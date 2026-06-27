@@ -2,8 +2,10 @@ name: CI
 
 on:
   pull_request:
+  # Pushes to PR branches are covered by the pull_request event above; only run
+  # the push trigger on main to avoid duplicate runs while a PR is open.
   push:
-    branches: [main, 'claude/**']
+    branches: [main]
 
 jobs:
   frontend:
