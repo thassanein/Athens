@@ -13,6 +13,17 @@ createRoot(document.getElementById('root')).render(
 // Use BASE_URL so it works under a subpath (e.g. GitHub Pages '/Athens/').
 if ('serviceWorker' in navigator) {
   const base = import.meta.env.BASE_URL
+  // When a new service worker takes control, reload once so the user lands on
+  // the latest deploy automatically. Only armed when a controller already
+  // exists (an update) — first-time visitors don't get a surprise reload.
+  if (navigator.serviceWorker.controller) {
+    let reloaded = false
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloaded) return
+      reloaded = true
+      window.location.reload()
+    })
+  }
   window.addEventListener('load', () => {
     navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch(() => {
       /* offline cache is best-effort */
