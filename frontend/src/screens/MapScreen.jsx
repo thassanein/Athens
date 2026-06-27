@@ -24,16 +24,20 @@ function makeProjector(data, w, h, pad = 52) {
   }
 }
 
-function StatTile({ label, value, tone }) {
+function StatTile({ label, value, tone, onClick }) {
   const color = tone === 'red' ? 'var(--red)' : tone === 'amber' ? 'var(--amber)' : '#fff'
   return (
-    <div
+    <button
+      onClick={onClick}
       style={{
         background: 'rgba(255,255,255,.07)',
         border: '1px solid rgba(255,255,255,.10)',
         borderRadius: 'var(--r-tile)',
         padding: '11px 12px',
         flex: 1,
+        textAlign: 'left',
+        cursor: 'pointer',
+        display: 'block',
       }}
     >
       <div className="stat-num" style={{ color }}>
@@ -42,11 +46,11 @@ function StatTile({ label, value, tone }) {
       <div className="label" style={{ color: '#9FB0C4', marginTop: 5 }}>
         {label}
       </div>
-    </div>
+    </button>
   )
 }
 
-export default function MapScreen({ data, onOpenSite }) {
+export default function MapScreen({ data, onOpenSite, onNav, setTaskFilter }) {
   const stats = portfolioStats(data)
   const W = 408,
     H = 264 // matches the panel aspect so nothing is cropped
@@ -65,9 +69,17 @@ export default function MapScreen({ data, onOpenSite }) {
           Portfolio compliance
         </div>
         <div className="row gap" style={{ marginTop: 16 }}>
-          <StatTile label="Open findings" value={stats.openFindings} tone="red" />
-          <StatTile label="To verify" value={stats.toVerify} tone="amber" />
-          <StatTile label="Due ≤30d" value={stats.due30} tone="navy" />
+          <StatTile
+            label="Open findings"
+            value={stats.openFindings}
+            tone="red"
+            onClick={() => {
+              setTaskFilter?.('all')
+              onNav?.('tasks')
+            }}
+          />
+          <StatTile label="To verify" value={stats.toVerify} tone="amber" onClick={() => onNav?.('alerts')} />
+          <StatTile label="Due ≤30d" value={stats.due30} tone="navy" onClick={() => onNav?.('alerts')} />
         </div>
       </div>
 
@@ -105,7 +117,15 @@ export default function MapScreen({ data, onOpenSite }) {
               const tone = siteTone(data[n])
               const open = siteStats(data[n]).open
               return (
-                <g key={n} onClick={() => onOpenSite(n)} style={{ cursor: 'pointer' }}>
+                <g
+                  key={n}
+                  onClick={() => onOpenSite(n)}
+                  role="button"
+                  aria-label={`Open ${n}`}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {/* transparent hit target (~32px) for reliable taps on mobile */}
+                  <circle cx={p.x} cy={p.y} r="16" fill="transparent" style={{ pointerEvents: 'all' }} />
                   <circle cx={p.x} cy={p.y} r="13" fill="#fff" />
                   <circle cx={p.x} cy={p.y} r="10" fill={TONE_HEX[tone]} />
                   <text

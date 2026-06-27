@@ -357,6 +357,37 @@ const TABS = [
   { id: 'env', label: 'ENV' },
 ]
 
+// Tappable read-only card for permits & leases (no field entry per the brief —
+// taps just expand a detail panel).
+function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <button
+      className={`card lrow bd-${toneKey}`}
+      onClick={() => setOpen((o) => !o)}
+      style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
+    >
+      <div className="row spread">
+        <span className="label" style={{ color: 'var(--grey)' }}>{area}</span>
+        <span className={`pill bg-${toneKey} s-${toneKey}`} style={{ fontSize: 10.5 }}>{label}</span>
+      </div>
+      <div style={{ fontSize: 14.5, fontWeight: 600, marginTop: 4 }}>{title}</div>
+      {subtitle && <div className="muted" style={{ fontSize: 12.5, marginTop: 3 }}>{subtitle}</div>}
+      {open && (
+        <div style={{ marginTop: 8, borderTop: '1px solid var(--card-border)', paddingTop: 8 }}>
+          {rows.map((r) => (
+            <div key={r.k} className="row spread" style={{ padding: '3px 0' }}>
+              <span className="label" style={{ color: 'var(--grey)' }}>{r.k}</span>
+              <span style={{ fontSize: 12.5, fontWeight: 600, textAlign: 'right' }}>{r.v}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>{open ? 'Tap to collapse' : 'Tap for details'}</div>
+    </button>
+  )
+}
+
 export default function SiteRecord({
   name,
   site,
@@ -585,18 +616,20 @@ export default function SiteRecord({
               ))}
             </div>
             {(site.permits || []).map((p) => (
-              <div key={p.id} className={`card lrow bd-${tone(p.status)}`} style={{ padding: '12px 14px' }}>
-                <div className="row spread">
-                  <span className="label" style={{ color: 'var(--grey)' }}>{p.area}</span>
-                  <span className={`pill bg-${tone(p.status)} s-${tone(p.status)}`} style={{ fontSize: 10.5 }}>{PERMIT_LABEL[p.status]}</span>
-                </div>
-                <div style={{ fontSize: 14.5, fontWeight: 600, marginTop: 4 }}>{p.name}</div>
-                <div className="muted" style={{ fontSize: 12.5, marginTop: 3 }}>{p.agency} · {p.number}</div>
-                <div className="row spread" style={{ marginTop: 6 }}>
-                  <span className="muted" style={{ fontSize: 12 }}>{p.cycle}</span>
-                  <span className="muted" style={{ fontSize: 12 }}>Expires {fmtDate(p.expires)}</span>
-                </div>
-              </div>
+              <ReadOnlyCard
+                key={p.id}
+                toneKey={tone(p.status)}
+                area={p.area}
+                label={PERMIT_LABEL[p.status]}
+                title={p.name}
+                subtitle={`${p.agency} · ${p.number}`}
+                rows={[
+                  { k: 'Agency', v: p.agency },
+                  { k: 'Number', v: p.number },
+                  { k: 'Cycle', v: p.cycle },
+                  { k: 'Expires', v: fmtDate(p.expires) },
+                ]}
+              />
             ))}
             <div className="muted" style={{ fontSize: 11.5, textAlign: 'center', padding: '4px 0' }}>
               Permits are read-only RAG reference — status is payment/cycle-driven, not date-driven.
@@ -610,15 +643,18 @@ export default function SiteRecord({
               <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No leases on file.</div></div>
             )}
             {(site.leases || []).map((l) => (
-              <div key={l.id} className={`card lrow bd-${tone(l.status)}`} style={{ padding: '12px 14px' }}>
-                <div className="row spread">
-                  <span className="label">{l.area}</span>
-                  <span className={`pill bg-${tone(l.status)} s-${tone(l.status)}`} style={{ fontSize: 10.5 }}>{PERMIT_LABEL[l.status]}</span>
-                </div>
-                <div style={{ fontSize: 14.5, fontWeight: 600, marginTop: 4 }}>{l.name}</div>
-                <div className="muted" style={{ fontSize: 12.5, marginTop: 3 }}>Lessor: {l.lessor}</div>
-                <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>Expires {fmtDate(l.expires)}</div>
-              </div>
+              <ReadOnlyCard
+                key={l.id}
+                toneKey={tone(l.status)}
+                area={l.area}
+                label={PERMIT_LABEL[l.status]}
+                title={l.name}
+                subtitle={`Lessor: ${l.lessor}`}
+                rows={[
+                  { k: 'Lessor', v: l.lessor },
+                  { k: 'Expires', v: fmtDate(l.expires) },
+                ]}
+              />
             ))}
           </div>
         )}
