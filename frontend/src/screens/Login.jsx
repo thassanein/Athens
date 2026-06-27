@@ -42,24 +42,31 @@ export default function Login({ source, onEnter }) {
         <button
           className="btn"
           style={{ background: '#fff', color: '#1A2736' }}
-          onClick={onEnter}
+          onClick={() => onEnter('auditor')}
         >
           <IconMicrosoft size={18} />
           Sign in with Microsoft
         </button>
-        <button
-          onClick={onEnter}
-          style={{
-            display: 'block',
-            margin: '18px auto 0',
-            color: '#9FB0C4',
-            fontSize: 13.5,
-            fontWeight: 600,
-            background: 'none',
-          }}
-        >
-          Continue as Dave Marin · demo
-        </button>
+
+        <div style={{ color: '#6E8198', fontSize: 11, fontWeight: 700, textAlign: 'center', letterSpacing: '.6px', margin: '20px 0 10px' }}>
+          OR CONTINUE AS · DEMO
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <button
+            onClick={() => onEnter('auditor')}
+            style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.14)', borderRadius: 12, padding: '12px 8px', color: '#fff', textAlign: 'center' }}
+          >
+            <div style={{ fontSize: 14.5, fontWeight: 700 }}>Auditor</div>
+            <div style={{ fontSize: 11, color: '#9FB0C4', marginTop: 3 }}>Dave Marin · can edit</div>
+          </button>
+          <button
+            onClick={() => onEnter('viewer')}
+            style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.14)', borderRadius: 12, padding: '12px 8px', color: '#fff', textAlign: 'center' }}
+          >
+            <div style={{ fontSize: 14.5, fontWeight: 700 }}>Viewer</div>
+            <div style={{ fontSize: 11, color: '#9FB0C4', marginTop: 3 }}>Read-only</div>
+          </button>
+        </div>
 
         <div
           style={{

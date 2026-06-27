@@ -12,7 +12,13 @@ import TabBar from './components/TabBar.jsx'
 import Capture from './components/Capture.jsx'
 import Toast from './components/Toast.jsx'
 
-const DEFAULT_USER = { name: 'Dave Marin', role: 'Field Auditor · EHS', initials: 'DM' }
+// Two roles / two demo logins. Auditors can edit findings (comments, photos,
+// details, status); viewers are read-only on existing findings (but may still
+// capture new ones).
+const USERS = {
+  auditor: { name: 'Dave Marin', role: 'auditor', title: 'Field Auditor · EHS', initials: 'DM' },
+  viewer: { name: 'Sam Okafor', role: 'viewer', title: 'Site Viewer · Read-only', initials: 'SO' },
+}
 
 export default function App() {
   // ---- global state (see README "State management") ----
@@ -23,7 +29,7 @@ export default function App() {
   const [siteView, setSiteView] = useState(null) // {site, tab?, focus?} or null
   const [taskFilter, setTaskFilter] = useState('all')
   const [settings, setSettings] = useState({ push: true, offline: true, camera: true })
-  const [user] = useState(DEFAULT_USER)
+  const [user, setUser] = useState(USERS.auditor)
   const [toast, setToast] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -138,12 +144,19 @@ export default function App() {
   if (screen === 'login') {
     return (
       <div className="app-shell">
-        <Login source={source} onEnter={() => setScreen('map')} />
+        <Login
+          source={source}
+          onEnter={(roleKey) => {
+            setUser(USERS[roleKey] || USERS.auditor)
+            setScreen('map')
+          }}
+        />
       </div>
     )
   }
 
   const badge = alertCount(data)
+  const canEdit = user.role === 'auditor'
 
   return (
     <div className="app-shell">
@@ -192,6 +205,7 @@ export default function App() {
           initialTab={siteView.tab}
           focusId={siteView.focus}
           source={source}
+          canEdit={canEdit}
           onClose={() => setSiteView(null)}
           onUpdateFinding={updateFinding}
           onUpdatePermit={updatePermit}

@@ -64,11 +64,31 @@ function CompletionRing({ done, total }) {
   )
 }
 
-// Expandable finding card — collapsed shows title + status; expanded shows
-// owner/due/note/photo and lets the auditor change the action-driving status.
-function FindingCard({ c, defaultOpen, onChange }) {
+// Expandable finding card. Collapsed shows title + status. Expanded:
+//  - Auditors (canEdit) get editable comment, photo evidence, owner, due, and
+//    the action-driving status pills.
+//  - Viewers get a read-only view of the same information.
+function FindingCard({ c, defaultOpen, canEdit, onChange }) {
   const [open, setOpen] = useState(defaultOpen || false)
+  const [note, setNote] = useState(c.note || '')
+  const [owner, setOwner] = useState(c.owner || '')
+  const fileRef = useRef(null)
   const t = tone(c.status)
+
+  // keep local edits in sync if the finding changes underneath us
+  useEffect(() => {
+    setNote(c.note || '')
+    setOwner(c.owner || '')
+  }, [c.id, c.note, c.owner])
+
+  const onPhoto = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => onChange({ photo: reader.result })
+    reader.readAsDataURL(file)
+  }
+
   return (
     <div className={`card lrow bd-${t}`} style={{ padding: 0, overflow: 'hidden' }}>
       <button
@@ -95,28 +115,67 @@ function FindingCard({ c, defaultOpen, onChange }) {
         </div>
       </button>
 
-      {open && (
+      {open && !canEdit && (
+        // ---- Viewer: read-only ----
         <div style={{ padding: '0 14px 14px' }}>
-          {c.note && (
-            <div
-              style={{
-                background: 'var(--bg)',
-                borderRadius: 10,
-                padding: '10px 12px',
-                fontSize: 13,
-                marginBottom: 10,
-                color: '#36465a',
-              }}
-            >
+          {c.note ? (
+            <div style={{ background: 'var(--bg)', borderRadius: 10, padding: '10px 12px', fontSize: 13, marginBottom: 10, color: '#36465a' }}>
               {c.note}
             </div>
+          ) : (
+            <div className="muted" style={{ fontSize: 12.5, marginBottom: 10 }}>No comment recorded.</div>
           )}
           {c.photo && (
             <img src={c.photo} alt="Evidence" style={{ width: '100%', borderRadius: 10, marginBottom: 10, display: 'block' }} />
           )}
-          <div className="label" style={{ marginBottom: 6 }}>
-            Set status
+          <span className="label" style={{ color: 'var(--grey)' }}>Read-only · viewer</span>
+        </div>
+      )}
+
+      {open && canEdit && (
+        // ---- Auditor: editable ----
+        <div style={{ padding: '0 14px 14px' }}>
+          <div className="label" style={{ marginBottom: 6 }}>Comment</div>
+          <textarea
+            className="textarea"
+            style={{ minHeight: 60, marginBottom: 12 }}
+            placeholder="Add the auditor's comment…"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            onBlur={() => note !== (c.note || '') && onChange({ note })}
+          />
+
+          {c.photo && (
+            <img src={c.photo} alt="Evidence" style={{ width: '100%', borderRadius: 10, marginBottom: 10, display: 'block' }} />
+          )}
+          <input ref={fileRef} type="file" accept="image/*" capture="environment" onChange={onPhoto} style={{ display: 'none' }} />
+          <button className="btn btn-light" style={{ marginBottom: 12 }} onClick={() => fileRef.current?.click()}>
+            <IconCamera /> {c.photo ? 'Replace photo' : 'Add photo evidence'}
+          </button>
+
+          <div className="row gap" style={{ alignItems: 'flex-start', marginBottom: 12 }}>
+            <label className="field" style={{ flex: 1, marginBottom: 0 }}>
+              <span className="label" style={{ display: 'block', marginBottom: 6 }}>Owner</span>
+              <input
+                className="input"
+                placeholder="Unassigned"
+                value={owner}
+                onChange={(e) => setOwner(e.target.value)}
+                onBlur={() => owner !== (c.owner || '') && onChange({ owner: owner || null })}
+              />
+            </label>
+            <label className="field" style={{ flex: 1, marginBottom: 0 }}>
+              <span className="label" style={{ display: 'block', marginBottom: 6 }}>Due</span>
+              <input
+                type="date"
+                className="input"
+                value={c.due || ''}
+                onChange={(e) => onChange({ due: e.target.value || null })}
+              />
+            </label>
           </div>
+
+          <div className="label" style={{ marginBottom: 6 }}>Set status</div>
           <div className="row gap" style={{ flexWrap: 'wrap' }}>
             {['pass', 'open', 'fail', 'na'].map((s) => (
               <button
@@ -303,6 +362,7 @@ export default function SiteRecord({
   site,
   initialTab,
   focusId,
+  canEdit = false,
   onClose,
   onUpdateFinding,
   onCapture,
@@ -323,6 +383,9 @@ export default function SiteRecord({
   const change = (id, patch) => {
     onUpdateFinding(name, id, patch)
     if (patch.status === 'pass') flash('Finding cleared')
+    else if ('status' in patch) flash('Status updated')
+    else if ('photo' in patch) flash('Photo attached')
+    else flash('Saved')
   }
 
   // tab datasets
@@ -367,10 +430,22 @@ export default function SiteRecord({
           <button onClick={onClose} aria-label="Back" style={{ color: '#fff', marginLeft: -6 }}>
             <IconBack />
           </button>
-          <button onClick={() => flash('Audit packet exported (PDF)')} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: '#fff' }}>
-            <IconExport size={15} />
-            Site packet
-          </button>
+          <div className="row gap" style={{ gap: 8 }}>
+            <span
+              className="pill"
+              style={{
+                background: canEdit ? 'rgba(26,86,50,.5)' : 'rgba(255,255,255,.12)',
+                color: canEdit ? '#9be8b6' : '#9FB0C4',
+                fontSize: 10.5,
+              }}
+            >
+              {canEdit ? 'Auditor · editing' : 'View only'}
+            </span>
+            <button onClick={() => flash('Audit packet exported (PDF)')} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: '#fff' }}>
+              <IconExport size={15} />
+              Site packet
+            </button>
+          </div>
         </div>
         <div className="title" style={{ marginTop: 8 }}>
           {name}
@@ -486,7 +561,7 @@ export default function SiteRecord({
             ) : (
               findings.map((c) => (
                 <div key={c.id} ref={c.id === focusId ? focusRef : null}>
-                  <FindingCard c={c} defaultOpen={c.id === focusId} onChange={(p) => change(c.id, p)} />
+                  <FindingCard c={c} defaultOpen={c.id === focusId} canEdit={canEdit} onChange={(p) => change(c.id, p)} />
                 </div>
               ))
             )}
@@ -555,6 +630,7 @@ export default function SiteRecord({
             icon={tab === 'facility' ? <IconDoc /> : <IconLeaf />}
             done={ringDone(tab === 'facility' ? facility : env)}
             total={ringTotal(tab === 'facility' ? facility : env)}
+            canEdit={canEdit}
             onChange={change}
             onCapture={() => onCapture('')}
           />
@@ -564,7 +640,7 @@ export default function SiteRecord({
   )
 }
 
-function ChecklistTab({ list, title, icon, done, total, onChange, onCapture }) {
+function ChecklistTab({ list, title, icon, done, total, canEdit, onChange, onCapture }) {
   return (
     <div className="stack">
       <div className="card row spread" style={{ padding: '12px 14px' }}>
@@ -572,7 +648,9 @@ function ChecklistTab({ list, title, icon, done, total, onChange, onCapture }) {
           <span style={{ color: 'var(--navy)' }}>{icon}</span>
           <div>
             <div className="h2" style={{ fontSize: 15 }}>{title}</div>
-            <div className="muted" style={{ fontSize: 12 }}>{done} of {total} passing</div>
+            <div className="muted" style={{ fontSize: 12 }}>
+              {done} of {total} passing{canEdit ? ' · tap a card to edit' : ' · read-only'}
+            </div>
           </div>
         </div>
         <CompletionRing done={done} total={total} />
@@ -580,7 +658,7 @@ function ChecklistTab({ list, title, icon, done, total, onChange, onCapture }) {
       {list.length === 0 ? (
         <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No items on this checklist.</div></div>
       ) : (
-        list.map((c) => <FindingCard key={c.id} c={c} defaultOpen={isOpenWork(c)} onChange={(p) => onChange(c.id, p)} />)
+        list.map((c) => <FindingCard key={c.id} c={c} defaultOpen={isOpenWork(c)} canEdit={canEdit} onChange={(p) => onChange(c.id, p)} />)
       )}
       <button className="btn btn-light" onClick={onCapture}>
         <IconCamera /> Log finding on this checklist
