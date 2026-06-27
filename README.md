@@ -1,117 +1,78 @@
-# Athens Facility Compliance
+# Athens Command Center
 
-A mobile-first app for Athens Services field auditors to track **permits, leases and inspection
-findings** across five facilities. Auditors open the app on a phone, see a portfolio map of all
-sites, work a list of open findings, capture new findings with a photo on the yard, and drill into
-a per-site compliance record (a scaled site plan + checklists + permits + an exportable audit packet).
+A lightweight goals / OKR command center for tracking **goals → key results → projects**,
+the **drivers** (owners) responsible for them, and the **documents** attached to each project.
+Built as a small Express + PostgreSQL app with a zero-build vanilla-JS dashboard.
 
-This repository is a production-oriented build of that app: a **React** frontend (PWA-ready) over a
-runnable **Express + PostgreSQL** backend, seeded from a canonical portfolio dataset.
+> **Deploying it?** See **[DEPLOY.md](DEPLOY.md)** for step-by-step instructions
+> (Neon + Vercel, or your own PostgreSQL).
 
-> Built from the handoff spec in `docs/HANDOFF.md` (Path B — "recreate in a framework"). The
-> backend is the same `server/` contract described in that handoff.
+## What it does
 
----
+- **Login** with email + password (sessions stored in PostgreSQL, so it works on serverless hosts).
+- **Dashboard** of goals, each expandable into its key results, each expandable into its projects.
+- **Inline editing** — click a title, change a status, drag a progress number; it saves automatically.
+- **Owners** — assign a driver to any goal, key result, or project.
+- **Documents** — upload, download, and delete files per project (stored in the database).
+- **Manage users** (admins only) — add teammates, set roles, remove accounts.
 
-## Repository layout
+## Data model
 
-```
-data/sitedata.json     Canonical seed — the whole portfolio (5 sites). Source of truth.
-server/                Express REST API over PostgreSQL (schema + seed + endpoints).
-frontend/              React + Vite mobile web app (login + 5 screens + capture + site record).
-docs/HANDOFF.md        Original product/design handoff (the spec this build follows).
-```
+| Table         | Purpose                                              |
+|---------------|------------------------------------------------------|
+| `users`       | Login accounts (`admin` / `member`)                  |
+| `drivers`     | People who own work (goal / KR / project owners)     |
+| `goals`       | Top-level strategic goals                            |
+| `key_results` | Measurable key results under a goal                  |
+| `projects`    | Initiatives that move a key result forward           |
+| `documents`   | Files attached to a project (bytes stored in the DB) |
+| `session`     | Login sessions (managed by `connect-pg-simple`)      |
 
-The frontend reads `GET /api/sites` first and **falls back to a bundled snapshot** of
-`data/sitedata.json` when the server is unreachable (Profile → *Data source* shows which mode is
-live). The snapshot is generated from the canonical data with `npm run gen:snapshot`.
+See [`db/schema.sql`](db/schema.sql).
 
----
-
-## Quick start
-
-### 1. Backend (Express + PostgreSQL)
-
-```bash
-cd server
-cp .env.example .env          # adjust PG* credentials if needed
-createdb athens_compliance
-npm install
-npm run initdb                # apply schema.sql
-npm run seed                  # load data/sitedata.json
-npm start                     # API on http://localhost:4000
-```
-
-### 2. Frontend (React + Vite)
+## Running locally
 
 ```bash
-cd frontend
+# 1. Configure
+cp .env.example .env        # then fill in DATABASE_URL, SESSION_SECRET, SEED_ADMIN_*
+
+# 2. Create tables + load starter data (seed also applies the schema)
 npm install
-npm run dev                   # http://localhost:5173 (proxies /api → :4000)
+npm run seed
+
+# 3. Start
+npm start                   # http://localhost:3000
 ```
 
-Open the dev URL on a phone-sized viewport. With the API running you'll see **PostgreSQL (local)**
-as the data source; stop the API and reload to see the **Local (demo)** snapshot fallback.
+`npm run seed` prints `✓ Seeded 5 drivers, 18 KRs, 25 projects, 5 goals` and creates
+your first admin from `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`. It's safe to re-run —
+it won't duplicate the admin or the starter data.
 
-Build for production with `npm run build` (output in `frontend/dist/`). Host `dist/` behind any
-static server and point `/api` at the Express app.
+## API overview
 
----
+All routes are under `/api` and (except auth) require a session cookie.
 
-## API
+| Method   | Path                               | Notes                                  |
+|----------|------------------------------------|----------------------------------------|
+| `POST`   | `/api/auth/login` · `/logout`      | `{ email, password }`                  |
+| `GET`    | `/api/auth/me`                     | current user                           |
+| `GET/POST` | `/api/{goals,key-results,projects,drivers}` | list / create             |
+| `PATCH/DELETE` | `/api/{resource}/:id`        | update (whitelisted fields) / delete   |
+| `GET/POST` | `/api/projects/:id/documents`    | list metadata / upload (`file` field)  |
+| `GET/DELETE` | `/api/documents/:id`           | download bytes / delete                |
+| `GET/POST` | `/api/users` (admin)             | list / create users                    |
+| `PATCH/DELETE` | `/api/users/:id` (admin)     | update role/name/password / delete     |
 
-| Method | Route | Purpose |
-|---|---|---|
-| GET | `/api/sites` | whole portfolio, shaped like `data/sitedata.json` |
-| PATCH | `/api/checklist/:id` | update a finding (status / owner / due / note / photo) |
-| POST | `/api/findings` | create a field finding (Capture) |
-| PATCH | `/api/permits/:id` | change a permit's RAG status |
-| GET | `/api/health` | liveness + DB check |
+## Project layout
 
-Dates are returned as `YYYY-MM-DD` strings; photos are base64 data URLs. See `server/README.md`
-for details and the table schema (CHECK-constrained per the two status models below).
-
----
-
-## Screens
-
-Persistent bottom tab bar with a center **Capture FAB**: `Map · Tasks · (Capture) · Alerts · Profile`.
-
-1. **Login** — navy gradient, "Sign in with Microsoft" (placeholder for Entra/Azure AD SSO) + demo entry.
-2. **Map** — portfolio stats, a regional map with one RAG pin per site, and the all-sites list.
-3. **Tasks (My Day)** — cross-site open-findings worklist with a resolve progress ring + filter chips.
-4. **Capture** — FAB → bottom sheet to log a field finding (site / checklist / area / note / owner / due / photo).
-5. **Alerts** — unowned findings, permits to verify, and renewal-cycle permits within 90 days.
-6. **Profile** — user card, PWA install, settings toggles, and the live **Data source** badge.
-7. **Site record** — per-facility: a scaled site plan (Plan / Blueprint / Terrain) with permit & finding
-   pins, a "next 90 days" renewal ribbon, and tabs for Findings · Permits · Leases · Facility · ENV.
-
----
-
-## Two status models (kept distinct)
-
-- **Permits & leases:** `active` (green) · `renew` (amber) · `verify` (red). Read-only RAG reference.
-- **Checklist findings:** `pass` (green) · `fail` (red) · `open` (amber) · `na` (grey). Action-driving.
-
-> **Dave's date rule:** a permit's printed expiration date is not ground truth. "Renewing" = in the
-> normal invoice/fee cycle (routine), not overdue. Only genuinely unconfirmed items go red ("verify").
-
-## Scope guardrails (from the brief)
-
-Permits/leases are read-only RAG (no field entry). **Fleet/vehicle inspection is excluded** — it
-lives in Fleetio. Two checklists only (Facility + ENV).
-
----
-
-## Brand
-
-Athens Red `#D5172A` (accent / needs-attention only — never a fill) · Navy `#1A2736` · Green
-`#1A5632` · Amber `#B7791F` · Blue `#1A428A`. Font is **Carlito** (metric-compatible Calibri). All
-tokens live in `frontend/src/index.css`.
-
-## Notes for production
-
-- Replace demo login with **Microsoft Entra / Azure AD SSO**.
-- Move photo storage from base64 to blob storage (S3 / Azure Blob).
-- The server becomes source of truth; the `localStorage` snapshot becomes a read-only offline cache.
-- Optional: wrap the same web app with **Capacitor** for App Store / MDM distribution — no rewrite.
+```
+api/index.js        Vercel serverless entry (re-exports the Express app)
+src/server.js       `npm start` entry (app.listen)
+src/app.js          Express app: sessions, routes, static, errors
+src/db.js           pg Pool (SSL aware via PGSSL)
+src/auth.js         bcrypt + session auth helpers/middleware
+src/routes/         auth, data (CRUD + documents), users (admin)
+scripts/seed.js     schema apply + admin + starter OKR data
+db/schema.sql       database schema (idempotent)
+public/             vanilla-JS dashboard (index.html, app.js, styles.css)
+```
