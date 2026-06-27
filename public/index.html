@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Athens Command Center</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>" />
+</head>
+<body>
+  <!-- Login -->
+  <div id="login-view" class="login-view hidden">
+    <form id="login-form" class="login-card">
+      <div class="login-brand">🏛️ Athens <span>Command Center</span></div>
+      <p class="login-sub">Sign in to your dashboard</p>
+      <label>Email
+        <input type="email" id="login-email" autocomplete="username" required />
+      </label>
+      <label>Password
+        <input type="password" id="login-password" autocomplete="current-password" required />
+      </label>
+      <button type="submit" id="login-submit">Sign in</button>
+      <div id="login-error" class="login-error"></div>
+    </form>
+  </div>
+
+  <!-- App -->
+  <div id="app-view" class="hidden">
+    <header class="topbar">
+      <div class="brand">🏛️ Athens <span>Command Center</span></div>
+      <div class="topbar-right">
+        <button id="manage-users-btn" class="ghost hidden">Manage users</button>
+        <span id="current-user" class="current-user"></span>
+        <button id="logout-btn" class="ghost">Log out</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="summary" class="summary-grid"></section>
+
+      <div class="section-head">
+        <h2>Goals</h2>
+        <div class="filters">
+          <label class="muted">Owner
+            <select id="filter-driver"><option value="">All</option></select>
+          </label>
+          <button id="add-goal-btn" class="primary small">+ Goal</button>
+        </div>
+      </div>
+
+      <section id="goals" class="goals"></section>
+    </main>
+  </div>
+
+  <!-- Manage users modal -->
+  <div id="users-modal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3>Manage users</h3>
+        <button class="ghost" data-close-modal>✕</button>
+      </div>
+      <table class="users-table">
+        <thead><tr><th>Email</th><th>Name</th><th>Role</th><th></th></tr></thead>
+        <tbody id="users-tbody"></tbody>
+      </table>
+      <form id="add-user-form" class="add-user">
+        <input type="email" id="nu-email" placeholder="email@athensservices.com" required />
+        <input type="text" id="nu-name" placeholder="Name" />
+        <input type="password" id="nu-password" placeholder="Temp password" required />
+        <select id="nu-role"><option value="member">Member</option><option value="admin">Admin</option></select>
+        <button type="submit" class="primary small">Add user</button>
+      </form>
+      <div id="users-error" class="login-error"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
