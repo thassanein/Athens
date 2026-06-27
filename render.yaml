@@ -1,0 +1,45 @@
+# Render blueprint — provisions a managed PostgreSQL + a single web service that
+# builds the frontend and runs the Express server (which serves the app + API).
+#
+# Deploy: Render dashboard → New → Blueprint → connect this repo. Render reads
+# this file and creates both resources. Then set the Microsoft Entra values
+# (marked sync:false below) in the service's Environment tab. See DEPLOY.md.
+
+databases:
+  - name: athens-db
+    plan: free # 1 GB. NOTE: free Postgres expires after ~30 days — upgrade to a paid plan for production.
+    databaseName: athens_compliance
+    user: athens
+
+services:
+  - type: web
+    name: athens-compliance
+    runtime: node
+    plan: free # free web services sleep when idle (~30s cold start). Upgrade to keep warm.
+    region: oregon
+    branch: claude/new-session-x35f9w # repo's current default branch
+    healthCheckPath: /api/health
+    buildCommand: cd frontend && npm ci && npm run build && cd ../server && npm ci
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: athens-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true # Render generates a long random secret
+      - key: DEFAULT_ROLE
+        value: viewer
+      # ---- Microsoft Entra (fill these in the dashboard after the app URL exists) ----
+      - key: ENTRA_CLIENT_ID
+        sync: false
+      - key: ENTRA_TENANT_ID
+        sync: false
+      - key: ENTRA_CLIENT_SECRET
+        sync: false
+      - key: ENTRA_REDIRECT_URI
+        sync: false # e.g. https://athens-compliance.onrender.com/auth/redirect
+      - key: AUDITOR_EMAILS
+        sync: false # comma-separated emails that should get the Auditor (edit) role

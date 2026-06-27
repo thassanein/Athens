@@ -15,7 +15,9 @@ run and deploy it, the decisions made, and the rough edges to know about.
 - **Backend:** Node + Express REST API over PostgreSQL. Built, schema + seed + endpoints verified
   end-to-end against a live PostgreSQL 16.
 - **CI:** GitHub Actions — frontend build + backend smoke test on every PR (`.github/workflows/ci.yml`).
-- **Hosting:** Live on GitHub Pages (demo mode, bundled data) via `.github/workflows/deploy-pages.yml`.
+- **Hosting (demo):** GitHub Pages — no backend, bundled data, localStorage. Via `.github/workflows/deploy-pages.yml`.
+- **Hosting (live, shared data):** Render blueprint (`render.yaml`) — always-on Express + managed
+  PostgreSQL, single URL, **Microsoft Entra SSO**. Step-by-step in **[`DEPLOY.md`](DEPLOY.md)**.
 
 **Live link:** **https://thassanein.github.io/Athens/**
 (If it ever looks stale, append a cache-buster: `?v=4`, `?v=5`, …)
@@ -154,20 +156,34 @@ online, falls back to cache only offline, and wipes old caches on activate (cach
 
 ---
 
-## 9. Known limitations / next steps
+## 9. Live shared-data deploy (Render + Entra SSO)
 
-- **Auth:** demo logins only. Wire Microsoft Entra / Azure AD SSO; derive role from the IdP.
-- **Photos:** stored as base64. Move to blob storage (S3 / Azure Blob) for production.
-- **Hosted app is demo-mode:** the GitHub Pages build has no backend, so it uses the bundled
-  snapshot and writes to `localStorage`. To make the hosted app live, deploy `server/` (managed
-  PostgreSQL) and point the frontend's `/api` at it (and add real CORS/auth).
+Implemented — see **[`DEPLOY.md`](DEPLOY.md)** for the click-by-click guide. In short:
+
+- `render.yaml` provisions a managed PostgreSQL + a web service that builds the frontend and runs
+  the Express server (which serves the SPA **and** `/api` from one origin).
+- **Auth:** Microsoft Entra (Azure AD), OIDC auth-code + PKCE, in `server/src/auth.js`. Cookie
+  sessions. Role comes from Entra **app roles** in the token, else the `AUDITOR_EMAILS` allowlist,
+  else `DEFAULT_ROLE` (viewer). `/api` writes are auditor-only (server-enforced).
+- **Modes:** the same code runs "open" locally (no Entra env → dev user) and "secure" in production
+  (Entra required; in prod it refuses to run without auth → returns 503, so the DB is never exposed).
+- **Schema:** `server/db/migrate.js` runs on boot — creates tables if missing, seeds only if empty
+  (never wipes live data).
+- The frontend auto-detects mode via `/auth/me`: authed → app; 401 → Microsoft login; no server →
+  demo (Pages).
+
+## 10. Known limitations / next steps
+
+- **Photos:** stored as base64 in DB rows. Move to blob storage (S3 / Azure Blob) for heavier use.
 - **Permits/leases** are intentionally read-only (tap expands a detail panel only).
-- **Default branch** is a `claude/...` branch — see §6; setting `main` as default is the clean fix.
+- **Default branch** is a `claude/...` branch — see §6; setting `main` as default is the clean fix
+  (also update `branch:` in `render.yaml` if you do).
+- **Free tiers** sleep (web) / expire (DB ~30 days) — upgrade for production (see DEPLOY.md).
 - **Optional native:** wrap the same web app with Capacitor for App Store / MDM distribution.
 
 ---
 
-## 10. Useful commands
+## 11. Useful commands
 
 ```bash
 # Frontend

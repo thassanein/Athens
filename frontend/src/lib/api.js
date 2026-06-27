@@ -7,6 +7,28 @@ import { SNAPSHOT } from './sitedata.js'
 
 const TIMEOUT_MS = 700
 const LS_KEY = 'athens.portfolio.v1'
+const BASE = import.meta.env.BASE_URL // '/' on the single-host deploy, '/Athens/' on Pages
+
+/**
+ * Determine the auth situation by calling the server's /auth/me:
+ *   - 'authed' → signed in (or server is in open/dev mode); returns the user.
+ *   - 'login'  → server requires Microsoft sign-in (HTTP 401).
+ *   - 'demo'   → no server reachable (e.g. GitHub Pages) → snapshot + demo logins.
+ */
+export async function fetchMe() {
+  try {
+    const res = await fetch(`${BASE}auth/me`, { credentials: 'include' })
+    if (res.status === 401) return { state: 'login' }
+    if (!res.ok) return { state: 'demo' }
+    const user = await res.json()
+    return { state: 'authed', user }
+  } catch {
+    return { state: 'demo' }
+  }
+}
+
+export const authLoginUrl = `${BASE}auth/login`
+export const authLogoutUrl = `${BASE}auth/logout`
 
 function withTimeout(promise, ms) {
   const ctrl = new AbortController()

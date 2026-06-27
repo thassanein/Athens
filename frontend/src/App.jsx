@@ -1,5 +1,13 @@
 import { useEffect, useState, useCallback } from 'react'
-import { loadPortfolio, saveLocal, patchChecklist, postFinding, patchPermit } from './lib/api.js'
+import {
+  loadPortfolio,
+  saveLocal,
+  patchChecklist,
+  postFinding,
+  patchPermit,
+  fetchMe,
+  authLogoutUrl,
+} from './lib/api.js'
 import { alertCount } from './lib/derive.js'
 
 import Login from './screens/Login.jsx'
@@ -30,18 +38,53 @@ export default function App() {
   const [taskFilter, setTaskFilter] = useState('all')
   const [settings, setSettings] = useState({ push: true, offline: true, camera: true })
   const [user, setUser] = useState(USERS.auditor)
+  const [authMode, setAuthMode] = useState('demo') // 'demo' (no server) | 'sso' (Microsoft)
   const [toast, setToast] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Load the portfolio on mount (API with 700ms timeout → snapshot fallback).
+  // Bootstrap: ask the server who we are, then load the portfolio.
+  //  - authed  → set the signed-in user and go straight to the app.
+  //  - login   → server requires Microsoft sign-in → show the SSO login screen.
+  //  - demo    → no server (e.g. Pages) → snapshot + the two demo logins.
   useEffect(() => {
     let alive = true
-    loadPortfolio().then(({ data, source }) => {
+    ;(async () => {
+      const me = await fetchMe()
       if (!alive) return
-      setData(data)
-      setSource(source)
+
+      if (me.state === 'login') {
+        setAuthMode('sso')
+        setLoading(false) // show the SSO login screen
+        return
+      }
+
+      if (me.state === 'authed') {
+        const u = me.user
+        setAuthMode(u.mode === 'open' ? 'demo' : 'sso')
+        setUser({
+          name: u.name,
+          role: u.role,
+          title: u.role === 'auditor' ? 'Field Auditor · EHS' : 'Site Viewer · Read-only',
+          initials: u.initials || 'A',
+          email: u.email,
+        })
+        const portfolio = await loadPortfolio()
+        if (!alive) return
+        setData(portfolio.data)
+        setSource(portfolio.source)
+        setScreen('map') // already signed in — skip the login screen
+        setLoading(false)
+        return
+      }
+
+      // demo: no server reachable
+      setAuthMode('demo')
+      const portfolio = await loadPortfolio()
+      if (!alive) return
+      setData(portfolio.data)
+      setSource(portfolio.source)
       setLoading(false)
-    })
+    })()
     return () => {
       alive = false
     }
@@ -131,22 +174,24 @@ export default function App() {
     [data, source, persist, flash]
   )
 
-  if (loading || !data) {
-    return (
-      <div className="app-shell">
-        <div className="screen" style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
-          <div className="muted">Loading portfolio…</div>
-        </div>
+  const Loading = (
+    <div className="app-shell">
+      <div className="screen" style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
+        <div className="muted">Loading…</div>
       </div>
-    )
-  }
+    </div>
+  )
+
+  if (loading) return Loading
 
   if (screen === 'login') {
     return (
       <div className="app-shell">
         <Login
           source={source}
+          mode={authMode}
           onEnter={(roleKey) => {
+            // Demo mode only — SSO mode redirects to Microsoft instead.
             setUser(USERS[roleKey] || USERS.auditor)
             setScreen('map')
           }}
@@ -154,6 +199,8 @@ export default function App() {
       </div>
     )
   }
+
+  if (!data) return Loading
 
   const badge = alertCount(data)
   const canEdit = user.role === 'auditor'
@@ -176,7 +223,10 @@ export default function App() {
           source={source}
           settings={settings}
           setSettings={setSettings}
-          onSignOut={() => setScreen('login')}
+          onSignOut={() => {
+            if (authMode === 'sso') window.location.href = authLogoutUrl
+            else setScreen('login')
+          }}
         />
       )}
 
