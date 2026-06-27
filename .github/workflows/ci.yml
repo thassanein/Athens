@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'claude/**']
+
+jobs:
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      # The bundled offline snapshot must match the canonical data/sitedata.json.
+      - name: Snapshot is up to date
+        run: |
+          npm run gen:snapshot
+          git diff --exit-code src/lib/sitedata.js \
+            || (echo "::error::src/lib/sitedata.js is stale — run 'npm run gen:snapshot' and commit." && exit 1)
+      - run: npm run build
+
+  backend:
+    name: Backend API (PostgreSQL)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: athens_compliance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: athens_compliance
+      PORT: '4000'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - name: Apply schema
+        run: npm run initdb
+      - name: Seed portfolio
+        run: npm run seed
+      - name: Smoke-test the API end to end
+        run: |
+          node src/index.js &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID 2>/dev/null || true' EXIT
+          # wait for liveness
+          for i in $(seq 1 30); do
+            if curl -sf localhost:4000/api/health >/dev/null; then break; fi
+            sleep 0.5
+          done
+          echo "health:"; curl -sf localhost:4000/api/health
+          # validate /api/sites returns the seeded portfolio in the expected shape
+          curl -sf localhost:4000/api/sites > /tmp/sites.json
+          node -e '
+            const j = require("/tmp/sites.json");
+            const names = Object.keys(j);
+            if (names.length !== 5) throw new Error("expected 5 sites, got " + names.length);
+            const ao = j["American Organics"];
+            if (!ao || !ao.anchor) throw new Error("anchor site American Organics missing");
+            for (const k of ["permits","leases","checklist"]) {
+              if (!Array.isArray(ao[k])) throw new Error("American Organics."+k+" not an array");
+            }
+            // dates come back as YYYY-MM-DD strings
+            const due = ao.checklist[0].due;
+            if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) throw new Error("bad date format: " + due);
+            console.log("OK:", names.length, "sites,", ao.permits.length, "AO permits");
+          '
+          # exercise a write: create a field finding
+          curl -sf -X POST localhost:4000/api/findings \
+            -H "Content-Type: application/json" \
+            -d "{\"site\":\"American Organics\",\"dept\":\"ENV\",\"area\":\"Fuel/CNG\",\"note\":\"CI smoke test finding\"}" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.status!==\"open\"||j.source!==\"field\")throw new Error(\"unexpected finding: \"+d);console.log(\"created\",j.id)})"
