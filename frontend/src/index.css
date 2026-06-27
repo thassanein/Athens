@@ -1,0 +1,519 @@
+/* ==========================================================================
+   Athens Facility Compliance — design tokens & base styles
+   Brand colors are FIXED (see README "Design tokens"). Athens Red is an
+   accent/"needs attention" color ONLY — never a fill.
+   ========================================================================== */
+
+:root {
+  /* Brand (fixed) */
+  --red: #d5172a;        /* accent / needs-attention ONLY */
+  --navy: #1a2736;       /* headers, primary text */
+  --green: #1a5632;      /* pass / active / compliant */
+  --amber: #b7791f;      /* renewing / open action */
+  --blue: #1a428a;       /* supporting links / info */
+  --grey: #939598;       /* muted text */
+
+  /* Surfaces */
+  --bg: #eef1f5;         /* screen background */
+  --card: #ffffff;
+  --card-border: #e6e9ee;
+
+  /* Status tints (card backgrounds) */
+  --tint-pass: #e6f0ea;
+  --tint-fail: #fbe7e9;
+  --tint-open: #fbf3e2;  /* open / renew */
+  --tint-na: #eef1f5;
+
+  /* Type */
+  --font: 'Carlito', 'Calibri', -apple-system, system-ui, 'Segoe UI', sans-serif;
+
+  /* Shape */
+  --r-card: 13px;
+  --r-tile: 11px;
+  --r-pill: 20px;
+  --r-sheet: 20px;
+  --shadow-card: 0 1px 3px rgba(15, 28, 46, 0.06);
+  --shadow-pop: 0 8px 30px rgba(15, 28, 46, 0.18);
+
+  /* Layout */
+  --app-w: 440px;
+  --tabbar-h: 64px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: #0c1320; /* letterbox around the phone frame on desktop */
+  color: var(--navy);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--navy);
+}
+
+/* The phone frame: a fixed ~440px portrait column centered on desktop,
+   full-bleed on an actual phone. */
+.app-shell {
+  position: relative;
+  width: 100%;
+  max-width: var(--app-w);
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--bg);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.4);
+}
+
+/* Scrolling content area sits above the bottom tab bar */
+.screen {
+  min-height: 100vh;
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 14px);
+}
+
+/* ---- Typography helpers ---- */
+.title {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+.h2 {
+  font-size: 17.5px;
+  font-weight: 700;
+}
+.label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--grey);
+}
+.stat-num {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.muted {
+  color: var(--grey);
+}
+
+/* ---- Cards ---- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---- Navy screen header ---- */
+.header {
+  background: var(--navy);
+  color: #fff;
+  padding: calc(env(safe-area-inset-top, 0px) + 18px) 18px 20px;
+}
+.header .title {
+  color: #fff;
+}
+
+/* ---- Pills / badges ---- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: var(--r-pill);
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ---- Status helpers (RAG) ---- */
+.s-pass,
+.s-active {
+  color: var(--green);
+}
+.s-fail,
+.s-verify {
+  color: var(--red);
+}
+.s-open,
+.s-renew {
+  color: var(--amber);
+}
+.s-na {
+  color: var(--grey);
+}
+
+.bg-pass {
+  background: var(--tint-pass);
+}
+.bg-fail {
+  background: var(--tint-fail);
+}
+.bg-open {
+  background: var(--tint-open);
+}
+.bg-na {
+  background: var(--tint-na);
+}
+
+.bd-pass,
+.bd-active {
+  border-left-color: var(--green);
+}
+.bd-fail,
+.bd-verify {
+  border-left-color: var(--red);
+}
+.bd-open,
+.bd-renew {
+  border-left-color: var(--amber);
+}
+.bd-na {
+  border-left-color: var(--grey);
+}
+
+/* row with a left RAG border */
+.lrow {
+  border-left: 4px solid var(--grey);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+}
+.btn-primary {
+  background: var(--navy);
+  color: #fff;
+}
+.btn-primary:active {
+  background: #243549;
+}
+.btn-light {
+  background: #fff;
+  color: var(--navy);
+  border: 1px solid var(--card-border);
+}
+.btn:disabled {
+  opacity: 0.55;
+}
+
+/* ---- Form fields ---- */
+.field {
+  display: block;
+  margin-bottom: 14px;
+}
+.field > .label {
+  display: block;
+  margin-bottom: 6px;
+}
+.input,
+.select,
+.textarea {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-size: 14px;
+  color: var(--navy);
+}
+.textarea {
+  min-height: 78px;
+  resize: vertical;
+}
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: 2px solid rgba(26, 66, 138, 0.35);
+  outline-offset: 0;
+  border-color: var(--blue);
+}
+
+/* ---- Bottom tab bar ---- */
+.tabbar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  width: 100%;
+  max-width: var(--app-w);
+  height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: #fff;
+  border-top: 1px solid var(--card-border);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  z-index: 40;
+}
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--grey);
+  padding-top: 8px;
+}
+.tab.active {
+  color: var(--red);
+}
+.tab .badge {
+  position: absolute;
+  transform: translate(12px, -6px);
+  background: var(--red);
+  color: #fff;
+  font-size: 9.5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* center capture FAB */
+.fab {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 4px solid #fff;
+  box-shadow: 0 6px 16px rgba(213, 23, 42, 0.4);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -24px;
+}
+.fab:active {
+  transform: scale(0.94);
+}
+
+/* ---- Bottom sheet / backdrop ---- */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 19, 32, 0.5);
+  z-index: 50;
+  opacity: 1;
+}
+.sheet {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  width: 100%;
+  max-width: var(--app-w);
+  background: var(--bg);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  z-index: 51;
+  /* transform-based slide-up (NOT opacity — see README note) */
+  transform: translate(-50%, 0);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 8px 16px calc(env(safe-area-inset-bottom, 0px) + 18px);
+  box-shadow: var(--shadow-pop);
+}
+.sheet.closing {
+  transform: translate(-50%, 100%);
+}
+.sheet-grip {
+  width: 38px;
+  height: 4px;
+  border-radius: 3px;
+  background: #cfd6df;
+  margin: 8px auto 6px;
+}
+
+/* ---- Toast ---- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-h) + 22px);
+  transform: translateX(-50%);
+  background: var(--navy);
+  color: #fff;
+  padding: 11px 16px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  z-index: 60;
+  box-shadow: var(--shadow-pop);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* transform-based entry, no opacity keyframe */
+  animation: toast-in 0.22s ease;
+}
+@keyframes toast-in {
+  from {
+    transform: translate(-50%, 14px);
+  }
+  to {
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ---- Data source dot ---- */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-pg {
+  background: var(--green);
+}
+.dot-local {
+  background: var(--amber);
+}
+
+/* ---- Progress ring (set --pct 0..100 via inline style) ---- */
+.ring {
+  --pct: 0;
+  --size: 56px;
+  --track: rgba(255, 255, 255, 0.22);
+  --fill: #fff;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(closest-side, transparent 70%, transparent 0),
+    conic-gradient(var(--fill) calc(var(--pct) * 1%), var(--track) 0);
+  position: relative;
+}
+.ring::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: var(--navy);
+}
+.ring > span {
+  position: relative;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* a light variant for use on white cards */
+.ring.light {
+  --track: #e6e9ee;
+  --fill: var(--green);
+}
+.ring.light::before {
+  background: #fff;
+}
+.ring.light > span {
+  color: var(--navy);
+}
+
+/* ---- horizontal filter chips ---- */
+.chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 4px;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar {
+  display: none;
+}
+.chip {
+  flex: 0 0 auto;
+  border-radius: var(--r-pill);
+  padding: 7px 13px;
+  font-size: 12.5px;
+  font-weight: 700;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  color: var(--navy);
+  white-space: nowrap;
+}
+.chip.active {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+/* segmented control */
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: #e3e8ef;
+  border-radius: 11px;
+  padding: 4px;
+}
+.segmented button {
+  border-radius: 8px;
+  padding: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.segmented button.active {
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+/* generic stack spacing */
+.stack > * + * {
+  margin-top: 12px;
+}
+.pad {
+  padding: 16px 16px 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+}
+.row.gap {
+  gap: 10px;
+}
+.spread {
+  justify-content: space-between;
+}
+
+/* tab content fade handled with transform; avoid opacity-from-0 keyframes */
