@@ -78,12 +78,24 @@ export default function Profile({ user, source, settings, setSettings, onSignOut
           >
             {user.initials}
           </div>
-          <div>
-            <div className="h2" style={{ fontSize: 16 }}>
-              {user.name}
+          <div style={{ flex: 1 }}>
+            <div className="row spread">
+              <div className="h2" style={{ fontSize: 16 }}>
+                {user.name}
+              </div>
+              <span
+                className="pill"
+                style={{
+                  background: user.role === 'auditor' ? 'var(--tint-pass)' : 'var(--tint-na)',
+                  color: user.role === 'auditor' ? 'var(--green)' : 'var(--grey)',
+                  fontSize: 10,
+                }}
+              >
+                {user.role === 'auditor' ? 'Can edit' : 'Read-only'}
+              </span>
             </div>
             <div className="muted" style={{ fontSize: 13, marginTop: 2 }}>
-              {user.role}
+              {user.title}
             </div>
           </div>
         </div>
