@@ -3,7 +3,8 @@
 // static shell. The app already falls back to a bundled snapshot when /api is
 // unreachable, so this only needs to keep the shell available offline.
 const CACHE = 'athens-compliance-v1'
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png']
+// Relative to the SW scope so it works at root ('/') or a subpath ('/Athens/').
+const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png']
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()))
@@ -34,7 +35,7 @@ self.addEventListener('fetch', (e) => {
             caches.open(CACHE).then((c) => c.put(request, copy)).catch(() => {})
             return res
           })
-          .catch(() => caches.match('/index.html'))
+          .catch(() => caches.match('./index.html'))
     )
   )
 })
