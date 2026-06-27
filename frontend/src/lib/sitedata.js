@@ -1,0 +1,673 @@
+// AUTO-GENERATED from data/sitedata.json by scripts/gen-snapshot.mjs — do not edit by hand.
+// Bundled offline snapshot: used when GET /api/sites is unreachable (demo / offline mode).
+export const SNAPSHOT = {
+  "American Organics": {
+    "type": "Compost / Organics",
+    "swis": "36-AA-0346",
+    "addr": "18601 Shay Rd, Victorville, CA 92394",
+    "city": "Victorville",
+    "lat": 34.5572,
+    "lng": -117.3148,
+    "anchor": true,
+    "permits": [
+      {
+        "id": "p-ao-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / Local EA",
+        "number": "36-AA-0346",
+        "status": "active",
+        "expires": "2027-09-30",
+        "cycle": "5-year review",
+        "area": "Scale/Entrance"
+      },
+      {
+        "id": "p-ao-02",
+        "name": "Compostable Materials Handling Permit",
+        "agency": "CalRecycle",
+        "number": "CMH-2021-014",
+        "status": "active",
+        "expires": "2026-12-31",
+        "cycle": "Annual fee",
+        "area": "Compost/Working"
+      },
+      {
+        "id": "p-ao-03",
+        "name": "Air Quality Permit to Operate",
+        "agency": "Mojave Desert AQMD",
+        "number": "MDAQMD-PTO-9920",
+        "status": "renew",
+        "expires": "2026-08-15",
+        "cycle": "Annual invoice",
+        "area": "Compost/Working"
+      },
+      {
+        "id": "p-ao-04",
+        "name": "Industrial Stormwater (IGP) NOI",
+        "agency": "SWRCB",
+        "number": "WDID 8 36I024601",
+        "status": "active",
+        "expires": "2026-10-01",
+        "cycle": "Annual report + fee",
+        "area": "Ponds/Stormwater"
+      },
+      {
+        "id": "p-ao-05",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "Lahontan RWQCB",
+        "number": "R6V-2019-0041",
+        "status": "active",
+        "expires": "2029-03-31",
+        "cycle": "5-year term",
+        "area": "Ponds/Stormwater"
+      },
+      {
+        "id": "p-ao-06",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA",
+        "number": "FA-0049122",
+        "status": "verify",
+        "expires": "2026-05-31",
+        "cycle": "Annual certification",
+        "area": "HazMat Storage"
+      },
+      {
+        "id": "p-ao-07",
+        "name": "Underground/Above Storage Tank (CNG/Fuel)",
+        "agency": "San Bernardino County CUPA",
+        "number": "AST-77310",
+        "status": "active",
+        "expires": "2027-02-28",
+        "cycle": "Annual fee",
+        "area": "Fuel/CNG"
+      }
+    ],
+    "leases": [
+      {
+        "id": "l-ao-01",
+        "name": "Ground Lease — VVRCF parcel",
+        "lessor": "City of Victorville",
+        "status": "active",
+        "expires": "2034-06-30",
+        "area": "Scale/Entrance"
+      },
+      {
+        "id": "l-ao-02",
+        "name": "Easement — access road",
+        "lessor": "County of San Bernardino",
+        "status": "renew",
+        "expires": "2026-09-01",
+        "area": "Scale/Entrance"
+      }
+    ],
+    "checklist": [
+      {
+        "id": "c-ao-01",
+        "dept": "ENV",
+        "area": "Ponds/Stormwater",
+        "title": "BMP inspection logs current",
+        "status": "pass",
+        "owner": "Dave Marin",
+        "due": "2026-07-15",
+        "note": "Quarterly visual obs filed; last storm event sampled.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5566,
+        "lng": -117.3139
+      },
+      {
+        "id": "c-ao-02",
+        "dept": "ENV",
+        "area": "Compost/Working",
+        "title": "Windrow temperature monitoring (PFRP)",
+        "status": "pass",
+        "owner": "Dave Marin",
+        "due": "2026-07-01",
+        "note": "55°C for 15 days documented across all active windrows.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5575,
+        "lng": -117.3155
+      },
+      {
+        "id": "c-ao-03",
+        "dept": "ENV",
+        "area": "HazMat Storage",
+        "title": "HMBP inventory reconciliation",
+        "status": "fail",
+        "owner": "Dave Marin",
+        "due": "2026-06-20",
+        "note": "Diesel AST quantity on file exceeds permitted threshold — CUPA cert unconfirmed.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.556,
+        "lng": -117.3162
+      },
+      {
+        "id": "c-ao-04",
+        "dept": "Facility",
+        "area": "Scale/Entrance",
+        "title": "Scale calibration certificate posted",
+        "status": "pass",
+        "owner": "Rosa Nieto",
+        "due": "2026-08-01",
+        "note": "County Weights & Measures seal current.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.558,
+        "lng": -117.3146
+      },
+      {
+        "id": "c-ao-05",
+        "dept": "Facility",
+        "area": "Maint. Shop",
+        "title": "Fire extinguisher monthly tags",
+        "status": "open",
+        "owner": null,
+        "due": "2026-06-30",
+        "note": "Two units in shop missing June initials.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5569,
+        "lng": -117.3168
+      },
+      {
+        "id": "c-ao-06",
+        "dept": "Facility",
+        "area": "Processing",
+        "title": "Conveyor guard interlocks functional",
+        "status": "pass",
+        "owner": "Rosa Nieto",
+        "due": "2026-07-10",
+        "note": "All e-stops tested.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5573,
+        "lng": -117.3151
+      },
+      {
+        "id": "c-ao-07",
+        "dept": "ENV",
+        "area": "Ponds/Stormwater",
+        "title": "Retention pond freeboard ≥ 2ft",
+        "status": "open",
+        "owner": "Dave Marin",
+        "due": "2026-07-05",
+        "note": "South pond at 1.6ft after last event — pump-down scheduled.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5563,
+        "lng": -117.3134
+      },
+      {
+        "id": "c-ao-08",
+        "dept": "Facility",
+        "area": "Fuel/CNG",
+        "title": "CNG station leak detection log",
+        "status": "pass",
+        "owner": "Rosa Nieto",
+        "due": "2026-08-15",
+        "note": "Monthly methane sniff test clear.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5558,
+        "lng": -117.3157
+      },
+      {
+        "id": "c-ao-09",
+        "dept": "ENV",
+        "area": "Compost/Working",
+        "title": "Dust / PM control — water truck coverage",
+        "status": "fail",
+        "owner": "Dave Marin",
+        "due": "2026-06-18",
+        "note": "Visible dust off working face during afternoon wind; AQMD nuisance risk.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5577,
+        "lng": -117.3159
+      },
+      {
+        "id": "c-ao-10",
+        "dept": "Facility",
+        "area": "Admin",
+        "title": "Emergency contact board updated",
+        "status": "na",
+        "owner": null,
+        "due": null,
+        "note": "N/A — handled at corporate EHS.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5582,
+        "lng": -117.3149
+      }
+    ]
+  },
+  "Sun Valley MRF": {
+    "type": "Materials Recovery Facility",
+    "swis": "19-AA-0231",
+    "addr": "9609 San Fernando Rd, Sun Valley, CA 91352",
+    "city": "Sun Valley",
+    "lat": 34.2331,
+    "lng": -118.3776,
+    "permits": [
+      {
+        "id": "p-sv-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / LEA",
+        "number": "19-AA-0231",
+        "status": "active",
+        "expires": "2028-04-30",
+        "cycle": "5-year review",
+        "area": "Scale/Entrance"
+      },
+      {
+        "id": "p-sv-02",
+        "name": "Air Quality Permit to Operate",
+        "agency": "South Coast AQMD",
+        "number": "SCAQMD-PTO-44102",
+        "status": "renew",
+        "expires": "2026-07-31",
+        "cycle": "Annual invoice",
+        "area": "Processing"
+      },
+      {
+        "id": "p-sv-03",
+        "name": "Industrial Stormwater (IGP) NOI",
+        "agency": "SWRCB",
+        "number": "WDID 4 19I011882",
+        "status": "active",
+        "expires": "2026-10-01",
+        "cycle": "Annual report + fee",
+        "area": "Ponds/Stormwater"
+      },
+      {
+        "id": "p-sv-04",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "LA City Fire CUPA",
+        "number": "FA-0188204",
+        "status": "verify",
+        "expires": "2026-06-30",
+        "cycle": "Annual certification",
+        "area": "HazMat Storage"
+      }
+    ],
+    "leases": [
+      {
+        "id": "l-sv-01",
+        "name": "Building Lease — MRF",
+        "lessor": "San Fernando Holdings LLC",
+        "status": "active",
+        "expires": "2031-12-31",
+        "area": "Processing"
+      }
+    ],
+    "checklist": [
+      {
+        "id": "c-sv-01",
+        "dept": "ENV",
+        "area": "Ponds/Stormwater",
+        "title": "Stormwater sample results within benchmark",
+        "status": "open",
+        "owner": "Marcus Lee",
+        "due": "2026-07-12",
+        "note": "Zinc slightly elevated last sample; corrective BMP pending.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.2326,
+        "lng": -118.3781
+      },
+      {
+        "id": "c-sv-02",
+        "dept": "Facility",
+        "area": "Processing",
+        "title": "Baler safety guarding intact",
+        "status": "pass",
+        "owner": "Marcus Lee",
+        "due": "2026-08-01",
+        "note": "Inspected; no issues.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.2333,
+        "lng": -118.3772
+      },
+      {
+        "id": "c-sv-03",
+        "dept": "Facility",
+        "area": "Scale/Entrance",
+        "title": "Tipping floor housekeeping",
+        "status": "fail",
+        "owner": null,
+        "due": "2026-06-22",
+        "note": "Accumulated fines blocking drain; trip hazard noted.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.233,
+        "lng": -118.3778
+      },
+      {
+        "id": "c-sv-04",
+        "dept": "ENV",
+        "area": "Processing",
+        "title": "Odor neutralizer system operating",
+        "status": "pass",
+        "owner": "Marcus Lee",
+        "due": "2026-07-20",
+        "note": "Misters functional.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.2334,
+        "lng": -118.377
+      },
+      {
+        "id": "c-sv-05",
+        "dept": "Facility",
+        "area": "Maint. Shop",
+        "title": "Hot work permit binder current",
+        "status": "open",
+        "owner": null,
+        "due": "2026-07-08",
+        "note": "No permits logged for last welding job.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.2328,
+        "lng": -118.3785
+      }
+    ]
+  },
+  "City of Industry Transfer": {
+    "type": "Transfer Station",
+    "swis": "19-AA-0556",
+    "addr": "13940 Live Oak Ave, Industry, CA 91746",
+    "city": "City of Industry",
+    "lat": 34.0245,
+    "lng": -117.9712,
+    "permits": [
+      {
+        "id": "p-ci-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / LEA",
+        "number": "19-AA-0556",
+        "status": "active",
+        "expires": "2027-11-30",
+        "cycle": "5-year review",
+        "area": "Scale/Entrance"
+      },
+      {
+        "id": "p-ci-02",
+        "name": "Air Quality Permit to Operate",
+        "agency": "South Coast AQMD",
+        "number": "SCAQMD-PTO-51277",
+        "status": "active",
+        "expires": "2026-12-15",
+        "cycle": "Annual invoice",
+        "area": "Processing"
+      },
+      {
+        "id": "p-ci-03",
+        "name": "Industrial Stormwater (IGP) NOI",
+        "agency": "SWRCB",
+        "number": "WDID 4 19I013440",
+        "status": "renew",
+        "expires": "2026-08-20",
+        "cycle": "Annual report + fee",
+        "area": "Ponds/Stormwater"
+      }
+    ],
+    "leases": [
+      {
+        "id": "l-ci-01",
+        "name": "Ground Lease — transfer yard",
+        "lessor": "Industry Urban-Dev Agency",
+        "status": "active",
+        "expires": "2030-06-30",
+        "area": "Scale/Entrance"
+      }
+    ],
+    "checklist": [
+      {
+        "id": "c-ci-01",
+        "dept": "Facility",
+        "area": "Processing",
+        "title": "Transfer trailer load securement",
+        "status": "pass",
+        "owner": "Priya Shah",
+        "due": "2026-07-25",
+        "note": "Tarps and nets verified.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.0248,
+        "lng": -117.9708
+      },
+      {
+        "id": "c-ci-02",
+        "dept": "ENV",
+        "area": "Ponds/Stormwater",
+        "title": "Catch basin inserts maintained",
+        "status": "open",
+        "owner": "Priya Shah",
+        "due": "2026-07-03",
+        "note": "Two inserts near capacity, replace before next rain.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.0241,
+        "lng": -117.9716
+      },
+      {
+        "id": "c-ci-03",
+        "dept": "Facility",
+        "area": "Scale/Entrance",
+        "title": "Inbound load inspection (hazmat screen)",
+        "status": "pass",
+        "owner": "Priya Shah",
+        "due": "2026-08-05",
+        "note": "Random screening documented.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.0246,
+        "lng": -117.9713
+      }
+    ]
+  },
+  "Thenard Transfer": {
+    "type": "Transfer / MRF",
+    "swis": "19-AA-0701",
+    "addr": "1240 E Thenard St, Carson, CA 90745",
+    "city": "Carson",
+    "lat": 33.8169,
+    "lng": -118.2481,
+    "permits": [
+      {
+        "id": "p-th-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / LEA",
+        "number": "19-AA-0701",
+        "status": "active",
+        "expires": "2028-09-30",
+        "cycle": "5-year review",
+        "area": "Scale/Entrance"
+      },
+      {
+        "id": "p-th-02",
+        "name": "Air Quality Permit to Operate",
+        "agency": "South Coast AQMD",
+        "number": "SCAQMD-PTO-60055",
+        "status": "verify",
+        "expires": "2026-06-10",
+        "cycle": "Annual invoice",
+        "area": "Processing"
+      },
+      {
+        "id": "p-th-03",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "Carson / LA County CUPA",
+        "number": "FA-0233019",
+        "status": "active",
+        "expires": "2027-01-31",
+        "cycle": "Annual certification",
+        "area": "HazMat Storage"
+      }
+    ],
+    "leases": [
+      {
+        "id": "l-th-01",
+        "name": "Building & yard lease",
+        "lessor": "Watson Land Company",
+        "status": "renew",
+        "expires": "2026-08-31",
+        "area": "Processing"
+      }
+    ],
+    "checklist": [
+      {
+        "id": "c-th-01",
+        "dept": "ENV",
+        "area": "Processing",
+        "title": "Dust suppression at tipping floor",
+        "status": "open",
+        "owner": null,
+        "due": "2026-07-09",
+        "note": "Misting line clogged on north bay.",
+        "photo": null,
+        "source": "seed",
+        "lat": 33.8172,
+        "lng": -118.2477
+      },
+      {
+        "id": "c-th-02",
+        "dept": "Facility",
+        "area": "HazMat Storage",
+        "title": "Universal waste accumulation labels",
+        "status": "fail",
+        "owner": "Dana Kprolds",
+        "due": "2026-06-19",
+        "note": "E-waste gaylord undated; >1yr accumulation risk.",
+        "photo": null,
+        "source": "seed",
+        "lat": 33.8165,
+        "lng": -118.2486
+      },
+      {
+        "id": "c-th-03",
+        "dept": "Facility",
+        "area": "Scale/Entrance",
+        "title": "Wheel wash operational",
+        "status": "pass",
+        "owner": "Dana Kprolds",
+        "due": "2026-08-12",
+        "note": "Track-out controlled.",
+        "photo": null,
+        "source": "seed",
+        "lat": 33.8168,
+        "lng": -118.2482
+      }
+    ]
+  },
+  "Mid-Valley Compost": {
+    "type": "Compost / Organics",
+    "swis": "36-AA-0419",
+    "addr": "2200 Nursery Rd, Adelanto, CA 92301",
+    "city": "Adelanto",
+    "lat": 34.5828,
+    "lng": -117.4092,
+    "permits": [
+      {
+        "id": "p-mv-01",
+        "name": "Compostable Materials Handling Permit",
+        "agency": "CalRecycle",
+        "number": "CMH-2022-031",
+        "status": "active",
+        "expires": "2027-05-31",
+        "cycle": "Annual fee",
+        "area": "Compost/Working"
+      },
+      {
+        "id": "p-mv-02",
+        "name": "Air Quality Permit to Operate",
+        "agency": "Mojave Desert AQMD",
+        "number": "MDAQMD-PTO-10277",
+        "status": "renew",
+        "expires": "2026-09-05",
+        "cycle": "Annual invoice",
+        "area": "Compost/Working"
+      },
+      {
+        "id": "p-mv-03",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "Lahontan RWQCB",
+        "number": "R6V-2021-0019",
+        "status": "active",
+        "expires": "2026-11-30",
+        "cycle": "5-year term",
+        "area": "Ponds/Stormwater"
+      }
+    ],
+    "leases": [
+      {
+        "id": "l-mv-01",
+        "name": "Ground Lease — compost pad",
+        "lessor": "City of Adelanto",
+        "status": "active",
+        "expires": "2033-03-31",
+        "area": "Compost/Working"
+      }
+    ],
+    "checklist": [
+      {
+        "id": "c-mv-01",
+        "dept": "ENV",
+        "area": "Compost/Working",
+        "title": "Pathogen reduction (PFRP) records",
+        "status": "pass",
+        "owner": "Sofia Reyes",
+        "due": "2026-07-30",
+        "note": "Time/temp logs complete.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5832,
+        "lng": -117.4088
+      },
+      {
+        "id": "c-mv-02",
+        "dept": "ENV",
+        "area": "Ponds/Stormwater",
+        "title": "Leachate pond liner inspection",
+        "status": "open",
+        "owner": "Sofia Reyes",
+        "due": "2026-07-14",
+        "note": "Annual liner integrity check due.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5824,
+        "lng": -117.4097
+      },
+      {
+        "id": "c-mv-03",
+        "dept": "Facility",
+        "area": "Maint. Shop",
+        "title": "Grinder lockout/tagout procedure posted",
+        "status": "pass",
+        "owner": "Sofia Reyes",
+        "due": "2026-08-18",
+        "note": "LOTO sheet at panel.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5829,
+        "lng": -117.4099
+      },
+      {
+        "id": "c-mv-04",
+        "dept": "Facility",
+        "area": "Compost/Working",
+        "title": "Working face setback from property line",
+        "status": "na",
+        "owner": null,
+        "due": null,
+        "note": "N/A this quarter — face on east pad only.",
+        "photo": null,
+        "source": "seed",
+        "lat": 34.5835,
+        "lng": -117.4085
+      }
+    ]
+  }
+}
