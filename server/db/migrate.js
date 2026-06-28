@@ -1,10 +1,16 @@
-// Non-destructive migration, safe to run on every server boot.
-//   - Creates tables/indexes IF NOT EXISTS (never drops — preserves live data).
-//   - Seeds from data/sitedata.json ONLY when the portfolio is empty.
-// (Contrast with db/schema.sql + db/seed.js, which intentionally reset for dev.)
+// Migration + data sync, safe to run on every server boot.
+//   - Creates tables/indexes IF NOT EXISTS (never drops schema).
+//   - Seeds from data/sitedata.json when the DB is empty, OR re-seeds when the
+//     dataset changes (tracked by a content hash in app_meta.seed_hash). This
+//     lets a new data push replace the live portfolio on the next deploy.
+//
+// NOTE: a re-seed REPLACES all portfolio rows (sites/permits/leases/findings).
+// Intended for controlled data updates. Set AUTO_RESEED=false to disable the
+// hash-triggered re-seed (then it only ever seeds an empty DB).
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import crypto from 'node:crypto'
 import { pool } from '../src/db.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -41,21 +47,17 @@ CREATE TABLE IF NOT EXISTS checklist_items (
   source TEXT CHECK (source IN ('seed','field')) DEFAULT 'seed',
   lat DOUBLE PRECISION, lng DOUBLE PRECISION
 );
+CREATE TABLE IF NOT EXISTS app_meta (key TEXT PRIMARY KEY, value TEXT);
 CREATE INDEX IF NOT EXISTS idx_checklist_items_site ON checklist_items(site);
 CREATE INDEX IF NOT EXISTS idx_permits_site ON permits(site);
 CREATE INDEX IF NOT EXISTS idx_leases_site ON leases(site);
 `
 
-async function seedIfEmpty(client) {
-  const { rows } = await client.query('SELECT COUNT(*)::int AS n FROM sites')
-  if (rows[0].n > 0) {
-    console.log(`[migrate] portfolio already has ${rows[0].n} sites — skipping seed.`)
-    return
-  }
-  const data = JSON.parse(await readFile(DATA_PATH, 'utf8'))
-  let sites = 0, permits = 0, leases = 0, items = 0
+async function loadAll(client, data, { wipe }) {
   await client.query('BEGIN')
   try {
+    if (wipe) await client.query('DELETE FROM sites') // CASCADE clears permits/leases/checklist
+    let sites = 0, permits = 0, leases = 0, items = 0
     for (const [name, site] of Object.entries(data)) {
       await client.query(
         `INSERT INTO sites (name,type,swis,addr,city,lat,lng,anchor) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
@@ -86,7 +88,7 @@ async function seedIfEmpty(client) {
       }
     }
     await client.query('COMMIT')
-    console.log(`[migrate] seeded ${sites} sites, ${permits} permits, ${leases} leases, ${items} checklist items.`)
+    console.log(`[migrate] loaded ${sites} sites, ${permits} permits, ${leases} leases, ${items} checklist items.`)
   } catch (err) {
     await client.query('ROLLBACK')
     throw err
@@ -97,7 +99,25 @@ export async function migrate() {
   const client = await pool.connect()
   try {
     await client.query(DDL)
-    await seedIfEmpty(client)
+    const raw = await readFile(DATA_PATH, 'utf8')
+    const hash = crypto.createHash('md5').update(raw).digest('hex')
+    const { rows: cnt } = await client.query('SELECT COUNT(*)::int AS n FROM sites')
+    const empty = cnt[0].n === 0
+    const { rows: meta } = await client.query("SELECT value FROM app_meta WHERE key = 'seed_hash'")
+    const stored = meta[0]?.value ?? null
+    const autoReseed = process.env.AUTO_RESEED !== 'false'
+
+    if (empty || (autoReseed && stored !== hash)) {
+      console.log(`[migrate] ${empty ? 'empty DB' : 'dataset changed'} — loading portfolio…`)
+      await loadAll(client, JSON.parse(raw), { wipe: !empty })
+      await client.query(
+        `INSERT INTO app_meta (key, value) VALUES ('seed_hash', $1)
+         ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+        [hash]
+      )
+    } else {
+      console.log(`[migrate] data unchanged (${cnt[0].n} sites) — no reseed.`)
+    }
   } finally {
     client.release()
   }
