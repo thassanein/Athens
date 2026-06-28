@@ -20,7 +20,7 @@ Five buttons along the bottom of every screen:
 
 | Button | What it's for |
 |---|---|
-| 🗺 **Map** | Home. All five sites on a map + a snapshot of open findings, items to verify, and what's due. Tap a site to open it. |
+| 🗺 **Map** | Home. All facilities on a map + a snapshot of open findings, items to verify, and what's due. Tap a site to open it. |
 | ✓ **Tasks** | Your "My Day" list — every open finding across all sites. Filter by Failing, Unassigned, etc. Tap one to open it. |
 | ➕ **(red button)** | **Log a new finding** from where you're standing (see below). |
 | 🔔 **Alerts** | What needs attention now — findings with no owner, permits to verify, renewals coming up. |

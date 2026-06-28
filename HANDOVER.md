@@ -1,7 +1,7 @@
 # Handover — Athens Facility Compliance
 
-Mobile-first field-auditor app for tracking **permits, leases and inspection findings** across five
-Athens facilities. This document is the practical "pick it up from here" guide: what exists, how to
+Mobile-first field-auditor app for tracking **permits, leases and inspection findings** across the
+Athens facility portfolio (~33 sites). This document is the practical "pick it up from here" guide: what exists, how to
 run and deploy it, the decisions made, and the rough edges to know about.
 
 > Product/design spec this build follows: [`docs/HANDOFF.md`](docs/HANDOFF.md).
@@ -27,7 +27,7 @@ run and deploy it, the decisions made, and the rough edges to know about.
 ## 2. Repository layout
 
 ```
-data/sitedata.json          Canonical seed — the whole portfolio (5 sites). Source of truth.
+data/sitedata.json          Canonical seed — the whole portfolio (~33 real Athens facilities). Source of truth.
 frontend/                   React + Vite app (login + 5 screens + capture + per-site record).
   src/App.jsx               Global state + routing + write handlers + roles.
   src/screens/              Login, MapScreen, Tasks, Alerts, Profile, SiteRecord.

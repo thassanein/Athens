@@ -1,124 +1,1499 @@
 {
-  "American Organics": {
-    "type": "Compost / Organics",
-    "swis": "36-AA-0346",
-    "addr": "18601 Shay Rd, Victorville, CA 92394",
+  "Big Bear TS": {
+    "type": "Transfer Station",
+    "swis": "36-AA-0417",
+    "addr": "Holcomb Valley Rd off Hwy 18 (Big Bear Sanitary Landfill)",
+    "city": "Big Bear City",
+    "lat": 34.276,
+    "lng": -116.844,
+    "permits": [
+      {
+        "id": "p-big-bear-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County (LEA)",
+        "number": "36-AA-0417",
+        "status": "active",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SWFP (SBC)"
+      },
+      {
+        "id": "p-big-bear-ts-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County Fire / CUPA",
+        "number": "EPA ID CAD982495632",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-big-bear-ts-03",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-implementing)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SPCC"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Morongo TS": {
+    "type": "Transfer Station",
+    "swis": "36-AA-0377",
+    "addr": "Off State Highway 62 (Twentynine Palms Hwy), NE of Morongo Valley",
+    "city": "Morongo Valley",
+    "lat": 34.0464,
+    "lng": -116.5803,
+    "permits": [
+      {
+        "id": "p-morongo-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "San Bernardino County LEA / CalRecycle",
+        "number": "36-AA-0377",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "SWFP (SBC)"
+      },
+      {
+        "id": "p-morongo-ts-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County Fire / CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Trona Argus TS": {
+    "type": "Transfer Station",
+    "swis": "36-AA-0391",
+    "addr": "Trona, San Bernardino County",
+    "city": "Trona",
+    "lat": 35.7624,
+    "lng": -117.3769,
+    "permits": [
+      {
+        "id": "p-trona-argus-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "San Bernardino County LEA / CalRecycle",
+        "number": "36-AA-0391",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "SWFP (SBC)"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Newberry Springs TS": {
+    "type": "Transfer Station",
+    "swis": "36-AA-0371",
+    "addr": "Poniente Drive, ~1/2 mi S of National Trails Hwy (Old Route 66)",
+    "city": "Newberry Springs",
+    "lat": 34.8281,
+    "lng": -116.6864,
+    "permits": [
+      {
+        "id": "p-newberry-springs-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "San Bernardino County LEA / CalRecycle",
+        "number": "36-AA-0371",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "SWFP (SBC)"
+      },
+      {
+        "id": "p-newberry-springs-ts-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County Fire / CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Baker TS": {
+    "type": "Transfer Station",
+    "swis": "",
+    "addr": "Baker, San Bernardino County",
+    "city": "Baker",
+    "lat": 35.2653,
+    "lng": -116.0764,
+    "permits": [
+      {
+        "id": "p-baker-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "San Bernardino County DPH (LEA)",
+        "number": "",
+        "status": "verify",
+        "expires": "2026-07-31",
+        "cycle": "annual",
+        "area": "County SB Public Health"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Camp Rock TS": {
+    "type": "Transfer Station",
+    "swis": "",
+    "addr": "27805 Squaw Bush Road (closed Lucerne Valley LF, ~8 mi NE of Lucerne Valley)",
+    "city": "Lucerne Valley",
+    "lat": 34.48,
+    "lng": -116.88,
+    "permits": [
+      {
+        "id": "p-camp-rock-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "San Bernardino County LEA / CalRecycle",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SWFP (SBC)"
+      },
+      {
+        "id": "p-camp-rock-ts-02",
+        "name": "County Public Health Permit to Operate",
+        "agency": "San Bernardino County DPH (LEA)",
+        "number": "",
+        "status": "verify",
+        "expires": "2026-07-31",
+        "cycle": "annual",
+        "area": "County SB Public Health"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "29 Palms TS": {
+    "type": "Transfer Station",
+    "swis": "36-AA-0390",
+    "addr": "7501 Pinto Mountain Rd",
+    "city": "Twentynine Palms",
+    "lat": 34.1478,
+    "lng": -116.03,
+    "permits": [
+      {
+        "id": "p-29-palms-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County DEHS (LEA)",
+        "number": "36-AA-0390",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-29-palms-ts-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA / CERS",
+        "number": "CERS ID 10038052",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-29-palms-ts-03",
+        "name": "SPCC Plan",
+        "agency": "US EPA (Tier I Qualified Facility)",
+        "number": "",
+        "status": "active",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SPCC"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Sheep Creek TS": {
+    "type": "Transfer Station",
+    "swis": "",
+    "addr": "10130 Buckwheat Rd",
+    "city": "Phelan",
+    "lat": 34.4256,
+    "lng": -117.5723,
+    "permits": [
+      {
+        "id": "p-sheep-creek-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County DEHS (LEA)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-sheep-creek-ts-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA / CERS",
+        "number": "CERS ID 10038007",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Heaps Peak TS": {
+    "type": "Transfer Station",
+    "swis": "36-AA-0152",
+    "addr": "29898 State Highway 18",
+    "city": "Running Springs",
+    "lat": 34.21,
+    "lng": -117.108,
+    "permits": [
+      {
+        "id": "p-heaps-peak-ts-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County DEHS (LEA)",
+        "number": "36-AA-0152",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-heaps-peak-ts-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA / CERS",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-heaps-peak-ts-03",
+        "name": "SPCC Plan",
+        "agency": "US EPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SPCC"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "PRR-Paramount Truck Yard": {
+    "type": "Transfer Station",
+    "swis": "19-AA-0840",
+    "addr": "7201, 7202 & 7230 Petterson Lane",
+    "city": "Paramount",
+    "lat": 33.89,
+    "lng": -118.162,
+    "permits": [
+      {
+        "id": "p-prr-paramount-truck-ya-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / LEA",
+        "number": "19-AA-0840",
+        "status": "active",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-prr-paramount-truck-ya-02",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board / RWQCB",
+        "number": "",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-prr-paramount-truck-ya-03",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "LA County CUPA (CERS)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-prr-paramount-truck-ya-04",
+        "name": "Conditional Use Permit",
+        "agency": "City of Paramount Planning Department",
+        "number": "",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "CUP"
+      },
+      {
+        "id": "p-prr-paramount-truck-ya-05",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "COI MRF": {
+    "type": "Materials Recovery Facility",
+    "swis": "19-AA-0863",
+    "addr": "14048 Valley Blvd.",
+    "city": "City of Industry",
+    "lat": 34.019,
+    "lng": -117.954,
+    "permits": [
+      {
+        "id": "p-coi-mrf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / LA County LEA",
+        "number": "19-AA-0863",
+        "status": "active",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-coi-mrf-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "CUPA via CERS",
+        "number": "CERS ID 10285438",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-coi-mrf-03",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Board / LA RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "annual",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-coi-mrf-04",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "LA RWQCB / LA County DPW",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater"
+      },
+      {
+        "id": "p-coi-mrf-05",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-implementing)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SPCC"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Crown MRF": {
+    "type": "Materials Recovery Facility",
+    "swis": "19-AR-0303",
+    "addr": "9189 De Garmo Avenue",
+    "city": "Sun Valley",
+    "lat": 34.2304,
+    "lng": -118.3884,
+    "permits": [
+      {
+        "id": "p-crown-mrf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / LA County LEA",
+        "number": "19-AR-0303",
+        "status": "active",
+        "expires": null,
+        "cycle": "5-year review (Nov 2021; amended Nov 2023)",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-crown-mrf-02",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Board / LA RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "annual",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-crown-mrf-03",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-crown-mrf-04",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-implementing)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SPCC"
+      },
+      {
+        "id": "p-crown-mrf-05",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "LA RWQCB / LA County DPW",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "PHMRF": {
+    "type": "Materials Recovery Facility",
+    "swis": "",
+    "addr": "13130 Crossroads Pkwy S",
+    "city": "City of Industry",
+    "lat": 34.006,
+    "lng": -117.967,
+    "permits": [
+      {
+        "id": "p-phmrf-01",
+        "name": "EPA ID (Hazardous Waste Handler)",
+        "agency": "US EPA / CA DTSC",
+        "number": "CAL000473206",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "EPA ID"
+      },
+      {
+        "id": "p-phmrf-02",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-implementing)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SPCC"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Irwindale MRF": {
+    "type": "Materials Recovery Facility",
+    "swis": "19-AA-1135",
+    "addr": "2200 Arrow Highway",
+    "city": "Irwindale",
+    "lat": 34.1186,
+    "lng": -117.954,
+    "permits": [
+      {
+        "id": "p-irwindale-mrf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "LA County DPH Solid Waste Mgmt (LEA) / CalRecycle",
+        "number": "19-AA-1135",
+        "status": "active",
+        "expires": "2026-08-27",
+        "cycle": "Permit review due 8/27/2026",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-irwindale-mrf-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-irwindale-mrf-03",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "LA RWQCB / State Water Board",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-irwindale-mrf-04",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "LA RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater"
+      },
+      {
+        "id": "p-irwindale-mrf-05",
+        "name": "SPCC Plan",
+        "agency": "US EPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SPCC"
+      },
+      {
+        "id": "p-irwindale-mrf-06",
+        "name": "Air Quality Permit to Operate",
+        "agency": "South Coast AQMD",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Air Permits"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "DART (LACSD)": {
+    "type": "Materials Recovery Facility",
+    "swis": "19-AA-0801",
+    "addr": "9770 Washburn Road",
+    "city": "Downey",
+    "lat": 33.918,
+    "lng": -118.118,
+    "permits": [
+      {
+        "id": "p-dart-lacsd-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "LA County Dept of Public Health (LEA)",
+        "number": "19-AA-0801",
+        "status": "active",
+        "expires": "2027-01-19",
+        "cycle": "5-year review",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-dart-lacsd-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-dart-lacsd-03",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board (RWQCB Region 4)",
+        "number": "WDID 4 19I029847",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-dart-lacsd-04",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "LA County Sanitation Districts",
+        "number": "22835",
+        "status": "active",
+        "expires": "2031-03-16",
+        "cycle": "5-year",
+        "area": "Wastewater"
+      },
+      {
+        "id": "p-dart-lacsd-05",
+        "name": "SPCC Plan",
+        "agency": "Self-certified (Tier 1)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SPCC"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Victorville LF": {
+    "type": "Landfill",
+    "swis": "36-AA-0045",
+    "addr": "18600 Stoddard Wells Road",
     "city": "Victorville",
-    "lat": 34.5572,
-    "lng": -117.3148,
+    "lat": 34.583,
+    "lng": -117.296,
+    "permits": [
+      {
+        "id": "p-victorville-lf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County (LEA)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SWFP (SBC)"
+      },
+      {
+        "id": "p-victorville-lf-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-victorville-lf-03",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "RWQCB - Lahontan Region",
+        "number": "R6V-2004-0027",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "WDR (SBC)"
+      },
+      {
+        "id": "p-victorville-lf-04",
+        "name": "Title V Federal Operating Permit (Air)",
+        "agency": "Mojave Desert AQMD (MDAQMD)",
+        "number": "102102443",
+        "status": "active",
+        "expires": null,
+        "cycle": "5-year",
+        "area": "Air Permits"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Mid Valley LF": {
+    "type": "Landfill",
+    "swis": "36-AA-0055",
+    "addr": "2390 North Alder Avenue",
+    "city": "Rialto",
+    "lat": 34.135,
+    "lng": -117.43,
+    "permits": [
+      {
+        "id": "p-mid-valley-lf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County (LEA)",
+        "number": "36-AA-0055",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-mid-valley-lf-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA (Fire Protection District)",
+        "number": "CERS ID 10037911",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-mid-valley-lf-03",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "California RWQCB, Santa Ana Region (R8)",
+        "number": "Order 98-095 (amd R8-2006-0040, R8-2016-0052)",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "WDR"
+      },
+      {
+        "id": "p-mid-valley-lf-04",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-implementing)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SPCC"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Barstow LF": {
+    "type": "Landfill",
+    "swis": "36-AA-0046",
+    "addr": "32553 Barstow Rd",
+    "city": "Barstow",
+    "lat": 34.8,
+    "lng": -117.02,
+    "permits": [
+      {
+        "id": "p-barstow-lf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County DEHS (LEA)",
+        "number": "36-AA-0046",
+        "status": "active",
+        "expires": "2029-10-25",
+        "cycle": "Permit review due",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-barstow-lf-02",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "Lahontan RWQCB (Region 6)",
+        "number": "Order R6V-2022-0009 / WDID 6B360304005",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "WDR (SBC)"
+      },
+      {
+        "id": "p-barstow-lf-03",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA / CERS",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Landers LF": {
+    "type": "Landfill",
+    "swis": "36-AA-0057",
+    "addr": "59200 Winters Road",
+    "city": "Landers",
+    "lat": 34.318,
+    "lng": -116.434,
+    "permits": [
+      {
+        "id": "p-landers-lf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County DEHS (LEA)",
+        "number": "36-AA-0057",
+        "status": "active",
+        "expires": "2027-01-27",
+        "cycle": "Permit review due",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-landers-lf-02",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "Lahontan RWQCB (Region 7)",
+        "number": "Order R7-2009-0063 / WDID 736I005246",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "WDR (SBC)"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "San Timoteo LF": {
+    "type": "Landfill",
+    "swis": "36-AA-0087",
+    "addr": "San Timoteo Canyon Rd, Redlands",
+    "city": "Redlands",
+    "lat": 34.015,
+    "lng": -117.15,
+    "permits": [
+      {
+        "id": "p-san-timoteo-lf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / San Bernardino County (LEA)",
+        "number": "36-AA-0087",
+        "status": "active",
+        "expires": "2027-10-21",
+        "cycle": "5-year",
+        "area": "SWFP (SBC)"
+      },
+      {
+        "id": "p-san-timoteo-lf-02",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "RWQCB (Santa Ana Region)",
+        "number": "78-151",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "JTD"
+      },
+      {
+        "id": "p-san-timoteo-lf-03",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA",
+        "number": "",
+        "status": "active",
+        "expires": "2026-06-30",
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-san-timoteo-lf-04",
+        "name": "County Public Health Permit to Operate",
+        "agency": "San Bernardino County Public Health",
+        "number": "",
+        "status": "active",
+        "expires": "2026-07-31",
+        "cycle": "annual",
+        "area": "County SB Public Health"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "American Organics (VVRCF)": {
+    "type": "Compost / Organics",
+    "swis": "36-AA-0403",
+    "addr": "20055 Shay Road",
+    "city": "Victorville",
+    "lat": 34.612,
+    "lng": -117.379,
+    "permits": [
+      {
+        "id": "p-american-organics-vvrc-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "San Bernardino County (LEA) / CalRecycle",
+        "number": "36-AA-0403",
+        "status": "active",
+        "expires": null,
+        "cycle": "RCSI revised Jan 2023",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-american-organics-vvrc-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "San Bernardino County CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-american-organics-vvrc-03",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "Lahontan / Colorado River Basin RWQCB / State Water Board",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-american-organics-vvrc-04",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "WDR"
+      },
+      {
+        "id": "p-american-organics-vvrc-05",
+        "name": "SPCC Plan",
+        "agency": "US EPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SPCC"
+      },
+      {
+        "id": "p-american-organics-vvrc-06",
+        "name": "Air Quality Permit to Operate",
+        "agency": "Mojave Desert AQMD (MDAQMD)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Air Permits"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Irwindale IOC": {
+    "type": "Office / Other",
+    "swis": "",
+    "addr": "4777 Irwindale Ave",
+    "city": "Irwindale",
+    "lat": 34.107,
+    "lng": -117.954,
     "anchor": true,
     "permits": [
-      { "id": "p-ao-01", "name": "Solid Waste Facility Permit", "agency": "CalRecycle / Local EA", "number": "36-AA-0346", "status": "active", "expires": "2027-09-30", "cycle": "5-year review", "area": "Scale/Entrance" },
-      { "id": "p-ao-02", "name": "Compostable Materials Handling Permit", "agency": "CalRecycle", "number": "CMH-2021-014", "status": "active", "expires": "2026-12-31", "cycle": "Annual fee", "area": "Compost/Working" },
-      { "id": "p-ao-03", "name": "Air Quality Permit to Operate", "agency": "Mojave Desert AQMD", "number": "MDAQMD-PTO-9920", "status": "renew", "expires": "2026-08-15", "cycle": "Annual invoice", "area": "Compost/Working" },
-      { "id": "p-ao-04", "name": "Industrial Stormwater (IGP) NOI", "agency": "SWRCB", "number": "WDID 8 36I024601", "status": "active", "expires": "2026-10-01", "cycle": "Annual report + fee", "area": "Ponds/Stormwater" },
-      { "id": "p-ao-05", "name": "Waste Discharge Requirements (WDR)", "agency": "Lahontan RWQCB", "number": "R6V-2019-0041", "status": "active", "expires": "2029-03-31", "cycle": "5-year term", "area": "Ponds/Stormwater" },
-      { "id": "p-ao-06", "name": "Hazardous Materials Business Plan (CUPA)", "agency": "San Bernardino County CUPA", "number": "FA-0049122", "status": "verify", "expires": "2026-05-31", "cycle": "Annual certification", "area": "HazMat Storage" },
-      { "id": "p-ao-07", "name": "Underground/Above Storage Tank (CNG/Fuel)", "agency": "San Bernardino County CUPA", "number": "AST-77310", "status": "active", "expires": "2027-02-28", "cycle": "Annual fee", "area": "Fuel/CNG" }
+      {
+        "id": "p-irwindale-ioc-01",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "LA County (CUPA) / CERS",
+        "number": "CERS ID 10148839 / FA0044010",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-irwindale-ioc-02",
+        "name": "Air Permit (Boiler)",
+        "agency": "South Coast AQMD",
+        "number": "Facility ID 208296",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Air Permits"
+      }
     ],
-    "leases": [
-      { "id": "l-ao-01", "name": "Ground Lease — VVRCF parcel", "lessor": "City of Victorville", "status": "active", "expires": "2034-06-30", "area": "Scale/Entrance" },
-      { "id": "l-ao-02", "name": "Easement — access road", "lessor": "County of San Bernardino", "status": "renew", "expires": "2026-09-01", "area": "Scale/Entrance" }
-    ],
-    "checklist": [
-      { "id": "c-ao-01", "dept": "ENV", "area": "Ponds/Stormwater", "title": "BMP inspection logs current", "status": "pass", "owner": "Dave Marin", "due": "2026-07-15", "note": "Quarterly visual obs filed; last storm event sampled.", "photo": null, "source": "seed", "lat": 34.5566, "lng": -117.3139 },
-      { "id": "c-ao-02", "dept": "ENV", "area": "Compost/Working", "title": "Windrow temperature monitoring (PFRP)", "status": "pass", "owner": "Dave Marin", "due": "2026-07-01", "note": "55°C for 15 days documented across all active windrows.", "photo": null, "source": "seed", "lat": 34.5575, "lng": -117.3155 },
-      { "id": "c-ao-03", "dept": "ENV", "area": "HazMat Storage", "title": "HMBP inventory reconciliation", "status": "fail", "owner": "Dave Marin", "due": "2026-06-20", "note": "Diesel AST quantity on file exceeds permitted threshold — CUPA cert unconfirmed.", "photo": null, "source": "seed", "lat": 34.5560, "lng": -117.3162 },
-      { "id": "c-ao-04", "dept": "Facility", "area": "Scale/Entrance", "title": "Scale calibration certificate posted", "status": "pass", "owner": "Rosa Nieto", "due": "2026-08-01", "note": "County Weights & Measures seal current.", "photo": null, "source": "seed", "lat": 34.5580, "lng": -117.3146 },
-      { "id": "c-ao-05", "dept": "Facility", "area": "Maint. Shop", "title": "Fire extinguisher monthly tags", "status": "open", "owner": null, "due": "2026-06-30", "note": "Two units in shop missing June initials.", "photo": null, "source": "seed", "lat": 34.5569, "lng": -117.3168 },
-      { "id": "c-ao-06", "dept": "Facility", "area": "Processing", "title": "Conveyor guard interlocks functional", "status": "pass", "owner": "Rosa Nieto", "due": "2026-07-10", "note": "All e-stops tested.", "photo": null, "source": "seed", "lat": 34.5573, "lng": -117.3151 },
-      { "id": "c-ao-07", "dept": "ENV", "area": "Ponds/Stormwater", "title": "Retention pond freeboard ≥ 2ft", "status": "open", "owner": "Dave Marin", "due": "2026-07-05", "note": "South pond at 1.6ft after last event — pump-down scheduled.", "photo": null, "source": "seed", "lat": 34.5563, "lng": -117.3134 },
-      { "id": "c-ao-08", "dept": "Facility", "area": "Fuel/CNG", "title": "CNG station leak detection log", "status": "pass", "owner": "Rosa Nieto", "due": "2026-08-15", "note": "Monthly methane sniff test clear.", "photo": null, "source": "seed", "lat": 34.5558, "lng": -117.3157 },
-      { "id": "c-ao-09", "dept": "ENV", "area": "Compost/Working", "title": "Dust / PM control — water truck coverage", "status": "fail", "owner": "Dave Marin", "due": "2026-06-18", "note": "Visible dust off working face during afternoon wind; AQMD nuisance risk.", "photo": null, "source": "seed", "lat": 34.5577, "lng": -117.3159 },
-      { "id": "c-ao-10", "dept": "Facility", "area": "Admin", "title": "Emergency contact board updated", "status": "na", "owner": null, "due": null, "note": "N/A — handled at corporate EHS.", "photo": null, "source": "seed", "lat": 34.5582, "lng": -117.3149 }
-    ]
+    "leases": [],
+    "checklist": []
   },
-  "Sun Valley MRF": {
-    "type": "Materials Recovery Facility",
-    "swis": "19-AA-0231",
-    "addr": "9609 San Fernando Rd, Sun Valley, CA 91352",
-    "city": "Sun Valley",
-    "lat": 34.2331,
-    "lng": -118.3776,
-    "permits": [
-      { "id": "p-sv-01", "name": "Solid Waste Facility Permit", "agency": "CalRecycle / LEA", "number": "19-AA-0231", "status": "active", "expires": "2028-04-30", "cycle": "5-year review", "area": "Scale/Entrance" },
-      { "id": "p-sv-02", "name": "Air Quality Permit to Operate", "agency": "South Coast AQMD", "number": "SCAQMD-PTO-44102", "status": "renew", "expires": "2026-07-31", "cycle": "Annual invoice", "area": "Processing" },
-      { "id": "p-sv-03", "name": "Industrial Stormwater (IGP) NOI", "agency": "SWRCB", "number": "WDID 4 19I011882", "status": "active", "expires": "2026-10-01", "cycle": "Annual report + fee", "area": "Ponds/Stormwater" },
-      { "id": "p-sv-04", "name": "Hazardous Materials Business Plan (CUPA)", "agency": "LA City Fire CUPA", "number": "FA-0188204", "status": "verify", "expires": "2026-06-30", "cycle": "Annual certification", "area": "HazMat Storage" }
-    ],
-    "leases": [
-      { "id": "l-sv-01", "name": "Building Lease — MRF", "lessor": "San Fernando Holdings LLC", "status": "active", "expires": "2031-12-31", "area": "Processing" }
-    ],
-    "checklist": [
-      { "id": "c-sv-01", "dept": "ENV", "area": "Ponds/Stormwater", "title": "Stormwater sample results within benchmark", "status": "open", "owner": "Marcus Lee", "due": "2026-07-12", "note": "Zinc slightly elevated last sample; corrective BMP pending.", "photo": null, "source": "seed", "lat": 34.2326, "lng": -118.3781 },
-      { "id": "c-sv-02", "dept": "Facility", "area": "Processing", "title": "Baler safety guarding intact", "status": "pass", "owner": "Marcus Lee", "due": "2026-08-01", "note": "Inspected; no issues.", "photo": null, "source": "seed", "lat": 34.2333, "lng": -118.3772 },
-      { "id": "c-sv-03", "dept": "Facility", "area": "Scale/Entrance", "title": "Tipping floor housekeeping", "status": "fail", "owner": null, "due": "2026-06-22", "note": "Accumulated fines blocking drain; trip hazard noted.", "photo": null, "source": "seed", "lat": 34.2330, "lng": -118.3778 },
-      { "id": "c-sv-04", "dept": "ENV", "area": "Processing", "title": "Odor neutralizer system operating", "status": "pass", "owner": "Marcus Lee", "due": "2026-07-20", "note": "Misters functional.", "photo": null, "source": "seed", "lat": 34.2334, "lng": -118.3770 },
-      { "id": "c-sv-05", "dept": "Facility", "area": "Maint. Shop", "title": "Hot work permit binder current", "status": "open", "owner": null, "due": "2026-07-08", "note": "No permits logged for last welding job.", "photo": null, "source": "seed", "lat": 34.2328, "lng": -118.3785 }
-    ]
-  },
-  "City of Industry Transfer": {
-    "type": "Transfer Station",
-    "swis": "19-AA-0556",
-    "addr": "13940 Live Oak Ave, Industry, CA 91746",
+  "Salt Lake": {
+    "type": "Hauling Yard",
+    "swis": "",
+    "addr": "15045 Salt Lake Avenue",
     "city": "City of Industry",
-    "lat": 34.0245,
-    "lng": -117.9712,
+    "lat": 34.019,
+    "lng": -117.945,
     "permits": [
-      { "id": "p-ci-01", "name": "Solid Waste Facility Permit", "agency": "CalRecycle / LEA", "number": "19-AA-0556", "status": "active", "expires": "2027-11-30", "cycle": "5-year review", "area": "Scale/Entrance" },
-      { "id": "p-ci-02", "name": "Air Quality Permit to Operate", "agency": "South Coast AQMD", "number": "SCAQMD-PTO-51277", "status": "active", "expires": "2026-12-15", "cycle": "Annual invoice", "area": "Processing" },
-      { "id": "p-ci-03", "name": "Industrial Stormwater (IGP) NOI", "agency": "SWRCB", "number": "WDID 4 19I013440", "status": "renew", "expires": "2026-08-20", "cycle": "Annual report + fee", "area": "Ponds/Stormwater" }
+      {
+        "id": "p-salt-lake-01",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board / RWQCB",
+        "number": "",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-salt-lake-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "LA County CUPA (CERS)",
+        "number": "CERS ID 10273117",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-salt-lake-03",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater (clarifier)"
+      }
     ],
-    "leases": [
-      { "id": "l-ci-01", "name": "Ground Lease — transfer yard", "lessor": "Industry Urban-Dev Agency", "status": "active", "expires": "2030-06-30", "area": "Scale/Entrance" }
-    ],
-    "checklist": [
-      { "id": "c-ci-01", "dept": "Facility", "area": "Processing", "title": "Transfer trailer load securement", "status": "pass", "owner": "Priya Shah", "due": "2026-07-25", "note": "Tarps and nets verified.", "photo": null, "source": "seed", "lat": 34.0248, "lng": -117.9708 },
-      { "id": "c-ci-02", "dept": "ENV", "area": "Ponds/Stormwater", "title": "Catch basin inserts maintained", "status": "open", "owner": "Priya Shah", "due": "2026-07-03", "note": "Two inserts near capacity, replace before next rain.", "photo": null, "source": "seed", "lat": 34.0241, "lng": -117.9716 },
-      { "id": "c-ci-03", "dept": "Facility", "area": "Scale/Entrance", "title": "Inbound load inspection (hazmat screen)", "status": "pass", "owner": "Priya Shah", "due": "2026-08-05", "note": "Random screening documented.", "photo": null, "source": "seed", "lat": 34.0246, "lng": -117.9713 }
-    ]
+    "leases": [],
+    "checklist": []
   },
-  "Thenard Transfer": {
-    "type": "Transfer / MRF",
-    "swis": "19-AA-0701",
-    "addr": "1240 E Thenard St, Carson, CA 90745",
-    "city": "Carson",
-    "lat": 33.8169,
-    "lng": -118.2481,
+  "Van Norman": {
+    "type": "Operations Yard",
+    "swis": "",
+    "addr": "127 Van Norman Road",
+    "city": "Montebello",
+    "lat": 34.01,
+    "lng": -118.113,
     "permits": [
-      { "id": "p-th-01", "name": "Solid Waste Facility Permit", "agency": "CalRecycle / LEA", "number": "19-AA-0701", "status": "active", "expires": "2028-09-30", "cycle": "5-year review", "area": "Scale/Entrance" },
-      { "id": "p-th-02", "name": "Air Quality Permit to Operate", "agency": "South Coast AQMD", "number": "SCAQMD-PTO-60055", "status": "verify", "expires": "2026-06-10", "cycle": "Annual invoice", "area": "Processing" },
-      { "id": "p-th-03", "name": "Hazardous Materials Business Plan (CUPA)", "agency": "Carson / LA County CUPA", "number": "FA-0233019", "status": "active", "expires": "2027-01-31", "cycle": "Annual certification", "area": "HazMat Storage" }
+      {
+        "id": "p-van-norman-01",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board / RWQCB",
+        "number": "",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-van-norman-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "LA County CUPA (CERS)",
+        "number": "CERS ID 10282906 / FA LACoFA0027441",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-van-norman-03",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater (clarifier)"
+      }
     ],
-    "leases": [
-      { "id": "l-th-01", "name": "Building & yard lease", "lessor": "Watson Land Company", "status": "renew", "expires": "2026-08-31", "area": "Processing" }
-    ],
-    "checklist": [
-      { "id": "c-th-01", "dept": "ENV", "area": "Processing", "title": "Dust suppression at tipping floor", "status": "open", "owner": null, "due": "2026-07-09", "note": "Misting line clogged on north bay.", "photo": null, "source": "seed", "lat": 33.8172, "lng": -118.2477 },
-      { "id": "c-th-02", "dept": "Facility", "area": "HazMat Storage", "title": "Universal waste accumulation labels", "status": "fail", "owner": "Dana Kprolds", "due": "2026-06-19", "note": "E-waste gaylord undated; >1yr accumulation risk.", "photo": null, "source": "seed", "lat": 33.8165, "lng": -118.2486 },
-      { "id": "c-th-03", "dept": "Facility", "area": "Scale/Entrance", "title": "Wheel wash operational", "status": "pass", "owner": "Dana Kprolds", "due": "2026-08-12", "note": "Track-out controlled.", "photo": null, "source": "seed", "lat": 33.8168, "lng": -118.2482 }
-    ]
+    "leases": [],
+    "checklist": []
   },
-  "Mid-Valley Compost": {
-    "type": "Compost / Organics",
-    "swis": "36-AA-0419",
-    "addr": "2200 Nursery Rd, Adelanto, CA 92301",
-    "city": "Adelanto",
-    "lat": 34.5828,
-    "lng": -117.4092,
+  "TO-Hillcrest": {
+    "type": "Hauling Yard",
+    "swis": "",
+    "addr": "225 W Hillcrest Drive",
+    "city": "Thousand Oaks",
+    "lat": 34.196,
+    "lng": -118.876,
     "permits": [
-      { "id": "p-mv-01", "name": "Compostable Materials Handling Permit", "agency": "CalRecycle", "number": "CMH-2022-031", "status": "active", "expires": "2027-05-31", "cycle": "Annual fee", "area": "Compost/Working" },
-      { "id": "p-mv-02", "name": "Air Quality Permit to Operate", "agency": "Mojave Desert AQMD", "number": "MDAQMD-PTO-10277", "status": "renew", "expires": "2026-09-05", "cycle": "Annual invoice", "area": "Compost/Working" },
-      { "id": "p-mv-03", "name": "Waste Discharge Requirements (WDR)", "agency": "Lahontan RWQCB", "number": "R6V-2021-0019", "status": "active", "expires": "2026-11-30", "cycle": "5-year term", "area": "Ponds/Stormwater" }
+      {
+        "id": "p-to-hillcrest-01",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board / Ventura RWQCB",
+        "number": "WDID 456I029957",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      }
     ],
-    "leases": [
-      { "id": "l-mv-01", "name": "Ground Lease — compost pad", "lessor": "City of Adelanto", "status": "active", "expires": "2033-03-31", "area": "Compost/Working" }
+    "leases": [],
+    "checklist": []
+  },
+  "TO-Conejo Center Dr": {
+    "type": "Operations Yard",
+    "swis": "",
+    "addr": "2550 Conejo Center Drive",
+    "city": "Thousand Oaks",
+    "lat": 34.187,
+    "lng": -118.937,
+    "permits": [
+      {
+        "id": "p-to-conejo-center-dr-01",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "Ventura County CUPA (CERS)",
+        "number": "CERS ID 10962301 / EPA ID CAL000487902",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-to-conejo-center-dr-02",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-certified)",
+        "number": "",
+        "status": "active",
+        "expires": null,
+        "cycle": "5-year review (last 9/16/2024)",
+        "area": "SPCC"
+      },
+      {
+        "id": "p-to-conejo-center-dr-03",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater"
+      }
     ],
-    "checklist": [
-      { "id": "c-mv-01", "dept": "ENV", "area": "Compost/Working", "title": "Pathogen reduction (PFRP) records", "status": "pass", "owner": "Sofia Reyes", "due": "2026-07-30", "note": "Time/temp logs complete.", "photo": null, "source": "seed", "lat": 34.5832, "lng": -117.4088 },
-      { "id": "c-mv-02", "dept": "ENV", "area": "Ponds/Stormwater", "title": "Leachate pond liner inspection", "status": "open", "owner": "Sofia Reyes", "due": "2026-07-14", "note": "Annual liner integrity check due.", "photo": null, "source": "seed", "lat": 34.5824, "lng": -117.4097 },
-      { "id": "c-mv-03", "dept": "Facility", "area": "Maint. Shop", "title": "Grinder lockout/tagout procedure posted", "status": "pass", "owner": "Sofia Reyes", "due": "2026-08-18", "note": "LOTO sheet at panel.", "photo": null, "source": "seed", "lat": 34.5829, "lng": -117.4099 },
-      { "id": "c-mv-04", "dept": "Facility", "area": "Compost/Working", "title": "Working face setback from property line", "status": "na", "owner": null, "due": null, "note": "N/A this quarter — face on east pad only.", "photo": null, "source": "seed", "lat": 34.5835, "lng": -117.4085 }
-    ]
+    "leases": [],
+    "checklist": []
+  },
+  "Lopez Canyon": {
+    "type": "Hauling Yard",
+    "swis": "",
+    "addr": "12221 N Lopez Canyon Rd",
+    "city": "Sylmar",
+    "lat": 34.33,
+    "lng": -118.379,
+    "permits": [
+      {
+        "id": "p-lopez-canyon-01",
+        "name": "County of LA Waste Collector Permit (WCP)",
+        "agency": "County of Los Angeles",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "WCP"
+      },
+      {
+        "id": "p-lopez-canyon-02",
+        "name": "EPA ID (Hazardous Waste Generator)",
+        "agency": "US EPA / CA DTSC",
+        "number": "CAL000468896",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "EPA ID"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "LA South": {
+    "type": "Operations Yard",
+    "swis": "",
+    "addr": "1301 W. 228th Street",
+    "city": "Torrance",
+    "lat": 33.823,
+    "lng": -118.299,
+    "permits": [
+      {
+        "id": "p-la-south-01",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board (LA RWQCB)",
+        "number": "WDID 4 19I025344",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-la-south-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-la-south-03",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-certified)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SPCC"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "LA North": {
+    "type": "Operations Yard",
+    "swis": "",
+    "addr": "12303 Montague Street",
+    "city": "Pacoima",
+    "lat": 34.262,
+    "lng": -118.412,
+    "permits": [
+      {
+        "id": "p-la-north-01",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board (LA RWQCB)",
+        "number": "WDID 4 19I025398",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-la-north-02",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-certified)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SPCC"
+      },
+      {
+        "id": "p-la-north-03",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "LA RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater (clarifier)"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Santa Paula": {
+    "type": "Hauling Yard",
+    "swis": "",
+    "addr": "905 Corporation Street",
+    "city": "Santa Paula",
+    "lat": 34.354,
+    "lng": -119.072,
+    "permits": [
+      {
+        "id": "p-santa-paula-01",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board (LA RWQCB)",
+        "number": "WDID 4 56I028659",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Riverside": {
+    "type": "Hauling Yard",
+    "swis": "",
+    "addr": "687 Iowa Avenue",
+    "city": "Riverside",
+    "lat": 33.998,
+    "lng": -117.339,
+    "permits": [
+      {
+        "id": "p-riverside-01",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board (Region 8 - Santa Ana RWQCB)",
+        "number": "WDID 8 33I024182",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-riverside-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-riverside-03",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-certified)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SPCC"
+      },
+      {
+        "id": "p-riverside-04",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "Santa Ana RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater (clarifier)"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "Vincent": {
+    "type": "Operations Yard",
+    "swis": "",
+    "addr": "5355 Vincent Ave",
+    "city": "Irwindale",
+    "lat": 34.085,
+    "lng": -117.953,
+    "permits": [
+      {
+        "id": "p-vincent-01",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board (LA RWQCB)",
+        "number": "WDID 4 19I021980",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-vincent-02",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-vincent-03",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-certified)",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "SPCC"
+      },
+      {
+        "id": "p-vincent-04",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "LA RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater (clarifier)"
+      }
+    ],
+    "leases": [],
+    "checklist": []
+  },
+  "SVMRF": {
+    "type": "Materials Recovery Facility",
+    "swis": "",
+    "addr": "11121 Pendleton Avenue",
+    "city": "Sun Valley",
+    "lat": 34.245,
+    "lng": -118.388,
+    "permits": [
+      {
+        "id": "p-svmrf-01",
+        "name": "Solid Waste Facility Permit",
+        "agency": "CalRecycle / LEA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SWFP"
+      },
+      {
+        "id": "p-svmrf-02",
+        "name": "Industrial Stormwater (IGP)",
+        "agency": "State Water Resources Control Board (RWQCB)",
+        "number": "WDID 4 19I025193",
+        "status": "active",
+        "expires": null,
+        "cycle": "annual",
+        "area": "Stormwater"
+      },
+      {
+        "id": "p-svmrf-03",
+        "name": "Hazardous Materials Business Plan (CUPA)",
+        "agency": "CUPA",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "annual (2025-2026)",
+        "area": "CUPA"
+      },
+      {
+        "id": "p-svmrf-04",
+        "name": "EPA ID (Hazardous Waste Generator)",
+        "agency": "US EPA / CA DTSC",
+        "number": "CAL000234960",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "EPA ID"
+      },
+      {
+        "id": "p-svmrf-05",
+        "name": "Air Permit — Baghouse",
+        "agency": "South Coast AQMD",
+        "number": "G45985",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Air Permits"
+      },
+      {
+        "id": "p-svmrf-06",
+        "name": "Air Permit — Portable Equipment (CARB PERP)",
+        "agency": "CARB PERP",
+        "number": "168448",
+        "status": "active",
+        "expires": "2027-05-31",
+        "cycle": "",
+        "area": "Air Permits"
+      },
+      {
+        "id": "p-svmrf-07",
+        "name": "SPCC Plan",
+        "agency": "US EPA (self-certified)",
+        "number": "",
+        "status": "active",
+        "expires": null,
+        "cycle": "5-year review",
+        "area": "SPCC"
+      },
+      {
+        "id": "p-svmrf-08",
+        "name": "Waste Discharge Requirements (WDR)",
+        "agency": "RWQCB",
+        "number": "",
+        "status": "verify",
+        "expires": null,
+        "cycle": "",
+        "area": "Wastewater (clarifier)"
+      },
+      {
+        "id": "p-svmrf-09",
+        "name": "Conditional Use Permit (Land Use)",
+        "agency": "City of Los Angeles (Zoning Administrator)",
+        "number": "ZA-98-0427-CUZ-PA3",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "CUP land use"
+      },
+      {
+        "id": "p-svmrf-10",
+        "name": "CalRecycle Waste Tire Program",
+        "agency": "CalRecycle",
+        "number": "TPID 1954111-01",
+        "status": "active",
+        "expires": null,
+        "cycle": "",
+        "area": "Waste Tire"
+      },
+      {
+        "id": "p-svmrf-11",
+        "name": "CDFA Weighmaster License",
+        "agency": "CDFA Division of Measurement Standards",
+        "number": "",
+        "status": "active",
+        "expires": "2026-09-01",
+        "cycle": "annual",
+        "area": "CDFA Weighmaster"
+      }
+    ],
+    "leases": [],
+    "checklist": []
   }
 }
