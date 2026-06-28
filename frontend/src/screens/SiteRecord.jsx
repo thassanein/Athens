@@ -353,6 +353,7 @@ function RenewalTimeline({ site }) {
 const TABS = [
   { id: 'findings', label: 'Findings' },
   { id: 'permits', label: 'Permits' },
+  { id: 'documents', label: 'Docs' },
   { id: 'leases', label: 'Leases' },
   { id: 'facility', label: 'Facility' },
   { id: 'env', label: 'ENV' },
@@ -700,6 +701,63 @@ export default function SiteRecord({
                 ]}
               />
             ))}
+          </div>
+        )}
+
+        {tab === 'documents' && (
+          <div className="stack">
+            <div className="muted" style={{ fontSize: 12, padding: '2px 2px 4px' }}>
+              Document folders open in SharePoint (uses your Microsoft sign-in).
+            </div>
+            {site.siteMap && (
+              <a
+                href={site.siteMap}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card lrow bd-pass"
+                style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, textDecoration: 'none', color: 'inherit' }}
+              >
+                <span className="row gap" style={{ alignItems: 'center', gap: 8 }}>
+                  <IconPin size={16} />
+                  <span style={{ fontSize: 14.5, fontWeight: 600 }}>Site map / site plan</span>
+                </span>
+                <IconChevron size={16} />
+              </a>
+            )}
+            {(site.documents || []).map((d) => (
+              <a
+                key={d.url}
+                href={d.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card lrow"
+                style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, textDecoration: 'none', color: 'inherit' }}
+              >
+                <span className="row gap" style={{ alignItems: 'center', gap: 8 }}>
+                  <IconDoc size={16} />
+                  <span style={{ fontSize: 14.5, fontWeight: 600 }}>{d.name}</span>
+                </span>
+                <IconChevron size={16} />
+              </a>
+            ))}
+            {site.folder && (
+              <a
+                href={site.folder}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="card lrow"
+                style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, textDecoration: 'none', color: 'inherit' }}
+              >
+                <span className="row gap" style={{ alignItems: 'center', gap: 8 }}>
+                  <IconDoc size={16} />
+                  <span style={{ fontSize: 14.5, fontWeight: 600 }}>All documents (facility folder)</span>
+                </span>
+                <IconChevron size={16} />
+              </a>
+            )}
+            {!site.folder && !site.siteMap && (site.documents || []).length === 0 && (
+              <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No linked documents.</div></div>
+            )}
           </div>
         )}
 

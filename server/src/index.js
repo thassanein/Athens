@@ -84,7 +84,7 @@ app.get('/api/sites', requireAuth, async (_req, res, next) => {
       out[s.name] = {
         type: s.type, swis: s.swis, addr: s.addr, city: s.city,
         lat: s.lat, lng: s.lng, anchor: s.anchor,
-        folder: s.folder, siteMap: s.site_map,
+        folder: s.folder, siteMap: s.site_map, documents: s.documents ?? [],
         permits: [], leases: [], checklist: [],
       };
     }

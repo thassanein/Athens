@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS sites (
   type   TEXT, swis TEXT, addr TEXT, city TEXT,
   lat DOUBLE PRECISION, lng DOUBLE PRECISION,
   anchor BOOLEAN DEFAULT false,
-  folder TEXT, site_map TEXT
+  folder TEXT, site_map TEXT, documents JSONB DEFAULT '[]'::jsonb
 );
 CREATE TABLE IF NOT EXISTS permits (
   id TEXT PRIMARY KEY,
@@ -32,9 +32,10 @@ CREATE TABLE IF NOT EXISTS permits (
   expires DATE, cycle TEXT, area TEXT, doc TEXT
 );
 -- Add document-link columns to pre-existing deployments (no-op once present).
-ALTER TABLE sites   ADD COLUMN IF NOT EXISTS folder   TEXT;
-ALTER TABLE sites   ADD COLUMN IF NOT EXISTS site_map TEXT;
-ALTER TABLE permits ADD COLUMN IF NOT EXISTS doc      TEXT;
+ALTER TABLE sites   ADD COLUMN IF NOT EXISTS folder    TEXT;
+ALTER TABLE sites   ADD COLUMN IF NOT EXISTS site_map  TEXT;
+ALTER TABLE sites   ADD COLUMN IF NOT EXISTS documents JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE permits ADD COLUMN IF NOT EXISTS doc       TEXT;
 CREATE TABLE IF NOT EXISTS leases (
   id TEXT PRIMARY KEY,
   site TEXT REFERENCES sites(name) ON DELETE CASCADE,
@@ -65,8 +66,8 @@ async function loadAll(client, data, { wipe }) {
     let sites = 0, permits = 0, leases = 0, items = 0
     for (const [name, site] of Object.entries(data)) {
       await client.query(
-        `INSERT INTO sites (name,type,swis,addr,city,lat,lng,anchor,folder,site_map) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
-        [name, site.type ?? null, site.swis ?? null, site.addr ?? null, site.city ?? null, site.lat ?? null, site.lng ?? null, site.anchor ?? false, site.folder ?? null, site.siteMap ?? null]
+        `INSERT INTO sites (name,type,swis,addr,city,lat,lng,anchor,folder,site_map,documents) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+        [name, site.type ?? null, site.swis ?? null, site.addr ?? null, site.city ?? null, site.lat ?? null, site.lng ?? null, site.anchor ?? false, site.folder ?? null, site.siteMap ?? null, JSON.stringify(site.documents ?? [])]
       )
       sites++
       for (const p of site.permits ?? []) {

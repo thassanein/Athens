@@ -9,6 +9,28 @@ export const SNAPSHOT = {
     "lat": 34.276,
     "lng": -116.844,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS",
+    "documents": [
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS/CUPA"
+      },
+      {
+        "name": "EPA ID CAD982495632 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS/EPA ID CAD982495632 (SBC)"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS/Pressure Vessels"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-big-bear-ts-01",
@@ -55,6 +77,24 @@ export const SNAPSHOT = {
     "lat": 34.0464,
     "lng": -116.5803,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Morongo TS",
+    "documents": [
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Morongo TS/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Morongo TS/CUPA"
+      },
+      {
+        "name": "EPA ID CAD982495723 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Morongo TS/EPA ID CAD982495723 (SBC)"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Morongo TS/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-morongo-ts-01",
@@ -90,6 +130,24 @@ export const SNAPSHOT = {
     "lat": 35.7624,
     "lng": -117.3769,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Trona Argus TS",
+    "documents": [
+      {
+        "name": "County SB public health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Trona Argus TS/County SB public health"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Trona Argus TS/EAP"
+      },
+      {
+        "name": "EPA ID CAD982495806 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Trona Argus TS/EPA ID CAD982495806 (SBC)"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Trona Argus TS/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-trona-argus-ts-01",
@@ -114,6 +172,28 @@ export const SNAPSHOT = {
     "lat": 34.8281,
     "lng": -116.6864,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Newberry Springs TS",
+    "documents": [
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Newberry Springs TS/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Newberry Springs TS/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Newberry Springs TS/EAP"
+      },
+      {
+        "name": "EPA ID CAL000372658 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Newberry Springs TS/EPA ID CAL000372658 (SBC)"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Newberry Springs TS/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-newberry-springs-ts-01",
@@ -149,6 +229,12 @@ export const SNAPSHOT = {
     "lat": 35.2653,
     "lng": -116.0764,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Baker TS",
+    "documents": [
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Baker TS/County SB Public Health"
+      }
+    ],
     "permits": [
       {
         "id": "p-baker-ts-01",
@@ -173,6 +259,28 @@ export const SNAPSHOT = {
     "lat": 34.48,
     "lng": -116.88,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Camp Rock TS",
+    "documents": [
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Camp Rock TS/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Camp Rock TS/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Camp Rock TS/EAP"
+      },
+      {
+        "name": "EPA ID CAD982495715 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Camp Rock TS/EPA ID CAD982495715 (SBC)"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Camp Rock TS/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-camp-rock-ts-01",
@@ -208,6 +316,36 @@ export const SNAPSHOT = {
     "lat": 34.1478,
     "lng": -116.03,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS",
+    "documents": [
+      {
+        "name": "County of SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS/County of SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS/EAP"
+      },
+      {
+        "name": "EPA ID CAD982495897 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS/EPA ID CAD982495897 (SBC)"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS/Pressure Vessels"
+      },
+      {
+        "name": "SPCC",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS/SPCC"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-29-palms-ts-01",
@@ -254,6 +392,32 @@ export const SNAPSHOT = {
     "lat": 34.4256,
     "lng": -117.5723,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Sheep Creek TS",
+    "documents": [
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Sheep Creek TS/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Sheep Creek TS/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Sheep Creek TS/EAP"
+      },
+      {
+        "name": "EPA ID CAL000372659 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Sheep Creek TS/EPA ID CAL000372659 (SBC)"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Sheep Creek TS/Pressure Vessels"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Sheep Creek TS/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-sheep-creek-ts-01",
@@ -289,6 +453,36 @@ export const SNAPSHOT = {
     "lat": 34.21,
     "lng": -117.108,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS",
+    "documents": [
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS/EAP"
+      },
+      {
+        "name": "EPA ID CAL000160981 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS/EPA ID CAL000160981 (SBC)"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS/Pressure Vessels"
+      },
+      {
+        "name": "SPCC",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS/SPCC"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-heaps-peak-ts-01",
@@ -336,6 +530,68 @@ export const SNAPSHOT = {
     "lng": -118.162,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Paramount/2024 CUP Preliminary Site Plans, 4 Phases.pdf",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/Air Permits"
+      },
+      {
+        "name": "CalRecycle Waste Tire",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/CalRecycle Waste Tire"
+      },
+      {
+        "name": "CDFA Weighmaster",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/CDFA Weighmaster"
+      },
+      {
+        "name": "County LA Waste Collector Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/County LA Waste Collector Permits"
+      },
+      {
+        "name": "County Weights & Measures",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/County Weights & Measures"
+      },
+      {
+        "name": "CUP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/CUP"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/CUPA"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID(DTSC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/EPA ID(DTSC)"
+      },
+      {
+        "name": "Fuel Station",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/Fuel Station"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/Pressure Vessels"
+      },
+      {
+        "name": "SPCC Oil Spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/SPCC Oil Spill"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/Stormwater"
+      },
+      {
+        "name": "SWFP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/SWFP"
+      },
+      {
+        "name": "Wastewater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/Wastewater"
+      }
+    ],
     "permits": [
       {
         "id": "p-prr-paramount-truck-ya-01",
@@ -405,6 +661,40 @@ export const SNAPSHOT = {
     "lng": -117.954,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Valley-COI",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/Air Permits"
+      },
+      {
+        "name": "CDFA Weighmaster",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/CDFA Weighmaster"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/Pressure Vessels"
+      },
+      {
+        "name": "SPCC oil Spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/SPCC oil Spill"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/Stormwater"
+      },
+      {
+        "name": "SWFP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/SWFP"
+      },
+      {
+        "name": "Wastewater (clarifiers)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/Wastewater (clarifiers)"
+      }
+    ],
     "permits": [
       {
         "id": "p-coi-mrf-01",
@@ -474,6 +764,44 @@ export const SNAPSHOT = {
     "lng": -118.3884,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Crown/2021 Site Plans/A-101 SITE PLAN_SIMPLE, ver.12-03-21.pdf",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/Air Permits"
+      },
+      {
+        "name": "CDFA Weighmaster",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/CDFA Weighmaster"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/CUPA"
+      },
+      {
+        "name": "EBEWE",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/EBEWE"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/EPA ID"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/Stormwater"
+      },
+      {
+        "name": "SWFP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/SWFP"
+      },
+      {
+        "name": "Wastewater (clarifier)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/Wastewater (clarifier)"
+      }
+    ],
     "permits": [
       {
         "id": "p-crown-mrf-01",
@@ -542,6 +870,24 @@ export const SNAPSHOT = {
     "lat": 34.006,
     "lng": -117.967,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PHMRF",
+    "documents": [
+      {
+        "name": "E-Waste",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PHMRF/E-Waste"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PHMRF/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PHMRF/EPA ID"
+      },
+      {
+        "name": "SPCC oil Spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PHMRF/SPCC oil Spill"
+      }
+    ],
     "permits": [
       {
         "id": "p-phmrf-01",
@@ -578,6 +924,56 @@ export const SNAPSHOT = {
     "lng": -117.954,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/IrwindaleMRF/A1.1 Site Plan, approved 1-30-2024.pdf",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/Air Permits"
+      },
+      {
+        "name": "CDFA Weighmaster License",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/CDFA Weighmaster License"
+      },
+      {
+        "name": "County DPH WCP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/County DPH WCP"
+      },
+      {
+        "name": "County W&M Scale Device",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/County W&M Scale Device"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/CUPA"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/Pressure Vessels"
+      },
+      {
+        "name": "SPCC Oil Spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/SPCC Oil Spill"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/Stormwater"
+      },
+      {
+        "name": "SWFP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/SWFP"
+      },
+      {
+        "name": "Wastewater (clarifier)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF/Wastewater (clarifier)"
+      }
+    ],
     "permits": [
       {
         "id": "p-irwindale-mrf-01",
@@ -657,6 +1053,48 @@ export const SNAPSHOT = {
     "lat": 33.918,
     "lng": -118.118,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)",
+    "documents": [
+      {
+        "name": "CDFA Weighmaster",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/CDFA Weighmaster"
+      },
+      {
+        "name": "CUP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/CUP"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/CUPA"
+      },
+      {
+        "name": "E-waste",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/E-waste"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/Pressure Vessels"
+      },
+      {
+        "name": "Spcc Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/Spcc Plan"
+      },
+      {
+        "name": "Stormwater (SWPPP)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/Stormwater (SWPPP)"
+      },
+      {
+        "name": "SWFP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/SWFP"
+      },
+      {
+        "name": "Wastewater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/Wastewater"
+      }
+    ],
     "permits": [
       {
         "id": "p-dart-lacsd-01",
@@ -725,6 +1163,36 @@ export const SNAPSHOT = {
     "lat": 34.583,
     "lng": -117.296,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/Air Permits"
+      },
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/EAP"
+      },
+      {
+        "name": "EPA ID CAD982495848 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/EPA ID CAD982495848 (SBC)"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/SWFP (SBC)"
+      },
+      {
+        "name": "WDR (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/WDR (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-victorville-lf-01",
@@ -782,6 +1250,40 @@ export const SNAPSHOT = {
     "lat": 34.135,
     "lng": -117.43,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF/Air Permits"
+      },
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF/EAP"
+      },
+      {
+        "name": "EPA ID CAL000332969 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF/EPA ID CAL000332969 (SBC)"
+      },
+      {
+        "name": "SPCC",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF/SPCC"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF/SWFP (SBC)"
+      },
+      {
+        "name": "WDR (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF/WDR (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-mid-valley-lf-01",
@@ -839,6 +1341,40 @@ export const SNAPSHOT = {
     "lat": 34.8,
     "lng": -117.02,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF",
+    "documents": [
+      {
+        "name": "Air Permit",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF/Air Permit"
+      },
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF/EAP"
+      },
+      {
+        "name": "EPA ID CAD982495624 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF/EPA ID CAD982495624 (SBC)"
+      },
+      {
+        "name": "Septic Management",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF/Septic Management"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF/SWFP (SBC)"
+      },
+      {
+        "name": "WDR (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF/WDR (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-barstow-lf-01",
@@ -885,6 +1421,36 @@ export const SNAPSHOT = {
     "lat": 34.318,
     "lng": -116.434,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF",
+    "documents": [
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF/EAP"
+      },
+      {
+        "name": "EPA ID CAD982495681 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF/EPA ID CAD982495681 (SBC)"
+      },
+      {
+        "name": "Septic Management",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF/Septic Management"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF/SWFP (SBC)"
+      },
+      {
+        "name": "WDR (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF/WDR (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-landers-lf-01",
@@ -920,6 +1486,32 @@ export const SNAPSHOT = {
     "lat": 34.015,
     "lng": -117.15,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/San Timoteo LF",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/San Timoteo LF/Air Permits"
+      },
+      {
+        "name": "County SB Public Health",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/San Timoteo LF/County SB Public Health"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/San Timoteo LF/CUPA"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/San Timoteo LF/EAP"
+      },
+      {
+        "name": "EAP ID CAD982485716 (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/San Timoteo LF/EAP ID CAD982485716 (SBC)"
+      },
+      {
+        "name": "SWFP (SBC)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/San Timoteo LF/SWFP (SBC)"
+      }
+    ],
     "permits": [
       {
         "id": "p-san-timoteo-lf-01",
@@ -978,6 +1570,72 @@ export const SNAPSHOT = {
     "lng": -117.379,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/AO-VVRCF",
+    "documents": [
+      {
+        "name": "Air Permits - MDAQMD",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/Air Permits - MDAQMD"
+      },
+      {
+        "name": "CDFA Fertilizing Materials License",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/CDFA Fertilizing Materials License"
+      },
+      {
+        "name": "CDFA Weighmaster",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/CDFA Weighmaster"
+      },
+      {
+        "name": "County W&M scale device",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/County W&M scale device"
+      },
+      {
+        "name": "CUP land use",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/CUP land use"
+      },
+      {
+        "name": "CUPA haz mat",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/CUPA haz mat"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/EPA ID"
+      },
+      {
+        "name": "OMRI Listed Cert",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/OMRI Listed Cert"
+      },
+      {
+        "name": "Pressure Vessels (OSHA)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/Pressure Vessels (OSHA)"
+      },
+      {
+        "name": "SPCC Oil Spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/SPCC Oil Spill"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/Stormwater"
+      },
+      {
+        "name": "SWFP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/SWFP"
+      },
+      {
+        "name": "US FWS-bird depredation",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/US FWS-bird depredation"
+      },
+      {
+        "name": "USCC STA Membership",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/USCC STA Membership"
+      },
+      {
+        "name": "WDR",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/WDR"
+      }
+    ],
     "permits": [
       {
         "id": "p-american-organics-vvrc-01",
@@ -1058,6 +1716,24 @@ export const SNAPSHOT = {
     "lng": -117.954,
     "anchor": true,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale IOC",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale IOC/Air Permits"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale IOC/CUPA"
+      },
+      {
+        "name": "Elevator Conveyance Permit",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale IOC/Elevator Conveyance Permit"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale IOC/Emergency Action Plan"
+      }
+    ],
     "permits": [
       {
         "id": "p-irwindale-ioc-01",
@@ -1094,6 +1770,44 @@ export const SNAPSHOT = {
     "lng": -117.945,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Salt Lake/Site Plan approved by County 12-18-24, CUP Exhibit A.pdf",
+    "documents": [
+      {
+        "name": "CalRecycle Waste Tire",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/CalRecycle Waste Tire"
+      },
+      {
+        "name": "County LA Waste Collector - yards & trucks",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/County LA Waste Collector - yards & trucks"
+      },
+      {
+        "name": "CUPA haz mat",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/CUPA haz mat"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels (OSHA)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/Pressure Vessels (OSHA)"
+      },
+      {
+        "name": "SPCC oil spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/SPCC oil spill"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/Stormwater"
+      },
+      {
+        "name": "Wastewater (clarifier)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake/Wastewater (clarifier)"
+      }
+    ],
     "permits": [
       {
         "id": "p-salt-lake-01",
@@ -1141,6 +1855,36 @@ export const SNAPSHOT = {
     "lng": -118.113,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Van Norman/Site Map, Stormwater 2024.pdf",
+    "documents": [
+      {
+        "name": "Air Permits - SCAQMD",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman/Air Permits - SCAQMD"
+      },
+      {
+        "name": "CUPA haz mat",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman/CUPA haz mat"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels (OSHA)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman/Pressure Vessels (OSHA)"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman/Stormwater"
+      },
+      {
+        "name": "Wastewater (clarifier)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman/Wastewater (clarifier)"
+      }
+    ],
     "permits": [
       {
         "id": "p-van-norman-01",
@@ -1187,6 +1931,20 @@ export const SNAPSHOT = {
     "lat": 34.196,
     "lng": -118.876,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Hillcrest",
+    "documents": [
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Hillcrest/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Hillcrest/EPA ID"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Hillcrest/Stormwater"
+      }
+    ],
     "permits": [
       {
         "id": "p-to-hillcrest-01",
@@ -1212,6 +1970,48 @@ export const SNAPSHOT = {
     "lng": -118.937,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/TO-Conejo/2021.09.10 TO Site Plan drawings.pdf",
+    "documents": [
+      {
+        "name": "CalRecycle Waste Tire",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/CalRecycle Waste Tire"
+      },
+      {
+        "name": "City DP Land Use Permit",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/City DP Land Use Permit"
+      },
+      {
+        "name": "CUPA",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/CUPA"
+      },
+      {
+        "name": "E-Waste",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/E-Waste"
+      },
+      {
+        "name": "EAP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/EAP"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/Pressure Vessels"
+      },
+      {
+        "name": "SPCC",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/SPCC"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/Stormwater"
+      },
+      {
+        "name": "Wastewater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr/Wastewater"
+      }
+    ],
     "permits": [
       {
         "id": "p-to-conejo-center-dr-01",
@@ -1258,6 +2058,12 @@ export const SNAPSHOT = {
     "lat": 34.33,
     "lng": -118.379,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Lopez Canyon",
+    "documents": [
+      {
+        "name": "County LA Waste Collector - yard only",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Lopez Canyon/County LA Waste Collector - yard only"
+      }
+    ],
     "permits": [
       {
         "id": "p-lopez-canyon-01",
@@ -1294,6 +2100,32 @@ export const SNAPSHOT = {
     "lng": -118.299,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/LASO/2025 LASO Stormwater Site Map.pdf",
+    "documents": [
+      {
+        "name": "County LA Waste Collector",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South/County LA Waste Collector"
+      },
+      {
+        "name": "CUPA Haz Mat",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South/CUPA Haz Mat"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South/Emergency Action Plan"
+      },
+      {
+        "name": "Fuel Station",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South/Fuel Station"
+      },
+      {
+        "name": "Land Use Approvals",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South/Land Use Approvals"
+      },
+      {
+        "name": "SPCC Oil Spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South/SPCC Oil Spill"
+      }
+    ],
     "permits": [
       {
         "id": "p-la-south-01",
@@ -1341,6 +2173,36 @@ export const SNAPSHOT = {
     "lng": -118.412,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/LANO/Site.Plan.Montague.revised.09.04.15.pdf",
+    "documents": [
+      {
+        "name": "EBEWE",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/EBEWE"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels (OSHA)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/Pressure Vessels (OSHA)"
+      },
+      {
+        "name": "SPCC Oil Spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/SPCC Oil Spill"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/Stormwater"
+      },
+      {
+        "name": "Wastewater (clarifier)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/Wastewater (clarifier)"
+      }
+    ],
     "permits": [
       {
         "id": "p-la-north-01",
@@ -1387,6 +2249,20 @@ export const SNAPSHOT = {
     "lat": 34.354,
     "lng": -119.072,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Santa Paula",
+    "documents": [
+      {
+        "name": "CUPA haz mat",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Santa Paula/CUPA haz mat"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Santa Paula/EPA ID"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Santa Paula/Stormwater"
+      }
+    ],
     "permits": [
       {
         "id": "p-santa-paula-01",
@@ -1412,6 +2288,48 @@ export const SNAPSHOT = {
     "lng": -117.339,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Riverside",
+    "documents": [
+      {
+        "name": "Cal Recycle Waste Tire",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/Cal Recycle Waste Tire"
+      },
+      {
+        "name": "CNG Temp Fueling Trailer",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/CNG Temp Fueling Trailer"
+      },
+      {
+        "name": "Country SB Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/Country SB Permits"
+      },
+      {
+        "name": "CUPA haz mat",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/CUPA haz mat"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels (OSHA)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/Pressure Vessels (OSHA)"
+      },
+      {
+        "name": "SPCC Oil Spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/SPCC Oil Spill"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/Stormwater"
+      },
+      {
+        "name": "Wastewater (clarifier)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside/Wastewater (clarifier)"
+      }
+    ],
     "permits": [
       {
         "id": "p-riverside-01",
@@ -1470,6 +2388,36 @@ export const SNAPSHOT = {
     "lng": -117.953,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Vincent/2023 Stormwater Site Map Vincent.pdf",
+    "documents": [
+      {
+        "name": "Air Permits - SCAQMD",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent/Air Permits - SCAQMD"
+      },
+      {
+        "name": "CUPA haz mat",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent/CUPA haz mat"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent/EPA ID"
+      },
+      {
+        "name": "Pressure Vessels (OSHA)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent/Pressure Vessels (OSHA)"
+      },
+      {
+        "name": "SPCC oil spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent/SPCC oil spill"
+      },
+      {
+        "name": "Stormwater",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent/Stormwater"
+      },
+      {
+        "name": "Wastewater (clarifier)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent/Wastewater (clarifier)"
+      }
+    ],
     "permits": [
       {
         "id": "p-vincent-01",
@@ -1527,6 +2475,68 @@ export const SNAPSHOT = {
     "lat": 34.245,
     "lng": -118.388,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF",
+    "documents": [
+      {
+        "name": "Air Permits",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/Air Permits"
+      },
+      {
+        "name": "CalRecycle Wastetire",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/CalRecycle Wastetire"
+      },
+      {
+        "name": "CDFA Weighmaster",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/CDFA Weighmaster"
+      },
+      {
+        "name": "County W&M Scale Device",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/County W&M Scale Device"
+      },
+      {
+        "name": "CUP land use",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/CUP land use"
+      },
+      {
+        "name": "CUPA haz mat",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/CUPA haz mat"
+      },
+      {
+        "name": "EBEWE",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/EBEWE"
+      },
+      {
+        "name": "Emergency Action Plan",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/Emergency Action Plan"
+      },
+      {
+        "name": "EPA ID",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/EPA ID"
+      },
+      {
+        "name": "Facility inspections",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/Facility inspections"
+      },
+      {
+        "name": "Pressure Vessels (OSHA)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/Pressure Vessels (OSHA)"
+      },
+      {
+        "name": "SPCC oil spill",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/SPCC oil spill"
+      },
+      {
+        "name": "Stormwater (includes Peoria)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/Stormwater (includes Peoria)"
+      },
+      {
+        "name": "SWFP",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/SWFP"
+      },
+      {
+        "name": "Wastewater (clarifier)",
+        "url": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF/Wastewater (clarifier)"
+      }
+    ],
     "permits": [
       {
         "id": "p-svmrf-01",
