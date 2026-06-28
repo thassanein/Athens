@@ -1,0 +1,2120 @@
+{
+  "hauling": {
+    "title": "Facility Inspection \u2014 Hauling Division",
+    "sections": [
+      {
+        "title": "EXTERIOR / YARD / SCALE",
+        "items": [
+          {
+            "ref": "A1",
+            "text": "General appearance of Grounds/Landscape?"
+          },
+          {
+            "ref": "A2",
+            "text": "Designated smoking area outside?"
+          },
+          {
+            "ref": "A3",
+            "text": "Building exterior appearance"
+          },
+          {
+            "ref": "A4",
+            "text": "When working in the yard, Is a positive \"Lockout/Tagout\" system provided to render machines, trucks, and equipment inoperable while repairs or adjustments are being made? Are locks individually keyed and under the exclusive control of the employee? (29 CFR 1910.147)"
+          },
+          {
+            "ref": "A5",
+            "text": "Equipment kept in secure area? Keys removed when parked?"
+          },
+          {
+            "ref": "A6",
+            "text": "Equipment equipped with working fire suppression systems as required?"
+          },
+          {
+            "ref": "A7",
+            "text": "Fences, gates and locks in good condition?"
+          },
+          {
+            "ref": "A8",
+            "text": "Are all Permit Required Postings posted at gate?"
+          },
+          {
+            "ref": "A9",
+            "text": "Are 24 hour emergency numbers posted at gate?"
+          },
+          {
+            "ref": "A10",
+            "text": "Perimeter of property has no evidence of discharge of pollutants?"
+          },
+          {
+            "ref": "A11",
+            "text": "Are \"No Trespassing\" signs posted along fence?"
+          },
+          {
+            "ref": "A12",
+            "text": "Required Sign: \"Caution - Always leave at least 10 feet between vehicles\""
+          },
+          {
+            "ref": "A13",
+            "text": "Required Sign: \"Notice - Only the Driver may exit the truck cab at the active tipping area\""
+          },
+          {
+            "ref": "A14",
+            "text": "Required Sign: \"Warning - Proper personal protective equipment must be worn at all times; (high visibility clothing, hard hats, etc..)"
+          },
+          {
+            "ref": "A15",
+            "text": "Manhole and other confined spaces clearly marked? (1910.146 c 4)"
+          },
+          {
+            "ref": "A16",
+            "text": "Parking area and Entrance/Exit are well lighted?"
+          },
+          {
+            "ref": "A17",
+            "text": "Paved surfaces free of potholes, debris and other trip, slip and fall hazards?"
+          },
+          {
+            "ref": "A18",
+            "text": "Walkways and steps in good repair? (1910.124)"
+          },
+          {
+            "ref": "A19",
+            "text": "Are step risers on stairs uniform from top to bottom? (1910.124)"
+          },
+          {
+            "ref": "A20",
+            "text": "Are steps on stairs and stairways designed to provide a surface that renders them slip resistant? (1910.124 f)"
+          },
+          {
+            "ref": "A21",
+            "text": "All barriers and bollards painted yellow?"
+          },
+          {
+            "ref": "A22",
+            "text": "Fuel island dispensers, hoses and nozzles in good repair? No auto fill clips (1910.106, NFPA #30, Local Fire Codes)"
+          },
+          {
+            "ref": "A23",
+            "text": "Fuel Island - No Smoking and Shut off Engine signs? (1910.106, NFPA #30, Local Fire Codes)"
+          },
+          {
+            "ref": "A24",
+            "text": "Fuel Island - Emergency Shut Off clearly marked? (1910.106, NFPA #30, Local Fire Codes)"
+          },
+          {
+            "ref": "A25",
+            "text": "Fuel Island - Adequate barrier protection? (1910.106, NFPA #30, Local Fire Codes)"
+          },
+          {
+            "ref": "A26",
+            "text": "Fuel Island - Adequate number of fire extinguishers? Charged/Tagged/Inspected? (1910.106 d 7)"
+          },
+          {
+            "ref": "A27",
+            "text": "Fuel Island - Spill Kit dry and well marked? (1910.106, NFPA #30, Local Fire Codes)"
+          },
+          {
+            "ref": "A28",
+            "text": "Fuel Truck - Dispensers, hoses and nozzles in good repair (1910.106, NFPA #30, Local Fire Codes)"
+          },
+          {
+            "ref": "A29",
+            "text": "Fuel Truck - No leaks or signs of deterioration of tank integrity? (1910.106, NFPA #30, Local Fire Codes)"
+          },
+          {
+            "ref": "A30",
+            "text": "Radiation Monitors and Scales Calibrated?"
+          },
+          {
+            "ref": "A31",
+            "text": "Working Video Surveillance System with correct camera placement and operational recording system?"
+          },
+          {
+            "ref": "A32",
+            "text": "Working Odor Control System?"
+          }
+        ]
+      },
+      {
+        "title": "OFFICE / DISPATCH / EMPLOYEE / STORAGE / FACILITY AREAS",
+        "items": [
+          {
+            "ref": "B1",
+            "text": "Are portable fire extinguishers kept at their designated places at all times (accessible, mounted, charged, pinned and sealed)? Is each extinguisher marked with sign and does each sign have a corresponding extinguisher? Are annual and monthly inspection inspections documented on the tag? Is there an adequate number of extinguishers for the prevailing fire hazards? Are extinguishers free from obstruction to access?"
+          },
+          {
+            "ref": "B2",
+            "text": "Are first aid kits available and maintained? Any items expired? No oral meds? (1910.151)"
+          },
+          {
+            "ref": "B3",
+            "text": "Are interior lights adequate and all in working order? Do emergency lights work when tested? (NFPA 101)"
+          },
+          {
+            "ref": "B4",
+            "text": "Is clear working space in front of an electrical panel maintained at no less than 36\"? (1910.303)"
+          },
+          {
+            "ref": "B5",
+            "text": "Are all live parts of electrical equipment operating at 50 volts or more guarded against accidental contact? Are outlet boxes in good condition? No exposed wiring? Are GFCI outlets used in wet or damp areas? (1910.303 g 2)"
+          },
+          {
+            "ref": "B6",
+            "text": "Are panel box doors and individual electrical circuit breakers (and fuel pump switches) legibly identified? (1910.303)"
+          },
+          {
+            "ref": "B7",
+            "text": "Are electric cords, extension cords, and trouble lights of approved 3-wire ground type and in good condition? Is there any temporary wiring that should be permanent? (1910.305)"
+          },
+          {
+            "ref": "B8",
+            "text": "Is a large format laminated copy of the latest Safety Alert posted at the time clock or other appropriate operations point? Are previous Safety Alerts taken down and kept in 3-ring binder for training (Corporate Safety Standard)"
+          },
+          {
+            "ref": "B9",
+            "text": "Company Required Postings? (Policy G - 102)"
+          },
+          {
+            "ref": "a",
+            "text": "Commitment to Drug and Alcohol Free Workplace"
+          },
+          {
+            "ref": "b",
+            "text": "Sexual Harassment Policy"
+          },
+          {
+            "ref": "c",
+            "text": "Americans with Disabilities Act Policy"
+          },
+          {
+            "ref": "d",
+            "text": "Reaffirmation of Equal Employment Opportunity"
+          },
+          {
+            "ref": "e",
+            "text": "Benefits Point of Contact name and number"
+          },
+          {
+            "ref": "f",
+            "text": "AWARE line toll free number and reporting procedures flow chart"
+          },
+          {
+            "ref": "g",
+            "text": "Code of Business Conduct and Ethics"
+          },
+          {
+            "ref": "h",
+            "text": "First Aid Responders and CPR trained employee names"
+          },
+          {
+            "ref": "B10",
+            "text": "Federal Required Posing's"
+          },
+          {
+            "ref": "a",
+            "text": "Federal 5 in 1 Poster"
+          },
+          {
+            "ref": "b",
+            "text": "OSHA \"It\u2019s the Law\" poster"
+          },
+          {
+            "ref": "c",
+            "text": "OSHA 300 Summary from February 1 to April 30"
+          },
+          {
+            "ref": "d",
+            "text": "Evacuation Map (1910.38)"
+          },
+          {
+            "ref": "e",
+            "text": "Emergency Contact Numbers"
+          },
+          {
+            "ref": "f",
+            "text": "Employee Polygraph Protection Act"
+          },
+          {
+            "ref": "g",
+            "text": "Fair Labor Standards Act"
+          },
+          {
+            "ref": "h",
+            "text": "Family and Medical Leave Act"
+          },
+          {
+            "ref": "I",
+            "text": "Beck Notice for Union Locations"
+          },
+          {
+            "ref": "j",
+            "text": "Equal Employment Opportunity"
+          },
+          {
+            "ref": "k",
+            "text": "Uniform Services Employment Act"
+          },
+          {
+            "ref": "l",
+            "text": "Invitation to Self Identify"
+          },
+          {
+            "ref": "m",
+            "text": "Notice of viewing Affirmative Action Plans"
+          },
+          {
+            "ref": "",
+            "text": "Note: Items in Italics must be viewable by job applicants. Some of above requirements are covered by the 5 in 1 poster."
+          },
+          {
+            "ref": "B11",
+            "text": "State and Local Required Posting"
+          },
+          {
+            "ref": "a",
+            "text": "State OSHA"
+          },
+          {
+            "ref": "b",
+            "text": "Workers Compensation Poster"
+          },
+          {
+            "ref": "c",
+            "text": "State Wage and Hour (minimum wage)"
+          },
+          {
+            "ref": "B12",
+            "text": "Is the injury record (OSHA 300 Log) maintained up to date with copies at satellite facilities (1904.7)"
+          },
+          {
+            "ref": "B13",
+            "text": "Is Clinic name, address, and phone number posted for after hour use?"
+          },
+          {
+            "ref": "B14",
+            "text": "Are the site emergency exit plans posted throughout the facility? (1910.38)"
+          },
+          {
+            "ref": "B15",
+            "text": "Records present and complete"
+          },
+          {
+            "ref": "a",
+            "text": "Fleet Inspection Log"
+          },
+          {
+            "ref": "b",
+            "text": "OSHA 300 Log"
+          },
+          {
+            "ref": "c",
+            "text": "Employee Observation Log"
+          },
+          {
+            "ref": "d",
+            "text": "Subcontractor / Critical Vendor Log"
+          },
+          {
+            "ref": "e",
+            "text": "Safety Meeting / Training"
+          },
+          {
+            "ref": "f",
+            "text": "Hazard Communications"
+          },
+          {
+            "ref": "g",
+            "text": "Sara Title III"
+          },
+          {
+            "ref": "h",
+            "text": "Volatile Organic Compounds (VOCs)"
+          },
+          {
+            "ref": "i",
+            "text": "Facility Permits"
+          },
+          {
+            "ref": "j",
+            "text": "PPE / Hazard Assessments"
+          },
+          {
+            "ref": "k",
+            "text": "SPCC / SWPPP Plans"
+          },
+          {
+            "ref": "l",
+            "text": "Accident and Injury Data"
+          },
+          {
+            "ref": "m",
+            "text": "Facility Inspections"
+          },
+          {
+            "ref": "n",
+            "text": "Cab Inspections"
+          },
+          {
+            "ref": "o",
+            "text": "Safety Alerts and Safety Alert Standards"
+          },
+          {
+            "ref": "p",
+            "text": "DOT Recordable Accident Logs"
+          },
+          {
+            "ref": "B16",
+            "text": "Are aisle ways and passageways kept clean and in good repair and are there no obstructions across aisle ways that could create a hazard?"
+          },
+          {
+            "ref": "B17",
+            "text": "Are floor openings and platforms or workstations above 48\" or higher guarded by a cover, a guardrail, or equivalent on all sides?"
+          },
+          {
+            "ref": "B18",
+            "text": "Are changes of direction or elevations readily identifiable? (painted yellow)"
+          },
+          {
+            "ref": "B19",
+            "text": "Are stairs adequately lighted, tread and risers uniform from top to bottom, have appropriate handrails and slip resistant surfaces? (1910.24 f)"
+          },
+          {
+            "ref": "B20",
+            "text": "Are \"No Smoking\" signs posted throughout the facility if required by State and Local Law? Designated Smoking Area outside?"
+          },
+          {
+            "ref": "B21",
+            "text": "Are automatic sprinkler fusable links clean, unpainted and undamaged. Is the minimum vertical clearance between automatic sprinklers and material below them at least 18 inches (36 inches for bales)?"
+          },
+          {
+            "ref": "B22",
+            "text": "Is the sprinkler header marked with a tag indicating inspection and service in the last 12 months? (1910.159)"
+          },
+          {
+            "ref": "",
+            "text": "Is the sprinkler or other Fire detection system operational and connected to a Central Station Alarm system?"
+          },
+          {
+            "ref": "B24",
+            "text": "Are Exits marked with appropriate signage (1910.37 b 2)? Are Emergency Exit doors functioning and not locked from the inside? Are interior doors leading to areas that could be mistaken for an exit marked \"Not an Exit\" (1910.37 b 5)"
+          },
+          {
+            "ref": "B25",
+            "text": "Are toilets and washing facilities clean and sanitary with warm water and soap, and means of hand drying? (1910.141)"
+          },
+          {
+            "ref": "B26",
+            "text": "Are an adequate number of waste disposal containers provided? Are they covered and emptied daily? (1910.141)"
+          },
+          {
+            "ref": "B27",
+            "text": "Are lunch rooms and break rooms kept clean?"
+          },
+          {
+            "ref": "B28",
+            "text": "Is ventilation system functioning adequately?"
+          }
+        ]
+      },
+      {
+        "title": "Personal Protective Equipment / First Aid",
+        "items": [
+          {
+            "ref": "C1.1",
+            "text": "Are protective eye and face equipment worn where required and are safety glasses worn over corrective lenses or do corrective lenses conform to ANSI Z87.I - 1968? (1910.133 a 1) (1910.133 a 3)"
+          },
+          {
+            "ref": "C1.2",
+            "text": "Is there a supply of loaner safety glasses located at all entrance points to the shop? (Corporate Standard) Are safety glass cleaning stations located in the shop? (Eye and Face Protection - Safety Glasses)"
+          },
+          {
+            "ref": "C1.3",
+            "text": "Are caution signs present at entrance points and at machines generating eye and face hazards, which state \"Caution Eye Protection Required\"? (Corporate Standard)(Eye and Face Protection - Safety Glasses) (1910.145 c 3) (1910.133 a) (1910.252 b 2) (1910.25"
+          },
+          {
+            "ref": "C1.4",
+            "text": "Is a safe passage area clearly marked by a painted yellow line?"
+          },
+          {
+            "ref": "C1.5",
+            "text": "Are employees who are exposed ot the hazards created by welding, cutting or brazing operations protected by appropriate personal protective equipment?"
+          },
+          {
+            "ref": "C1.6",
+            "text": "Is there a supply of vests available in the truck and container shop for use by mechanics and welders while outside of shop area?"
+          },
+          {
+            "ref": "C1.7",
+            "text": "Are suitable gloves, hearing protections, and protective clothing available to be worn as necessary? (1910.132 a)"
+          },
+          {
+            "ref": "C1.8",
+            "text": "Are appropriate safety glasses, face shields, etc. used while using hand tools or abrasive wheels or equipment which might produce flying materials or be subject to breakage? (1910.132 a)"
+          },
+          {
+            "ref": "C1.9",
+            "text": "Are respirators clean, properly stored, and respirator program in effect?(1910.134 h1)"
+          },
+          {
+            "ref": "C1.10",
+            "text": "Is there a clean, accessible, functioning eye wash station in any area where hazardous or corrosive materials are used? (1910.151)"
+          },
+          {
+            "ref": "C1.11",
+            "text": "If emergency showers are present are they clean, operable and accessible? (1910.151 c)"
+          },
+          {
+            "ref": "C1.12",
+            "text": "Are first aid kits available and maintained? Any items expired? No oral meds? (1910.151 b)"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Fire Protection",
+        "items": [
+          {
+            "ref": "C2.1",
+            "text": "Are portable fire extinguishers kept at their designated places at all times (accessible, mounted, charged, pinned and sealed)? Is each extinguisher marked with sign and does each sign have a corresponding extinguisher? Are annual and monthly inspections documented on the tag? Is there an adequate number of extinguishers for the prevailing fire hazards? Are extinguishers free from obstructions to access? (1910.157)"
+          },
+          {
+            "ref": "C2.2",
+            "text": "Have all Fire Extinguishers been inspected and serviced within the past 12 months by a licensed Fire Protection Company? (1910.151 e 3)"
+          },
+          {
+            "ref": "C2.3",
+            "text": "Are reels and cabinets for hose systems in good working order, conspicuously identified accessible and used only as fire equipment? (1910.125 c 1)"
+          },
+          {
+            "ref": "C2.4",
+            "text": "No Smoking signs posted in: Fuel Area, Battery Charging Area, Paint Booths, Storage? (1910.106 b 6)"
+          },
+          {
+            "ref": "C2.5",
+            "text": "Test Emergency Lighting Equipment to ensure proper working order."
+          }
+        ]
+      },
+      {
+        "title": "Shop - Electrical / Lighting",
+        "items": [
+          {
+            "ref": "C3.1",
+            "text": "Are interior lights adequate and all in working order?"
+          },
+          {
+            "ref": "C3.2",
+            "text": "Is clear working space in front of an electrical panel maintained at no less than 36\"? (1910.303 h 3 i)"
+          },
+          {
+            "ref": "C3.3",
+            "text": "Are all live parts of electrical equipment operating at 50 volts or more guarded against accidental contact? (1910.303 g 2)"
+          },
+          {
+            "ref": "C3.4",
+            "text": "Are panel box doors and individual electrical circuit breakers (and fuel pump switches) legibly identified? (1910.303 f)"
+          },
+          {
+            "ref": "C3.5",
+            "text": "Are electric cords, extension cords, and trouble lights of approved 3-wire ground type and in good condition? (1910.304 f) (1910.305 a 2 iii c)"
+          },
+          {
+            "ref": "C3.6",
+            "text": "Are overhead doors and controls in good working order? (1910.305 g 1 iii)"
+          },
+          {
+            "ref": "C3.7",
+            "text": "Are outlet boxes in good condition? Are all outlets grounded? Are GFCI outlets used in wet or damp areas? (1910.305 b) (1910.303 g 2) (1910.304 f 5 iv b)"
+          },
+          {
+            "ref": "C3.8",
+            "text": "Is a positive \"Lockout / Tagout\" system provided to render machines, trucks, and equipment inoperable while repairs or adjustments are being made? Are locks individually keyed and under the exclusive control of the employee? Is there a means of identifying the individual who placed the lock(tag)? (29 CFR 1910.147)"
+          },
+          {
+            "ref": "C3.9",
+            "text": "Is the Hazard Communication Program complete and are the Material Safety Data Sheets present and available? Is the Chemical Inventory present and complete? (1910.1200 e 1 i) (1910.1200 g 10)"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Walking and Working Surfaces",
+        "items": [
+          {
+            "ref": "C4.1",
+            "text": "Are floor openings and platforms or workstations above 48\" or higher guarded by a cover, a guardrail, or equivalent on all sides? (1910.23 c 1)"
+          },
+          {
+            "ref": "C4.2",
+            "text": "Are grates or covers over floor openings such as floor drains secured?(1910.23 a8 iii)"
+          },
+          {
+            "ref": "C4.3",
+            "text": "Are step risers on stairs uniform from top to bottom? (1910.124) Are steps on stairs and stairways designed to provide a surface that renders them slip resistant? (1910.24 f)"
+          },
+          {
+            "ref": "C4.4",
+            "text": "Are aisles and passageways kept clear and marked as appropriate? (1910.22 b)"
+          },
+          {
+            "ref": "C4.5",
+            "text": "Are wet surfaces cleaned up or covered with non-slip materials? (1910.22 a 2)"
+          },
+          {
+            "ref": "C4.6",
+            "text": "Are changes of direction or elevations readily identifiable? (painted yellow)"
+          },
+          {
+            "ref": "C4.7",
+            "text": "Are aisles and walkways protected from potential hazards of adjacent work areas? Are aisles and passageways kept clean and in good repair and are there no obstructions across aisles that could create a hazard? (1910.176a)"
+          },
+          {
+            "ref": "C4.8",
+            "text": "Are floor loading capacity limits posted for 2nd floor storage? (1910.22 d) Are there toe boards and guard rails for second floor storage? (1910.23 e 4)"
+          },
+          {
+            "ref": "C4.9",
+            "text": "Is the exit pathway clearly marked by signs from all points within the working area? Are doors which could be mistaken for an exit identified with signs which read \"Not and Exit\"? (1910.37 b)"
+          },
+          {
+            "ref": "C4.10",
+            "text": "Where mechanical handling equipment is used are there sufficient safe clearances allowed for aisles, at loading docks, through doorways and wherever a turn or passage must be made?"
+          },
+          {
+            "ref": "C4.11",
+            "text": "Does the storage of material not create a hazard - stacked, blocked, interlocked and limited in height to ensure they are stable and secured against sliding or collapse? (1910.176 b)"
+          },
+          {
+            "ref": "C4.12",
+            "text": "Are unused portions of service pits and pits not actually in use either covered or protected by guardrails or equivalent? Do all PM pits have a 4\" toe board? Are PM pits equipped with explosion proof wiring and lighting? (1910.22 c)(1910.307 b)"
+          },
+          {
+            "ref": "C4.13",
+            "text": "Manhole and other confined spaces clearly marked? (1910.146 c)"
+          },
+          {
+            "ref": "C4.14",
+            "text": "Are storage areas kept free from accumulation of materials that constitute hazards from tripping, fire, explosion or harborage of pests? (1910.176 c)"
+          },
+          {
+            "ref": "C4.15",
+            "text": "Is there a fall protection system available to employees working on top of trucks?"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Ladders",
+        "items": [
+          {
+            "ref": "C5.1",
+            "text": "Are portable ladders in good condition with slip proof feet and no cracks, paint or splinters on the rungs? (1910.26 c)"
+          },
+          {
+            "ref": "C5.2",
+            "text": "Are fixed metal ladders painted or treated to resist corrosion and rusting?"
+          },
+          {
+            "ref": "C5.2",
+            "text": "Is the fixed ladder's clearance distance at least 36\" between the nearest permanent object and centerline of the rungs?"
+          },
+          {
+            "ref": "C5.3",
+            "text": "Are all portable ladders properly labeled and stored upright with chains."
+          }
+        ]
+      },
+      {
+        "title": "Shop - Cranes, Hoists, and Slings",
+        "items": [
+          {
+            "ref": "C6.1",
+            "text": "Are all bolts or rivets properly secured? (1910.179 j 3 ii)"
+          },
+          {
+            "ref": "C6.2",
+            "text": "Is there a documented inspection program with Annual certifications and monthly inspections in file? (1910.179 j) (1910.179 m)"
+          },
+          {
+            "ref": "C6.3",
+            "text": "Is the load rating clearly marked on each side of the crane? (1910.179 b 5)"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Flammables / Liquid Storage",
+        "items": [
+          {
+            "ref": "C7.1",
+            "text": "Spray booths have explosive proof wires, adequate ventilation, no smoking signage, and an operational fire suppression system? Filters are regularly checked and changed? (1910.107 b)"
+          },
+          {
+            "ref": "C7.2",
+            "text": "Are only approved metal storage cans used for flammable liquids, including gasoline? Are all containers marked as to contents? (1910.106 d)"
+          },
+          {
+            "ref": "C7.3",
+            "text": "Are flammable and combustible liquids (fuels, solvents, paints, etc.) stored in a UL/FM approved flammable storage cabinet? (1910.106 d)"
+          },
+          {
+            "ref": "C7.4",
+            "text": "Parts washer is in good working order, with fusible link attached and no obstructions for lid closure? Protective gloves and eye protection available? (CCR article 36)"
+          },
+          {
+            "ref": "C7.5",
+            "text": "Are drums of petroleum products kept in secondary containment?"
+          },
+          {
+            "ref": "C7.6",
+            "text": "Are spills cleaned up in the liquid storage areas?"
+          },
+          {
+            "ref": "C7.7",
+            "text": "Are closable containers provided for soiled rag disposal? (1910.106 h 8 iii)"
+          },
+          {
+            "ref": "C7.8",
+            "text": "Is pressure washer in good working order? (hoses, vents, fuel lines)"
+          },
+          {
+            "ref": "C7.9",
+            "text": "No Smoking signs, adequate ventilation, eye and face protection and no spark or flame sources in battery charging/storage area?"
+          },
+          {
+            "ref": "C7.10",
+            "text": "Is MSDS book available to employees, complete and updated? (1910.1200)"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Compressors",
+        "items": [
+          {
+            "ref": "C8.1",
+            "text": "Do all compressors prominently display a sign stating \"Caution - this machine stars automatically\"? (CCR 3320)"
+          },
+          {
+            "ref": "C8.2",
+            "text": "Are compressors equipped with pressure relief valves, pressure gauge, and spring-loaded safety valves, a totally enclosed belt drive system, and are air filters installed and maintained on the compressor intake? (CCR 3320)"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Welding Equipment",
+        "items": [
+          {
+            "ref": "C9.1",
+            "text": "Are welder cables, clamps and guards in good condition. (1910.254) Are torch hoses, regulators and valves equipped with anti-flashback valves? (1910.253 b 2 ii)"
+          },
+          {
+            "ref": "C9.2",
+            "text": "Are \"Hot Work Permits\" used when welding is conducted outside of designated areas? (1910.252 a 2 iv) Is the designated welding area at least 35 feet from combustible materials, spray painting, etc.? (1910.253)"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Compressed Gas Cylinders",
+        "items": [
+          {
+            "ref": "C10.1",
+            "text": "Are all stored cylinders effectively secured to prevent tipping? Are cylinder valve protectors in place unless in use? (1910.253 b 2 ii)"
+          },
+          {
+            "ref": "C10.2",
+            "text": "Are cylinders legibly marked and labeled to clearly identify the gas contained? (1910.253 b 1 ii)"
+          },
+          {
+            "ref": "C10.3",
+            "text": "Are oxygen and acetylene (or other fuel) tanks stored separated by 20' or with a 5' high 1/2 hour fire resistant wall between oxygen and fuels? (1910.253 b 4 iii)"
+          },
+          {
+            "ref": "C10.4",
+            "text": "Are cylinders stored in areas which are protected from heat and flame, located at least 25' from electrical equipment and people an at least 20' from flammable liquids or combustible materials? (1910.253 b 2 ii)"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Machine Guarding",
+        "items": [
+          {
+            "ref": "C11.1",
+            "text": "Is tire repair equipment in good working order?"
+          },
+          {
+            "ref": "C11.2",
+            "text": "Are chop saws equipped with a retracting blade guard and functioning spring return? Do they have proper feet to prevent movement while in use? (1910.212 a 1)"
+          },
+          {
+            "ref": "C11.3",
+            "text": "Are power machines, shears, grinders, saws, drill presses, etc. properly anchored, maintained, and guarded? (1910.212 b)"
+          },
+          {
+            "ref": "C11.4",
+            "text": "Do fixed grinders have side guards that cover the spindle, nut, and flange and 75% of the wheel diameter (1910.215 a 4), Tool rests adjusted to within 1/8\"? (1910.215 a 2) Tongue guard adjusted to within 1/4\" of wheel? (1910.215 b 9)"
+          },
+          {
+            "ref": "C11.5",
+            "text": "Before new abrasive wheels are mounted are they visually inspected and ring tested? (1910.215 d)"
+          },
+          {
+            "ref": "C11.6",
+            "text": "Is the proper eye protection caution sign and full face shield located at grinder? (1910.133 a)"
+          },
+          {
+            "ref": "C11.7",
+            "text": "Have all hazards from points of operation, ingoing nip points, rotating parts, flying chips, sparks, moving chains, gears, pulleys and belts (1910.212 a), including fan blades(within 7 feet of floor)(1910.212 a 5) been guarded?"
+          }
+        ]
+      },
+      {
+        "title": "Shop - Tools and Jacks",
+        "items": [
+          {
+            "ref": "C12.1",
+            "text": "Are all tools and equipment (both company and employee owned) in good condition and used with the correct handle, shield, guard, or attachment, recommended by the manufacturer? (1910.242 a)"
+          },
+          {
+            "ref": "C12.2",
+            "text": "Are hand tools such as chisels, punches, wrenches, etc. which are worn, bent or mushroomed during use, reconditioned or replaced as necessary? (1910.242 a)"
+          },
+          {
+            "ref": "C12.3",
+            "text": "Are appropriate handles used on files and similar tools?"
+          },
+          {
+            "ref": "C12.6",
+            "text": "Are all cord-connected, electrically operated tools and equipment effectively grounded or of the approved double insulated type? (1910.243 a 5)"
+          },
+          {
+            "ref": "C12.7",
+            "text": "Are pneumatic and hydraulic hoses on power operated tools free of deterioration or damage? (1910.243 b 2)"
+          },
+          {
+            "ref": "C12.8",
+            "text": "Are all jacks and jack stands in good condition with OEM pin and labeled with load capacity? (1910.244 a)"
+          }
+        ]
+      },
+      {
+        "title": "HEAVY EQUIPMENT / FORKLIFT / INDUSTRIAL TRUCK",
+        "items": [
+          {
+            "ref": "D1",
+            "text": "Are all nameplates and markings in place and legible on powered industrial trucks? (1910.178 a 6)"
+          },
+          {
+            "ref": "D2",
+            "text": "Are industrial trucks kept in a clean condition, free of lint, excess oil and grease? (1910.178 q 10)"
+          },
+          {
+            "ref": "D3",
+            "text": "Is directional lighting provided on each industrial truck?"
+          },
+          {
+            "ref": "D4",
+            "text": "Does equipment have a warning horn, or other device which can be clearly heard above the normal noise in the areas where operated?"
+          },
+          {
+            "ref": "D5",
+            "text": "Does equipment have a reverse signal alarm audible above the surrounding noise level?"
+          },
+          {
+            "ref": "D6",
+            "text": "Are the brakes on the equipment capable of bringing the vehicle to a complete and safe stop when fully loaded and does the parking brake effectively prevent the vehicle from moving when unattended? (1910.178 a 2)"
+          },
+          {
+            "ref": "D7",
+            "text": "Does the equipment have a working seatbelt and working strobe? (1910.178 a 2)"
+          },
+          {
+            "ref": "D8",
+            "text": "Is equipment driven by trained and authorized personnel only? (1910.178 i)"
+          },
+          {
+            "ref": "D9",
+            "text": "Is an examination of equipment made at least daily and after each shift and is a Vehicle Condition Report completed? (1910.178 q 7)"
+          },
+          {
+            "ref": "D10",
+            "text": "Is equipment left in an off position when unattended or when the operator is more than 25 feet from the vehicle? (1910.178 m 5 i)"
+          },
+          {
+            "ref": "D11",
+            "text": "Is the rated capacity of the equipment clearly posted within the view of the operator? (1910.178 a 2)"
+          },
+          {
+            "ref": "D12",
+            "text": "Does all equipment have a mounted, inspected and pinned fire extinguisher? (1910.178 a2)"
+          },
+          {
+            "ref": "D13",
+            "text": "Is the overhead guard clear of obstruction, enabling the operator to view raised loads? (1910.178 e)"
+          },
+          {
+            "ref": "D14",
+            "text": "Does the operator have a grease gun and are regular grease requirements being met?"
+          },
+          {
+            "ref": "D15",
+            "text": "Are radiators cleaned daily or as required?"
+          },
+          {
+            "ref": "D16",
+            "text": "Do tracked machines have a clean carriage?"
+          },
+          {
+            "ref": "D17",
+            "text": "Are compactor wheel teeth worn?"
+          },
+          {
+            "ref": "D18",
+            "text": "Are bucket cutting edges and teeth worn?"
+          },
+          {
+            "ref": "D19",
+            "text": "Are there signs of equipment abuse or damage?"
+          },
+          {
+            "ref": "D20",
+            "text": "Does all equipment requiring cameras have them installed and operational?"
+          },
+          {
+            "ref": "D21",
+            "text": "Does all equipment have a functioning beacon?"
+          },
+          {
+            "ref": "D22",
+            "text": "Are all required fire suppression systems in place and operational?"
+          },
+          {
+            "ref": "A22",
+            "text": "Auto fill clip on fuel nozzle at Fueling Station"
+          },
+          {
+            "ref": "C1.1",
+            "text": "Eye Protection Sign needed at Chopsaw; Face Shield needs to be secured"
+          },
+          {
+            "ref": "C1.9",
+            "text": "Respirator Storage not inspected"
+          },
+          {
+            "ref": "C1.10",
+            "text": "Eye Wash Station not inpsected weekly"
+          },
+          {
+            "ref": "C2.1",
+            "text": "2 Fire Extinguishers not mounted in Weld Shop"
+          },
+          {
+            "ref": "C2.3",
+            "text": "Remove Fire Hose sign on outside of Weld Shop"
+          },
+          {
+            "ref": "C3.7",
+            "text": "Outlet box loose in maintenance shop"
+          },
+          {
+            "ref": "C7.1",
+            "text": "Could not locate inspection log of air filters"
+          },
+          {
+            "ref": "C7.2",
+            "text": "Remove Flammable Cans from cardboard boxes when stored in Flammable Cabinet"
+          },
+          {
+            "ref": "C7.3",
+            "text": "Flammable Cabinet in Weld Shop not self closing"
+          },
+          {
+            "ref": "C11.3",
+            "text": "Replace face plates on vice; bolts loose"
+          },
+          {
+            "ref": "C12.7",
+            "text": "PSI Posted at Air Hose"
+          },
+          {
+            "ref": "C12.8",
+            "text": "Jack stands need pins made by manufacturer"
+          },
+          {
+            "ref": "D13",
+            "text": "FKXL9E33 overhead guard not clean; obstructs clear view"
+          }
+        ]
+      }
+    ]
+  },
+  "mrf": {
+    "title": "Facility Site Check \u2014 MRF Master Form",
+    "sections": [
+      {
+        "title": "Exterior & Yard Condition",
+        "items": [
+          {
+            "ref": "X1",
+            "text": "Is the general appearance of grounds/ landscape in good condition?"
+          },
+          {
+            "ref": "X2",
+            "text": "Are no smoking signs clearly posted and designated smoking areas identified?"
+          },
+          {
+            "ref": "X3",
+            "text": "Are required postings at the entrance gate with emergency numbers posted?"
+          },
+          {
+            "ref": "X4",
+            "text": "Are \u201cNo Trespassing\u201d signs posted at the main entrance and exterior fencing?"
+          },
+          {
+            "ref": "X5",
+            "text": "Are fences, gate and locks in good condition?"
+          },
+          {
+            "ref": "X6",
+            "text": "Material expose to the elements have quick access to tarps in inclement weather?"
+          },
+          {
+            "ref": "X7",
+            "text": "Trash, debri, Junk and/or scrap material is disposed of in a timely manner?"
+          },
+          {
+            "ref": "X8",
+            "text": "Exterior Building Signs, Walls, Panels, Doors, and rails/bollards free of damaged, good paint, and in good working order?"
+          },
+          {
+            "ref": "X9",
+            "text": "Curbs and paved surfaces free of potholes, debris and other trip slip and fall hazards?"
+          },
+          {
+            "ref": "X10",
+            "text": "Do stairways having 4 or more steps have a secured guard rail?"
+          },
+          {
+            "ref": "X11",
+            "text": "Walkways and Steps in good repair?(1910.137)"
+          },
+          {
+            "ref": "X12",
+            "text": "Are changes of direction or elevations readily identifiable? (painted yellow)"
+          },
+          {
+            "ref": "X13",
+            "text": "Containers neatly stored and safely stacked? No trash or standing water in containers?"
+          },
+          {
+            "ref": "X14",
+            "text": "Are all water lines, air lines, and conduits in good condition?"
+          },
+          {
+            "ref": "X15",
+            "text": "Storm Water BMP\u2019s in place? Conduct Storm Water inspection monthly with facility inspection. File in SWPP Plan."
+          },
+          {
+            "ref": "X16",
+            "text": "Rain water diversion system working properly?"
+          },
+          {
+            "ref": "X17",
+            "text": "Landscaping? Are all planters and green areas clean and properly maintained?"
+          }
+        ]
+      },
+      {
+        "title": "Housekeeping, General Office, Postings",
+        "items": [
+          {
+            "ref": "H1",
+            "text": "Are interior lights adequate and all in working order? Do emergency lights work when tested?"
+          },
+          {
+            "ref": "H2",
+            "text": "Is clear working space in front of an electrical panel maintained at no less than 36\u201d? (1910.303)"
+          },
+          {
+            "ref": "H3",
+            "text": "Are outlet boxes in good condition? GFCI outlets used in wet or damp areas?"
+          },
+          {
+            "ref": "H4",
+            "text": "Are Panel box doors and individual electrical circuit breakers legibly identified (1910.303)"
+          },
+          {
+            "ref": "H5",
+            "text": "Are electric cords, extension cords, and trouble lights of approved 3-wire ground type and in good condition? Is there any temporary wiring that should be permanent? ( 1910.305)"
+          },
+          {
+            "ref": "H6",
+            "text": "Are aisles and passageways kept clear and marked as appropriate? No obstructions? No unsecured hoses or cords?(1910.22)"
+          },
+          {
+            "ref": "H7",
+            "text": "Is the site clear of any scavanged material in the work areas, vehicles, and or storage areas?"
+          },
+          {
+            "ref": "H8",
+            "text": "Is every exit sign self- illuminated and clearly marked by the word, \u201cEXIT\u201d in legible letters not less than 6 inches high and the width \u00be inches wide?"
+          },
+          {
+            "ref": "H9",
+            "text": "Are interior doors leading to areas that could be mistaken for an exit, marked \u201cNot an Exit\u201d ( 1910.37)"
+          },
+          {
+            "ref": "H10",
+            "text": "Are lunch rooms, rest rooms, and service rooms clean and sanitary with warm water and soap, and means of hand drying? (190.141)"
+          },
+          {
+            "ref": "H11",
+            "text": "\u201cUse of Microwave Oven\u201d signage posted outside of entrance points where present?"
+          },
+          {
+            "ref": "H12",
+            "text": "If portable heaters are used, is the area free from paper clutter and the heater has shut off if knocked over?"
+          },
+          {
+            "ref": "H13",
+            "text": "Are materials and supplies kelp neatly stacked and organized? Storage does not pose a falling hazard?"
+          },
+          {
+            "ref": "H14",
+            "text": "Are the site emergency exit plans posted throughout the facility? (1910.38)"
+          },
+          {
+            "ref": "H15",
+            "text": "Are first aid kits available and maintained? Any items expired? No Oral Meds? (1910.151) Trained personnel posted?"
+          },
+          {
+            "ref": "H21",
+            "text": "Company required postings?"
+          },
+          {
+            "ref": "H22",
+            "text": "Federal/State Required Posting"
+          },
+          {
+            "ref": "H23",
+            "text": "Records present and complete - TPR, Load Counts, Special Occurances, Odor, SPCC/ SWPPP Plans and inspections, etc..."
+          }
+        ]
+      },
+      {
+        "title": "Scale House",
+        "items": [
+          {
+            "ref": "SH1",
+            "text": "Scale House - Are Weighmaster registered on the State Weight & Measures Document"
+          },
+          {
+            "ref": "SH2",
+            "text": "Scale House - Are Cameras working?"
+          },
+          {
+            "ref": "SH3",
+            "text": "Scale House - Are CASH machines and tills in good work order?"
+          },
+          {
+            "ref": "SH4",
+            "text": "Scale House - Scales calibrated and documented?"
+          },
+          {
+            "ref": "SH5",
+            "text": "Scale House - Radiation Monitors Operational?"
+          }
+        ]
+      },
+      {
+        "title": "Personal Protective Equipment",
+        "items": [
+          {
+            "ref": "PPE1",
+            "text": "Is the Global Harmonization Program complete and are the Safety Data Sheets present and accessible to employees? Is the Chemical Inventory maintained? (30 year archive)"
+          },
+          {
+            "ref": "PPE2",
+            "text": "Is the chemical inventory reviewed and documented annually? 30 year archive?"
+          },
+          {
+            "ref": "PPE3",
+            "text": "Is PPE functional and in good repair? Used when required?"
+          },
+          {
+            "ref": "PPE4",
+            "text": "Is there a supply of loaner safety glasses located in the shop?"
+          },
+          {
+            "ref": "PPE5",
+            "text": "Are caution signs present at entrance points and at machines generating eye and face hazards, which state; \u201cCaution Eye Protection Required\u201d?"
+          },
+          {
+            "ref": "PPE6",
+            "text": "Do employees who wear corrective lenses use only ANSI approved safety glasses or goggles? (1910.133)"
+          },
+          {
+            "ref": "PPE7",
+            "text": "Is a safe passage area clearly marked by a painted yellow line?"
+          },
+          {
+            "ref": "PPE8",
+            "text": "Are employees who are exposed to the hazards created by welding, cutting or brazing operations protected by appropriate personal protective equipment?"
+          },
+          {
+            "ref": "PPE9",
+            "text": "Are suitable gloves, hearing protection, and protective clothing available to be worn as required?"
+          },
+          {
+            "ref": "PPE10",
+            "text": "Are required PPE signs posted outside of the entrance points where required?"
+          },
+          {
+            "ref": "PPE11",
+            "text": "Are appropriate safety glasses or face shields used while using hand tools or abrasive wheels or equipment which might produce flying materials or be subject to breakage?"
+          },
+          {
+            "ref": "PPE12",
+            "text": "Are respirators; clean, inspected, properly stored, and respirator program in effect?"
+          },
+          {
+            "ref": "PPE13",
+            "text": "Is there a clean, accessible, functioning, labeled eyewash station in any area where hazardous or corrosive materials are used? (1910.151 Battery Storage?"
+          },
+          {
+            "ref": "PPE14",
+            "text": "Are plumbed eye wash stations inspected weekly? (Monthly for self-contained)?"
+          },
+          {
+            "ref": "PPE15",
+            "text": "Are first aid kits available and maintained? Any items expired? No Oral Meds? Trained personnel posted?"
+          },
+          {
+            "ref": "PPE16",
+            "text": "Is compressed air used for cleaning? Is a restrictor in place for 30 PSI? Are goggles or glasses required when cleaning with compressed air?"
+          },
+          {
+            "ref": "PPE17",
+            "text": "Proper ventilation for truck repair with idling vehicles?"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Fire Protection",
+        "items": [
+          {
+            "ref": "FP1",
+            "text": "Are portable fire extinguishers kept at their designated places at all times (accessible, mounted, charged, pinned and sealed)? Is each extinguisher marked with a sign and do each sign have a corresponding extinguisher? (1910.157)"
+          },
+          {
+            "ref": "FP2",
+            "text": "Is there an adequate number of extinguishers for the prevailing fire hazards?"
+          },
+          {
+            "ref": "FP3",
+            "text": "Are annual certifications and monthly inspections documented on the tag?"
+          },
+          {
+            "ref": "FP4",
+            "text": "Are extinguishers free from obstructions to access and located within 75 feet or less (1910.157)"
+          },
+          {
+            "ref": "FP5",
+            "text": "Spray booths have explosive proof wires, adequate ventilation, no smoking signage, and an operational fire suppression system? Filters are regularly checked and changed?"
+          },
+          {
+            "ref": "FP6",
+            "text": "Filters are regularly checked and changed? Properly disposed of?"
+          },
+          {
+            "ref": "FP7",
+            "text": "Are only approved metal storage cans used for flammable liquids, including gasoline? Are all containers marked as to contents? (1910.106d)"
+          },
+          {
+            "ref": "FP8",
+            "text": "Are flammable and combustible liquids (fuels, solvents, paints, etc.) stored in a UL/FM approved flammable, self-closing storage cabinet? (1910.106d)"
+          },
+          {
+            "ref": "FP9",
+            "text": "Are bulk drums of flammable liquids grounded and bonded to containers during dispensing?"
+          },
+          {
+            "ref": "FP10",
+            "text": "Parts washer is in good working order, with fusible link attached and no obstructions for lid closure?"
+          },
+          {
+            "ref": "FP11",
+            "text": "Are drums of petroleum products kept in secondary containment which will hold the capacity of potential spilled drums stored?"
+          },
+          {
+            "ref": "FP12",
+            "text": "Are spills cleaned in a timely manner?"
+          },
+          {
+            "ref": "FP13",
+            "text": "Are closable containers provided for soiled rag disposal?"
+          },
+          {
+            "ref": "FP14",
+            "text": "Are portable torch set hoses free of grease and oil accumulation?"
+          },
+          {
+            "ref": "FP15",
+            "text": "No smoking signs, adequate ventilation, eye and face protection and no spark or flame sources in battery charging/storage areas?"
+          },
+          {
+            "ref": "FP16",
+            "text": "Are fire reels and cabinets for fire hose systems in good working order, conspicuously identified accessible and used only as fire equipment?"
+          },
+          {
+            "ref": "FP17",
+            "text": "Are \u201cNo Smoking Signs: posted in: Fuel Area, Battery Charging Area, Paint Booths, Welding Area and Flammable Storage Areas?"
+          },
+          {
+            "ref": "FP18",
+            "text": "Batteries stored on secondary containment and under cover?"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Electrical & Lighting",
+        "items": [
+          {
+            "ref": "E1",
+            "text": "Are interior lights adequate and all in working order?"
+          },
+          {
+            "ref": "E2",
+            "text": "Does emergency exit lighting work when tested?"
+          },
+          {
+            "ref": "E3",
+            "text": "Is clear working space in front of an electrical panel maintained at no less than 36\u201d?"
+          },
+          {
+            "ref": "E4",
+            "text": "Are all live parts of electrical equipment operating at 50 volts or more guarded against accidental contact?"
+          },
+          {
+            "ref": "E5",
+            "text": "Are Panel box doors and individual electrical circuit breakers and fuel pump switches legibly identified? Panel boxes close tightly? Knockouts are covered? Any missing panel doors or covers for equipment?"
+          },
+          {
+            "ref": "E6",
+            "text": "Are extension cords used only for temporary applications?"
+          },
+          {
+            "ref": "E7",
+            "text": "Are electric cords, extension cords, and trouble lights are of approved 3-wire ground type and in good condition and have a grounding connector? Are all conduits intact with no exposed wiring?"
+          },
+          {
+            "ref": "E8",
+            "text": "Are overhead doors and controls in good working order?"
+          },
+          {
+            "ref": "E9",
+            "text": "Are outlet boxes in good condition with covers and plates? Are all outlets grounded? Are GFCI outlets installed in wet or damp areas?"
+          },
+          {
+            "ref": "E10",
+            "text": "Are all cord-connected, electrically-operated tools and equipment effectively grounded or of the approved double insulated type?"
+          },
+          {
+            "ref": "E11",
+            "text": "Are pneumatic and hydraulic hoses on power-operated tools free of deterioration or damage?"
+          },
+          {
+            "ref": "E12",
+            "text": "Are box covers clearly marked, \u201cHigh Voltage\u201d?"
+          },
+          {
+            "ref": "E13",
+            "text": "Is a positive \u201cLockout/Tag out\u201d system provided to render machines, trucks, and equipment inoperable while repairs or adjustments are being made? Are locks individually keyed and under the exclusive control of the employee. Is there a means of identifying the individual who placed the lock and tag? (29 CFR 1910.147)"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Walking & Working Surfaces",
+        "items": [
+          {
+            "ref": "WW1",
+            "text": "Are floor openings and platforms or workstations 48\u201d or higher guarded by a cover, a guardrail, or equivalent on all side?(1910.23)"
+          },
+          {
+            "ref": "WW2",
+            "text": "Are grates or covers over floor openings such as floor drains, secured? (1910.23a8)"
+          },
+          {
+            "ref": "WW3",
+            "text": "Are step risers on stairs uniform from top to bottom?(1910.124) Are steps on stairs and stairways designed to provide a surface that renders them slip resistant?(1910.24f)"
+          },
+          {
+            "ref": "WW4",
+            "text": "Are aisles and passageways kept clear and marked as appropriate? No obstructions? (1910.22)"
+          },
+          {
+            "ref": "WW5",
+            "text": "Are changes of direction or elevations readily identifiable? (painted yellow)"
+          },
+          {
+            "ref": "WW6",
+            "text": "Are aisles and walkways protected from potential hazards of adjacent work areas?"
+          },
+          {
+            "ref": "WW7",
+            "text": "Are floor loading capacity limits posted for 2nd floor storage?(1910.22d)"
+          },
+          {
+            "ref": "WW8",
+            "text": "Is the exit pathway clearly marked by signs from all points within the working area?(1910.36b) Are doors which could be mistaken for an exit identified with signs which read, \u201cNot an Exit\u201d"
+          },
+          {
+            "ref": "WW9",
+            "text": "Where mechanical handling equipment is used, are there sufficient safe clearances allowed for aisles, at loading docks, through doorways and wherever a turn or passage must be made?"
+          },
+          {
+            "ref": "WW10",
+            "text": "Does the storage of material not create a hazard - stacked, blocked, interlocked and limited in height to ensure they are stable and secured against sliding or collapse?(1910.76b)"
+          },
+          {
+            "ref": "WW11",
+            "text": "Does every platform of 4 feet or more have a standard rail, mid rail and toe board?"
+          },
+          {
+            "ref": "WW12",
+            "text": "Are storage areas kept free from accumulation of materials that constitute hazards from tripping, fire, explosion or harborage of pests?(1910.176c)"
+          },
+          {
+            "ref": "WW13",
+            "text": "Is there a fall protection system available to employees working on top of elevated areas?"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Ladders",
+        "items": [
+          {
+            "ref": "L1",
+            "text": "Are portable ladders in good condition with slip proof feet and no cracks, dents, paint or splinters on the rungs?( 1910.24, 1910.26)"
+          },
+          {
+            "ref": "L2",
+            "text": "Are portable ladders kept free from oil and grease accumulation on the rungs?"
+          },
+          {
+            "ref": "L3",
+            "text": "Are portable ladders stored upright and secured with a chain to prevent falling over?"
+          },
+          {
+            "ref": "L4",
+            "text": "Are portable ladders inspected monthly and have weight capacity and warning labels?"
+          },
+          {
+            "ref": "L5",
+            "text": "Are defective ladders made unusable before discarding?"
+          },
+          {
+            "ref": "L6",
+            "text": "Is the fixed ladder\u2019s clearance distance at least 36 inches between the nearest permanent object and the centerline of the rungs?"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Cranes, Hoists, & Slings",
+        "items": [
+          {
+            "ref": "C1",
+            "text": "Is the crane visually inspected prior to use and only operated by trained personnel?"
+          },
+          {
+            "ref": "C2",
+            "text": "Is there any evidence of deformed, cracked, corroded members or leakage in lines, tanks, valves and drain pumps?"
+          },
+          {
+            "ref": "C3",
+            "text": "Are all bolts or rivets properly secured?"
+          },
+          {
+            "ref": "C4",
+            "text": "Any evidence of worn, cracked or distorted parts: Pins, bearings, shafts, gears, rollers, locking and clamping devices?"
+          },
+          {
+            "ref": "C5",
+            "text": "Is there a documented inspection program with Annual Certifications by a qualified third party?"
+          },
+          {
+            "ref": "C6",
+            "text": "Is the load rating clearly marked on each side of the equipment? (1910.179b)"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Air Compressors",
+        "items": [
+          {
+            "ref": "AC1",
+            "text": "Do all compressors prominently display a sign stating, \"Caution- This Machine Starts Automatically\"?"
+          },
+          {
+            "ref": "AC2",
+            "text": "Do all compressors have the permit posted?"
+          },
+          {
+            "ref": "AC3",
+            "text": "Are compressors equipped with pressure relief valves, pressure gauge, and spring-loaded safety valves, a totally enclosed, guarded belt drive system, and are air filters installed and maintained on the compressor intake?"
+          },
+          {
+            "ref": "AC4",
+            "text": "Are all air lines fixed piping with proper fittings and no leaks?"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Welding & Torching Equipment",
+        "items": [
+          {
+            "ref": "W1",
+            "text": "Are welder cables, clamps and guards in good condition and are torch hoses, regulators and valves equipped with anti-flash back valves?"
+          },
+          {
+            "ref": "W2",
+            "text": "Are \u201cHot Work Permits\u201d used when welding is conducted outside of designated areas, Is the designated welding area at least 35 feet from combustible materials, spray painting, etc.? (1910.253)"
+          },
+          {
+            "ref": "W3",
+            "text": "Are all stored cylinders effectively secured to prevent tipping? Are Cylinder valve protectors in place unless in use? (1910.253b)"
+          },
+          {
+            "ref": "W4",
+            "text": "Are cylinders legibly marked and labeled to clearly identify the gas contained? (1910.253b)"
+          },
+          {
+            "ref": "W5",
+            "text": "Are oxygen and acetylene tanks stored separated by at least 20 feet and protected with barriers to prevent accidental puncture by moving equipment?"
+          },
+          {
+            "ref": "W6",
+            "text": "Does the welding cart have a 5 feet, \u00bd hour manufactured fire wall?"
+          },
+          {
+            "ref": "W7",
+            "text": "Are cylinders stored in areas which are protected from heat and flame, located at least 25 feet from electrical equipment and people and at least 20 feet from flammable liquids or combustible materials?(1910.253b)"
+          },
+          {
+            "ref": "W8",
+            "text": "Are valves closed and lines zeroed before a cylinder is moved after completion of each job?"
+          },
+          {
+            "ref": "W9",
+            "text": "Welding screens in place and good condition?"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Machine Guarding",
+        "items": [
+          {
+            "ref": "MG1",
+            "text": "Is tire cage used every time a tire in inflated or deflated?"
+          },
+          {
+            "ref": "MG2",
+            "text": "Wheel chocks properly used and right size?"
+          },
+          {
+            "ref": "MG3",
+            "text": "Are radial arm saws equipped with a retracting blade guard and functioning spring return? Do they have proper feet to prevent movement while in use?"
+          },
+          {
+            "ref": "MG4",
+            "text": "Are power machines and tools shears, grinders, saws, drill presses properly anchored maintained and guarded? (1910.212a)"
+          },
+          {
+            "ref": "MG5",
+            "text": "Do fixed grinders have side guards that cover the spindle, nut, and flange and 75% of the wheel diameter, a tool rest adjusted to within 1/8\u201d and a tongue guard adjusted to within 1/4\u201d of wheel? (1910.215a)"
+          },
+          {
+            "ref": "MG6",
+            "text": "Have all hazards from points of operation, ingoing nip points, rotating parts, flying chips, sparks, moving chains, gears, pulleys and belts, including fan blades (within 7 feet of the floor) been guarded?"
+          },
+          {
+            "ref": "MG7",
+            "text": "Do portable power tools have a constant pressure switch that will automatically shut off when released?"
+          },
+          {
+            "ref": "MG8",
+            "text": "Do foot operated switches have guards to prevent accidental actuation by personnel or falling objects?"
+          }
+        ]
+      },
+      {
+        "title": "Shop: Tools & Jacks",
+        "items": [
+          {
+            "ref": "TJ1",
+            "text": "Are all tools and equipment (both company and employee-owned) in stored correctly and in good condition and used with the correct handle, shield, guard, or attachment, recommended by the manufacturer?"
+          },
+          {
+            "ref": "TJ2",
+            "text": "Are hand tools such as chisels, punches, wrenches which are worn, bent or mushroomed during use, reconditioned or replaced as necessary?"
+          },
+          {
+            "ref": "TJ3",
+            "text": "No custom/homemade tools, stands, supports, jacks, steps, or ladders?"
+          },
+          {
+            "ref": "TJ4",
+            "text": "Are all jacks and jack stands in good condition, with OEM pin and labeled with load capacity ( 1910.244)"
+          }
+        ]
+      },
+      {
+        "title": "Florklift/Industrial Truck",
+        "items": [
+          {
+            "ref": "F1",
+            "text": "Are all nameplates and load capacity ratings in place and legible?"
+          },
+          {
+            "ref": "F2",
+            "text": "Are industrial trucks kept in a clean condition, free of lint, excess oil and grease?"
+          },
+          {
+            "ref": "F3",
+            "text": "Will the parking brake effectively prevent the equipment from moving when left unattended?"
+          },
+          {
+            "ref": "F4",
+            "text": "Does equipment have a warning horn and audible reverse alarm which can be clearly heard above the normal noise in the areas where operated?"
+          },
+          {
+            "ref": "F5",
+            "text": "Does the equipment have a working seatbelt and working strobe (if OEM equipped)?"
+          },
+          {
+            "ref": "F6",
+            "text": "Is equipment driven by trained and authorized personnel only? (1910.178)"
+          },
+          {
+            "ref": "F7",
+            "text": "Is an examination of equipment made at least daily and after each shift and is a DVIR completed? (1910.178q) Driver knows OOS Criteria?"
+          },
+          {
+            "ref": "F8",
+            "text": "Is equipment left in an off position when unattended or when the operator is more than 25 feet from the vehicle? (1910.178m)"
+          },
+          {
+            "ref": "F9",
+            "text": "Equipment shut off when refueling?"
+          },
+          {
+            "ref": "F10",
+            "text": "Do all forklifts have a mounted, inspected and pinned fire extinguisher?"
+          },
+          {
+            "ref": "F11",
+            "text": "Is the overhead guard clear of obstruction, enabling the operator to view raised loads? (1910.178e)"
+          },
+          {
+            "ref": "F12",
+            "text": "Are trailers secure from movement during loading and unloading?"
+          }
+        ]
+      },
+      {
+        "title": "Heavy Equipment / Operator",
+        "items": [
+          {
+            "ref": "HEO1",
+            "text": "Is equipment driven by trained and authorized personnel only? (1910.178)"
+          },
+          {
+            "ref": "HEO2",
+            "text": "Will the parking brake effectively prevent the equipment from moving when left unattended?"
+          },
+          {
+            "ref": "HEO3",
+            "text": "Does equipment have a warning horn and audible reverse alarm which can be clearly heard above the normal noise in the areas where operated?"
+          },
+          {
+            "ref": "HEO4",
+            "text": "Does the equipment have a working seatbelt and working strobe?"
+          },
+          {
+            "ref": "HEO5",
+            "text": "Is an examination of equipment made at least daily and after each shift and is a DVIR completed? (1910.178) Driver knows OOS Criteria?"
+          },
+          {
+            "ref": "HEO6",
+            "text": "Is equipment left in an off position when unattended or when the operator is more than 25 feet from the vehicle? (1910.178)"
+          },
+          {
+            "ref": "HEO7",
+            "text": "Equipment shut off when refueling?"
+          },
+          {
+            "ref": "HEO8",
+            "text": "Are radiators cleaned daily or as required?"
+          },
+          {
+            "ref": "HEO9",
+            "text": "Do tracked machines have a clean carriage?"
+          },
+          {
+            "ref": "HEO10",
+            "text": "Are Compactor wheel teeth worn?"
+          },
+          {
+            "ref": "HEO11",
+            "text": "Are bucket cutting edges and teeth in good condition?"
+          },
+          {
+            "ref": "HEO12",
+            "text": "Is the unit clear of any new signs of equipment abuse or damage?"
+          },
+          {
+            "ref": "HEO13",
+            "text": "Does all equipment have a functioning beacon?"
+          },
+          {
+            "ref": "HEO14",
+            "text": "Are all required fire suppression systems in place and operational?"
+          }
+        ]
+      },
+      {
+        "title": "Working Face/Tipping Floor",
+        "items": [
+          {
+            "ref": "WF1",
+            "text": "Are trucks kept at least 10-15 feet apart?"
+          },
+          {
+            "ref": "WF2",
+            "text": "Are all spotters outfitted with ANSI approved Class II garments?"
+          },
+          {
+            "ref": "WF3",
+            "text": "Required Sign: \u201c Caution- Always leave at least 10 feet between vehicles\u201d"
+          },
+          {
+            "ref": "WF4",
+            "text": "Required sign: \u201c Notice- Only the Driver may exit the truck cab at the active tipping area\u201d"
+          },
+          {
+            "ref": "WF5",
+            "text": "Is swill contained and directed properly?"
+          },
+          {
+            "ref": "WF6",
+            "text": "Are HHW, UHM, and other Prohibited handled as required?"
+          },
+          {
+            "ref": "WF8",
+            "text": "Is litter being cleaned up, near, or beyond the perimeter fence?"
+          },
+          {
+            "ref": "WF9",
+            "text": "Is the site clear of odors present that might drift off-site?"
+          },
+          {
+            "ref": "WF10",
+            "text": "Are vectors controlled in some effective manner?"
+          },
+          {
+            "ref": "WF11",
+            "text": "Is Tipping Floor cleaned and trash stored per permit regulations?"
+          },
+          {
+            "ref": "WF12",
+            "text": "Is the waste material contained properly and not damaging Building walls, doors, and or other equipment?"
+          },
+          {
+            "ref": "WF13",
+            "text": "Are all Fall Protection devices and procedures in place and in use?"
+          },
+          {
+            "ref": "WF14",
+            "text": "Open Pit signage and means to prevent access in place? Controlled Access Plan?"
+          }
+        ]
+      },
+      {
+        "title": "MRF - Life, Safety, Critical Items",
+        "items": [
+          {
+            "ref": "MRF1",
+            "text": "Are all MRF sort-line guards in place?"
+          },
+          {
+            "ref": "MRF2",
+            "text": "Are all MRF conveyor guards in place?"
+          },
+          {
+            "ref": "MRF3",
+            "text": "Do all MRF balers have a start-up alarm?"
+          },
+          {
+            "ref": "MRF4",
+            "text": "Are all MRF baler/sort-line emergency stops and other safety devices and signage in place?"
+          }
+        ]
+      },
+      {
+        "title": "Storage Tanks/Fuel Island",
+        "items": [
+          {
+            "ref": "T1",
+            "text": "All barriers and bollards in place, painted yellow to provide tank protection?"
+          },
+          {
+            "ref": "T2",
+            "text": "Are all tank contents properly labeled, universal hazardous materials signs and legible? Accumulation date less than 90 days?"
+          },
+          {
+            "ref": "T3",
+            "text": "Are all tank permits current, registered and hazardous material business plan submitted?"
+          },
+          {
+            "ref": "T4",
+            "text": "Does your facility require a SPCC Plan? (1320 gallons or more of any combination of petroleum products)"
+          },
+          {
+            "ref": "T5",
+            "text": "Are all tank or drums clear of signs showing leakage, damage, rust, bulging, buckling or deterioration in, on or around area?"
+          },
+          {
+            "ref": "T6",
+            "text": "Are tanks and drums clear of obstacles, residue, vegetation or trash?"
+          },
+          {
+            "ref": "T7",
+            "text": "Annual tank integrity test been performed?"
+          },
+          {
+            "ref": "T8",
+            "text": "Hazarsous Inventory properly stored in designated area on proper secondary containment?"
+          },
+          {
+            "ref": "T9",
+            "text": "Spill kits present near product, sealed, labeled and inspected?"
+          },
+          {
+            "ref": "T10",
+            "text": "Fuel Island/Station: Adequate number of mounted, fire extinguishers with signs inspected?"
+          },
+          {
+            "ref": "T11",
+            "text": "Fuel Island: Dispensers, hoses and nozzles in good condition?"
+          },
+          {
+            "ref": "T12",
+            "text": "Fuel Island: \u201cNo Smoking\u201d, \u201cShut Off Engine\u201d, Emergency Shut Off\u201d signs clearly posted, legible and unobstructed?"
+          }
+        ]
+      }
+    ]
+  },
+  "facility": {
+    "title": "Facility Compliance Review",
+    "sections": [
+      {
+        "title": "Programs & Training",
+        "items": [
+          {
+            "ref": "",
+            "text": "Written programs"
+          },
+          {
+            "ref": "",
+            "text": "Right to Know (Hazcom)"
+          },
+          {
+            "ref": "",
+            "text": "Written Program"
+          },
+          {
+            "ref": "",
+            "text": "Employee Training"
+          },
+          {
+            "ref": "",
+            "text": "Current MSDS's"
+          },
+          {
+            "ref": "",
+            "text": "Lockout / tagout"
+          },
+          {
+            "ref": "",
+            "text": "Written Program"
+          },
+          {
+            "ref": "",
+            "text": "Equip LO procedures"
+          },
+          {
+            "ref": "",
+            "text": "Annual review"
+          },
+          {
+            "ref": "",
+            "text": "Employee Training"
+          },
+          {
+            "ref": "",
+            "text": "Confined space"
+          },
+          {
+            "ref": "",
+            "text": "Written Program"
+          },
+          {
+            "ref": "",
+            "text": "Evaluations"
+          },
+          {
+            "ref": "",
+            "text": "Employee Training"
+          },
+          {
+            "ref": "",
+            "text": "Bloodborne Pathogens"
+          },
+          {
+            "ref": "",
+            "text": "Exposure Control Plan"
+          },
+          {
+            "ref": "",
+            "text": "Employee Training"
+          },
+          {
+            "ref": "",
+            "text": "Supervisor training"
+          },
+          {
+            "ref": "",
+            "text": "Hep B vac offer form"
+          },
+          {
+            "ref": "",
+            "text": "RESOP"
+          },
+          {
+            "ref": "",
+            "text": "Being performed?"
+          },
+          {
+            "ref": "",
+            "text": "Being tracked?"
+          },
+          {
+            "ref": "",
+            "text": "Safety Training"
+          },
+          {
+            "ref": "",
+            "text": "Per Compliance Calendar"
+          },
+          {
+            "ref": "",
+            "text": "PPE"
+          },
+          {
+            "ref": "",
+            "text": "Hazard assessments"
+          },
+          {
+            "ref": "",
+            "text": "Employee Training"
+          },
+          {
+            "ref": "",
+            "text": "Current supply of PPE"
+          },
+          {
+            "ref": "",
+            "text": "Third party use?"
+          },
+          {
+            "ref": "",
+            "text": "Respirator"
+          },
+          {
+            "ref": "",
+            "text": "Spray painting?"
+          },
+          {
+            "ref": "",
+            "text": "Written Program"
+          },
+          {
+            "ref": "",
+            "text": "Annual spirometry"
+          },
+          {
+            "ref": "",
+            "text": "Fit tests performed"
+          },
+          {
+            "ref": "",
+            "text": "Accident repeater policy"
+          },
+          {
+            "ref": "",
+            "text": "in effect and tracking"
+          },
+          {
+            "ref": "",
+            "text": "mechanism in place"
+          },
+          {
+            "ref": "",
+            "text": "Safety Committee"
+          },
+          {
+            "ref": "",
+            "text": "In place?"
+          },
+          {
+            "ref": "",
+            "text": "Notes?"
+          }
+        ]
+      },
+      {
+        "title": "Records & DOT",
+        "items": [
+          {
+            "ref": "",
+            "text": "Records"
+          },
+          {
+            "ref": "",
+            "text": "OSHA 300 log 2/1 to 4/30)"
+          },
+          {
+            "ref": "",
+            "text": "Accident / injury reports"
+          },
+          {
+            "ref": "",
+            "text": "(Complete and on file)"
+          },
+          {
+            "ref": "",
+            "text": "DOT accident register"
+          },
+          {
+            "ref": "",
+            "text": "(Previous 12 months DOT recordable accidents)"
+          },
+          {
+            "ref": "",
+            "text": "Monthly safety meeting records"
+          },
+          {
+            "ref": "",
+            "text": "Follow Compliance Calendar"
+          },
+          {
+            "ref": "",
+            "text": "Truck maintenance files (DOT annuals)"
+          },
+          {
+            "ref": "",
+            "text": "Mechanic brake certifications"
+          },
+          {
+            "ref": "",
+            "text": "(Including mech's that inspect brakes)"
+          },
+          {
+            "ref": "",
+            "text": "Facility assessments (inspection)"
+          },
+          {
+            "ref": "",
+            "text": "Driver qualification files complete?"
+          },
+          {
+            "ref": "",
+            "text": "Hearing conservation"
+          },
+          {
+            "ref": "",
+            "text": "Written Program"
+          },
+          {
+            "ref": "",
+            "text": "Noise survey completed?"
+          },
+          {
+            "ref": "",
+            "text": "Annual audiograms performed?"
+          },
+          {
+            "ref": "",
+            "text": "Hearing protection issued?"
+          },
+          {
+            "ref": "",
+            "text": "Emergency response plan"
+          },
+          {
+            "ref": "",
+            "text": "(Current and up to date)"
+          },
+          {
+            "ref": "",
+            "text": "Forklift"
+          },
+          {
+            "ref": "",
+            "text": "Certified / trained operators"
+          },
+          {
+            "ref": "",
+            "text": "(Including practical operational exam)"
+          },
+          {
+            "ref": "",
+            "text": "Temporary labor"
+          },
+          {
+            "ref": "",
+            "text": "Contract in place?"
+          },
+          {
+            "ref": "",
+            "text": "Training program documented?"
+          },
+          {
+            "ref": "",
+            "text": "PPE issued?"
+          },
+          {
+            "ref": "",
+            "text": "Certificate of insurance on file?"
+          },
+          {
+            "ref": "",
+            "text": "DOT hours of service"
+          },
+          {
+            "ref": "",
+            "text": "number of 60 hour violations"
+          },
+          {
+            "ref": "",
+            "text": "Drug & alcohol testing program"
+          },
+          {
+            "ref": "",
+            "text": "Quarterly test summary reports on file?"
+          },
+          {
+            "ref": "",
+            "text": "(for both urine and breath alcohol - DOT required)"
+          }
+        ]
+      }
+    ]
+  }
+}

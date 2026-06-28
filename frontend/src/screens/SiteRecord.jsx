@@ -16,6 +16,7 @@ import {
   IconLeaf,
   IconDoc,
   IconPin,
+  IconCheck,
 } from '../components/Icons.jsx'
 
 // Scaled site-plan zone layout (viewBox 360×300). Each of the eight areas is a
@@ -415,6 +416,7 @@ export default function SiteRecord({
   onClose,
   onUpdateFinding,
   onCapture,
+  onStartAudit,
   flash,
 }) {
   const [tab, setTab] = useState(initialTab || 'findings')
@@ -507,6 +509,15 @@ export default function SiteRecord({
         <div style={{ color: '#9FB0C4', fontSize: 12.5, marginTop: 3 }}>
           {site.type} · {site.city}{site.swis ? ` · SWIS ${site.swis}` : ''}
         </div>
+        {onStartAudit && (
+          <button
+            onClick={onStartAudit}
+            className="pill"
+            style={{ marginTop: 12, width: '100%', padding: '12px', background: '#fff', color: 'var(--navy)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}
+          >
+            <IconCheck size={16} /> Start audit
+          </button>
+        )}
         <div className="row gap" style={{ marginTop: 12 }}>
           <span className="pill bg-fail s-fail">{s.open} open</span>
           {s.verify > 0 && <span className="pill bg-fail s-fail">{s.verify} verify</span>}

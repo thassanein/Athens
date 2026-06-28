@@ -16,6 +16,7 @@ import Tasks from './screens/Tasks.jsx'
 import Alerts from './screens/Alerts.jsx'
 import Profile from './screens/Profile.jsx'
 import SiteRecord from './screens/SiteRecord.jsx'
+import AuditRunner from './screens/AuditRunner.jsx'
 import TabBar from './components/TabBar.jsx'
 import Capture from './components/Capture.jsx'
 import Toast from './components/Toast.jsx'
@@ -35,6 +36,7 @@ export default function App() {
   const [source, setSource] = useState('local') // postgres|local
   const [capture, setCapture] = useState(null) // draft finding or null
   const [siteView, setSiteView] = useState(null) // {site, tab?, focus?} or null
+  const [auditSite, setAuditSite] = useState(null) // site name being audited, or null
   const [taskFilter, setTaskFilter] = useState('all')
   const [settings, setSettings] = useState({ push: true, offline: true, camera: true })
   const [user, setUser] = useState(USERS.auditor)
@@ -147,6 +149,48 @@ export default function App() {
       }
     },
     [data, source, persist, flash]
+  )
+
+  // Batch-create findings from an audit's deficiencies ("No" answers).
+  const logAuditFindings = useCallback(
+    async (siteName, defs) => {
+      const next = structuredClone(data)
+      const created = []
+      defs.forEach((d, i) => {
+        const localId = `f-${Date.now()}-${Math.floor(Math.random() * 1e4)}-${i}`
+        const finding = {
+          id: localId,
+          dept: 'Facility',
+          area: (d.section || 'Audit').slice(0, 40),
+          title: (d.text || 'Audit finding').slice(0, 80),
+          status: 'open',
+          owner: null,
+          due: null,
+          note: `[Audit] ${d.ref ? d.ref + ': ' : ''}${d.text}${d.note ? ` — ${d.note}` : ''}`,
+          photo: null,
+          source: 'field',
+          lat: null,
+          lng: null,
+        }
+        next[siteName].checklist.unshift(finding)
+        created.push(finding)
+      })
+      persist(next)
+      for (const f of created) {
+        try {
+          const row = await postFinding({ ...f, site: siteName }, source)
+          if (row?.id && row.id !== f.id) {
+            const sync = structuredClone(next)
+            const c = sync[siteName].checklist.find((x) => x.id === f.id)
+            if (c) c.id = row.id
+            persist(sync)
+          }
+        } catch {
+          /* already persisted locally */
+        }
+      }
+    },
+    [data, source, persist]
   )
 
   const saveCapture = useCallback(
@@ -282,6 +326,17 @@ export default function App() {
           onCapture={(area) =>
             setCapture({ site: siteView.site, dept: 'ENV', area: area || '', note: '', owner: '', due: '', photo: null })
           }
+          onStartAudit={() => setAuditSite(siteView.site)}
+          flash={flash}
+        />
+      )}
+
+      {auditSite && data[auditSite] && (
+        <AuditRunner
+          name={auditSite}
+          site={data[auditSite]}
+          onClose={() => setAuditSite(null)}
+          onLogDeficiencies={logAuditFindings}
           flash={flash}
         />
       )}
