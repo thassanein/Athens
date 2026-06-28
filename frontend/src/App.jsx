@@ -41,6 +41,7 @@ export default function App() {
   const [authMode, setAuthMode] = useState('demo') // 'demo' (no server) | 'sso' (Microsoft)
   const [toast, setToast] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [waking, setWaking] = useState(false) // server cold-starting (free tier)
 
   // Bootstrap: ask the server who we are, then load the portfolio.
   //  - authed  → set the signed-in user and go straight to the app.
@@ -49,7 +50,19 @@ export default function App() {
   useEffect(() => {
     let alive = true
     ;(async () => {
-      const me = await fetchMe()
+      // Reach the server, retrying through a free-tier cold start (~30-60s).
+      // A timed-out /auth/me means the service is waking; keep trying (with a
+      // "waking up" message) until it answers or the window closes, then fall
+      // back to the bundled snapshot so the app is never stuck on a spinner.
+      const deadline = Date.now() + 75000
+      let me = await fetchMe()
+      while (alive && me.state === 'demo' && me.timedOut && Date.now() < deadline) {
+        setWaking(true)
+        await new Promise((r) => setTimeout(r, 2500))
+        if (!alive) return
+        me = await fetchMe()
+      }
+      setWaking(false)
       if (!alive) return
 
       if (me.state === 'login') {
@@ -176,8 +189,15 @@ export default function App() {
 
   const Loading = (
     <div className="app-shell">
-      <div className="screen" style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }}>
-        <div className="muted">Loading…</div>
+      <div className="screen" style={{ display: 'grid', placeItems: 'center', minHeight: '100vh', padding: 24 }}>
+        <div style={{ textAlign: 'center', maxWidth: 280 }}>
+          <div className="muted">{waking ? 'Waking up the server…' : 'Loading…'}</div>
+          {waking && (
+            <div className="muted" style={{ fontSize: 12, marginTop: 8, opacity: 0.8 }}>
+              First load after a quiet period can take up to a minute.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

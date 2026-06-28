@@ -1,11 +1,12 @@
 // API client + data-source detection.
 //
-// On load the app calls GET /api/sites with a 700ms timeout. Success → live
-// PostgreSQL mode. Failure → bundled snapshot + localStorage (demo/offline).
+// On load the app probes /auth/me (with a timeout + cold-start retry), then
+// GET /api/sites. Success → live PostgreSQL mode. Failure → bundled snapshot +
+// localStorage (demo/offline).
 // The active mode is surfaced in Profile → "Data source".
 import { SNAPSHOT } from './sitedata.js'
 
-const TIMEOUT_MS = 700
+const TIMEOUT_MS = 6000 // generous: server presence is already gated by fetchMe()
 const LS_KEY = 'athens.portfolio.v1'
 const BASE = import.meta.env.BASE_URL // '/' on the single-host deploy, '/Athens/' on Pages
 
@@ -15,9 +16,12 @@ const BASE = import.meta.env.BASE_URL // '/' on the single-host deploy, '/Athens
  *   - 'login'  → server requires Microsoft sign-in (HTTP 401).
  *   - 'demo'   → no server reachable (e.g. GitHub Pages) → snapshot + demo logins.
  */
-export async function fetchMe() {
+export async function fetchMe(timeoutMs = 8000) {
+  const ctrl = new AbortController()
+  const t = setTimeout(() => ctrl.abort(), timeoutMs)
   try {
-    const res = await fetch(`${BASE}auth/me`, { credentials: 'include' })
+    const res = await fetch(`${BASE}auth/me`, { credentials: 'include', signal: ctrl.signal })
+    clearTimeout(t)
     if (res.status === 401) {
       let mode = 'sso'
       try {
@@ -27,11 +31,15 @@ export async function fetchMe() {
       }
       return { state: 'login', mode }
     }
-    if (!res.ok) return { state: 'demo' }
+    if (!res.ok) return { state: 'demo' } // got a response but no API here (e.g. Pages 404)
     const user = await res.json()
     return { state: 'authed', user }
-  } catch {
-    return { state: 'demo' }
+  } catch (e) {
+    clearTimeout(t)
+    // timedOut means the request was aborted — the server is unreachable/cold,
+    // which is worth retrying (a sleeping free-tier service waking up). Other
+    // failures (fast network error / no server) are treated as plain demo.
+    return { state: 'demo', timedOut: e.name === 'AbortError' }
   }
 }
 
