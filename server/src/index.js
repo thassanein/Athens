@@ -51,6 +51,17 @@ function shapeChecklistRow(r) {
   };
 }
 
+function shapeAudit(r) {
+  return {
+    id: r.id, site: r.site, template: r.template, status: r.status,
+    auditor: r.auditor,
+    started: r.started instanceof Date ? r.started.toISOString() : r.started,
+    updated: r.updated instanceof Date ? r.updated.toISOString() : r.updated,
+    answered: r.answered != null ? Number(r.answered) : undefined,
+    deficiencies: r.deficiencies != null ? Number(r.deficiencies) : undefined,
+  };
+}
+
 function shapePermitRow(r) {
   return {
     id: r.id, site: r.site, name: r.name, agency: r.agency, number: r.number,
@@ -180,6 +191,105 @@ app.patch('/api/permits/:id', requireAuth, requireAuditor, async (req, res, next
     res.json(shapePermitRow(result.rows[0]));
   } catch (err) {
     next(err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Audits — saved checklist runs. Open to any authenticated user (field tool,
+// like Capture). Responses are stored per item; site/template identify the run.
+// ---------------------------------------------------------------------------
+app.get('/api/audits', requireAuth, async (req, res, next) => {
+  try {
+    const { site, template, status } = req.query;
+    const where = [];
+    const vals = [];
+    for (const [col, v] of [['site', site], ['template', template], ['status', status]]) {
+      if (v) { vals.push(v); where.push(`a.${col} = $${vals.length}`); }
+    }
+    const sql = `
+      SELECT a.*,
+        COUNT(r.item) FILTER (WHERE r.val IS NOT NULL)        AS answered,
+        COUNT(r.item) FILTER (WHERE r.val = 'no')             AS deficiencies
+      FROM audits a LEFT JOIN audit_responses r ON r.audit = a.id
+      ${where.length ? 'WHERE ' + where.join(' AND ') : ''}
+      GROUP BY a.id
+      ORDER BY a.updated DESC`;
+    const { rows } = await pool.query(sql, vals);
+    res.json(rows.map(shapeAudit));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/audits/:id', requireAuth, async (req, res, next) => {
+  try {
+    const a = await pool.query('SELECT * FROM audits WHERE id = $1', [req.params.id]);
+    if (a.rowCount === 0) return res.status(404).json({ error: 'Audit not found' });
+    const r = await pool.query('SELECT item, val, note FROM audit_responses WHERE audit = $1', [req.params.id]);
+    const responses = {};
+    for (const row of r.rows) responses[row.item] = { val: row.val, note: row.note || '' };
+    res.json({ ...shapeAudit(a.rows[0]), responses });
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/api/audits', requireAuth, async (req, res, next) => {
+  try {
+    const { site, template } = req.body || {};
+    if (!site) return res.status(400).json({ error: 'site is required.' });
+    const siteCheck = await pool.query('SELECT 1 FROM sites WHERE name = $1', [site]);
+    if (siteCheck.rowCount === 0) return res.status(400).json({ error: `Unknown site '${site}'.` });
+    const id = `a-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const auditor = req.user?.name || req.user?.email || 'Unknown';
+    const result = await pool.query(
+      `INSERT INTO audits (id, site, template, status, auditor) VALUES ($1,$2,$3,'in_progress',$4) RETURNING *`,
+      [id, site, template ?? null, auditor]
+    );
+    res.status(201).json({ ...shapeAudit(result.rows[0]), responses: {} });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Save responses (full set) and/or status. Idempotent: replaces the audit's
+// response rows with the supplied map.
+app.patch('/api/audits/:id', requireAuth, async (req, res, next) => {
+  const client = await pool.connect();
+  try {
+    const { id } = req.params;
+    const { responses, status } = req.body || {};
+    if (status && !['in_progress', 'complete'].includes(status)) {
+      return res.status(400).json({ error: "status must be 'in_progress' or 'complete'." });
+    }
+    await client.query('BEGIN');
+    const exists = await client.query('SELECT 1 FROM audits WHERE id = $1', [id]);
+    if (exists.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Audit not found' });
+    }
+    if (responses && typeof responses === 'object') {
+      await client.query('DELETE FROM audit_responses WHERE audit = $1', [id]);
+      for (const [item, r] of Object.entries(responses)) {
+        if (!r || (!r.val && !r.note)) continue;
+        if (r.val && !['yes', 'no', 'na'].includes(r.val)) continue;
+        await client.query(
+          'INSERT INTO audit_responses (audit, item, val, note) VALUES ($1,$2,$3,$4)',
+          [id, item, r.val ?? null, r.note ?? null]
+        );
+      }
+    }
+    const upd = await client.query(
+      'UPDATE audits SET status = COALESCE($2, status), updated = now() WHERE id = $1 RETURNING *',
+      [id, status ?? null]
+    );
+    await client.query('COMMIT');
+    res.json(shapeAudit(upd.rows[0]));
+  } catch (err) {
+    await client.query('ROLLBACK').catch(() => {});
+    next(err);
+  } finally {
+    client.release();
   }
 });
 

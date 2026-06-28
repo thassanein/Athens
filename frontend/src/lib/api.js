@@ -148,3 +148,29 @@ export async function patchPermit(id, status, source) {
     body: JSON.stringify({ status }),
   })
 }
+
+// ---- Audits (server-persisted; AuditRunner falls back to localStorage) -----
+export function listAudits(params = {}) {
+  const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString()
+  return fetchJSON(`/api/audits${q ? `?${q}` : ''}`)
+}
+
+export function getAudit(id) {
+  return fetchJSON(`/api/audits/${encodeURIComponent(id)}`)
+}
+
+export function createAudit(site, template) {
+  return fetchJSON('/api/audits', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ site, template }),
+  })
+}
+
+export function saveAudit(id, body) {
+  return fetchJSON(`/api/audits/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+}

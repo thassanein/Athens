@@ -54,6 +54,25 @@ CREATE TABLE IF NOT EXISTS checklist_items (
   lat DOUBLE PRECISION, lng DOUBLE PRECISION
 );
 CREATE TABLE IF NOT EXISTS app_meta (key TEXT PRIMARY KEY, value TEXT);
+-- Audits: a saved run of a checklist for a site. site is plain TEXT (no FK) so
+-- a portfolio re-seed (which deletes sites) never cascades away audit history.
+CREATE TABLE IF NOT EXISTS audits (
+  id       TEXT PRIMARY KEY,
+  site     TEXT,
+  template TEXT,
+  status   TEXT CHECK (status IN ('in_progress','complete')) DEFAULT 'in_progress',
+  auditor  TEXT,
+  started  TIMESTAMPTZ DEFAULT now(),
+  updated  TIMESTAMPTZ DEFAULT now()
+);
+CREATE TABLE IF NOT EXISTS audit_responses (
+  audit TEXT REFERENCES audits(id) ON DELETE CASCADE,
+  item  TEXT NOT NULL,
+  val   TEXT CHECK (val IN ('yes','no','na')),
+  note  TEXT,
+  PRIMARY KEY (audit, item)
+);
+CREATE INDEX IF NOT EXISTS idx_audits_site ON audits(site);
 CREATE INDEX IF NOT EXISTS idx_checklist_items_site ON checklist_items(site);
 CREATE INDEX IF NOT EXISTS idx_permits_site ON permits(site);
 CREATE INDEX IF NOT EXISTS idx_leases_site ON leases(site);

@@ -335,6 +335,7 @@ export default function App() {
         <AuditRunner
           name={auditSite}
           site={data[auditSite]}
+          source={source}
           onClose={() => setAuditSite(null)}
           onLogDeficiencies={logAuditFindings}
           flash={flash}

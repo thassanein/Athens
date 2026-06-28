@@ -106,3 +106,11 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"site\":\"SVMRF\",\"dept\":\"ENV\",\"area\":\"Stormwater\",\"note\":\"CI smoke test finding\"}" \
             | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.status!==\"open\"||j.source!==\"field\")throw new Error(\"unexpected finding: \"+d);console.log(\"created\",j.id)})"
+          # audits: create -> save responses + complete -> read back
+          AID=$(curl -sf -X POST localhost:4000/api/audits -H "Content-Type: application/json" \
+            -d "{\"site\":\"SVMRF\",\"template\":\"mrf\"}" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(!j.id)throw new Error(\"no audit id: \"+d);console.log(j.id)})")
+          curl -sf -X PATCH "localhost:4000/api/audits/$AID" -H "Content-Type: application/json" \
+            -d "{\"responses\":{\"mrf-0-0\":{\"val\":\"no\",\"note\":\"ci\"}},\"status\":\"complete\"}" >/dev/null
+          curl -sf "localhost:4000/api/audits/$AID" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const a=JSON.parse(d);if(a.status!==\"complete\")throw new Error(\"audit not complete\");if(a.responses[\"mrf-0-0\"].val!==\"no\")throw new Error(\"audit response not saved\");console.log(\"audit OK\",a.id)})"

@@ -5,12 +5,16 @@ import {
   templateKeyForType,
   templateItemCount,
 } from '../lib/audit-templates.js'
+import { listAudits, getAudit, createAudit, saveAudit } from '../lib/api.js'
 import { IconBack, IconCheck, IconClose, IconChevron } from '../components/Icons.jsx'
 
 // Full-screen step-by-step audit. Walks the checklist that matches the site's
 // type (auditor can switch template), one section per screen. Each item is
-// answered Yes / No / N-A with an optional comment. Progress and answers are
-// saved to localStorage per (site, template) so an audit can be resumed.
+// answered Yes / No / N-A with an optional comment.
+//
+// Persistence: in live (postgres) mode each audit is a row in the `audits`
+// table and answers autosave to the server (resumable across devices). A
+// localStorage mirror is always kept so an audit survives offline / demo mode.
 
 const VAL = { yes: { label: 'Yes', tone: 'pass' }, no: { label: 'No', tone: 'fail' }, na: { label: 'N/A', tone: 'open' } }
 const lsKey = (site, tpl) => `athens.audit.${site}.${tpl}`
@@ -55,7 +59,7 @@ function ItemRow({ item, resp, onSet }) {
           )
         })}
       </div>
-      {(showNote || resp?.note) ? (
+      {showNote || resp?.note ? (
         <textarea
           value={resp?.note || ''}
           onChange={(e) => onSet({ ...resp, note: e.target.value })}
@@ -72,30 +76,100 @@ function ItemRow({ item, resp, onSet }) {
   )
 }
 
-export default function AuditRunner({ name, site, onClose, onLogDeficiencies, flash }) {
+const SYNC_LABEL = { saved: 'Saved', saving: 'Saving…', offline: 'Saved on device', local: 'On device' }
+
+export default function AuditRunner({ name, site, source, onClose, onLogDeficiencies, flash }) {
   const [tplKey, setTplKey] = useState(() => templateKeyForType(site.type))
-  const [responses, setResponses] = useState(() => loadResponses(name, templateKeyForType(site.type)))
+  const [responses, setResponses] = useState({})
   const [sectionIdx, setSectionIdx] = useState(0)
   const [review, setReview] = useState(false)
+  const [sync, setSync] = useState(source === 'postgres' ? 'saving' : 'local')
   const tpl = AUDIT_TEMPLATES[tplKey]
   const total = templateItemCount(tplKey)
   const topRef = useRef(null)
 
-  // Switch template → load that template's saved answers, reset to first section.
+  const aliveRef = useRef(true)
+  const auditIdRef = useRef(null)
+  const skipSaveRef = useRef(false) // suppress autosave for programmatic loads
+  const saveTimer = useRef(null)
+
   useEffect(() => {
-    setResponses(loadResponses(name, tplKey))
+    aliveRef.current = true
+    return () => {
+      aliveRef.current = false
+      clearTimeout(saveTimer.current)
+    }
+  }, [])
+
+  // Establish the audit (create or resume) whenever the site/template changes.
+  useEffect(() => {
     setSectionIdx(0)
     setReview(false)
-  }, [tplKey, name])
+    auditIdRef.current = null
+    const local = loadResponses(name, tplKey)
+    let cancelled = false
 
-  // Persist on every change.
+    async function ensure() {
+      if (source !== 'postgres') {
+        skipSaveRef.current = true
+        setResponses(local)
+        setSync('local')
+        return
+      }
+      setSync('saving')
+      try {
+        const open = await listAudits({ site: name, template: tplKey, status: 'in_progress' })
+        let audit
+        if (open && open.length) audit = await getAudit(open[0].id)
+        else audit = await createAudit(name, tplKey)
+        if (cancelled || !aliveRef.current) return
+        auditIdRef.current = audit.id
+        const serverResp = audit.responses || {}
+        let resp = serverResp
+        if (Object.keys(serverResp).length === 0 && Object.keys(local).length > 0) {
+          resp = local // freshly created but we have local answers → push them up
+          saveAudit(audit.id, { responses: local }).catch(() => {})
+        }
+        skipSaveRef.current = true
+        setResponses(resp)
+        setSync('saved')
+      } catch {
+        if (cancelled || !aliveRef.current) return
+        auditIdRef.current = null
+        skipSaveRef.current = true
+        setResponses(local)
+        setSync('offline')
+      }
+    }
+    ensure()
+    return () => {
+      cancelled = true
+    }
+  }, [name, tplKey, source])
+
+  // Mirror to localStorage always; autosave to the server (debounced) in live mode.
   useEffect(() => {
     try {
       localStorage.setItem(lsKey(name, tplKey), JSON.stringify(responses))
     } catch {
       /* ignore */
     }
-  }, [responses, name, tplKey])
+    if (skipSaveRef.current) {
+      skipSaveRef.current = false
+      return
+    }
+    if (source !== 'postgres' || !auditIdRef.current) return
+    setSync('saving')
+    clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(async () => {
+      try {
+        await saveAudit(auditIdRef.current, { responses })
+        if (aliveRef.current) setSync('saved')
+      } catch {
+        if (aliveRef.current) setSync('offline')
+      }
+    }, 900)
+  }, [responses, name, tplKey, source])
 
   useEffect(() => {
     if (topRef.current) topRef.current.scrollTop = 0
@@ -116,7 +190,6 @@ export default function AuditRunner({ name, site, onClose, onLogDeficiencies, fl
       return next
     })
 
-  // All "No" answers, flattened with their section, for the review screen.
   const deficiencies = useMemo(() => {
     const out = []
     tpl.sections.forEach((s) => {
@@ -127,6 +200,17 @@ export default function AuditRunner({ name, site, onClose, onLogDeficiencies, fl
     })
     return out
   }, [responses, tpl])
+
+  async function finish() {
+    if (source === 'postgres' && auditIdRef.current) {
+      try {
+        await saveAudit(auditIdRef.current, { responses, status: 'complete' })
+      } catch {
+        /* mirror remains on device */
+      }
+    }
+    onClose()
+  }
 
   const pct = total ? Math.round((answered / total) * 100) : 0
   const section = tpl.sections[sectionIdx]
@@ -140,11 +224,13 @@ export default function AuditRunner({ name, site, onClose, onLogDeficiencies, fl
           <button onClick={onClose} className="pill" style={{ background: 'rgba(255,255,255,.14)', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <IconClose size={15} /> Close
           </button>
-          <span className="pill" style={{ background: 'rgba(255,255,255,.14)', color: '#fff' }}>{answered}/{total} answered</span>
+          <span className="row gap" style={{ gap: 8, alignItems: 'center' }}>
+            <span className="muted" style={{ fontSize: 11, color: '#9FB0C4' }}>{SYNC_LABEL[sync]}</span>
+            <span className="pill" style={{ background: 'rgba(255,255,255,.14)', color: '#fff' }}>{answered}/{total}</span>
+          </span>
         </div>
         <div className="title" style={{ marginTop: 10 }}>Audit · {name}</div>
         <div style={{ color: '#9FB0C4', fontSize: 12.5, marginTop: 2 }}>{site.type} · {site.city}</div>
-        {/* template switcher */}
         <div className="row gap" style={{ marginTop: 10, flexWrap: 'wrap' }}>
           {TEMPLATE_LIST.map((t) => (
             <button
@@ -157,7 +243,6 @@ export default function AuditRunner({ name, site, onClose, onLogDeficiencies, fl
             </button>
           ))}
         </div>
-        {/* progress bar */}
         <div style={{ marginTop: 12, height: 6, background: 'rgba(255,255,255,.16)', borderRadius: 99 }}>
           <div style={{ width: `${pct}%`, height: '100%', background: 'var(--green, #2E9E5B)', borderRadius: 99, transition: 'width .2s' }} />
         </div>
@@ -171,7 +256,7 @@ export default function AuditRunner({ name, site, onClose, onLogDeficiencies, fl
               <div className="title" style={{ fontSize: 18 }}>{section.title}</div>
               <span className="muted" style={{ fontSize: 12 }}>Section {sectionIdx + 1}/{tpl.sections.length}</span>
             </div>
-            <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {section.items.map((it) => (
                 <ItemRow key={it.id} item={it} resp={responses[it.id]} onSet={(r) => setItem(it.id, r)} />
               ))}
@@ -180,7 +265,7 @@ export default function AuditRunner({ name, site, onClose, onLogDeficiencies, fl
         )}
 
         {review && (
-          <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div className="title" style={{ fontSize: 18 }}>Audit summary</div>
             <div className="row gap">
               {[['Yes', counts.yes, 'pass'], ['No', counts.no, 'fail'], ['N/A', counts.na, 'open'], ['Left', total - answered, '']].map(([l, n, tone]) => (
@@ -193,7 +278,7 @@ export default function AuditRunner({ name, site, onClose, onLogDeficiencies, fl
 
             <div className="title" style={{ fontSize: 15, marginTop: 4 }}>Deficiencies ({deficiencies.length})</div>
             {deficiencies.length === 0 && (
-              <div className="card" style={{ padding: 20, textAlign: 'center' }}><div className="muted">No "No" answers — site is clear.</div></div>
+              <div className="card" style={{ padding: 20, textAlign: 'center' }}><div className="muted">No &quot;No&quot; answers — site is clear.</div></div>
             )}
             {deficiencies.map((d, i) => (
               <div key={i} className="card bd-fail" style={{ padding: '11px 14px' }}>
@@ -232,11 +317,11 @@ export default function AuditRunner({ name, site, onClose, onLogDeficiencies, fl
         )}
         {!review && lastSection && (
           <button onClick={() => setReview(true)} className="pill" style={{ flex: 1, padding: '12px 0', background: 'var(--green,#2E9E5B)', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>
-            Review & finish
+            Review &amp; finish
           </button>
         )}
         {review && (
-          <button onClick={onClose} className="pill" style={{ flex: 1, padding: '12px 0', background: 'var(--navy)', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>
+          <button onClick={finish} className="pill" style={{ flex: 1, padding: '12px 0', background: 'var(--navy)', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>
             Done
           </button>
         )}
