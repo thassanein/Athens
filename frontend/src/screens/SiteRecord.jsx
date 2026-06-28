@@ -18,6 +18,18 @@ import {
   IconPin,
   IconCheck,
 } from '../components/Icons.jsx'
+import { listAudits } from '../lib/api.js'
+import { templateItemCount } from '../lib/audit-templates.js'
+
+const TPL_NAME = { hauling: 'Hauling Division', mrf: 'MRF Master Form', facility: 'Facility Review' }
+const fmtWhen = (iso) => {
+  if (!iso) return '—'
+  try {
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  } catch {
+    return '—'
+  }
+}
 
 // Scaled site-plan zone layout (viewBox 360×300). Each of the eight areas is a
 // rectangle in a plausible yard layout; pins drop onto a zone's centroid.
@@ -355,6 +367,7 @@ const TABS = [
   { id: 'findings', label: 'Findings' },
   { id: 'permits', label: 'Permits' },
   { id: 'documents', label: 'Docs' },
+  { id: 'audits', label: 'Audits' },
   { id: 'leases', label: 'Leases' },
   { id: 'facility', label: 'Facility' },
   { id: 'env', label: 'ENV' },
@@ -413,21 +426,37 @@ export default function SiteRecord({
   initialTab,
   focusId,
   canEdit = false,
+  source,
   onClose,
   onUpdateFinding,
   onCapture,
   onStartAudit,
+  auditOpen = false,
   flash,
 }) {
   const [tab, setTab] = useState(initialTab || 'findings')
   const [mapStyle, setMapStyle] = useState('plan')
   const [zone, setZone] = useState(null)
+  const [audits, setAudits] = useState(null) // null = loading, [] = none
   const focusRef = useRef(null)
 
   // scroll to top on open
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  // Load this site's saved audits when the Audits tab is opened (live mode).
+  useEffect(() => {
+    if (tab !== 'audits' || source !== 'postgres' || auditOpen) return
+    let alive = true
+    setAudits(null)
+    listAudits({ site: name })
+      .then((r) => alive && setAudits(Array.isArray(r) ? r : []))
+      .catch(() => alive && setAudits([]))
+    return () => {
+      alive = false
+    }
+  }, [tab, source, name, auditOpen])
 
   const s = siteStats(site)
   const checklist = site.checklist || []
@@ -769,6 +798,63 @@ export default function SiteRecord({
             {!site.folder && !site.siteMap && (site.documents || []).length === 0 && (
               <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No linked documents.</div></div>
             )}
+          </div>
+        )}
+
+        {tab === 'audits' && (
+          <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {onStartAudit && (
+              <button
+                onClick={() => onStartAudit()}
+                className="pill"
+                style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}
+              >
+                <IconCheck size={16} /> Start new audit
+              </button>
+            )}
+            {source !== 'postgres' && (
+              <div className="muted" style={{ fontSize: 12.5, padding: '4px 2px' }}>
+                Saved audit history appears here in the live app.
+              </div>
+            )}
+            {source === 'postgres' && audits === null && (
+              <div className="muted" style={{ fontSize: 13, padding: '8px 2px' }}>Loading audits…</div>
+            )}
+            {source === 'postgres' && audits && audits.length === 0 && (
+              <div className="card" style={{ padding: 20, textAlign: 'center' }}><div className="muted">No audits yet for this site.</div></div>
+            )}
+            {audits &&
+              audits.map((a) => {
+                const total = templateItemCount(a.template)
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => onStartAudit && onStartAudit({ openId: a.id, template: a.template })}
+                    className="card lrow"
+                    style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
+                  >
+                    <div className="row spread">
+                      <span style={{ fontSize: 14.5, fontWeight: 600 }}>{TPL_NAME[a.template] || a.template || 'Audit'}</span>
+                      <span className={`pill ${a.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
+                        {a.status === 'complete' ? 'Complete' : 'In progress'}
+                      </span>
+                    </div>
+                    <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
+                      {fmtWhen(a.updated)} · {a.auditor || '—'}
+                    </div>
+                    <div className="row gap" style={{ marginTop: 7, gap: 6 }}>
+                      <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>
+                        {a.answered ?? 0}/{total} answered
+                      </span>
+                      {a.deficiencies > 0 && (
+                        <span className="pill bg-fail s-fail" style={{ fontSize: 10 }}>
+                          {a.deficiencies} deficienc{a.deficiencies > 1 ? 'ies' : 'y'}
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
           </div>
         )}
 

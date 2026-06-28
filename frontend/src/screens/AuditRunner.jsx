@@ -78,8 +78,8 @@ function ItemRow({ item, resp, onSet }) {
 
 const SYNC_LABEL = { saved: 'Saved', saving: 'Saving…', offline: 'Saved on device', local: 'On device' }
 
-export default function AuditRunner({ name, site, source, onClose, onLogDeficiencies, flash }) {
-  const [tplKey, setTplKey] = useState(() => templateKeyForType(site.type))
+export default function AuditRunner({ name, site, source, openId, openTemplate, onClose, onLogDeficiencies, flash }) {
+  const [tplKey, setTplKey] = useState(() => openTemplate || templateKeyForType(site.type))
   const [responses, setResponses] = useState({})
   const [sectionIdx, setSectionIdx] = useState(0)
   const [review, setReview] = useState(false)
@@ -92,6 +92,7 @@ export default function AuditRunner({ name, site, source, onClose, onLogDeficien
   const auditIdRef = useRef(null)
   const skipSaveRef = useRef(false) // suppress autosave for programmatic loads
   const saveTimer = useRef(null)
+  const pendingOpenRef = useRef(openId || null) // a specific past audit to reopen
 
   useEffect(() => {
     aliveRef.current = true
@@ -110,6 +111,23 @@ export default function AuditRunner({ name, site, source, onClose, onLogDeficien
     let cancelled = false
 
     async function ensure() {
+      // Reopen a specific past audit (from the site's history list).
+      if (pendingOpenRef.current && source === 'postgres') {
+        const id = pendingOpenRef.current
+        pendingOpenRef.current = null
+        setSync('saving')
+        try {
+          const audit = await getAudit(id)
+          if (cancelled || !aliveRef.current) return
+          auditIdRef.current = audit.id
+          skipSaveRef.current = true
+          setResponses(audit.responses || {})
+          setSync('saved')
+          return
+        } catch {
+          /* fall through to create/resume by template */
+        }
+      }
       if (source !== 'postgres') {
         skipSaveRef.current = true
         setResponses(local)

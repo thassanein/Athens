@@ -36,7 +36,7 @@ export default function App() {
   const [source, setSource] = useState('local') // postgres|local
   const [capture, setCapture] = useState(null) // draft finding or null
   const [siteView, setSiteView] = useState(null) // {site, tab?, focus?} or null
-  const [auditSite, setAuditSite] = useState(null) // site name being audited, or null
+  const [auditTarget, setAuditTarget] = useState(null) // { site, openId?, template? } or null
   const [taskFilter, setTaskFilter] = useState('all')
   const [settings, setSettings] = useState({ push: true, offline: true, camera: true })
   const [user, setUser] = useState(USERS.auditor)
@@ -326,17 +326,20 @@ export default function App() {
           onCapture={(area) =>
             setCapture({ site: siteView.site, dept: 'ENV', area: area || '', note: '', owner: '', due: '', photo: null })
           }
-          onStartAudit={() => setAuditSite(siteView.site)}
+          onStartAudit={(opts) => setAuditTarget({ site: siteView.site, openId: opts?.openId || null, template: opts?.template || null })}
+          auditOpen={!!auditTarget}
           flash={flash}
         />
       )}
 
-      {auditSite && data[auditSite] && (
+      {auditTarget && data[auditTarget.site] && (
         <AuditRunner
-          name={auditSite}
-          site={data[auditSite]}
+          name={auditTarget.site}
+          site={data[auditTarget.site]}
           source={source}
-          onClose={() => setAuditSite(null)}
+          openId={auditTarget.openId}
+          openTemplate={auditTarget.template}
+          onClose={() => setAuditTarget(null)}
           onLogDeficiencies={logAuditFindings}
           flash={flash}
         />
