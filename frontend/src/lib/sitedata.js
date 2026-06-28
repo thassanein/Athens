@@ -63,7 +63,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "5-year review",
         "area": "SPCC",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS/SPCC/SPCC Big Bear Tier 1 - ver. 03.2026.pdf"
       }
     ],
     "leases": [],
@@ -646,7 +646,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "",
         "area": "Wastewater",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/Wastewater"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard/Wastewater/1 Clarifier (West), Main Wash Rack/LACSD Industrial Wastewater Permit No. 22814 - Paramount.pdf"
       }
     ],
     "leases": [],
@@ -716,7 +716,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "annual",
         "area": "CUPA",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF/CUPA haz mat/04.2026 CERs Submittal - Insurance Update.pdf"
       },
       {
         "id": "p-coi-mrf-03",
@@ -845,7 +845,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "5-year review",
         "area": "SPCC",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF/SPCC oil spill/SPCC Crown MRF Tier 1 -rev.02.2025-signed.pdf"
       },
       {
         "id": "p-crown-mrf-05",
@@ -1127,7 +1127,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "annual",
         "area": "Stormwater",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/Stormwater (SWPPP)"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)/Stormwater (SWPPP)/SWPPP DART_ August 2022-1.pdf"
       },
       {
         "id": "p-dart-lacsd-04",
@@ -1214,7 +1214,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "annual",
         "area": "CUPA",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/CUPA"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF/CUPA/CUPA Annual Permit 2025-2026 Victorville.pdf"
       },
       {
         "id": "p-victorville-lf-03",
@@ -1701,7 +1701,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "",
         "area": "Air Permits",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/Air Permits - MDAQMD"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)/Air Permits - MDAQMD/Permit B015173 Edge Screen TRT622 exp.7-31-26.pdf"
       }
     ],
     "leases": [],
@@ -2158,7 +2158,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "",
         "area": "SPCC",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South/SPCC Oil Spill"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South/SPCC Oil Spill/Waste Oil Collection Tank Report 2025-09-17.pdf"
       }
     ],
     "leases": [],
@@ -2235,7 +2235,7 @@ export const SNAPSHOT = {
         "expires": null,
         "cycle": "",
         "area": "Wastewater (clarifier)",
-        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/Wastewater (clarifier)"
+        "doc": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North/Wastewater (clarifier)/Industrial Waste Water Permit - LANO 030916.pdf"
       }
     ],
     "leases": [],
