@@ -14,7 +14,9 @@ CREATE TABLE sites (
   city   TEXT,
   lat    DOUBLE PRECISION,
   lng    DOUBLE PRECISION,
-  anchor BOOLEAN DEFAULT false
+  anchor BOOLEAN DEFAULT false,
+  folder   TEXT,
+  site_map TEXT
 );
 
 CREATE TABLE permits (
@@ -26,7 +28,8 @@ CREATE TABLE permits (
   status  TEXT CHECK (status IN ('active','renew','verify')),
   expires DATE,
   cycle   TEXT,
-  area    TEXT
+  area    TEXT,
+  doc     TEXT
 );
 
 CREATE TABLE leases (

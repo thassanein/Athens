@@ -54,7 +54,7 @@ function shapeChecklistRow(r) {
 function shapePermitRow(r) {
   return {
     id: r.id, site: r.site, name: r.name, agency: r.agency, number: r.number,
-    status: r.status, expires: fmtDate(r.expires), cycle: r.cycle, area: r.area,
+    status: r.status, expires: fmtDate(r.expires), cycle: r.cycle, area: r.area, doc: r.doc,
   };
 }
 
@@ -84,6 +84,7 @@ app.get('/api/sites', requireAuth, async (_req, res, next) => {
       out[s.name] = {
         type: s.type, swis: s.swis, addr: s.addr, city: s.city,
         lat: s.lat, lng: s.lng, anchor: s.anchor,
+        folder: s.folder, siteMap: s.site_map,
         permits: [], leases: [], checklist: [],
       };
     }
@@ -91,7 +92,7 @@ app.get('/api/sites', requireAuth, async (_req, res, next) => {
       if (!out[p.site]) continue;
       out[p.site].permits.push({
         id: p.id, name: p.name, agency: p.agency, number: p.number,
-        status: p.status, expires: fmtDate(p.expires), cycle: p.cycle, area: p.area,
+        status: p.status, expires: fmtDate(p.expires), cycle: p.cycle, area: p.area, doc: p.doc,
       });
     }
     for (const l of leases.rows) {

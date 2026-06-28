@@ -15,6 +15,7 @@ import {
   IconCamera,
   IconLeaf,
   IconDoc,
+  IconPin,
 } from '../components/Icons.jsx'
 
 // Scaled site-plan zone layout (viewBox 360×300). Each of the eight areas is a
@@ -358,13 +359,17 @@ const TABS = [
 ]
 
 // Tappable read-only card for permits & leases (no field entry per the brief —
-// taps just expand a detail panel).
-function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows }) {
+// taps just expand a detail panel). When `docUrl` is set, the expanded panel
+// shows a "View document" link that opens the source file/folder in SharePoint.
+function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows, docUrl }) {
   const [open, setOpen] = useState(false)
   return (
-    <button
+    <div
       className={`card lrow bd-${toneKey}`}
+      role="button"
+      tabIndex={0}
       onClick={() => setOpen((o) => !o)}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setOpen((o) => !o))}
       style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
     >
       <div className="row spread">
@@ -381,10 +386,22 @@ function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows }) {
               <span style={{ fontSize: 12.5, fontWeight: 600, textAlign: 'right' }}>{r.v}</span>
             </div>
           ))}
+          {docUrl && (
+            <a
+              href={docUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="pill"
+              style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--navy)', color: '#fff', textDecoration: 'none' }}
+            >
+              <IconDoc size={14} /> View document
+            </a>
+          )}
         </div>
       )}
       <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>{open ? 'Tap to collapse' : 'Tap for details'}</div>
-    </button>
+    </div>
   )
 }
 
@@ -487,13 +504,39 @@ export default function SiteRecord({
           )}
         </div>
         <div style={{ color: '#9FB0C4', fontSize: 12.5, marginTop: 3 }}>
-          {site.type} · {site.city} · SWIS {site.swis}
+          {site.type} · {site.city}{site.swis ? ` · SWIS ${site.swis}` : ''}
         </div>
         <div className="row gap" style={{ marginTop: 12 }}>
           <span className="pill bg-fail s-fail">{s.open} open</span>
           {s.verify > 0 && <span className="pill bg-fail s-fail">{s.verify} verify</span>}
           {s.renew > 0 && <span className="pill bg-open s-open">{s.renew} renewing</span>}
         </div>
+        {(site.siteMap || site.folder) && (
+          <div className="row gap" style={{ marginTop: 10, flexWrap: 'wrap' }}>
+            {site.siteMap && (
+              <a
+                href={site.siteMap}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pill"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,.14)', color: '#fff', textDecoration: 'none' }}
+              >
+                <IconPin size={14} /> Site map
+              </a>
+            )}
+            {site.folder && (
+              <a
+                href={site.folder}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pill"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,.14)', color: '#fff', textDecoration: 'none' }}
+              >
+                <IconDoc size={14} /> Documents
+              </a>
+            )}
+          </div>
+        )}
       </div>
 
       {/* map-led site plan */}
@@ -623,6 +666,7 @@ export default function SiteRecord({
                 label={PERMIT_LABEL[p.status]}
                 title={p.name}
                 subtitle={`${p.agency} · ${p.number}`}
+                docUrl={p.doc}
                 rows={[
                   { k: 'Agency', v: p.agency },
                   { k: 'Number', v: p.number },

@@ -21,15 +21,20 @@ CREATE TABLE IF NOT EXISTS sites (
   name   TEXT PRIMARY KEY,
   type   TEXT, swis TEXT, addr TEXT, city TEXT,
   lat DOUBLE PRECISION, lng DOUBLE PRECISION,
-  anchor BOOLEAN DEFAULT false
+  anchor BOOLEAN DEFAULT false,
+  folder TEXT, site_map TEXT
 );
 CREATE TABLE IF NOT EXISTS permits (
   id TEXT PRIMARY KEY,
   site TEXT REFERENCES sites(name) ON DELETE CASCADE,
   name TEXT, agency TEXT, number TEXT,
   status TEXT CHECK (status IN ('active','renew','verify')),
-  expires DATE, cycle TEXT, area TEXT
+  expires DATE, cycle TEXT, area TEXT, doc TEXT
 );
+-- Add document-link columns to pre-existing deployments (no-op once present).
+ALTER TABLE sites   ADD COLUMN IF NOT EXISTS folder   TEXT;
+ALTER TABLE sites   ADD COLUMN IF NOT EXISTS site_map TEXT;
+ALTER TABLE permits ADD COLUMN IF NOT EXISTS doc      TEXT;
 CREATE TABLE IF NOT EXISTS leases (
   id TEXT PRIMARY KEY,
   site TEXT REFERENCES sites(name) ON DELETE CASCADE,
@@ -60,14 +65,14 @@ async function loadAll(client, data, { wipe }) {
     let sites = 0, permits = 0, leases = 0, items = 0
     for (const [name, site] of Object.entries(data)) {
       await client.query(
-        `INSERT INTO sites (name,type,swis,addr,city,lat,lng,anchor) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
-        [name, site.type ?? null, site.swis ?? null, site.addr ?? null, site.city ?? null, site.lat ?? null, site.lng ?? null, site.anchor ?? false]
+        `INSERT INTO sites (name,type,swis,addr,city,lat,lng,anchor,folder,site_map) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+        [name, site.type ?? null, site.swis ?? null, site.addr ?? null, site.city ?? null, site.lat ?? null, site.lng ?? null, site.anchor ?? false, site.folder ?? null, site.siteMap ?? null]
       )
       sites++
       for (const p of site.permits ?? []) {
         await client.query(
-          `INSERT INTO permits (id,site,name,agency,number,status,expires,cycle,area) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-          [p.id, name, p.name ?? null, p.agency ?? null, p.number ?? null, p.status ?? null, p.expires ?? null, p.cycle ?? null, p.area ?? null]
+          `INSERT INTO permits (id,site,name,agency,number,status,expires,cycle,area,doc) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+          [p.id, name, p.name ?? null, p.agency ?? null, p.number ?? null, p.status ?? null, p.expires ?? null, p.cycle ?? null, p.area ?? null, p.doc ?? null]
         )
         permits++
       }
