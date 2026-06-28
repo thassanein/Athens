@@ -6,7 +6,7 @@ import 'dotenv/config';
 import { pool } from './db.js';
 import { migrate } from '../db/migrate.js';
 import {
-  authEnabled,
+  authMode,
   sessionMiddleware,
   mountAuthRoutes,
   requireAuth,
@@ -64,7 +64,7 @@ function shapePermitRow(r) {
 app.get('/api/health', async (_req, res) => {
   try {
     await pool.query('SELECT 1');
-    res.json({ ok: true, db: true, auth: authEnabled ? 'sso' : 'open' });
+    res.json({ ok: true, db: true, auth: authMode });
   } catch (err) {
     res.status(503).json({ ok: true, db: false, error: err.message });
   }
@@ -208,7 +208,7 @@ migrate()
   .finally(() => {
     app.listen(PORT, () => {
       console.log(
-        `Athens Compliance API on http://localhost:${PORT}  (auth: ${authEnabled ? 'Microsoft SSO' : 'OPEN/dev'})`
+        `Athens Compliance API on http://localhost:${PORT}  (auth: ${authMode})`
       );
     });
   });

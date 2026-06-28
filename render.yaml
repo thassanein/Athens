@@ -32,7 +32,12 @@ services:
         generateValue: true # Render generates a long random secret
       - key: DEFAULT_ROLE
         value: viewer
-      # ---- Microsoft Entra (fill these in the dashboard after the app URL exists) ----
+      # ---- Option A: shared team passcodes (no Microsoft admin needed) ----
+      - key: AUDITOR_PASSCODE
+        sync: false # passcode that grants edit (auditor) access
+      - key: VIEWER_PASSCODE
+        sync: false # passcode that grants read-only (viewer) access
+      # ---- Option B: Microsoft Entra SSO (leave blank to use passcodes above) ----
       - key: ENTRA_CLIENT_ID
         sync: false
       - key: ENTRA_TENANT_ID

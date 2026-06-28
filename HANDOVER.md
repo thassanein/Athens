@@ -162,9 +162,14 @@ Implemented — see **[`DEPLOY.md`](DEPLOY.md)** for the click-by-click guide. I
 
 - `render.yaml` provisions a managed PostgreSQL + a web service that builds the frontend and runs
   the Express server (which serves the SPA **and** `/api` from one origin).
-- **Auth:** Microsoft Entra (Azure AD), OIDC auth-code + PKCE, in `server/src/auth.js`. Cookie
-  sessions. Role comes from Entra **app roles** in the token, else the `AUDITOR_EMAILS` allowlist,
-  else `DEFAULT_ROLE` (viewer). `/api` writes are auditor-only (server-enforced).
+- **Auth (`server/src/auth.js`), three modes, cookie sessions:**
+  - **passcode** — shared `AUDITOR_PASSCODE` / `VIEWER_PASSCODE` (no admin needed; the default for
+    the live deploy). Entering a passcode signs you in with that role.
+  - **sso** — Microsoft Entra (Azure AD), OIDC auth-code + PKCE. Role from token app roles, else the
+    `AUDITOR_EMAILS` allowlist, else `DEFAULT_ROLE`. Takes precedence over passcodes when configured.
+  - **open** — local dev only (no auth env → dev user). In production with no auth the API is locked
+    (503) so the DB can't leak.
+  - `/api` writes are auditor-only (server-enforced, not just hidden in the UI).
 - **Modes:** the same code runs "open" locally (no Entra env → dev user) and "secure" in production
   (Entra required; in prod it refuses to run without auth → returns 503, so the DB is never exposed).
 - **Schema:** `server/db/migrate.js` runs on boot — creates tables if missing, seeds only if empty

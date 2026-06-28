@@ -1,11 +1,10 @@
-// Authentication — Microsoft Entra (Azure AD) OpenID Connect, auth-code + PKCE.
-//
-// Two modes:
-//   - SECURE: when ENTRA_CLIENT_ID/TENANT_ID/CLIENT_SECRET/REDIRECT_URI are set,
-//     users must sign in with Microsoft; /api is protected; role comes from the
-//     token's app roles or an email allowlist.
-//   - OPEN: when those are NOT set (local dev / the Pages demo has no server at
-//     all), the server returns a default dev user so the app keeps working.
+// Authentication — three modes, chosen by which env vars are set:
+//   1. ENTRA  : Microsoft Entra (Azure AD) OIDC, auth-code + PKCE (full SSO).
+//   2. PASSCODE: shared team passcodes (no admin needed). AUDITOR_PASSCODE /
+//      VIEWER_PASSCODE — entering one signs you in with that role.
+//   3. OPEN   : local dev only (no auth env) → a default dev user. In PRODUCTION
+//      with no auth configured the API is locked (503) so data can't leak.
+import crypto from 'node:crypto'
 import cookieSession from 'cookie-session'
 import { ConfidentialClientApplication, CryptoProvider } from '@azure/msal-node'
 
@@ -15,40 +14,45 @@ const {
   ENTRA_CLIENT_SECRET,
   ENTRA_REDIRECT_URI,
   AUDITOR_EMAILS = '',
+  AUDITOR_PASSCODE = '',
+  VIEWER_PASSCODE = '',
   DEFAULT_ROLE = 'viewer',
   SESSION_SECRET,
   NODE_ENV,
 } = process.env
 
-export const authEnabled = Boolean(
-  ENTRA_CLIENT_ID && ENTRA_TENANT_ID && ENTRA_CLIENT_SECRET && ENTRA_REDIRECT_URI
-)
 const PROD = NODE_ENV === 'production'
 
-// Safety: in production, refuse to run "open" (no-auth) — that would expose the
-// database. Until Entra is configured, /api and /auth/me return 503 so the live
-// site falls back to read-only demo data instead of leaking real records.
+export const entraEnabled = Boolean(
+  ENTRA_CLIENT_ID && ENTRA_TENANT_ID && ENTRA_CLIENT_SECRET && ENTRA_REDIRECT_URI
+)
+export const passcodeEnabled = !entraEnabled && Boolean(AUDITOR_PASSCODE || VIEWER_PASSCODE)
+export const authEnabled = entraEnabled || passcodeEnabled
+export const authMode = entraEnabled ? 'sso' : passcodeEnabled ? 'passcode' : 'open'
+
 const UNCONFIGURED = PROD && !authEnabled
 if (UNCONFIGURED) {
-  console.warn('[auth] PRODUCTION WITHOUT ENTRA CONFIG — API is locked (503). Set ENTRA_* env vars.')
+  console.warn('[auth] PRODUCTION WITH NO AUTH CONFIGURED — API is locked (503). Set passcodes or Entra.')
 }
 
 const SCOPES = ['openid', 'profile', 'email']
-
-// Default identity used in OPEN mode (local dev only).
 const DEV_USER = { name: 'Dave Marin', email: 'dev@local', role: 'auditor', initials: 'DM' }
 
-const auditorList = AUDITOR_EMAILS.toLowerCase()
-  .split(',')
-  .map((s) => s.trim())
-  .filter(Boolean)
+const auditorList = AUDITOR_EMAILS.toLowerCase().split(',').map((s) => s.trim()).filter(Boolean)
 
 function initialsFrom(name = '') {
   const parts = name.trim().split(/\s+/)
   return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase() || 'A'
 }
 
-// App roles in the token win; otherwise the email allowlist; otherwise default.
+// Constant-time string compare (avoids leaking length/early-exit timing).
+function safeEqual(a, b) {
+  const ab = Buffer.from(String(a))
+  const bb = Buffer.from(String(b))
+  if (ab.length !== bb.length) return false
+  return crypto.timingSafeEqual(ab, bb)
+}
+
 function resolveRole(email, tokenRoles) {
   if (Array.isArray(tokenRoles)) {
     if (tokenRoles.includes('Auditor')) return 'auditor'
@@ -60,7 +64,7 @@ function resolveRole(email, tokenRoles) {
 
 let cca = null
 let cryptoProvider = null
-if (authEnabled) {
+if (entraEnabled) {
   cca = new ConfidentialClientApplication({
     auth: {
       clientId: ENTRA_CLIENT_ID,
@@ -71,33 +75,53 @@ if (authEnabled) {
   cryptoProvider = new CryptoProvider()
 }
 
-// Signed session cookie. Holds the user identity (and transient PKCE during the
-// login round-trip). secure+sameSite work because the app is single-origin.
 export const sessionMiddleware = cookieSession({
   name: 'athens.sid',
   keys: [SESSION_SECRET || 'dev-insecure-change-me'],
   maxAge: 8 * 60 * 60 * 1000,
   httpOnly: true,
   sameSite: 'lax',
-  secure: NODE_ENV === 'production',
+  secure: PROD,
 })
 
 function safeRedirect(target) {
-  // only allow same-app relative paths
   return typeof target === 'string' && target.startsWith('/') && !target.startsWith('//') ? target : '/'
 }
 
 export function mountAuthRoutes(app) {
-  // Who am I? Drives the frontend (authed / needs-login / demo).
+  // Who am I? Drives the frontend: authed / which-login-to-show / demo.
   app.get('/auth/me', (req, res) => {
     if (UNCONFIGURED) return res.status(503).json({ error: 'auth not configured', mode: 'unconfigured' })
     if (!authEnabled) return res.json({ ...DEV_USER, mode: 'open' }) // local dev only
-    if (req.session?.user) return res.json({ ...req.session.user, mode: 'sso' })
-    return res.status(401).json({ error: 'not authenticated', mode: 'sso' })
+    if (req.session?.user) return res.json({ ...req.session.user, mode: authMode })
+    return res.status(401).json({ error: 'not authenticated', mode: authMode })
   })
 
-  if (!authEnabled) return // OPEN mode: no login routes needed
+  // ---- PASSCODE mode ----
+  if (passcodeEnabled) {
+    app.post('/auth/passcode', (req, res) => {
+      const code = String(req.body?.passcode ?? '')
+      let role = null
+      if (AUDITOR_PASSCODE && safeEqual(code, AUDITOR_PASSCODE)) role = 'auditor'
+      else if (VIEWER_PASSCODE && safeEqual(code, VIEWER_PASSCODE)) role = 'viewer'
+      if (!role) return res.status(401).json({ error: 'Incorrect passcode.' })
+      req.session.user =
+        role === 'auditor'
+          ? { name: 'Field Auditor', email: '', role: 'auditor', initials: 'FA' }
+          : { name: 'Site Viewer', email: '', role: 'viewer', initials: 'SV' }
+      res.json({ ok: true, role })
+    })
 
+    app.get('/auth/logout', (req, res) => {
+      req.session = null
+      res.redirect('/')
+    })
+    return
+  }
+
+  if (!entraEnabled) return // OPEN mode — no login routes
+
+  // ---- ENTRA (Microsoft) mode ----
   app.get('/auth/login', async (req, res, next) => {
     try {
       const { verifier, challenge } = await cryptoProvider.generatePkceCodes()
@@ -150,16 +174,14 @@ export function mountAuthRoutes(app) {
 
   app.get('/auth/logout', (req, res) => {
     req.session = null
-    // Also end the Microsoft session, then return to the app.
     const base = ENTRA_REDIRECT_URI.replace(/\/auth\/redirect$/, '/')
-    const logoutUrl =
+    res.redirect(
       `https://login.microsoftonline.com/${ENTRA_TENANT_ID}/oauth2/v2.0/logout` +
-      `?post_logout_redirect_uri=${encodeURIComponent(base)}`
-    res.redirect(logoutUrl)
+        `?post_logout_redirect_uri=${encodeURIComponent(base)}`
+    )
   })
 }
 
-// Gate for /api. OPEN mode injects the dev user; SECURE mode requires a session.
 export function requireAuth(req, res, next) {
   if (UNCONFIGURED) return res.status(503).json({ error: 'auth not configured' })
   if (!authEnabled) {
@@ -173,8 +195,6 @@ export function requireAuth(req, res, next) {
   return res.status(401).json({ error: 'authentication required' })
 }
 
-// Write-protection: only auditors may edit existing records (defense in depth —
-// the UI already hides the controls for viewers).
 export function requireAuditor(req, res, next) {
   if (req.user?.role === 'auditor') return next()
   return res.status(403).json({ error: 'auditor role required' })

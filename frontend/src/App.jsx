@@ -53,14 +53,14 @@ export default function App() {
       if (!alive) return
 
       if (me.state === 'login') {
-        setAuthMode('sso')
-        setLoading(false) // show the SSO login screen
+        setAuthMode(me.mode === 'passcode' ? 'passcode' : 'sso')
+        setLoading(false) // show the login screen (passcode or Microsoft)
         return
       }
 
       if (me.state === 'authed') {
         const u = me.user
-        setAuthMode(u.mode === 'open' ? 'demo' : 'sso')
+        setAuthMode(u.mode === 'open' ? 'demo' : u.mode === 'passcode' ? 'passcode' : 'sso')
         setUser({
           name: u.name,
           role: u.role,
@@ -224,7 +224,7 @@ export default function App() {
           settings={settings}
           setSettings={setSettings}
           onSignOut={() => {
-            if (authMode === 'sso') window.location.href = authLogoutUrl
+            if (authMode === 'sso' || authMode === 'passcode') window.location.href = authLogoutUrl
             else setScreen('login')
           }}
         />

@@ -1,11 +1,30 @@
+import { useState } from 'react'
 import { IconMicrosoft } from '../components/Icons.jsx'
-import { authLoginUrl } from '../lib/api.js'
+import { authLoginUrl, submitPasscode } from '../lib/api.js'
 
 // Full-bleed navy gradient, centered logo + tagline, bottom CTA block.
-//  - mode 'sso'  → live deploy: only "Sign in with Microsoft" (Entra).
-//  - mode 'demo' → no backend (e.g. GitHub Pages): the two demo logins.
+//  - mode 'sso'      → live deploy: only "Sign in with Microsoft" (Entra).
+//  - mode 'passcode' → live deploy: a shared team passcode.
+//  - mode 'demo'     → no backend (e.g. GitHub Pages): the two demo logins.
 export default function Login({ source, onEnter, mode = 'demo' }) {
   const sso = mode === 'sso'
+  const passcode = mode === 'passcode'
+  const [code, setCode] = useState('')
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  const enterPasscode = async () => {
+    if (!code || busy) return
+    setBusy(true)
+    setErr('')
+    const ok = await submitPasscode(code)
+    if (ok) window.location.reload() // re-bootstraps as the signed-in user
+    else {
+      setErr('Incorrect passcode. Try again.')
+      setBusy(false)
+    }
+  }
+
   return (
     <div
       style={{
@@ -42,40 +61,67 @@ export default function Login({ source, onEnter, mode = 'demo' }) {
       </div>
 
       <div style={{ width: '100%' }}>
-        <button
-          className="btn"
-          style={{ background: '#fff', color: '#1A2736' }}
-          onClick={() => (sso ? (window.location.href = authLoginUrl) : onEnter('auditor'))}
-        >
-          <IconMicrosoft size={18} />
-          Sign in with Microsoft
-        </button>
-
-        {sso ? (
-          <div style={{ color: '#6E8198', fontSize: 12, textAlign: 'center', marginTop: 16, lineHeight: 1.5 }}>
-            Use your Athens Microsoft account.<br />Your access level (auditor / viewer) is set by IT.
-          </div>
+        {passcode ? (
+          <>
+            <input
+              type="password"
+              inputMode="text"
+              className="input"
+              placeholder="Team passcode"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && enterPasscode()}
+              style={{ marginBottom: 10, textAlign: 'center', fontSize: 16 }}
+              autoFocus
+            />
+            {err && (
+              <div style={{ color: '#ff9aa6', fontSize: 12.5, textAlign: 'center', marginBottom: 10 }}>{err}</div>
+            )}
+            <button className="btn btn-primary" disabled={busy || !code} onClick={enterPasscode}>
+              {busy ? 'Checking…' : 'Enter'}
+            </button>
+            <div style={{ color: '#6E8198', fontSize: 12, textAlign: 'center', marginTop: 16, lineHeight: 1.5 }}>
+              Enter your team passcode. Auditor and viewer access use different passcodes — ask your team lead.
+            </div>
+          </>
         ) : (
           <>
-            <div style={{ color: '#6E8198', fontSize: 11, fontWeight: 700, textAlign: 'center', letterSpacing: '.6px', margin: '20px 0 10px' }}>
-              OR CONTINUE AS · DEMO
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <button
-                onClick={() => onEnter('auditor')}
-                style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.14)', borderRadius: 12, padding: '12px 8px', color: '#fff', textAlign: 'center' }}
-              >
-                <div style={{ fontSize: 14.5, fontWeight: 700 }}>Auditor</div>
-                <div style={{ fontSize: 11, color: '#9FB0C4', marginTop: 3 }}>Dave Marin · can edit</div>
-              </button>
-              <button
-                onClick={() => onEnter('viewer')}
-                style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.14)', borderRadius: 12, padding: '12px 8px', color: '#fff', textAlign: 'center' }}
-              >
-                <div style={{ fontSize: 14.5, fontWeight: 700 }}>Viewer</div>
-                <div style={{ fontSize: 11, color: '#9FB0C4', marginTop: 3 }}>Read-only</div>
-              </button>
-            </div>
+            <button
+              className="btn"
+              style={{ background: '#fff', color: '#1A2736' }}
+              onClick={() => (sso ? (window.location.href = authLoginUrl) : onEnter('auditor'))}
+            >
+              <IconMicrosoft size={18} />
+              Sign in with Microsoft
+            </button>
+
+            {sso ? (
+              <div style={{ color: '#6E8198', fontSize: 12, textAlign: 'center', marginTop: 16, lineHeight: 1.5 }}>
+                Use your Athens Microsoft account.<br />Your access level (auditor / viewer) is set by IT.
+              </div>
+            ) : (
+              <>
+                <div style={{ color: '#6E8198', fontSize: 11, fontWeight: 700, textAlign: 'center', letterSpacing: '.6px', margin: '20px 0 10px' }}>
+                  OR CONTINUE AS · DEMO
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <button
+                    onClick={() => onEnter('auditor')}
+                    style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.14)', borderRadius: 12, padding: '12px 8px', color: '#fff', textAlign: 'center' }}
+                  >
+                    <div style={{ fontSize: 14.5, fontWeight: 700 }}>Auditor</div>
+                    <div style={{ fontSize: 11, color: '#9FB0C4', marginTop: 3 }}>Dave Marin · can edit</div>
+                  </button>
+                  <button
+                    onClick={() => onEnter('viewer')}
+                    style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.14)', borderRadius: 12, padding: '12px 8px', color: '#fff', textAlign: 'center' }}
+                  >
+                    <div style={{ fontSize: 14.5, fontWeight: 700 }}>Viewer</div>
+                    <div style={{ fontSize: 11, color: '#9FB0C4', marginTop: 3 }}>Read-only</div>
+                  </button>
+                </div>
+              </>
+            )}
           </>
         )}
 

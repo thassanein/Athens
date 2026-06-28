@@ -18,12 +18,35 @@ const BASE = import.meta.env.BASE_URL // '/' on the single-host deploy, '/Athens
 export async function fetchMe() {
   try {
     const res = await fetch(`${BASE}auth/me`, { credentials: 'include' })
-    if (res.status === 401) return { state: 'login' }
+    if (res.status === 401) {
+      let mode = 'sso'
+      try {
+        mode = (await res.json()).mode || 'sso'
+      } catch {
+        /* default */
+      }
+      return { state: 'login', mode }
+    }
     if (!res.ok) return { state: 'demo' }
     const user = await res.json()
     return { state: 'authed', user }
   } catch {
     return { state: 'demo' }
+  }
+}
+
+// Passcode login (passcode mode). Returns true on success.
+export async function submitPasscode(passcode) {
+  try {
+    const res = await fetch(`${BASE}auth/passcode`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ passcode }),
+    })
+    return res.ok
+  } catch {
+    return false
   }
 }
 
