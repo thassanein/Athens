@@ -254,8 +254,9 @@ export default function App() {
     </div>
   )
 
-  if (loading) return Loading
-
+  // Landing page: show the Auditor/Viewer chooser immediately on open, while the
+  // portfolio loads in the background — so a cold start never blocks the role
+  // choice behind a spinner.
   if (screen === 'login') {
     return (
       <div className="app-shell">
@@ -273,7 +274,8 @@ export default function App() {
     )
   }
 
-  if (!data) return Loading
+  // Past the chooser: wait for the portfolio before rendering the app shell.
+  if (loading || !data) return Loading
 
   const badge = alertCount(data)
   const canEdit = user.role === 'auditor'
