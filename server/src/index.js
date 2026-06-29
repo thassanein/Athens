@@ -13,6 +13,7 @@ import {
   requireAuth,
   requireAuditor,
 } from './auth.js';
+import { portfolioDiagnostics, renderOverviewHTML, renderLlmsTxt } from './diagnostics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -30,7 +31,7 @@ if (process.env.CORS_ORIGIN) {
 // apps and AI tools can consume it. No cookies are needed in this mode, so a
 // wildcard origin is safe. Locking auth (Entra/passcodes) disables this.
 if (!authEnabled) {
-  app.use(['/api', '/auth'], (req, res, next) => {
+  app.use(['/api', '/auth', '/overview', '/llms.txt'], (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
@@ -94,46 +95,77 @@ app.get('/api/health', async (_req, res) => {
   }
 });
 
+// Build the full portfolio object (same shape the SPA consumes). Shared by
+// /api/sites and the server-rendered diagnostics surfaces.
+async function loadPortfolio() {
+  const [sites, permits, leases, checklist] = await Promise.all([
+    pool.query('SELECT * FROM sites ORDER BY name'),
+    pool.query('SELECT * FROM permits ORDER BY id'),
+    pool.query('SELECT * FROM leases ORDER BY id'),
+    pool.query('SELECT * FROM checklist_items ORDER BY id'),
+  ]);
+  const out = {};
+  for (const s of sites.rows) {
+    out[s.name] = {
+      type: s.type, swis: s.swis, addr: s.addr, city: s.city,
+      lat: s.lat, lng: s.lng, anchor: s.anchor,
+      folder: s.folder, siteMap: s.site_map, documents: s.documents ?? [], compliance: s.compliance ?? null,
+      permits: [], leases: [], checklist: [],
+    };
+  }
+  for (const p of permits.rows) {
+    if (!out[p.site]) continue;
+    out[p.site].permits.push({
+      id: p.id, name: p.name, agency: p.agency, number: p.number,
+      status: p.status, expires: fmtDate(p.expires), cycle: p.cycle, area: p.area, doc: p.doc,
+    });
+  }
+  for (const l of leases.rows) {
+    if (!out[l.site]) continue;
+    out[l.site].leases.push({
+      id: l.id, name: l.name, lessor: l.lessor, status: l.status,
+      expires: fmtDate(l.expires), area: l.area,
+    });
+  }
+  for (const c of checklist.rows) {
+    if (!out[c.site]) continue;
+    out[c.site].checklist.push(shapeChecklistRow(c));
+  }
+  return out;
+}
+
 app.get('/api/sites', requireAuth, async (_req, res, next) => {
   try {
-    const [sites, permits, leases, checklist] = await Promise.all([
-      pool.query('SELECT * FROM sites ORDER BY name'),
-      pool.query('SELECT * FROM permits ORDER BY id'),
-      pool.query('SELECT * FROM leases ORDER BY id'),
-      pool.query('SELECT * FROM checklist_items ORDER BY id'),
-    ]);
-
-    const out = {};
-    for (const s of sites.rows) {
-      out[s.name] = {
-        type: s.type, swis: s.swis, addr: s.addr, city: s.city,
-        lat: s.lat, lng: s.lng, anchor: s.anchor,
-        folder: s.folder, siteMap: s.site_map, documents: s.documents ?? [], compliance: s.compliance ?? null,
-        permits: [], leases: [], checklist: [],
-      };
-    }
-    for (const p of permits.rows) {
-      if (!out[p.site]) continue;
-      out[p.site].permits.push({
-        id: p.id, name: p.name, agency: p.agency, number: p.number,
-        status: p.status, expires: fmtDate(p.expires), cycle: p.cycle, area: p.area, doc: p.doc,
-      });
-    }
-    for (const l of leases.rows) {
-      if (!out[l.site]) continue;
-      out[l.site].leases.push({
-        id: l.id, name: l.name, lessor: l.lessor, status: l.status,
-        expires: fmtDate(l.expires), area: l.area,
-      });
-    }
-    for (const c of checklist.rows) {
-      if (!out[c.site]) continue;
-      out[c.site].checklist.push(shapeChecklistRow(c));
-    }
-    res.json(out);
+    res.json(await loadPortfolio());
   } catch (err) {
     next(err);
   }
+});
+
+// Machine-readable portfolio diagnostics (rollup + per-facility summary).
+app.get('/api/portfolio', requireAuth, async (_req, res, next) => {
+  try {
+    res.json(portfolioDiagnostics(await loadPortfolio()));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Index of public endpoints (API discovery for tools).
+app.get('/api', (req, res) => {
+  res.json({
+    app: 'Athens Facility Compliance',
+    description: 'Compliance command center for the Athens facilities portfolio.',
+    authMode,
+    endpoints: {
+      health: '/api/health',
+      sites: '/api/sites',
+      portfolio: '/api/portfolio',
+      audits: '/api/audits',
+      overview: '/overview',
+      llms: '/llms.txt',
+    },
+  });
 });
 
 app.patch('/api/checklist/:id', requireAuth, requireAuditor, async (req, res, next) => {
@@ -303,6 +335,27 @@ app.patch('/api/audits/:id', requireAuth, async (req, res, next) => {
     next(err);
   } finally {
     client.release();
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Server-rendered, no-JS surfaces for crawlers / AI diagnostics tools. These
+// must be registered before the SPA catch-all so they aren't shadowed by it.
+// ---------------------------------------------------------------------------
+app.get('/overview', requireAuth, async (_req, res, next) => {
+  try {
+    res.type('html').send(renderOverviewHTML(await loadPortfolio(), { authMode }));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/llms.txt', requireAuth, async (req, res, next) => {
+  try {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    res.type('text/plain').send(renderLlmsTxt(await loadPortfolio(), { baseUrl }));
+  } catch (err) {
+    next(err);
   }
 });
 

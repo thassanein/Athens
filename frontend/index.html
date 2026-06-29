@@ -20,9 +20,36 @@
       rel="stylesheet"
     />
     <title>Athens Facility Compliance</title>
+    <meta
+      name="description"
+      content="Compliance command center for the Athens facilities portfolio — track compliance status, open gaps, due dates, owners, and audit readiness. Machine-readable data at /api/portfolio and /api/sites; server-rendered overview at /overview."
+    />
+    <meta property="og:title" content="Athens Facility Compliance" />
+    <meta
+      property="og:description"
+      content="Track facility compliance status, open gaps, due dates, owners, and audit readiness across the Athens portfolio."
+    />
   </head>
   <body>
     <div id="root"></div>
+    <!-- Fallback for crawlers / tools that don't run JavaScript. The app is a
+         single-page app; its rendered data is available without JS below. -->
+    <noscript>
+      <div style="font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; color: #1a2736">
+        <h1>Athens Facility Compliance</h1>
+        <p>
+          This is an interactive single-page app. To read its data without a
+          JavaScript browser (e.g. for automated diagnostics), use:
+        </p>
+        <ul>
+          <li><a href="/overview">/overview</a> — server-rendered portfolio overview (HTML)</li>
+          <li><a href="/api/portfolio">/api/portfolio</a> — portfolio diagnostics (JSON)</li>
+          <li><a href="/api/sites">/api/sites</a> — full portfolio (JSON)</li>
+          <li><a href="/llms.txt">/llms.txt</a> — guide for AI tools</li>
+          <li><a href="/api/health">/api/health</a> — service status (JSON)</li>
+        </ul>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
