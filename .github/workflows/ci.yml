@@ -126,3 +126,11 @@ jobs:
           curl -sf "localhost:4000/overview/SVMRF" | grep -q '<h1>SVMRF' || (echo '::error::/overview/:name did not server-render' && exit 1)
           curl -s -o /dev/null -w '%{http_code}' "localhost:4000/api/facility/DoesNotExist" | grep -q '404' || (echo '::error::unknown facility should 404' && exit 1)
           echo "diagnostics surfaces OK"
+          # audit hygiene: review flags a wrong-form audit, and delete removes it
+          BAD=$(curl -sf -X POST localhost:4000/api/audits -H "Content-Type: application/json" -d "{\"site\":\"SVMRF\",\"template\":\"landfill\"}" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>console.log(JSON.parse(d).id))")
+          curl -sf localhost:4000/api/audits/review \
+            | BAD=$BAD node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(!j.mismatched.some(a=>a.id===process.env.BAD))throw new Error(\"review did not flag the mismatched audit\");console.log(\"review OK\",j.mismatchedCount,\"mismatched\")})"
+          curl -sf -X DELETE "localhost:4000/api/audits/$BAD" >/dev/null
+          curl -s -o /dev/null -w '%{http_code}' "localhost:4000/api/audits/$BAD" | grep -q '404' || (echo '::error::deleted audit should 404' && exit 1)
+          echo "audit delete + review OK"

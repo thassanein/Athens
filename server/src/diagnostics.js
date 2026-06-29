@@ -35,6 +35,18 @@ function daysUntil(dateStr) {
 }
 const isOpenWork = (c) => c.status === 'fail' || c.status === 'open'
 
+// Facility type → expected audit form (mirror of the frontend TYPE_TEMPLATE).
+export const TYPE_TEMPLATE = {
+  'Materials Recovery Facility': 'mrf',
+  'Hauling Yard': 'hauling',
+  'Operations Yard': 'hauling',
+  'Transfer Station': 'ts',
+  Landfill: 'landfill',
+  'Compost / Organics': 'organics',
+  'Office / Other': 'facility',
+}
+export const expectedTemplate = (type) => TYPE_TEMPLATE[type] || 'hauling'
+
 // Mirror of the frontend's risk tiering so the diagnostics match the UI.
 function riskTier(site) {
   const checklist = site.checklist || []

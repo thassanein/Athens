@@ -13,7 +13,7 @@ import {
   requireAuth,
   requireAuditor,
 } from './auth.js';
-import { portfolioDiagnostics, facilityDetail, renderOverviewHTML, renderFacilityHTML, renderLlmsTxt } from './diagnostics.js';
+import { portfolioDiagnostics, facilityDetail, renderOverviewHTML, renderFacilityHTML, renderLlmsTxt, expectedTemplate } from './diagnostics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -33,7 +33,7 @@ if (process.env.CORS_ORIGIN) {
 if (!authEnabled) {
   app.use(['/api', '/auth', '/overview', '/llms.txt'], (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') return res.sendStatus(204);
     next();
@@ -279,6 +279,45 @@ app.get('/api/audits', requireAuth, async (req, res, next) => {
   }
 });
 
+// Audit hygiene across the whole portfolio: which audits use the wrong form for
+// their facility type, and which are empty drafts. Helps clean up stray records.
+// (Registered before /api/audits/:id so "review" isn't read as an id.)
+app.get('/api/audits/review', requireAuth, async (_req, res, next) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT a.id, a.site, a.template, a.status, a.auditor, a.updated, s.type,
+        COUNT(r.item) FILTER (WHERE r.val IS NOT NULL) AS answered
+      FROM audits a
+      LEFT JOIN sites s ON s.name = a.site
+      LEFT JOIN audit_responses r ON r.audit = a.id
+      GROUP BY a.id, s.type
+      ORDER BY a.updated DESC`);
+    const audits = rows.map((r) => {
+      const expected = expectedTemplate(r.type);
+      const answered = Number(r.answered);
+      return {
+        id: r.id, site: r.site, type: r.type || null, template: r.template, status: r.status,
+        auditor: r.auditor, updated: r.updated instanceof Date ? r.updated.toISOString() : r.updated,
+        answered, expectedTemplate: expected,
+        formMismatch: !!r.template && !!r.type && r.template !== expected,
+        emptyDraft: answered === 0 && r.status !== 'complete',
+      };
+    });
+    const mismatched = audits.filter((a) => a.formMismatch);
+    const emptyDrafts = audits.filter((a) => a.emptyDraft);
+    res.json({
+      total: audits.length,
+      mismatchedCount: mismatched.length,
+      emptyDraftCount: emptyDrafts.length,
+      mismatched,
+      emptyDrafts,
+      audits,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.get('/api/audits/:id', requireAuth, async (req, res, next) => {
   try {
     const a = await pool.query('SELECT * FROM audits WHERE id = $1', [req.params.id]);
@@ -305,6 +344,17 @@ app.post('/api/audits', requireAuth, async (req, res, next) => {
       [id, site, template ?? null, auditor]
     );
     res.status(201).json({ ...shapeAudit(result.rows[0]), responses: {} });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Delete an audit (and its responses, via ON DELETE CASCADE).
+app.delete('/api/audits/:id', requireAuth, async (req, res, next) => {
+  try {
+    const result = await pool.query('DELETE FROM audits WHERE id = $1 RETURNING id', [req.params.id]);
+    if (result.rowCount === 0) return res.status(404).json({ error: 'Audit not found' });
+    res.json({ ok: true, deleted: result.rows[0].id });
   } catch (err) {
     next(err);
   }

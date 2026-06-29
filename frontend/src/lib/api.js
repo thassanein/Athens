@@ -177,3 +177,7 @@ export function saveAudit(id, body) {
     body: JSON.stringify(body),
   })
 }
+
+export function deleteAudit(id) {
+  return fetchJSON(`/api/audits/${encodeURIComponent(id)}`, { method: 'DELETE' })
+}

@@ -18,8 +18,8 @@ import {
   IconPin,
   IconCheck,
 } from '../components/Icons.jsx'
-import { listAudits, getAudit } from '../lib/api.js'
-import { AUDIT_TEMPLATES, templateItemCount } from '../lib/audit-templates.js'
+import { listAudits, getAudit, deleteAudit } from '../lib/api.js'
+import { AUDIT_TEMPLATES, templateItemCount, TYPE_TEMPLATE } from '../lib/audit-templates.js'
 import { demoAuditFor } from '../lib/demo-audits.js'
 import FacilityMap from './FacilityMap.jsx'
 
@@ -424,6 +424,7 @@ export default function SiteRecord({
   const [reportAudit, setReportAudit] = useState(null) // latest completed audit detail (for the report)
   const [resultAudit, setResultAudit] = useState(null) // an audit detail to show inline ("results")
   const [resultLoading, setResultLoading] = useState(false)
+  const [auditsReload, setAuditsReload] = useState(0) // bump to refetch the audit list
   const [focusItem, setFocusItem] = useState(null) // a permit/lease id to expand + highlight
   const focusRef = useRef(null)
   const tabsRef = useRef(null)
@@ -444,6 +445,18 @@ export default function SiteRecord({
   const verifyPermit = (id) => {
     onUpdatePermit?.(name, id, 'active')
     setFocusItem(null)
+  }
+  const removeAudit = async (a) => {
+    if (!a?.id) return
+    if (typeof window !== 'undefined' && !window.confirm(`Delete this audit (${TPL_NAME[a.template] || a.template})? This cannot be undone.`)) return
+    try {
+      await deleteAudit(a.id)
+      flash('Audit deleted')
+    } catch {
+      flash('Could not delete audit')
+    }
+    setResultAudit(null)
+    setAuditsReload((n) => n + 1)
   }
 
   const isLive = source === 'postgres'
@@ -487,7 +500,7 @@ export default function SiteRecord({
     return () => {
       alive = false
     }
-  }, [tab, source, name, auditOpen])
+  }, [tab, source, name, auditOpen, auditsReload])
 
   // For the report: pull the latest completed audit's full detail (deficiencies).
   useEffect(() => {
@@ -915,6 +928,7 @@ export default function SiteRecord({
             canEdit={canEdit}
             onBack={() => setResultAudit(null)}
             onResume={onStartAudit && resultAudit.status !== 'complete' ? () => onStartAudit({ openId: resultAudit.id, template: resultAudit.template }) : null}
+            onDelete={canEdit && isLive ? () => removeAudit(resultAudit) : null}
           />
         )}
 
@@ -966,33 +980,48 @@ export default function SiteRecord({
             {isLive &&
               (audits || []).map((a) => {
                 const total = templateItemCount(a.template)
+                const mismatch = TYPE_TEMPLATE[site.type] && a.template && TYPE_TEMPLATE[site.type] !== a.template
                 return (
-                  <button
-                    key={a.id}
-                    onClick={() => (a.status === 'complete' ? openResult(a) : onStartAudit && onStartAudit({ openId: a.id, template: a.template }))}
-                    className="card lrow"
-                    style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
-                  >
-                    <div className="row spread">
-                      <span style={{ fontSize: 14.5, fontWeight: 600 }}>{TPL_NAME[a.template] || a.template || 'Audit'}</span>
-                      <span className={`pill ${a.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
-                        {a.status === 'complete' ? 'Complete' : 'In progress'}
-                      </span>
-                    </div>
-                    <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-                      {fmtWhen(a.updated)} · {a.auditor || '—'}
-                    </div>
-                    <div className="row gap" style={{ marginTop: 7, gap: 6 }}>
-                      <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>
-                        {a.answered ?? 0}/{total} answered
-                      </span>
-                      {a.deficiencies > 0 && (
-                        <span className="pill bg-fail s-fail" style={{ fontSize: 10 }}>
-                          {a.deficiencies} deficienc{a.deficiencies > 1 ? 'ies' : 'y'}
+                  <div key={a.id} className="card lrow" style={{ padding: '12px 14px' }}>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => (a.status === 'complete' ? openResult(a) : onStartAudit && onStartAudit({ openId: a.id, template: a.template }))}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <div className="row spread">
+                        <span style={{ fontSize: 14.5, fontWeight: 600 }}>{TPL_NAME[a.template] || a.template || 'Audit'}</span>
+                        <span className={`pill ${a.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
+                          {a.status === 'complete' ? 'Complete' : 'In progress'}
                         </span>
-                      )}
+                      </div>
+                      <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
+                        {fmtWhen(a.updated)} · {a.auditor || '—'}
+                      </div>
+                      <div className="row gap" style={{ marginTop: 7, gap: 6, flexWrap: 'wrap' }}>
+                        <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>
+                          {a.answered ?? 0}/{total} answered
+                        </span>
+                        {a.deficiencies > 0 && (
+                          <span className="pill bg-fail s-fail" style={{ fontSize: 10 }}>
+                            {a.deficiencies} deficienc{a.deficiencies > 1 ? 'ies' : 'y'}
+                          </span>
+                        )}
+                        {mismatch && (
+                          <span className="pill bg-open s-open" style={{ fontSize: 10 }} title={`This form doesn't match a ${site.type}`}>
+                            Wrong form for {site.type}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </button>
+                    {canEdit && (
+                      <div style={{ borderTop: '1px solid var(--card-border)', marginTop: 8, paddingTop: 8, textAlign: 'right' }}>
+                        <button onClick={() => removeAudit(a)} className="label" style={{ color: 'var(--red)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                          Delete audit
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 )
               })}
           </div>
@@ -1016,7 +1045,7 @@ export default function SiteRecord({
 }
 
 // Read-only results for a single audit: counts + the list of deficiencies.
-function AuditResults({ audit, loading, canEdit, onBack, onResume }) {
+function AuditResults({ audit, loading, canEdit, onBack, onResume, onDelete }) {
   const total = templateItemCount(audit.template)
   const responses = audit.responses || {}
   const counts = { yes: 0, no: 0, na: 0 }
@@ -1025,9 +1054,16 @@ function AuditResults({ audit, loading, canEdit, onBack, onResume }) {
   const defs = auditDeficiencies(audit)
   return (
     <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <button onClick={onBack} className="label" style={{ color: 'var(--blue)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
-        ← Back to audits
-      </button>
+      <div className="row spread" style={{ alignItems: 'center' }}>
+        <button onClick={onBack} className="label" style={{ color: 'var(--blue)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
+          ← Back to audits
+        </button>
+        {onDelete && (
+          <button onClick={onDelete} className="label" style={{ color: 'var(--red)', background: 'none', border: 'none', cursor: 'pointer' }}>
+            Delete audit
+          </button>
+        )}
+      </div>
       <div className="card" style={{ padding: '12px 14px' }}>
         <div className="row spread">
           <span style={{ fontSize: 15.5, fontWeight: 700 }}>{TPL_NAME[audit.template] || audit.template}</span>
