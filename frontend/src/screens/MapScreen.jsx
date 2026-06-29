@@ -48,7 +48,7 @@ function Kpi({ value, label, accent, active, onClick }) {
       <div className="stat-num" style={{ color: accent || '#fff', fontSize: 22, lineHeight: 1.1 }}>
         {value}
       </div>
-      <div className="label" style={{ color: '#9FB0C4', marginTop: 4, fontSize: 10.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <div className="label" style={{ color: '#9FB0C4', marginTop: 4, fontSize: 10.5, textTransform: 'none', letterSpacing: 0, lineHeight: 1.15, whiteSpace: 'normal' }}>
         {label}
       </div>
     </button>
@@ -144,8 +144,8 @@ export default function MapScreen({ data, user, onOpenSite, onNav }) {
           <Kpi value={roll.tiers.compliant} label="Compliant" accent="#7BE0A3" active={tier === 'compliant'} onClick={() => setTier(tier === 'compliant' ? 'all' : 'compliant')} />
           <Kpi value={roll.tiers.risk} label="At risk" accent="#F1C66B" active={tier === 'risk'} onClick={() => setTier(tier === 'risk' ? 'all' : 'risk')} />
           <Kpi value={roll.tiers.noncompliant} label="Non-compliant" accent="#FF8C99" active={tier === 'noncompliant'} onClick={() => setTier(tier === 'noncompliant' ? 'all' : 'noncompliant')} />
-          <Kpi value={roll.overdue} label="Overdue items" accent={roll.overdue ? '#FF8C99' : '#fff'} onClick={() => onNav?.('alerts')} />
-          <Kpi value={roll.upcoming} label="Due ≤ 90 days" accent={roll.upcoming ? '#F1C66B' : '#fff'} onClick={() => onNav?.('alerts')} />
+          <Kpi value={roll.overdue} label="Overdue" accent={roll.overdue ? '#FF8C99' : '#fff'} onClick={() => onNav?.('alerts')} />
+          <Kpi value={roll.upcoming} label="Due ≤ 90d" accent={roll.upcoming ? '#F1C66B' : '#fff'} onClick={() => onNav?.('alerts')} />
         </div>
       </div>
 

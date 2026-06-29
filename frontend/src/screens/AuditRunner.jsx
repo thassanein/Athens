@@ -5,6 +5,7 @@ import {
   templateItemCount,
 } from '../lib/audit-templates.js'
 import { listAudits, getAudit, createAudit, saveAudit } from '../lib/api.js'
+import { groupSectionsByZone, zoneForSection } from '../lib/audit-zones.js'
 import { IconBack, IconCheck, IconClose, IconChevron } from '../components/Icons.jsx'
 
 // Full-screen step-by-step audit. Walks the checklist that matches the site's
@@ -287,7 +288,14 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
 
   const pct = total ? Math.round((answered / total) * 100) : 0
   const section = tpl.sections[sectionIdx]
-  const lastSection = sectionIdx >= tpl.sections.length - 1
+
+  // Group the form's sections into site-plan zones, walkthrough-ordered.
+  const groups = useMemo(() => groupSectionsByZone(tpl.sections), [tpl])
+  const walkOrder = useMemo(() => groups.flatMap((g) => g.entries.map((e) => e.index)), [groups])
+  const walkPos = walkOrder.indexOf(sectionIdx)
+  const lastSection = walkPos === walkOrder.length - 1
+  const nextSectionIdx = walkPos >= 0 ? walkOrder[walkPos + 1] : undefined
+  const zoneOf = (title) => zoneForSection(title)
 
   return (
     <div className="app-shell" style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 'min(1040px, 100vw)', zIndex: 100, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
@@ -320,36 +328,54 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
       <div ref={topRef} style={{ flex: 1, overflowY: 'auto', padding: 14 }}>
         {view === 'menu' && (
           <div style={{ maxWidth: 760, margin: '0 auto' }}>
-            <div className="title" style={{ fontSize: 18 }}>Areas to audit</div>
-            <div className="muted" style={{ fontSize: 12.5, margin: '4px 0 12px' }}>
-              Pick any area to begin — in any order. Every item in all areas must be answered (N/A is fine) to submit.
+            <div className="title" style={{ fontSize: 18 }}>Walk the site</div>
+            <div className="muted" style={{ fontSize: 12.5, margin: '4px 0 14px' }}>
+              Areas are grouped by zone in walkthrough order. Work through each subarea as you go — every item in every
+              area must be answered (N/A is fine) to submit.
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 10 }}>
-              {tpl.sections.map((s, i) => {
-                const a = sectionAnswered(s)
-                const t = s.items.length
-                const done = a === t
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {groups.map((g) => {
+                const za = g.entries.reduce((n, e) => n + sectionAnswered(e.section), 0)
+                const zt = g.entries.reduce((n, e) => n + e.section.items.length, 0)
+                const zdone = za === zt
                 return (
-                  <button
-                    key={i}
-                    onClick={() => { setSectionIdx(i); setView('section') }}
-                    className={`card ${done ? 'bd-pass' : ''}`}
-                    style={{ padding: '12px 14px', textAlign: 'left', cursor: 'pointer', display: 'block', width: '100%' }}
-                  >
-                    <div className="row spread" style={{ alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 14.5, fontWeight: 700 }}>{s.title}</span>
-                      {done ? (
-                        <span className="pill bg-pass s-pass" style={{ fontSize: 10, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                          <IconCheck size={12} /> Done
-                        </span>
-                      ) : (
-                        <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>{a}/{t}</span>
-                      )}
+                  <div key={g.zone}>
+                    <div className="row spread" style={{ alignItems: 'center', marginBottom: 8 }}>
+                      <span className="label" style={{ fontSize: 12.5, color: 'var(--navy)', letterSpacing: '.3px' }}>{g.zone}</span>
+                      <span className={`pill ${zdone ? 'bg-pass s-pass' : ''}`} style={{ fontSize: 10, ...(zdone ? {} : { background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }) }}>
+                        {zdone ? '✓ Done' : `${za}/${zt}`}
+                      </span>
                     </div>
-                    <div style={{ marginTop: 8, height: 5, background: 'var(--card-border)', borderRadius: 99 }}>
-                      <div style={{ width: `${t ? Math.round((a / t) * 100) : 0}%`, height: '100%', background: done ? 'var(--green,#2E9E5B)' : 'var(--amber)', borderRadius: 99 }} />
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 8 }}>
+                      {g.entries.map(({ section: s, index: i }) => {
+                        const a = sectionAnswered(s)
+                        const t = s.items.length
+                        const done = a === t
+                        return (
+                          <button
+                            key={i}
+                            onClick={() => { setSectionIdx(i); setView('section') }}
+                            className={`card ${done ? 'bd-pass' : ''}`}
+                            style={{ padding: '11px 13px', textAlign: 'left', cursor: 'pointer', display: 'block', width: '100%' }}
+                          >
+                            <div className="row spread" style={{ alignItems: 'center', gap: 8 }}>
+                              <span style={{ fontSize: 13.5, fontWeight: 600 }}>{s.title}</span>
+                              {done ? (
+                                <span className="pill bg-pass s-pass" style={{ fontSize: 10, display: 'inline-flex', alignItems: 'center', gap: 4, flex: '0 0 auto' }}>
+                                  <IconCheck size={12} /> Done
+                                </span>
+                              ) : (
+                                <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)', flex: '0 0 auto' }}>{a}/{t}</span>
+                              )}
+                            </div>
+                            <div style={{ marginTop: 7, height: 5, background: 'var(--card-border)', borderRadius: 99 }}>
+                              <div style={{ width: `${t ? Math.round((a / t) * 100) : 0}%`, height: '100%', background: done ? 'var(--green,#2E9E5B)' : 'var(--amber)', borderRadius: 99 }} />
+                            </div>
+                          </button>
+                        )
+                      })}
                     </div>
-                  </button>
+                  </div>
                 )
               })}
             </div>
@@ -358,9 +384,12 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
 
         {view === 'section' && (
           <>
-            <div className="row spread" style={{ marginBottom: 10 }}>
-              <div className="title" style={{ fontSize: 18 }}>{section.title}</div>
-              <span className="muted" style={{ fontSize: 12 }}>Area {sectionIdx + 1}/{tpl.sections.length} · {sectionAnswered(section)}/{section.items.length}</span>
+            <div className="row spread" style={{ marginBottom: 10, alignItems: 'flex-start' }}>
+              <div>
+                <div className="label" style={{ fontSize: 11, color: 'var(--grey)' }}>{zoneOf(section.title)}</div>
+                <div className="title" style={{ fontSize: 18 }}>{section.title}</div>
+              </div>
+              <span className="muted" style={{ fontSize: 12, flex: '0 0 auto' }}>{sectionAnswered(section)}/{section.items.length}</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: 10, alignItems: 'start' }}>
               {section.items.map((it) => (
@@ -434,7 +463,7 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
                 Done <IconCheck size={15} />
               </button>
             ) : (
-              <button onClick={() => setSectionIdx((i) => i + 1)} className="pill" style={{ flex: 1, padding: '12px 0', background: 'var(--navy)', color: '#fff', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <button onClick={() => nextSectionIdx !== undefined && setSectionIdx(nextSectionIdx)} className="pill" style={{ flex: 1, padding: '12px 0', background: 'var(--navy)', color: '#fff', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                 Next area <IconChevron size={15} />
               </button>
             )}

@@ -289,28 +289,16 @@ export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
           ))}
         </div>
 
-        {/* live legend / attention chip (bottom-left — corner is free) */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 10,
-            bottom: 10,
-            background: 'rgba(255,255,255,.92)',
-            borderRadius: 10,
-            padding: '5px 9px',
-            fontSize: 10.5,
-            fontWeight: 700,
-            display: 'flex',
-            gap: 9,
-            boxShadow: 'var(--shadow-card)',
-          }}
-        >
-          {attention > 0 ? (
-            <span style={{ color: 'var(--red)' }}>● {attention} area{attention > 1 ? 's' : ''} need attention</span>
-          ) : (
-            <span style={{ color: 'var(--green)' }}>● All areas clear</span>
-          )}
-        </div>
+      </div>
+
+      {/* attention status — below the map (avoids overlapping the style selector
+          on narrow phones) */}
+      <div style={{ marginTop: 8, fontSize: 12, fontWeight: 700 }}>
+        {attention > 0 ? (
+          <span style={{ color: 'var(--red)' }}>● {attention} area{attention > 1 ? 's' : ''} need attention</span>
+        ) : (
+          <span style={{ color: 'var(--green)' }}>● All areas clear</span>
+        )}
       </div>
 
       {/* selected-zone obligations */}
