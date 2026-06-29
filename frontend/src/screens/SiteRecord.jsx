@@ -21,6 +21,8 @@ import {
 import { listAudits, getAudit, deleteAudit } from '../lib/api.js'
 import { AUDIT_TEMPLATES, templateItemCount, TYPE_TEMPLATE } from '../lib/audit-templates.js'
 import { demoAuditFor } from '../lib/demo-audits.js'
+import { zoneForSection } from '../lib/audit-zones.js'
+import { ownerFor } from '../lib/employees.js'
 import FacilityMap from './FacilityMap.jsx'
 import ReportOverlay from '../components/ReportOverlay.jsx'
 
@@ -34,7 +36,8 @@ const fmtWhen = (iso) => {
   }
 }
 
-// Deficiencies (the "No" answers) of a fetched audit detail, with their area.
+// Deficiencies (the "No" answers) of a fetched audit detail, with their area,
+// site-plan zone, note and any photo evidence.
 function auditDeficiencies(audit) {
   if (!audit) return []
   const tpl = AUDIT_TEMPLATES[audit.template]
@@ -43,7 +46,8 @@ function auditDeficiencies(audit) {
   tpl.sections.forEach((s) =>
     s.items.forEach((it) => {
       const r = audit.responses?.[it.id]
-      if (r && r.val === 'no') out.push({ section: s.title, ref: it.ref, text: it.text, note: r.note || '' })
+      if (r && r.val === 'no')
+        out.push({ id: it.id, section: s.title, zone: zoneForSection(s.title), ref: it.ref, text: it.text, note: r.note || '', photo: r.photo || null })
     })
   )
   return out
@@ -410,6 +414,7 @@ export default function SiteRecord({
   onUpdatePermit,
   onCapture,
   onStartAudit,
+  onLogDeficiencies,
   auditOpen = false,
   userName,
   flash,
@@ -919,12 +924,22 @@ export default function SiteRecord({
 
         {tab === 'audits' && resultAudit && (
           <AuditResults
+            key={resultAudit.id}
             audit={resultAudit}
             loading={resultLoading}
             canEdit={canEdit}
+            ownerName={ownerFor(name).name}
             onBack={() => setResultAudit(null)}
             onResume={onStartAudit && resultAudit.status !== 'complete' ? () => onStartAudit({ openId: resultAudit.id, template: resultAudit.template }) : null}
             onDelete={canEdit && isLive ? () => removeAudit(resultAudit) : null}
+            onLog={
+              onLogDeficiencies
+                ? (defs) => {
+                    onLogDeficiencies(name, defs)
+                    flash(`Logged ${defs.length} finding${defs.length > 1 ? 's' : ''} · assigned to ${ownerFor(name).name}`)
+                  }
+                : null
+            }
           />
         )}
 
@@ -933,12 +948,12 @@ export default function SiteRecord({
             {latestComplete && (
               <button
                 onClick={() => openResult(latestComplete)}
-                className="card bd-pass"
+                className={`card ${latestComplete.deficiencies > 0 ? 'bd-fail' : 'bd-pass'}`}
                 style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
               >
                 <div className="row spread">
                   <span className="label" style={{ color: 'var(--grey)' }}>Last audit result</span>
-                  <span className="label" style={{ color: 'var(--blue)' }}>View results →</span>
+                  <span className="label" style={{ color: 'var(--blue)' }}>{latestComplete.deficiencies > 0 ? 'Take action →' : 'View results →'}</span>
                 </div>
                 <div className="row spread" style={{ marginTop: 4 }}>
                   <span style={{ fontSize: 14.5, fontWeight: 700 }}>{TPL_NAME[latestComplete.template] || latestComplete.template}</span>
@@ -949,7 +964,9 @@ export default function SiteRecord({
                 <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>{fmtWhen(latestComplete.updated)} · {latestComplete.auditor || '—'}</div>
                 <div className="row gap" style={{ marginTop: 7, gap: 6 }}>
                   <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>{latestComplete.answered ?? 0}/{templateItemCount(latestComplete.template)} answered</span>
-                  <span className={`pill ${latestComplete.deficiencies > 0 ? 'bg-fail s-fail' : 'bg-pass s-pass'}`} style={{ fontSize: 10 }}>{latestComplete.deficiencies || 0} deficienc{latestComplete.deficiencies === 1 ? 'y' : 'ies'}</span>
+                  <span className={`pill ${latestComplete.deficiencies > 0 ? 'bg-fail s-fail' : 'bg-pass s-pass'}`} style={{ fontSize: 10 }}>
+                    {latestComplete.deficiencies > 0 ? `${latestComplete.deficiencies} need action` : 'No deficiencies'}
+                  </span>
                 </div>
               </button>
             )}
@@ -1045,13 +1062,19 @@ export default function SiteRecord({
 }
 
 // Read-only results for a single audit: counts + the list of deficiencies.
-function AuditResults({ audit, loading, canEdit, onBack, onResume, onDelete }) {
+function AuditResults({ audit, loading, canEdit, ownerName, onBack, onResume, onDelete, onLog }) {
+  const [logged, setLogged] = useState(false)
   const total = templateItemCount(audit.template)
   const responses = audit.responses || {}
   const counts = { yes: 0, no: 0, na: 0 }
   for (const r of Object.values(responses)) if (r && r.val) counts[r.val]++
   const answered = counts.yes + counts.no + counts.na
   const defs = auditDeficiencies(audit)
+  // group deficiencies by site-plan zone
+  const byZone = {}
+  defs.forEach((d) => (byZone[d.zone] ||= []).push(d))
+  const withPhotos = defs.filter((d) => d.photo).length
+
   return (
     <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div className="row spread" style={{ alignItems: 'center' }}>
@@ -1087,18 +1110,53 @@ function AuditResults({ audit, loading, canEdit, onBack, onResume, onDelete }) {
             ))}
           </div>
 
-          <div className="label">Deficiencies ({defs.length})</div>
+          {/* action headline — turn deficiencies into tracked, assigned findings */}
           {defs.length === 0 ? (
-            <div className="card" style={{ padding: 18, textAlign: 'center' }}><div className="muted">No “No” answers — site is clear.</div></div>
+            <div className="card bd-pass" style={{ padding: 18, textAlign: 'center' }}>
+              <div style={{ fontWeight: 700, color: 'var(--green,#2E9E5B)' }}>No deficiencies — site is clear</div>
+            </div>
           ) : (
-            defs.map((d, i) => (
-              <div key={i} className="card bd-fail" style={{ padding: '11px 14px' }}>
-                <div className="label" style={{ color: 'var(--grey)' }}>{d.section}</div>
-                <div style={{ fontSize: 13.5, marginTop: 3 }}>{d.ref ? `${d.ref}. ` : ''}{d.text}</div>
-                {d.note && <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>“{d.note}”</div>}
+            <div className="card bd-fail" style={{ padding: '12px 14px' }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--red)' }}>
+                {defs.length} deficienc{defs.length === 1 ? 'y' : 'ies'} need action
               </div>
-            ))
+              <div className="muted" style={{ fontSize: 12.5, marginTop: 3 }}>
+                Across {Object.keys(byZone).length} area{Object.keys(byZone).length === 1 ? '' : 's'}
+                {withPhotos ? ` · ${withPhotos} with photo evidence` : ''}. Log them to assign an owner and a due date.
+              </div>
+              {canEdit && onLog && (
+                <button
+                  onClick={() => { onLog(defs); setLogged(true) }}
+                  disabled={logged}
+                  className="pill"
+                  style={{ marginTop: 10, width: '100%', padding: '12px', background: logged ? '#cdd5df' : 'var(--red)', color: '#fff', fontWeight: 700, cursor: logged ? 'default' : 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                >
+                  <IconCheck size={16} /> {logged ? `Logged · assigned to ${ownerName}` : `Log ${defs.length} as tracked findings → ${ownerName}`}
+                </button>
+              )}
+            </div>
           )}
+
+          {/* deficiencies grouped by zone, with note + photo */}
+          {Object.entries(byZone).map(([zone, items]) => (
+            <div key={zone}>
+              <div className="label" style={{ margin: '2px 0 6px' }}>{zone} ({items.length})</div>
+              {items.map((d, i) => (
+                <div key={i} className="card bd-fail" style={{ padding: '11px 14px', marginBottom: 8 }}>
+                  <div className="label" style={{ color: 'var(--grey)' }}>{d.section}</div>
+                  <div style={{ fontSize: 13.5, marginTop: 3, fontWeight: 600 }}>{d.ref ? `${d.ref}. ` : ''}{d.text}</div>
+                  {d.note && <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>“{d.note}”</div>}
+                  {d.photo && (
+                    <img src={d.photo} alt="evidence" style={{ width: '100%', maxHeight: 180, objectFit: 'cover', borderRadius: 8, marginTop: 8, display: 'block' }} />
+                  )}
+                  <div className="row spread" style={{ marginTop: 8, alignItems: 'center' }}>
+                    <span className="muted" style={{ fontSize: 11.5 }}>Suggested owner · {ownerName}</span>
+                    <span className="pill bg-fail s-fail" style={{ fontSize: 10 }}>Action required</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
 
           {onResume && canEdit && (
             <button onClick={onResume} className="pill" style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>

@@ -9,6 +9,7 @@ import {
   authLogoutUrl,
 } from './lib/api.js'
 import { alertCount } from './lib/derive.js'
+import { ownerFor } from './lib/employees.js'
 
 import Login from './screens/Login.jsx'
 import MapScreen from './screens/MapScreen.jsx'
@@ -125,9 +126,13 @@ export default function App() {
     [data, source, persist, flash]
   )
 
-  // Batch-create findings from an audit's deficiencies ("No" answers).
+  // Batch-create findings from an audit's deficiencies ("No" answers). Each
+  // becomes an open, action-driven finding: assigned to the site's compliance
+  // owner with a 2-week due date, carrying the auditor's note + photo evidence.
   const logAuditFindings = useCallback(
     async (siteName, defs) => {
+      const owner = ownerFor(siteName).name
+      const due = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10)
       const next = structuredClone(data)
       const created = []
       defs.forEach((d, i) => {
@@ -135,13 +140,13 @@ export default function App() {
         const finding = {
           id: localId,
           dept: 'Facility',
-          area: (d.section || 'Audit').slice(0, 40),
+          area: (d.zone || d.section || 'Audit').slice(0, 40),
           title: (d.text || 'Audit finding').slice(0, 80),
           status: 'open',
-          owner: null,
-          due: null,
-          note: `[Audit] ${d.ref ? d.ref + ': ' : ''}${d.text}${d.note ? ` — ${d.note}` : ''}`,
-          photo: null,
+          owner: d.owner || owner,
+          due: d.due || due,
+          note: `[Audit${d.section ? ` · ${d.section}` : ''}] ${d.ref ? d.ref + ': ' : ''}${d.text}${d.note ? ` — ${d.note}` : ''}`,
+          photo: d.photo || null,
           source: 'field',
           lat: null,
           lng: null,
@@ -307,6 +312,7 @@ export default function App() {
             setCapture({ site: siteView.site, dept: 'ENV', area: area || '', note: '', owner: '', due: '', photo: null })
           }
           onStartAudit={(opts) => setAuditTarget({ site: siteView.site, openId: opts?.openId || null, template: opts?.template || null })}
+          onLogDeficiencies={logAuditFindings}
           auditOpen={!!auditTarget}
           userName={user.name}
           flash={flash}
