@@ -837,7 +837,7 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "PRR-Paramount Truck Yard": {
-    "type": "Operations Yard",
+    "type": "Hauling Yard",
     "swis": "19-AA-0840",
     "addr": "7201, 7202 & 7230 Petterson Lane",
     "city": "Paramount",
@@ -1664,7 +1664,7 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "DART (LACSD)": {
-    "type": "Operations Yard",
+    "type": "Hauling Yard",
     "swis": "19-AA-0801",
     "addr": "9770 Washburn Road",
     "city": "Downey",
@@ -2897,7 +2897,7 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "Van Norman": {
-    "type": "Operations Yard",
+    "type": "Hauling Yard",
     "swis": "",
     "addr": "127 Van Norman Road",
     "city": "Montebello",
@@ -3114,7 +3114,7 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "TO-Conejo Center Dr": {
-    "type": "Operations Yard",
+    "type": "Hauling Yard",
     "swis": "",
     "addr": "2550 Conejo Center Drive",
     "city": "Thousand Oaks",
@@ -3295,7 +3295,7 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "LA South": {
-    "type": "Operations Yard",
+    "type": "Hauling Yard",
     "swis": "",
     "addr": "1301 W. 228th Street",
     "city": "Torrance",
@@ -3419,7 +3419,7 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "LA North": {
-    "type": "Operations Yard",
+    "type": "Hauling Yard",
     "swis": "",
     "addr": "12303 Montague Street",
     "city": "Pacoima",
@@ -3787,7 +3787,7 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "Vincent": {
-    "type": "Operations Yard",
+    "type": "Hauling Yard",
     "swis": "",
     "addr": "5355 Vincent Ave",
     "city": "Irwindale",
