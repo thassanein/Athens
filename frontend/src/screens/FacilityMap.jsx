@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { PERMIT_LABEL, FINDING_LABEL, isOpenWork } from '../lib/derive.js'
 import { templateKeyForType } from '../lib/audit-templates.js'
-import { IconPin } from '../components/Icons.jsx'
+import { IconPin, IconChevron } from '../components/Icons.jsx'
 
 // ---------------------------------------------------------------------------
 // A living, data-driven facility plan. Unlike the old generic schematic, the
@@ -156,7 +156,7 @@ function fitLabel(label, w) {
   return l2 ? [l1, l2] : [l1]
 }
 
-export default function FacilityMap({ site, type, onCapture }) {
+export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
   const [styleKey, setStyleKey] = useState('plan')
   const [selKey, setSelKey] = useState(null)
   const layout = LAYOUTS[templateKeyForType(type)] || LAYOUTS.hauling
@@ -330,7 +330,12 @@ export default function FacilityMap({ site, type, onCapture }) {
             </div>
           )}
           {sel.permits.map((p) => (
-            <div key={p.id} className="row spread" style={{ padding: '5px 0' }}>
+            <button
+              key={p.id}
+              onClick={() => onOpenPermit?.(p.id)}
+              className="row spread"
+              style={{ padding: '5px 0', width: '100%', background: 'none', border: 'none', cursor: onOpenPermit ? 'pointer' : 'default', textAlign: 'left', alignItems: 'center' }}
+            >
               <span style={{ fontSize: 12.5 }}>
                 <span className="dot" style={{ background: RAG_HEX[p.status], marginRight: 7 }} />
                 {p.name}
@@ -338,10 +343,10 @@ export default function FacilityMap({ site, type, onCapture }) {
                   {p.area}
                 </span>
               </span>
-              <span className={`s-${p.status === 'active' ? 'pass' : 'fail'}`} style={{ fontSize: 11.5, fontWeight: 700 }}>
-                {PERMIT_LABEL[p.status]}
+              <span className={`s-${p.status === 'active' ? 'pass' : 'fail'}`} style={{ fontSize: 11.5, fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                {PERMIT_LABEL[p.status]} {onOpenPermit && <IconChevron size={12} />}
               </span>
-            </div>
+            </button>
           ))}
           {sel.findings.map((f) => (
             <div key={f.id} className="row spread" style={{ padding: '5px 0' }}>

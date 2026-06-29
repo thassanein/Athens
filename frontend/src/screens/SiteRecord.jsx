@@ -261,7 +261,7 @@ function FindingCard({ c, defaultOpen, canEdit, onChange }) {
 }
 
 // ----------------------------------------------------------------------------
-function RenewalTimeline({ site }) {
+function RenewalTimeline({ site, onOpenItem }) {
   const items = []
   for (const p of site.permits || []) {
     const d = daysUntil(p.expires)
@@ -289,14 +289,15 @@ function RenewalTimeline({ site }) {
         {upcoming.map((it) => {
           const pct = Math.max(2, Math.min(98, (Math.max(it.d, 0) / 90) * 100))
           return (
-            <div
+            <button
               key={it.id}
               title={`${it.name} · ${fmtShort(it.expires)}`}
-              style={{ position: 'absolute', left: `${pct}%`, top: 6, transform: 'translateX(-50%)', textAlign: 'center' }}
+              onClick={() => onOpenItem?.(it)}
+              style={{ position: 'absolute', left: `${pct}%`, top: 6, transform: 'translateX(-50%)', textAlign: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               <div className={`dot dot-${it.status === 'renew' ? 'local' : 'pg'}`} style={{ width: 12, height: 12, border: '2px solid #fff', boxShadow: '0 0 0 1px var(--card-border)' }} />
               <div style={{ fontSize: 9, fontWeight: 700, marginTop: 3, color: 'var(--amber)' }}>{it.d}d</div>
-            </div>
+            </button>
           )
         })}
         {upcoming.length === 0 && (
@@ -309,12 +310,17 @@ function RenewalTimeline({ site }) {
         <div style={{ borderTop: '1px solid var(--card-border)', marginTop: 8, paddingTop: 8 }}>
           <span className="label s-fail">Overdue / unconfirmed</span>
           {overdue.map((it) => (
-            <div key={it.id} className="row spread" style={{ marginTop: 6 }}>
+            <button
+              key={it.id}
+              onClick={() => onOpenItem?.(it)}
+              className="row spread"
+              style={{ marginTop: 6, width: '100%', background: 'none', border: 'none', padding: '3px 0', cursor: 'pointer', textAlign: 'left', alignItems: 'center' }}
+            >
               <span style={{ fontSize: 12.5, fontWeight: 600 }}>{it.name}</span>
-              <span className="pill bg-fail s-fail" style={{ fontSize: 10 }}>
-                Verify
+              <span className="pill bg-fail s-fail" style={{ fontSize: 10, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                Verify <IconChevron size={12} />
               </span>
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -338,16 +344,20 @@ const TABS = [
 // Tappable read-only card for permits & leases (no field entry per the brief —
 // taps just expand a detail panel). When `docUrl` is set, the expanded panel
 // shows a "View document" link that opens the source file/folder in SharePoint.
-function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows, docUrl }) {
-  const [open, setOpen] = useState(false)
+function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows, docUrl, defaultOpen, highlight, onVerify, innerRef }) {
+  const [open, setOpen] = useState(!!defaultOpen)
+  useEffect(() => {
+    if (defaultOpen) setOpen(true)
+  }, [defaultOpen])
   return (
     <div
+      ref={innerRef}
       className={`card lrow bd-${toneKey}`}
       role="button"
       tabIndex={0}
       onClick={() => setOpen((o) => !o)}
       onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setOpen((o) => !o))}
-      style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
+      style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer', boxShadow: highlight ? '0 0 0 2px var(--navy)' : undefined }}
     >
       <div className="row spread">
         <span className="label" style={{ color: 'var(--grey)' }}>{area}</span>
@@ -363,18 +373,29 @@ function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows, docUrl }) {
               <span style={{ fontSize: 12.5, fontWeight: 600, textAlign: 'right' }}>{r.v}</span>
             </div>
           ))}
-          {docUrl && (
-            <a
-              href={docUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="pill"
-              style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--navy)', color: '#fff', textDecoration: 'none' }}
-            >
-              <IconDoc size={14} /> View document
-            </a>
-          )}
+          <div className="row gap" style={{ marginTop: 10, gap: 8, flexWrap: 'wrap' }}>
+            {docUrl && (
+              <a
+                href={docUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="pill"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--navy)', color: '#fff', textDecoration: 'none' }}
+              >
+                <IconDoc size={14} /> View document
+              </a>
+            )}
+            {onVerify && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onVerify() }}
+                className="pill"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--green,#2E9E5B)', color: '#fff', border: 'none', cursor: 'pointer' }}
+              >
+                <IconCheck size={14} /> Mark verified
+              </button>
+            )}
+          </div>
         </div>
       )}
       <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>{open ? 'Tap to collapse' : 'Tap for details'}</div>
@@ -391,6 +412,7 @@ export default function SiteRecord({
   source,
   onClose,
   onUpdateFinding,
+  onUpdatePermit,
   onCapture,
   onStartAudit,
   auditOpen = false,
@@ -402,12 +424,27 @@ export default function SiteRecord({
   const [reportAudit, setReportAudit] = useState(null) // latest completed audit detail (for the report)
   const [resultAudit, setResultAudit] = useState(null) // an audit detail to show inline ("results")
   const [resultLoading, setResultLoading] = useState(false)
+  const [focusItem, setFocusItem] = useState(null) // a permit/lease id to expand + highlight
   const focusRef = useRef(null)
   const tabsRef = useRef(null)
+  const permitRef = useRef(null)
   const didMountRef = useRef(false)
 
   // Bring the tab strip (and the content under it) into view on tab change.
   const scrollToTabs = () => tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  // Open a permit/lease from the map zone panel or the renewal timeline:
+  // jump to its tab, expand + highlight it, and scroll it into view.
+  const openItem = (it) => {
+    setTab(it.kind === 'lease' ? 'leases' : 'permits')
+    setFocusItem(it.id)
+    scrollToTabs()
+    setTimeout(() => permitRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 260)
+  }
+  const verifyPermit = (id) => {
+    onUpdatePermit?.(name, id, 'active')
+    setFocusItem(null)
+  }
 
   const isLive = source === 'postgres'
   // In demo mode (no backend) synthesize one completed audit so last-audit
@@ -472,6 +509,7 @@ export default function SiteRecord({
   // and scroll the content into view on every tab switch (but not first mount).
   useEffect(() => {
     if (tab !== 'audits') setResultAudit(null)
+    if (tab !== 'permits' && tab !== 'leases') setFocusItem(null)
     if (didMountRef.current) scrollToTabs()
     else didMountRef.current = true
   }, [tab])
@@ -594,11 +632,16 @@ export default function SiteRecord({
 
       {/* live, data-driven facility plan (zones = real cert/permit areas) */}
       <div className="pad">
-        <FacilityMap site={{ ...site, name }} type={site.type} onCapture={onCapture} />
+        <FacilityMap
+          site={{ ...site, name }}
+          type={site.type}
+          onCapture={onCapture}
+          onOpenPermit={(id) => openItem({ id, kind: 'permit' })}
+        />
 
         {/* renewal timeline */}
         <div style={{ marginTop: 12 }}>
-          <RenewalTimeline site={site} />
+          <RenewalTimeline site={site} onOpenItem={openItem} />
         </div>
       </div>
 
@@ -650,12 +693,16 @@ export default function SiteRecord({
             {(site.permits || []).map((p) => (
               <ReadOnlyCard
                 key={p.id}
+                innerRef={p.id === focusItem ? permitRef : null}
+                defaultOpen={p.id === focusItem}
+                highlight={p.id === focusItem}
                 toneKey={tone(p.status)}
                 area={p.area}
                 label={PERMIT_LABEL[p.status]}
                 title={p.name}
                 subtitle={`${p.agency} · ${p.number}`}
                 docUrl={p.doc}
+                onVerify={canEdit && p.status === 'verify' ? () => verifyPermit(p.id) : null}
                 rows={[
                   { k: 'Agency', v: p.agency },
                   { k: 'Number', v: p.number },
@@ -718,6 +765,9 @@ export default function SiteRecord({
             {(site.leases || []).map((l) => (
               <ReadOnlyCard
                 key={l.id}
+                innerRef={l.id === focusItem ? permitRef : null}
+                defaultOpen={l.id === focusItem}
+                highlight={l.id === focusItem}
                 toneKey={tone(l.status)}
                 area={l.area}
                 label={PERMIT_LABEL[l.status]}
