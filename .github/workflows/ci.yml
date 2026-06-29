@@ -134,3 +134,11 @@ jobs:
           curl -sf -X DELETE "localhost:4000/api/audits/$BAD" >/dev/null
           curl -s -o /dev/null -w '%{http_code}' "localhost:4000/api/audits/$BAD" | grep -q '404' || (echo '::error::deleted audit should 404' && exit 1)
           echo "audit delete + review OK"
+          # bulk cleanup removes wrong-form audits and leaves matching ones
+          curl -sf -X POST localhost:4000/api/audits -H "Content-Type: application/json" -d "{\"site\":\"SVMRF\",\"template\":\"ts\"}" >/dev/null   # MRF site, wrong form
+          GOOD=$(curl -sf -X POST localhost:4000/api/audits -H "Content-Type: application/json" -d "{\"site\":\"SVMRF\",\"template\":\"mrf\"}" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>console.log(JSON.parse(d).id))")
+          curl -sf -X POST localhost:4000/api/audits/cleanup \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.deletedCount<1)throw new Error(\"cleanup deleted nothing\");console.log(\"cleanup removed\",j.deletedCount)})"
+          curl -sf "localhost:4000/api/audits/$GOOD" >/dev/null || (echo '::error::cleanup deleted a matching audit' && exit 1)
+          curl -sf localhost:4000/api/audits/review | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.mismatchedCount!==0)throw new Error(\"mismatched remain after cleanup: \"+j.mismatchedCount);console.log(\"cleanup OK\")})"

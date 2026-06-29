@@ -349,6 +349,28 @@ app.post('/api/audits', requireAuth, async (req, res, next) => {
   }
 });
 
+// Delete every audit whose form doesn't match its facility's type (the stray
+// records created before Start-audit was locked to the matching form). Returns
+// the list of deleted ids. Responses cascade.
+async function deleteMismatchedAudits() {
+  const { rows } = await pool.query(
+    'SELECT a.id, a.template, s.type FROM audits a JOIN sites s ON s.name = a.site'
+  );
+  const bad = rows.filter((r) => r.template && r.template !== expectedTemplate(r.type)).map((r) => r.id);
+  if (bad.length) await pool.query('DELETE FROM audits WHERE id = ANY($1)', [bad]);
+  return bad;
+}
+
+// Manual trigger for the cleanup above.
+app.post('/api/audits/cleanup', requireAuth, async (_req, res, next) => {
+  try {
+    const deleted = await deleteMismatchedAudits();
+    res.json({ ok: true, deletedCount: deleted.length, deleted });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Delete an audit (and its responses, via ON DELETE CASCADE).
 app.delete('/api/audits/:id', requireAuth, async (req, res, next) => {
   try {
@@ -459,9 +481,14 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: 'Internal server error', detail: err.message });
 });
 
-// Create tables / seed-if-empty, then listen.
+// Create tables / seed-if-empty, sweep out any wrong-form audits, then listen.
 migrate()
   .catch((err) => console.error('[migrate] error (continuing):', err.message))
+  .then(() => deleteMismatchedAudits())
+  .then((deleted) => {
+    if (deleted && deleted.length) console.log(`[cleanup] removed ${deleted.length} mismatched audit(s)`);
+  })
+  .catch((err) => console.error('[cleanup] error (continuing):', err.message))
   .finally(() => {
     app.listen(PORT, () => {
       console.log(
