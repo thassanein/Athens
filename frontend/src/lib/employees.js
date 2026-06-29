@@ -10,7 +10,21 @@ export const EMPLOYEES = [
   { name: 'Lupe Ramirez', initials: 'LR', dept: 'Operations' },
   { name: 'Tom Becker', initials: 'TB', dept: 'Maintenance' },
   { name: 'Andre Okonkwo', initials: 'AO', dept: 'Operations' },
+  // Test-yard site support (own the findings at their yard).
+  { name: 'Jaime Guerra', initials: 'JG', dept: 'Operations' }, // Vincent
+  { name: 'Enrique', initials: 'EN', dept: 'Operations' }, // Crown MRF
+  // New auditors (Rachel's recent hires). Flagged as trainees — they ride along
+  // on the first audits as read-only observers and aren't assigned as owners yet.
+  { name: 'Jordan Rubinow', initials: 'JR', dept: 'EHS', canAudit: true, trainee: true },
+  { name: 'Kate Downey', initials: 'KD', dept: 'EHS', canAudit: true, trainee: true },
 ]
+
+// Explicit compliance-owner assignments. Overrides the deterministic hash below
+// so the test yards land on the people supporting them.
+export const OWNER_OVERRIDES = {
+  Vincent: 'Jaime Guerra',
+  'Crown MRF': 'Enrique',
+}
 
 // Demo auditor passcode (viewers need none).
 export const AUDITOR_PASSCODE = 'athens'
@@ -24,8 +38,14 @@ function hash(str) {
   return h >>> 0
 }
 
-// Deterministic compliance owner assigned to a facility (demo). Stable per name.
+// Compliance owner assigned to a facility. An explicit OWNER_OVERRIDES entry
+// wins; otherwise it's deterministic (stable per name).
 export function ownerFor(name) {
+  const override = OWNER_OVERRIDES[name]
+  if (override) {
+    const emp = EMPLOYEES.find((e) => e.name === override)
+    if (emp) return emp
+  }
   return EMPLOYEES[hash(`owner:${name}`) % EMPLOYEES.length]
 }
 
