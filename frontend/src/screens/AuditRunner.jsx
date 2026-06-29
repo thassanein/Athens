@@ -299,8 +299,8 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
 
   return (
     <div className="app-shell" style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 'min(1040px, 100vw)', zIndex: 100, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
-      {/* header */}
-      <div style={{ background: 'var(--navy)', color: '#fff', padding: '14px 16px 12px' }}>
+      {/* header — pad for the iPhone status bar (safe-area) in standalone PWA */}
+      <div style={{ background: 'var(--navy)', color: '#fff', padding: 'calc(env(safe-area-inset-top, 0px) + 14px) 16px 12px' }}>
         <div className="row spread">
           <button onClick={saveDraftAndClose} className="pill" style={{ background: 'rgba(255,255,255,.14)', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <IconClose size={15} /> Save &amp; close
@@ -435,8 +435,8 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
         )}
       </div>
 
-      {/* footer nav — depends on the current view */}
-      <div className="row spread" style={{ padding: 12, borderTop: '1px solid var(--card-border)', background: '#fff', gap: 10, alignItems: 'center' }}>
+      {/* footer nav — depends on the current view (pad for the home indicator) */}
+      <div className="row spread" style={{ padding: '12px 12px calc(env(safe-area-inset-bottom, 0px) + 12px)', borderTop: '1px solid var(--card-border)', background: '#fff', gap: 10, alignItems: 'center' }}>
         {view === 'menu' && (
           <>
             <span className="muted" style={{ fontSize: 12, flex: 1 }}>
