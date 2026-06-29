@@ -59,7 +59,7 @@ function ItemRow({ item, resp, onSet }) {
           )
         })}
       </div>
-      {showNote || resp?.note ? (
+      {(showNote || resp?.note) && (
         <textarea
           value={resp?.note || ''}
           onChange={(e) => onSet({ ...resp, note: e.target.value })}
@@ -67,11 +67,43 @@ function ItemRow({ item, resp, onSet }) {
           rows={2}
           style={{ marginTop: 8, width: '100%', fontSize: 13, padding: 8, borderRadius: 8, border: '1px solid var(--card-border)', resize: 'vertical', boxSizing: 'border-box' }}
         />
-      ) : (
-        <button onClick={() => setShowNote(true)} className="muted" style={{ marginTop: 7, fontSize: 12, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
-          + Add comment
-        </button>
       )}
+      {resp?.photo && (
+        <div style={{ marginTop: 8, position: 'relative', display: 'inline-block' }}>
+          <img src={resp.photo} alt="evidence" style={{ maxWidth: '100%', maxHeight: 180, borderRadius: 8, display: 'block' }} />
+          <button
+            onClick={() => onSet({ ...resp, photo: null })}
+            className="pill"
+            style={{ position: 'absolute', top: 6, right: 6, background: 'rgba(0,0,0,.6)', color: '#fff', fontSize: 11, padding: '2px 8px', cursor: 'pointer' }}
+          >
+            Remove
+          </button>
+        </div>
+      )}
+      <div className="row gap" style={{ marginTop: 7, gap: 14 }}>
+        {!(showNote || resp?.note) && (
+          <button onClick={() => setShowNote(true)} className="muted" style={{ fontSize: 12, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+            + Add comment
+          </button>
+        )}
+        <label className="muted" style={{ fontSize: 12, cursor: 'pointer' }}>
+          {resp?.photo ? '↻ Replace photo' : '📷 Add photo'}
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const f = e.target.files?.[0]
+              if (!f) return
+              const reader = new FileReader()
+              reader.onload = () => onSet({ ...resp, photo: reader.result })
+              reader.readAsDataURL(f)
+              e.target.value = ''
+            }}
+          />
+        </label>
+      </div>
     </div>
   )
 }
@@ -203,7 +235,7 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
   const setItem = (id, resp) =>
     setResponses((prev) => {
       const next = { ...prev }
-      if (!resp || (!resp.val && !resp.note)) delete next[id]
+      if (!resp || (!resp.val && !resp.note && !resp.photo)) delete next[id]
       else next[id] = resp
       return next
     })
@@ -219,7 +251,7 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
     return out
   }, [responses, tpl])
 
-  async function finish() {
+  async function submit() {
     if (source === 'postgres' && auditIdRef.current) {
       try {
         await saveAudit(auditIdRef.current, { responses, status: 'complete' })
@@ -227,6 +259,19 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
         /* mirror remains on device */
       }
     }
+    flash('Audit submitted')
+    onClose()
+  }
+
+  async function saveDraftAndClose() {
+    if (source === 'postgres' && auditIdRef.current) {
+      try {
+        await saveAudit(auditIdRef.current, { responses })
+      } catch {
+        /* mirror remains on device */
+      }
+    }
+    flash('Draft saved')
     onClose()
   }
 
@@ -235,12 +280,12 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
   const lastSection = sectionIdx >= tpl.sections.length - 1
 
   return (
-    <div className="app-shell" style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 'var(--app-w)', zIndex: 100, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+    <div className="app-shell" style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: 'min(1040px, 100vw)', zIndex: 100, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
       {/* header */}
       <div style={{ background: 'var(--navy)', color: '#fff', padding: '14px 16px 12px' }}>
         <div className="row spread">
-          <button onClick={onClose} className="pill" style={{ background: 'rgba(255,255,255,.14)', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <IconClose size={15} /> Close
+          <button onClick={saveDraftAndClose} className="pill" style={{ background: 'rgba(255,255,255,.14)', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <IconClose size={15} /> Save &amp; close
           </button>
           <span className="row gap" style={{ gap: 8, alignItems: 'center' }}>
             <span className="muted" style={{ fontSize: 11, color: '#9FB0C4' }}>{SYNC_LABEL[sync]}</span>
@@ -274,7 +319,7 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
               <div className="title" style={{ fontSize: 18 }}>{section.title}</div>
               <span className="muted" style={{ fontSize: 12 }}>Section {sectionIdx + 1}/{tpl.sections.length}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))', gap: 10, alignItems: 'start' }}>
               {section.items.map((it) => (
                 <ItemRow key={it.id} item={it} resp={responses[it.id]} onSet={(r) => setItem(it.id, r)} />
               ))}
@@ -283,7 +328,7 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
         )}
 
         {review && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 760, margin: '0 auto' }}>
             <div className="title" style={{ fontSize: 18 }}>Audit summary</div>
             <div className="row gap">
               {[['Yes', counts.yes, 'pass'], ['No', counts.no, 'fail'], ['N/A', counts.na, 'open'], ['Left', total - answered, '']].map(([l, n, tone]) => (
@@ -339,9 +384,14 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
           </button>
         )}
         {review && (
-          <button onClick={finish} className="pill" style={{ flex: 1, padding: '12px 0', background: 'var(--navy)', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>
-            Done
-          </button>
+          <>
+            <button onClick={saveDraftAndClose} className="pill" style={{ flex: 1, padding: '12px 0', background: '#fff', border: '1px solid var(--card-border)', color: 'var(--navy)', fontWeight: 700, cursor: 'pointer' }}>
+              Save draft
+            </button>
+            <button onClick={submit} className="pill" style={{ flex: 1.3, padding: '12px 0', background: 'var(--green,#2E9E5B)', color: '#fff', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <IconCheck size={16} /> Submit audit
+            </button>
+          </>
         )}
       </div>
     </div>

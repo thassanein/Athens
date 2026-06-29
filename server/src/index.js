@@ -25,7 +25,7 @@ app.set('trust proxy', 1); // behind Render's proxy — needed for secure cookie
 if (process.env.CORS_ORIGIN) {
   app.use(cors({ origin: process.env.CORS_ORIGIN.split(','), credentials: true }));
 }
-app.use(express.json({ limit: '10mb' })); // photos arrive as base64 data URLs
+app.use(express.json({ limit: '25mb' })); // photos (findings + audit items) arrive as base64 data URLs
 app.use(sessionMiddleware);
 mountAuthRoutes(app);
 
@@ -225,9 +225,9 @@ app.get('/api/audits/:id', requireAuth, async (req, res, next) => {
   try {
     const a = await pool.query('SELECT * FROM audits WHERE id = $1', [req.params.id]);
     if (a.rowCount === 0) return res.status(404).json({ error: 'Audit not found' });
-    const r = await pool.query('SELECT item, val, note FROM audit_responses WHERE audit = $1', [req.params.id]);
+    const r = await pool.query('SELECT item, val, note, photo FROM audit_responses WHERE audit = $1', [req.params.id]);
     const responses = {};
-    for (const row of r.rows) responses[row.item] = { val: row.val, note: row.note || '' };
+    for (const row of r.rows) responses[row.item] = { val: row.val, note: row.note || '', photo: row.photo || null };
     res.json({ ...shapeAudit(a.rows[0]), responses });
   } catch (err) {
     next(err);
@@ -271,11 +271,11 @@ app.patch('/api/audits/:id', requireAuth, async (req, res, next) => {
     if (responses && typeof responses === 'object') {
       await client.query('DELETE FROM audit_responses WHERE audit = $1', [id]);
       for (const [item, r] of Object.entries(responses)) {
-        if (!r || (!r.val && !r.note)) continue;
+        if (!r || (!r.val && !r.note && !r.photo)) continue;
         if (r.val && !['yes', 'no', 'na'].includes(r.val)) continue;
         await client.query(
-          'INSERT INTO audit_responses (audit, item, val, note) VALUES ($1,$2,$3,$4)',
-          [id, item, r.val ?? null, r.note ?? null]
+          'INSERT INTO audit_responses (audit, item, val, note, photo) VALUES ($1,$2,$3,$4,$5)',
+          [id, item, r.val ?? null, r.note ?? null, r.photo ?? null]
         );
       }
     }

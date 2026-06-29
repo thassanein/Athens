@@ -77,6 +77,7 @@ CREATE TABLE audit_responses (
   item  TEXT NOT NULL,
   val   TEXT CHECK (val IN ('yes','no','na')),
   note  TEXT,
+  photo TEXT,
   PRIMARY KEY (audit, item)
 );
 

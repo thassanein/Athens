@@ -803,6 +803,27 @@ export default function SiteRecord({
 
         {tab === 'audits' && (
           <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {(() => {
+              const latest = (audits || []).find((a) => a.status === 'complete') || (audits || [])[0]
+              if (!latest) return null
+              const total = templateItemCount(latest.template)
+              return (
+                <div className="card bd-pass" style={{ padding: '12px 14px' }}>
+                  <div className="label" style={{ color: 'var(--grey)' }}>Last audit result</div>
+                  <div className="row spread" style={{ marginTop: 4 }}>
+                    <span style={{ fontSize: 14.5, fontWeight: 700 }}>{TPL_NAME[latest.template] || latest.template}</span>
+                    <span className={`pill ${latest.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
+                      {latest.status === 'complete' ? 'Complete' : 'In progress'}
+                    </span>
+                  </div>
+                  <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>{fmtWhen(latest.updated)} · {latest.auditor || '—'}</div>
+                  <div className="row gap" style={{ marginTop: 7, gap: 6 }}>
+                    <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>{latest.answered ?? 0}/{total} answered</span>
+                    <span className={`pill ${latest.deficiencies > 0 ? 'bg-fail s-fail' : 'bg-pass s-pass'}`} style={{ fontSize: 10 }}>{latest.deficiencies || 0} deficienc{latest.deficiencies === 1 ? 'y' : 'ies'}</span>
+                  </div>
+                </div>
+              )
+            })()}
             {onStartAudit && (
               <button
                 onClick={() => onStartAudit()}

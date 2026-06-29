@@ -70,8 +70,10 @@ CREATE TABLE IF NOT EXISTS audit_responses (
   item  TEXT NOT NULL,
   val   TEXT CHECK (val IN ('yes','no','na')),
   note  TEXT,
+  photo TEXT,
   PRIMARY KEY (audit, item)
 );
+ALTER TABLE audit_responses ADD COLUMN IF NOT EXISTS photo TEXT;
 CREATE INDEX IF NOT EXISTS idx_audits_site ON audits(site);
 CREATE INDEX IF NOT EXISTS idx_checklist_items_site ON checklist_items(site);
 CREATE INDEX IF NOT EXISTS idx_permits_site ON permits(site);
