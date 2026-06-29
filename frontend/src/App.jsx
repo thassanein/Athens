@@ -328,6 +328,7 @@ export default function App() {
           }
           onStartAudit={(opts) => setAuditTarget({ site: siteView.site, openId: opts?.openId || null, template: opts?.template || null })}
           auditOpen={!!auditTarget}
+          userName={user.name}
           flash={flash}
         />
       )}

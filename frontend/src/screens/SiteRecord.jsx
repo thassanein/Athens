@@ -18,8 +18,8 @@ import {
   IconPin,
   IconCheck,
 } from '../components/Icons.jsx'
-import { listAudits } from '../lib/api.js'
-import { templateItemCount } from '../lib/audit-templates.js'
+import { listAudits, getAudit } from '../lib/api.js'
+import { AUDIT_TEMPLATES, templateItemCount } from '../lib/audit-templates.js'
 
 const TPL_NAME = { hauling: 'Hauling Division', mrf: 'MRF Master Form', facility: 'Facility Review', ts: 'Transfer Station', organics: 'American Organics / Compost', landfill: 'Landfill' }
 const fmtWhen = (iso) => {
@@ -28,6 +28,82 @@ const fmtWhen = (iso) => {
     return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   } catch {
     return '—'
+  }
+}
+
+// Deficiencies (the "No" answers) of a fetched audit detail, with their area.
+function auditDeficiencies(audit) {
+  if (!audit) return []
+  const tpl = AUDIT_TEMPLATES[audit.template]
+  if (!tpl) return []
+  const out = []
+  tpl.sections.forEach((s) =>
+    s.items.forEach((it) => {
+      const r = audit.responses?.[it.id]
+      if (r && r.val === 'no') out.push({ section: s.title, ref: it.ref, text: it.text, note: r.note || '' })
+    })
+  )
+  return out
+}
+
+const esc = (s) =>
+  String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+
+// Build a standalone, print-ready HTML report and open it for Print / Save-as-PDF.
+function openReport(name, site, latestAudit, userName) {
+  const now = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' })
+  const c = site.compliance
+  const findings = site.checklist || []
+  const defs = auditDeficiencies(latestAudit)
+  const permitsAttn = (site.permits || []).filter((p) => p.status !== 'active')
+
+  const compBlock = c
+    ? `<div class="kpi ${c.missing ? 'bad' : 'ok'}"><b>${c.missing ? `${c.missing} compliance gap${c.missing > 1 ? 's' : ''}` : 'Compliant'}</b> · ${c.present} of ${c.present + c.missing} required items present${c.note ? ` · <i>${esc(c.note)}</i>` : ''}</div>
+       <p>${c.categories.map((x) => `<span class="chip ${x.status === 'missing' ? 'bad' : 'ok'}">${x.status === 'missing' ? '✗' : '✓'} ${esc(x.key)}</span>`).join(' ')}</p>`
+    : '<p class="muted">No compliance requirements on file.</p>'
+
+  const auditBlock = latestAudit
+    ? `<p><b>${esc(TPL_NAME[latestAudit.template] || latestAudit.template)}</b> · ${esc(latestAudit.status)} · ${fmtWhen(latestAudit.updated)} · by ${esc(latestAudit.auditor || '—')}</p>
+       ${defs.length ? `<table><thead><tr><th>Area</th><th>Deficiency</th><th>Note</th></tr></thead><tbody>${defs.map((d) => `<tr><td>${esc(d.section)}</td><td>${esc((d.ref ? d.ref + '. ' : '') + d.text)}</td><td>${esc(d.note)}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No deficiencies recorded.</p>'}`
+    : '<p class="muted">No completed audit on file.</p>'
+
+  const findingsBlock = findings.length
+    ? `<table><thead><tr><th>Area</th><th>Finding</th><th>Status</th><th>Owner</th><th>Due</th></tr></thead><tbody>${findings
+        .map((f) => `<tr><td>${esc(f.area)}</td><td>${esc(f.title)}${f.note ? `<br><span class="muted">${esc(f.note)}</span>` : ''}</td><td>${esc(f.status)}</td><td>${esc(f.owner || 'Unassigned')}</td><td>${esc(fmtDate(f.due))}</td></tr>`)
+        .join('')}</tbody></table>`
+    : '<p class="muted">No findings logged.</p>'
+
+  const permitsBlock = permitsAttn.length
+    ? `<table><thead><tr><th>Permit</th><th>Agency</th><th>Number</th><th>Status</th><th>Expires</th></tr></thead><tbody>${permitsAttn
+        .map((p) => `<tr><td>${esc(p.name)}</td><td>${esc(p.agency)}</td><td>${esc(p.number)}</td><td>${esc(p.status)}</td><td>${esc(fmtDate(p.expires))}</td></tr>`)
+        .join('')}</tbody></table>`
+    : '<p class="muted">All permits active.</p>'
+
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Report — ${esc(name)}</title>
+  <style>
+    body{font:14px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1A2736;margin:32px;max-width:900px}
+    h1{font-size:22px;margin:0 0 2px} h2{font-size:15px;border-bottom:2px solid #1A2736;padding-bottom:4px;margin:26px 0 10px}
+    .sub{color:#667;margin-bottom:4px}.muted{color:#889}
+    table{border-collapse:collapse;width:100%;font-size:12.5px} th,td{border:1px solid #d7dde5;padding:6px 8px;text-align:left;vertical-align:top}
+    th{background:#f2f5f8} .kpi{padding:10px 12px;border-radius:8px;margin:6px 0} .kpi.bad{background:#fdecee;border:1px solid #f3b8bf} .kpi.ok{background:#eaf6ee;border:1px solid #b6e2c5}
+    .chip{display:inline-block;border:1px solid #d7dde5;border-radius:20px;padding:2px 9px;margin:2px;font-size:12px} .chip.bad{color:#D5172A;border-color:#f3b8bf} .chip.ok{color:#1A5632;border-color:#b6e2c5}
+    .toolbar{position:fixed;top:10px;right:10px} button{font:14px sans-serif;padding:8px 14px;border-radius:8px;border:0;background:#1A2736;color:#fff;cursor:pointer}
+    @media print{.toolbar{display:none}}
+  </style></head><body>
+  <div class="toolbar"><button onclick="window.print()">Print / Save PDF</button></div>
+  <h1>Facility Compliance Report</h1>
+  <div class="sub"><b>${esc(name)}</b> · ${esc(site.type)} · ${esc(site.city)}${site.swis ? ` · SWIS ${esc(site.swis)}` : ''}</div>
+  <div class="muted">Generated ${esc(now)}${userName ? ` · by ${esc(userName)}` : ''}</div>
+  <h2>Compliance</h2>${compBlock}
+  <h2>Latest audit</h2>${auditBlock}
+  <h2>Findings (${findings.length})</h2>${findingsBlock}
+  <h2>Permits needing attention</h2>${permitsBlock}
+  </body></html>`
+
+  const w = window.open('', '_blank')
+  if (w) {
+    w.document.write(html)
+    w.document.close()
   }
 }
 
@@ -369,6 +445,7 @@ const TABS = [
   { id: 'permits', label: 'Permits' },
   { id: 'documents', label: 'Docs' },
   { id: 'audits', label: 'Audits' },
+  { id: 'reports', label: 'Report' },
   { id: 'leases', label: 'Leases' },
   { id: 'facility', label: 'Facility' },
   { id: 'env', label: 'ENV' },
@@ -433,12 +510,14 @@ export default function SiteRecord({
   onCapture,
   onStartAudit,
   auditOpen = false,
+  userName,
   flash,
 }) {
   const [tab, setTab] = useState(initialTab || 'findings')
   const [mapStyle, setMapStyle] = useState('plan')
   const [zone, setZone] = useState(null)
   const [audits, setAudits] = useState(null) // null = loading, [] = none
+  const [reportAudit, setReportAudit] = useState(null) // latest completed audit detail (for the report)
   const focusRef = useRef(null)
 
   // scroll to top on open
@@ -448,7 +527,7 @@ export default function SiteRecord({
 
   // Load this site's saved audits when the Audits tab is opened (live mode).
   useEffect(() => {
-    if (tab !== 'audits' || source !== 'postgres' || auditOpen) return
+    if ((tab !== 'audits' && tab !== 'reports') || source !== 'postgres' || auditOpen) return
     let alive = true
     setAudits(null)
     listAudits({ site: name })
@@ -458,6 +537,22 @@ export default function SiteRecord({
       alive = false
     }
   }, [tab, source, name, auditOpen])
+
+  // For the report: pull the latest completed audit's full detail (deficiencies).
+  useEffect(() => {
+    if (tab !== 'reports' || source !== 'postgres') {
+      setReportAudit(null)
+      return
+    }
+    let alive = true
+    listAudits({ site: name, status: 'complete' })
+      .then((list) => (list && list[0] ? getAudit(list[0].id) : null))
+      .then((detail) => alive && setReportAudit(detail))
+      .catch(() => alive && setReportAudit(null))
+    return () => {
+      alive = false
+    }
+  }, [tab, source, name])
 
   const s = siteStats(site)
   const checklist = site.checklist || []
@@ -719,6 +814,48 @@ export default function SiteRecord({
             ))}
             <div className="muted" style={{ fontSize: 11.5, textAlign: 'center', padding: '4px 0' }}>
               Permits are read-only RAG reference — status is payment/cycle-driven, not date-driven.
+            </div>
+          </div>
+        )}
+
+        {tab === 'reports' && (
+          <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <button
+              onClick={() => openReport(name, site, reportAudit, userName)}
+              className="pill"
+              style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}
+            >
+              <IconExport size={16} /> Open / print full report
+            </button>
+            <div className="muted" style={{ fontSize: 12, marginTop: -4 }}>
+              Compiles compliance, the latest audit, all findings, and permit status into a printable report (Save as PDF from the print dialog).
+            </div>
+
+            {site.compliance && (
+              <div className={`card ${site.compliance.missing ? 'bd-fail' : 'bd-pass'}`} style={{ padding: '12px 14px' }}>
+                <div className="label" style={{ color: 'var(--grey)' }}>Compliance</div>
+                <div style={{ fontSize: 14.5, fontWeight: 700, marginTop: 3 }}>
+                  {site.compliance.missing ? `${site.compliance.missing} gap${site.compliance.missing > 1 ? 's' : ''}` : 'Compliant'} · {site.compliance.present} of {site.compliance.present + site.compliance.missing} present
+                </div>
+              </div>
+            )}
+
+            <div className="card" style={{ padding: '12px 14px' }}>
+              <div className="label" style={{ color: 'var(--grey)' }}>Latest audit</div>
+              {source !== 'postgres' ? (
+                <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>Audit detail loads in the live app.</div>
+              ) : reportAudit ? (
+                <div style={{ fontSize: 13.5, marginTop: 3 }}>
+                  {TPL_NAME[reportAudit.template] || reportAudit.template} · {fmtWhen(reportAudit.updated)} · {auditDeficiencies(reportAudit).length} deficienc{auditDeficiencies(reportAudit).length === 1 ? 'y' : 'ies'}
+                </div>
+              ) : (
+                <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>No completed audit yet.</div>
+              )}
+            </div>
+
+            <div className="card" style={{ padding: '12px 14px' }}>
+              <div className="label" style={{ color: 'var(--grey)' }}>Contents</div>
+              <div style={{ fontSize: 13.5, marginTop: 3 }}>{(site.checklist || []).length} finding{(site.checklist || []).length === 1 ? '' : 's'} · {(site.permits || []).filter((p) => p.status !== 'active').length} permit{(site.permits || []).filter((p) => p.status !== 'active').length === 1 ? '' : 's'} needing attention</div>
             </div>
           </div>
         )}
