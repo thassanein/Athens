@@ -5,6 +5,7 @@
 // localStorage (demo/offline).
 // The active mode is surfaced in Profile → "Data source".
 import { SNAPSHOT } from './sitedata.js'
+import { withDemoFindings } from './demo-findings.js'
 
 const TIMEOUT_MS = 6000 // generous: server presence is already gated by fetchMe()
 const LS_KEY = 'athens.portfolio.v1'
@@ -117,7 +118,8 @@ export async function loadPortfolio() {
     return { data, source: 'postgres' }
   } catch {
     clearTimeout(t)
-    return { data: loadLocal(), source: 'local' }
+    // demo / snapshot mode → enrich with deterministic per-site demo findings
+    return { data: withDemoFindings(loadLocal()), source: 'local' }
   }
 }
 
