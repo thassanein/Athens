@@ -13,7 +13,7 @@ import {
   requireAuth,
   requireAuditor,
 } from './auth.js';
-import { portfolioDiagnostics, renderOverviewHTML, renderLlmsTxt } from './diagnostics.js';
+import { portfolioDiagnostics, facilityDetail, renderOverviewHTML, renderFacilityHTML, renderLlmsTxt } from './diagnostics.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -146,6 +146,19 @@ app.get('/api/sites', requireAuth, async (_req, res, next) => {
 app.get('/api/portfolio', requireAuth, async (_req, res, next) => {
   try {
     res.json(portfolioDiagnostics(await loadPortfolio()));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Machine-readable detail for a single facility.
+app.get('/api/facility/:name', requireAuth, async (req, res, next) => {
+  try {
+    const data = await loadPortfolio();
+    const name = req.params.name;
+    const site = data[name];
+    if (!site) return res.status(404).json({ error: `Unknown facility '${name}'.`, facilities: Object.keys(data) });
+    res.json(facilityDetail(name, site));
   } catch (err) {
     next(err);
   }
@@ -345,6 +358,23 @@ app.patch('/api/audits/:id', requireAuth, async (req, res, next) => {
 app.get('/overview', requireAuth, async (_req, res, next) => {
   try {
     res.type('html').send(renderOverviewHTML(await loadPortfolio(), { authMode }));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/overview/:name', requireAuth, async (req, res, next) => {
+  try {
+    const data = await loadPortfolio();
+    const name = req.params.name;
+    const site = data[name];
+    if (!site) {
+      return res
+        .status(404)
+        .type('html')
+        .send(`<!doctype html><meta charset="utf-8"><body style="font-family:system-ui;margin:40px"><h1>Facility not found</h1><p>'${name.replace(/[<>&]/g, '')}' is not in the portfolio. <a href="/overview">See all facilities</a>.</p></body>`);
+    }
+    res.type('html').send(renderFacilityHTML(name, site, { authMode }));
   } catch (err) {
     next(err);
   }

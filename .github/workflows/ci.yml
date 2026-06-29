@@ -120,4 +120,9 @@ jobs:
             | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.total<30)throw new Error(\"portfolio total too low: \"+j.total);if(!j.tiers||typeof j.tiers.noncompliant!==\"number\")throw new Error(\"missing tiers\");if(!Array.isArray(j.sites)||!j.sites[0].status)throw new Error(\"missing per-site summary\");console.log(\"portfolio OK\",j.total)})"
           curl -sf localhost:4000/overview | grep -q '<h1>Athens Facility Compliance' || (echo '::error::/overview did not server-render' && exit 1)
           curl -sf localhost:4000/llms.txt | grep -q '/api/portfolio' || (echo '::error::/llms.txt missing endpoints' && exit 1)
+          # per-facility detail (JSON + server-rendered HTML)
+          curl -sf "localhost:4000/api/facility/SVMRF" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.name!==\"SVMRF\"||!Array.isArray(j.permitsList))throw new Error(\"bad facility detail: \"+d);console.log(\"facility OK\",j.permitsList.length,\"permits\")})"
+          curl -sf "localhost:4000/overview/SVMRF" | grep -q '<h1>SVMRF' || (echo '::error::/overview/:name did not server-render' && exit 1)
+          curl -s -o /dev/null -w '%{http_code}' "localhost:4000/api/facility/DoesNotExist" | grep -q '404' || (echo '::error::unknown facility should 404' && exit 1)
           echo "diagnostics surfaces OK"

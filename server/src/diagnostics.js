@@ -9,6 +9,25 @@ const TODAY = new Date('2026-06-27T00:00:00Z')
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 
+// URL-safe slug for /overview/:slug (round-trips via slugForName lookup).
+export const slugify = (name) => encodeURIComponent(String(name))
+
+const PAGE_CSS = `
+  body{font:15px/1.5 -apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1A2736;margin:28px;max-width:1040px}
+  h1{font-size:24px;margin:0 0 2px}h2{font-size:16px;margin:24px 0 8px}
+  .muted{color:#677}a{color:#1f5fbf}
+  .grid{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+  .kpi{flex:1;min-width:120px;border:1px solid #dde3ea;border-radius:10px;padding:12px 14px}
+  .kpi .n{font-size:26px;font-weight:800}.kpi .l{font-size:12px;color:#667;margin-top:2px}
+  .kpi.ok{background:#eaf6ee;border-color:#b6e2c5}.kpi.warn{background:#fdf4e3;border-color:#f0d39a}.kpi.bad{background:#fdecee;border-color:#f3b8bf}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}
+  th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left}th{background:#f2f5f8}
+  .tag{display:inline-block;border-radius:20px;padding:1px 8px;font-size:12px;font-weight:700}
+  .tag.ok{background:#eaf6ee;color:#1A5632}.tag.warn{background:#fdf4e3;color:#8a5a00}.tag.bad{background:#fdecee;color:#D5172A}
+  code{background:#f2f5f8;border-radius:5px;padding:1px 5px}
+  ul{margin:6px 0}
+`
+
 function daysUntil(dateStr) {
   if (!dateStr) return Infinity
   const d = new Date(`${dateStr}T00:00:00Z`)
@@ -121,7 +140,7 @@ export function renderOverviewHTML(data, { authMode } = {}) {
       const cls = s.statusKey === 'noncompliant' ? 'bad' : s.statusKey === 'risk' ? 'warn' : 'ok'
       const nd = s.nextDue ? `${esc(s.nextDue.date)} (${s.nextDue.days}d)` : '—'
       return `<tr>
-        <td>${esc(s.name)}</td><td>${esc(s.type)}</td><td>${esc(s.city)}</td>
+        <td><a href="/overview/${slugify(s.name)}">${esc(s.name)}</a></td><td>${esc(s.type)}</td><td>${esc(s.city)}</td>
         <td><span class="tag ${cls}">${esc(s.status)}</span></td>
         <td>${s.complianceGaps}</td><td>${s.openIssues}</td><td>${s.overdue}</td>
         <td>${nd}</td><td>${s.permits.total}</td>
@@ -133,21 +152,7 @@ export function renderOverviewHTML(data, { authMode } = {}) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Athens Facility Compliance — Overview & Diagnostics</title>
   <meta name="description" content="Server-rendered overview of the Athens facility compliance portfolio: ${d.total} facilities, compliance status, open gaps, overdue items and upcoming deadlines. JSON API at /api/sites and /api/portfolio.">
-  <style>
-    body{font:15px/1.5 -apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1A2736;margin:28px;max-width:1040px}
-    h1{font-size:24px;margin:0 0 2px}h2{font-size:16px;margin:24px 0 8px}
-    .muted{color:#677}a{color:#1f5fbf}
-    .grid{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-    .kpi{flex:1;min-width:120px;border:1px solid #dde3ea;border-radius:10px;padding:12px 14px}
-    .kpi .n{font-size:26px;font-weight:800}.kpi .l{font-size:12px;color:#667;margin-top:2px}
-    .kpi.ok{background:#eaf6ee;border-color:#b6e2c5}.kpi.warn{background:#fdf4e3;border-color:#f0d39a}.kpi.bad{background:#fdecee;border-color:#f3b8bf}
-    table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}
-    th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left}th{background:#f2f5f8}
-    .tag{display:inline-block;border-radius:20px;padding:1px 8px;font-size:12px;font-weight:700}
-    .tag.ok{background:#eaf6ee;color:#1A5632}.tag.warn{background:#fdf4e3;color:#8a5a00}.tag.bad{background:#fdecee;color:#D5172A}
-    code{background:#f2f5f8;border-radius:5px;padding:1px 5px}
-    ul{margin:6px 0}
-  </style></head><body>
+  <style>${PAGE_CSS}</style></head><body>
   <h1>Athens Facility Compliance</h1>
   <div class="muted">Track facility compliance status, open gaps, due dates, owners, and audit readiness across the Athens portfolio.
   Server-rendered overview · ${d.total} facilities · reference date ${esc(d.referenceDate)} · generated ${esc(d.generatedAt)} · auth mode: ${esc(authMode || 'open')}</div>
@@ -179,6 +184,95 @@ export function renderOverviewHTML(data, { authMode } = {}) {
   </body></html>`
 }
 
+// Machine-readable detail for a single facility (summary + raw permits, leases,
+// open findings, compliance, documents).
+export function facilityDetail(name, site) {
+  return {
+    ...siteSummary(name, site),
+    addr: site.addr || null,
+    coords: site.lat != null && site.lng != null ? { lat: site.lat, lng: site.lng } : null,
+    permitsList: (site.permits || []).map((p) => ({
+      name: p.name, agency: p.agency, number: p.number, status: p.status,
+      expires: p.expires, expiresInDays: p.expires ? daysUntil(p.expires) : null, area: p.area, doc: p.doc || null,
+    })),
+    leasesList: (site.leases || []).map((l) => ({
+      name: l.name, lessor: l.lessor, status: l.status, expires: l.expires, area: l.area,
+    })),
+    openFindings: (site.checklist || []).filter(isOpenWork).map((c) => ({
+      dept: c.dept, area: c.area, title: c.title, status: c.status, owner: c.owner || null, due: c.due || null,
+    })),
+    documents: (site.documents || []).map((x) => ({ name: x.name, url: x.url })),
+    folder: site.folder || null,
+    siteMap: site.siteMap || null,
+  }
+}
+
+// Server-rendered HTML detail page for one facility (no JS required).
+export function renderFacilityHTML(name, site, { authMode } = {}) {
+  const f = facilityDetail(name, site)
+  const cls = f.statusKey === 'noncompliant' ? 'bad' : f.statusKey === 'risk' ? 'warn' : 'ok'
+  const ragCls = (s) => (s === 'verify' ? 'bad' : s === 'renew' ? 'warn' : 'ok')
+
+  const compBlock = f.compliance
+    ? `<p>${f.compliance.categories
+        .map((c) => `<span class="tag ${c.status === 'missing' ? 'bad' : 'ok'}">${c.status === 'missing' ? '✗' : '✓'} ${esc(c.key)}</span>`)
+        .join(' ')}</p>${f.compliance.note ? `<p class="muted"><i>${esc(f.compliance.note)}</i></p>` : ''}`
+    : '<p class="muted">No compliance requirements on file.</p>'
+
+  const permitsBlock = f.permitsList.length
+    ? `<table><thead><tr><th>Permit</th><th>Agency</th><th>Number</th><th>Status</th><th>Expires</th><th>Area</th><th>Doc</th></tr></thead><tbody>${f.permitsList
+        .map((p) => `<tr><td>${esc(p.name)}</td><td>${esc(p.agency)}</td><td>${esc(p.number)}</td>
+          <td><span class="tag ${ragCls(p.status)}">${esc(p.status)}</span></td>
+          <td>${p.expires ? `${esc(p.expires)}${p.expiresInDays != null ? ` (${p.expiresInDays}d)` : ''}` : '—'}</td>
+          <td>${esc(p.area || '—')}</td><td>${p.doc ? `<a href="${esc(p.doc)}">view</a>` : '—'}</td></tr>`)
+        .join('')}</tbody></table>`
+    : '<p class="muted">No permits on file.</p>'
+
+  const leasesBlock = f.leasesList.length
+    ? `<table><thead><tr><th>Lease</th><th>Lessor</th><th>Status</th><th>Expires</th></tr></thead><tbody>${f.leasesList
+        .map((l) => `<tr><td>${esc(l.name)}</td><td>${esc(l.lessor)}</td><td><span class="tag ${ragCls(l.status)}">${esc(l.status)}</span></td><td>${esc(l.expires || '—')}</td></tr>`)
+        .join('')}</tbody></table>`
+    : '<p class="muted">No leases on file.</p>'
+
+  const findingsBlock = f.openFindings.length
+    ? `<table><thead><tr><th>Area</th><th>Finding</th><th>Status</th><th>Owner</th><th>Due</th></tr></thead><tbody>${f.openFindings
+        .map((c) => `<tr><td>${esc(c.area)}</td><td>${esc(c.title)}</td><td>${esc(c.status)}</td><td>${esc(c.owner || 'Unassigned')}</td><td>${esc(c.due || '—')}</td></tr>`)
+        .join('')}</tbody></table>`
+    : '<p class="muted">No open findings.</p>'
+
+  const docsBlock = [
+    ...(f.siteMap ? [`<li><a href="${esc(f.siteMap)}">Site map / plan</a></li>`] : []),
+    ...f.documents.map((x) => `<li><a href="${esc(x.url)}">${esc(x.name)}</a></li>`),
+    ...(f.folder ? [`<li><a href="${esc(f.folder)}">All documents (facility folder)</a></li>`] : []),
+  ].join('')
+
+  const kpi = (n, l, c) => `<div class="kpi ${c || ''}"><div class="n">${n}</div><div class="l">${esc(l)}</div></div>`
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${esc(name)} — Athens Facility Compliance</title>
+  <meta name="description" content="${esc(name)} (${esc(f.type)}, ${esc(f.city)}): compliance status ${esc(f.status)}, ${f.complianceGaps} gaps, ${f.openIssues} open issues. Permits, leases, findings and documents.">
+  <style>${PAGE_CSS}</style></head><body>
+  <div class="muted"><a href="/overview">← All facilities</a></div>
+  <h1>${esc(name)} <span class="tag ${cls}">${esc(f.status)}</span></h1>
+  <div class="muted">${esc(f.type)} · ${esc(f.city)}${f.swis ? ` · SWIS ${esc(f.swis)}` : ''}${f.anchor ? ' · Anchor site' : ''}${f.addr ? ` · ${esc(f.addr)}` : ''}
+  · auth mode: ${esc(authMode || 'open')} · JSON: <a href="/api/facility/${slugify(name)}">/api/facility/${esc(slugify(name))}</a></div>
+
+  <div class="grid">
+    ${kpi(f.complianceGaps, 'Compliance gaps', f.complianceGaps ? 'bad' : 'ok')}
+    ${kpi(f.openIssues, 'Open issues', f.openIssues ? 'warn' : 'ok')}
+    ${kpi(f.overdue, 'Overdue / unconfirmed', f.overdue ? 'bad' : 'ok')}
+    ${kpi(f.nextDue ? `${f.nextDue.days}d` : '—', 'Next due', f.nextDue && f.nextDue.days <= 30 ? 'warn' : '')}
+    ${kpi(f.permits.total, 'Permits')}
+  </div>
+
+  <h2>Compliance</h2>${compBlock}
+  <h2>Permits (${f.permitsList.length})</h2>${permitsBlock}
+  <h2>Leases (${f.leasesList.length})</h2>${leasesBlock}
+  <h2>Open findings (${f.openFindings.length})</h2>${findingsBlock}
+  <h2>Documents</h2>${docsBlock ? `<ul>${docsBlock}</ul>` : '<p class="muted">No linked documents.</p>'}
+  </body></html>`
+}
+
 // Plain-text descriptor for AI tools (emerging /llms.txt convention).
 export function renderLlmsTxt(data, { baseUrl = '' } = {}) {
   const d = portfolioDiagnostics(data)
@@ -195,8 +289,10 @@ endpoints below. All are public and CORS-enabled (Access-Control-Allow-Origin: *
 ## Endpoints
 - ${baseUrl}/api/portfolio : JSON diagnostics — portfolio rollup (totals, status tiers, overdue, upcoming, high-risk) plus a per-facility summary.
 - ${baseUrl}/api/sites : JSON — full portfolio (each facility's permits, leases, findings, compliance, documents).
+- ${baseUrl}/api/facility/<name> : JSON — one facility's detail (URL-encode the name, e.g. /api/facility/SVMRF).
 - ${baseUrl}/api/health : JSON — service and database status.
-- ${baseUrl}/overview : HTML — server-rendered overview (human + machine readable).
+- ${baseUrl}/overview : HTML — server-rendered overview (human + machine readable); facility names link to detail pages.
+- ${baseUrl}/overview/<name> : HTML — one facility's detail page (URL-encode the name).
 - ${baseUrl}/llms.txt : this file.
 
 ## Current snapshot (reference date ${d.referenceDate})
