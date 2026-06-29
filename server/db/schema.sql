@@ -17,9 +17,10 @@ CREATE TABLE sites (
   lat    DOUBLE PRECISION,
   lng    DOUBLE PRECISION,
   anchor BOOLEAN DEFAULT false,
-  folder    TEXT,
-  site_map  TEXT,
-  documents JSONB DEFAULT '[]'::jsonb
+  folder     TEXT,
+  site_map   TEXT,
+  documents  JSONB DEFAULT '[]'::jsonb,
+  compliance JSONB
 );
 
 CREATE TABLE permits (

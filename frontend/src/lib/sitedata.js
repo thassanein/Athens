@@ -9,6 +9,41 @@ export const SNAPSHOT = {
     "lat": 34.276,
     "lng": -116.844,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Big Bear TS",
+    "compliance": {
+      "present": 7,
+      "missing": 0,
+      "note": "",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB Public Health",
@@ -77,6 +112,41 @@ export const SNAPSHOT = {
     "lat": 34.0464,
     "lng": -116.5803,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Morongo TS",
+    "compliance": {
+      "present": 5,
+      "missing": 2,
+      "note": "",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB Public Health",
@@ -130,6 +200,41 @@ export const SNAPSHOT = {
     "lat": 35.7624,
     "lng": -117.3769,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Trona Argus TS",
+    "compliance": {
+      "present": 6,
+      "missing": 1,
+      "note": "",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB public health",
@@ -172,6 +277,41 @@ export const SNAPSHOT = {
     "lat": 34.8281,
     "lng": -116.6864,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Newberry Springs TS",
+    "compliance": {
+      "present": 6,
+      "missing": 1,
+      "note": "",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB Public Health",
@@ -229,6 +369,41 @@ export const SNAPSHOT = {
     "lat": 35.2653,
     "lng": -116.0764,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Baker TS",
+    "compliance": {
+      "present": 1,
+      "missing": 6,
+      "note": "Remove, no active permits required except for DPH",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "missing"
+        },
+        {
+          "key": "SWFP",
+          "status": "missing"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "missing"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB Public Health",
@@ -259,6 +434,41 @@ export const SNAPSHOT = {
     "lat": 34.48,
     "lng": -116.88,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Camp Rock TS",
+    "compliance": {
+      "present": 6,
+      "missing": 1,
+      "note": "",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB Public Health",
@@ -316,6 +526,41 @@ export const SNAPSHOT = {
     "lat": 34.1478,
     "lng": -116.03,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/29 Palms TS",
+    "compliance": {
+      "present": 7,
+      "missing": 0,
+      "note": "",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County of SB Public Health",
@@ -392,6 +637,41 @@ export const SNAPSHOT = {
     "lat": 34.4256,
     "lng": -117.5723,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Sheep Creek TS",
+    "compliance": {
+      "present": 7,
+      "missing": 0,
+      "note": "",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB Public Health",
@@ -453,6 +733,41 @@ export const SNAPSHOT = {
     "lat": 34.21,
     "lng": -117.108,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Heaps Peak TS",
+    "compliance": {
+      "present": 6,
+      "missing": 1,
+      "note": "",
+      "categories": [
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB Public Health",
@@ -522,7 +837,7 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "PRR-Paramount Truck Yard": {
-    "type": "Transfer Station",
+    "type": "Operations Yard",
     "swis": "19-AA-0840",
     "addr": "7201, 7202 & 7230 Petterson Lane",
     "city": "Paramount",
@@ -530,6 +845,57 @@ export const SNAPSHOT = {
     "lng": -118.162,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PRR-Paramount Truck Yard",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Paramount/2024 CUP Preliminary Site Plans, 4 Phases.pdf",
+    "compliance": {
+      "present": 11,
+      "missing": 0,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "present"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits",
@@ -661,6 +1027,69 @@ export const SNAPSHOT = {
     "lng": -117.954,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/COI MRF",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Valley-COI",
+    "compliance": {
+      "present": 14,
+      "missing": 0,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "CUP Land Use",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Weighmaster",
+          "status": "present"
+        },
+        {
+          "key": "W&M Scale",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits",
@@ -764,6 +1193,69 @@ export const SNAPSHOT = {
     "lng": -118.3884,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Crown MRF",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Crown/2021 Site Plans/A-101 SITE PLAN_SIMPLE, ver.12-03-21.pdf",
+    "compliance": {
+      "present": 12,
+      "missing": 2,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "CUP Land Use",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Weighmaster",
+          "status": "present"
+        },
+        {
+          "key": "W&M Scale",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits",
@@ -870,6 +1362,69 @@ export const SNAPSHOT = {
     "lat": 34.006,
     "lng": -117.967,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/PHMRF",
+    "compliance": {
+      "present": 5,
+      "missing": 9,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "CUP Land Use",
+          "status": "missing"
+        },
+        {
+          "key": "SWFP",
+          "status": "missing"
+        },
+        {
+          "key": "Stormwater",
+          "status": "missing"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "missing"
+        },
+        {
+          "key": "Weighmaster",
+          "status": "missing"
+        },
+        {
+          "key": "W&M Scale",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "E-Waste",
@@ -924,6 +1479,69 @@ export const SNAPSHOT = {
     "lng": -117.954,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Irwindale MRF",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/IrwindaleMRF/A1.1 Site Plan, approved 1-30-2024.pdf",
+    "compliance": {
+      "present": 11,
+      "missing": 3,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "CUP Land Use",
+          "status": "missing"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Weighmaster",
+          "status": "present"
+        },
+        {
+          "key": "W&M Scale",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits",
@@ -1046,13 +1664,64 @@ export const SNAPSHOT = {
     "checklist": []
   },
   "DART (LACSD)": {
-    "type": "Materials Recovery Facility",
+    "type": "Operations Yard",
     "swis": "19-AA-0801",
     "addr": "9770 Washburn Road",
     "city": "Downey",
     "lat": 33.918,
     "lng": -118.118,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/DART (LACSD)",
+    "compliance": {
+      "present": 9,
+      "missing": 2,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "present"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "CDFA Weighmaster",
@@ -1163,6 +1832,57 @@ export const SNAPSHOT = {
     "lat": 34.583,
     "lng": -117.296,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Victorville LF",
+    "compliance": {
+      "present": 8,
+      "missing": 3,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "WDR",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "Septic",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits",
@@ -1250,6 +1970,57 @@ export const SNAPSHOT = {
     "lat": 34.135,
     "lng": -117.43,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Mid Valley LF",
+    "compliance": {
+      "present": 9,
+      "missing": 2,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "WDR",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "Septic",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits",
@@ -1341,6 +2112,57 @@ export const SNAPSHOT = {
     "lat": 34.8,
     "lng": -117.02,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Barstow LF",
+    "compliance": {
+      "present": 9,
+      "missing": 2,
+      "note": "Under country contract, no requirement for SPCC, Waste tire hauling permit only for roll-off handling 10 tires or more.",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "WDR",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "Septic",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permit",
@@ -1421,6 +2243,57 @@ export const SNAPSHOT = {
     "lat": 34.318,
     "lng": -116.434,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Landers LF",
+    "compliance": {
+      "present": 7,
+      "missing": 4,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "WDR",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "Septic",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "missing"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County SB Public Health",
@@ -1486,6 +2359,57 @@ export const SNAPSHOT = {
     "lat": 34.015,
     "lng": -117.15,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/San Timoteo LF",
+    "compliance": {
+      "present": 7,
+      "missing": 4,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "WDR",
+          "status": "missing"
+        },
+        {
+          "key": "SPCC",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "Septic",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits",
@@ -1570,6 +2494,81 @@ export const SNAPSHOT = {
     "lng": -117.379,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/American Organics (VVRCF)",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/AO-VVRCF",
+    "compliance": {
+      "present": 17,
+      "missing": 0,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "CUP Land Use",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "WDR",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Recycled Water",
+          "status": "present"
+        },
+        {
+          "key": "Weighmaster",
+          "status": "present"
+        },
+        {
+          "key": "W&M Scale",
+          "status": "present"
+        },
+        {
+          "key": "Compost Cert",
+          "status": "present"
+        },
+        {
+          "key": "CDFA Fertilizer",
+          "status": "present"
+        },
+        {
+          "key": "DPH",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits - MDAQMD",
@@ -1770,6 +2769,57 @@ export const SNAPSHOT = {
     "lng": -117.945,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Salt Lake",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Salt Lake/Site Plan approved by County 12-18-24, CUP Exhibit A.pdf",
+    "compliance": {
+      "present": 9,
+      "missing": 2,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "present"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "CalRecycle Waste Tire",
@@ -1855,6 +2905,57 @@ export const SNAPSHOT = {
     "lng": -118.113,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Van Norman",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Van Norman/Site Map, Stormwater 2024.pdf",
+    "compliance": {
+      "present": 7,
+      "missing": 4,
+      "note": "SPCC not required for sites with less than 1320 Gallos of oils of Fuel",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "missing"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "missing"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits - SCAQMD",
@@ -1931,6 +3032,57 @@ export const SNAPSHOT = {
     "lat": 34.196,
     "lng": -118.876,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Hillcrest",
+    "compliance": {
+      "present": 3,
+      "missing": 8,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "missing"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "missing"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "missing"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Emergency Action Plan",
@@ -1970,6 +3122,57 @@ export const SNAPSHOT = {
     "lng": -118.937,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/TO-Conejo Center Dr",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/TO-Conejo/2021.09.10 TO Site Plan drawings.pdf",
+    "compliance": {
+      "present": 8,
+      "missing": 3,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "missing"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "CalRecycle Waste Tire",
@@ -2100,6 +3303,57 @@ export const SNAPSHOT = {
     "lng": -118.299,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA South",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/LASO/2025 LASO Stormwater Site Map.pdf",
+    "compliance": {
+      "present": 8,
+      "missing": 3,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "present"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "County LA Waste Collector",
@@ -2173,6 +3427,57 @@ export const SNAPSHOT = {
     "lng": -118.412,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/LA North",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/LANO/Site.Plan.Montague.revised.09.04.15.pdf",
+    "compliance": {
+      "present": 8,
+      "missing": 3,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "present"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "EBEWE",
@@ -2249,6 +3554,57 @@ export const SNAPSHOT = {
     "lat": 34.354,
     "lng": -119.072,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Santa Paula",
+    "compliance": {
+      "present": 3,
+      "missing": 8,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "missing"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "missing"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "missing"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "missing"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "CUPA haz mat",
@@ -2288,6 +3644,57 @@ export const SNAPSHOT = {
     "lng": -117.339,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Riverside",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Riverside",
+    "compliance": {
+      "present": 6,
+      "missing": 5,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "missing"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "missing"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "missing"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "missing"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Cal Recycle Waste Tire",
@@ -2388,6 +3795,57 @@ export const SNAPSHOT = {
     "lng": -117.953,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/Vincent",
     "siteMap": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Facilities Site Plan - Facilities/Vincent/2023 Stormwater Site Map Vincent.pdf",
+    "compliance": {
+      "present": 10,
+      "missing": 1,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "Waste Collector",
+          "status": "present"
+        },
+        {
+          "key": "Fuel Station",
+          "status": "missing"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits - SCAQMD",
@@ -2475,6 +3933,69 @@ export const SNAPSHOT = {
     "lat": 34.245,
     "lng": -118.388,
     "folder": "https://caiwoodgroup-my.sharepoint.com/personal/tamer_hassanein_caiwoodgroup_com/Documents/Athens/Environmental Facility Permits - Documents/SVMRF",
+    "compliance": {
+      "present": 14,
+      "missing": 0,
+      "note": "",
+      "categories": [
+        {
+          "key": "Air",
+          "status": "present"
+        },
+        {
+          "key": "CUPA",
+          "status": "present"
+        },
+        {
+          "key": "CUP Land Use",
+          "status": "present"
+        },
+        {
+          "key": "SWFP",
+          "status": "present"
+        },
+        {
+          "key": "Stormwater",
+          "status": "present"
+        },
+        {
+          "key": "SPCC",
+          "status": "present"
+        },
+        {
+          "key": "Pressure Vessels",
+          "status": "present"
+        },
+        {
+          "key": "EPA ID",
+          "status": "present"
+        },
+        {
+          "key": "Wastewater",
+          "status": "present"
+        },
+        {
+          "key": "Weighmaster",
+          "status": "present"
+        },
+        {
+          "key": "W&M Scale",
+          "status": "present"
+        },
+        {
+          "key": "Waste Tire",
+          "status": "present"
+        },
+        {
+          "key": "EAP",
+          "status": "present"
+        },
+        {
+          "key": "Logs",
+          "status": "present"
+        }
+      ]
+    },
     "documents": [
       {
         "name": "Air Permits",

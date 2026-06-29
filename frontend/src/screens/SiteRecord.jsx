@@ -365,6 +365,7 @@ function RenewalTimeline({ site }) {
 // ----------------------------------------------------------------------------
 const TABS = [
   { id: 'findings', label: 'Findings' },
+  { id: 'compliance', label: 'Compliance' },
   { id: 'permits', label: 'Permits' },
   { id: 'documents', label: 'Docs' },
   { id: 'audits', label: 'Audits' },
@@ -797,6 +798,75 @@ export default function SiteRecord({
             )}
             {!site.folder && !site.siteMap && (site.documents || []).length === 0 && (
               <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No linked documents.</div></div>
+            )}
+          </div>
+        )}
+
+        {tab === 'compliance' && (
+          <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {!site.compliance ? (
+              <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No compliance requirements on file for this site.</div></div>
+            ) : (
+              <>
+                {(() => {
+                  const c = site.compliance
+                  const gaps = c.missing || 0
+                  const ok = gaps === 0
+                  return (
+                    <div className={`card ${ok ? 'bd-pass' : 'bd-fail'}`} style={{ padding: '14px 16px' }}>
+                      <div className="row spread" style={{ alignItems: 'center' }}>
+                        <div>
+                          <div className="stat-num" style={{ color: ok ? 'var(--green,#2E9E5B)' : 'var(--red)', fontSize: 30 }}>{ok ? 'Compliant' : `${gaps} gap${gaps > 1 ? 's' : ''}`}</div>
+                          <div className="muted" style={{ fontSize: 12.5, marginTop: 2 }}>{c.present} of {c.present + c.missing} required items present</div>
+                        </div>
+                        <span className={`pill ${ok ? 'bg-pass s-pass' : 'bg-fail s-fail'}`} style={{ fontSize: 12, fontWeight: 700 }}>{ok ? 'PASS' : 'ACTION'}</span>
+                      </div>
+                      {c.note && <div className="muted" style={{ fontSize: 12.5, marginTop: 8, fontStyle: 'italic' }}>“{c.note}”</div>}
+                    </div>
+                  )
+                })()}
+                <div>
+                  <div className="label" style={{ marginBottom: 6 }}>Core requirement areas</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 8 }}>
+                    {[...site.compliance.categories]
+                      .sort((a, b) => (a.status === b.status ? 0 : a.status === 'missing' ? -1 : 1))
+                      .map((cat) => {
+                        const miss = cat.status === 'missing'
+                        return (
+                          <div key={cat.key} className={`card ${miss ? 'bd-fail' : 'bd-pass'}`} style={{ padding: '9px 11px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontWeight: 800, color: miss ? 'var(--red)' : 'var(--green,#2E9E5B)' }}>{miss ? '✗' : '✓'}</span>
+                            <span style={{ fontSize: 12.5, fontWeight: 600 }}>{cat.key}</span>
+                          </div>
+                        )
+                      })}
+                  </div>
+                </div>
+                {/* Open actions: pending findings, who is tasked, on schedule / behind */}
+                <div>
+                  <div className="label" style={{ marginBottom: 6 }}>Open actions</div>
+                  {(() => {
+                    const open = (site.checklist || []).filter(isOpenWork)
+                    if (open.length === 0) return <div className="card" style={{ padding: 16, textAlign: 'center' }}><div className="muted">No open actions.</div></div>
+                    return open
+                      .slice()
+                      .sort((a, b) => daysUntil(a.due) - daysUntil(b.due))
+                      .map((f) => {
+                        const behind = f.due && daysUntil(f.due) < 0
+                        return (
+                          <div key={f.id} className="card" style={{ padding: '10px 13px', marginBottom: 8 }}>
+                            <div className="row spread">
+                              <span style={{ fontSize: 13.5, fontWeight: 600 }}>{f.title}</span>
+                              <span className={`pill ${behind ? 'bg-fail s-fail' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>{behind ? 'Behind' : 'On schedule'}</span>
+                            </div>
+                            <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>
+                              {f.owner || 'Unassigned'}{f.due ? ` · due ${fmtDate(f.due)}` : ' · no due date'} · {f.area}
+                            </div>
+                          </div>
+                        )
+                      })
+                  })()}
+                </div>
+              </>
             )}
           </div>
         )}

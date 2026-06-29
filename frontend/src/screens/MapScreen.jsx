@@ -79,7 +79,7 @@ export default function MapScreen({ data, onOpenSite, onNav, setTaskFilter }) {
             }}
           />
           <StatTile label="To verify" value={stats.toVerify} tone="amber" onClick={() => onNav?.('alerts')} />
-          <StatTile label="Due ≤30d" value={stats.due30} tone="navy" onClick={() => onNav?.('alerts')} />
+          <StatTile label="Compliance gaps" value={stats.complianceGaps} tone={stats.complianceGaps > 0 ? 'red' : 'navy'} onClick={() => onNav?.('alerts')} />
         </div>
       </div>
 

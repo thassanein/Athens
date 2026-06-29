@@ -38,8 +38,8 @@ async function main() {
 
     for (const [name, site] of Object.entries(data)) {
       await client.query(
-        `INSERT INTO sites (name, type, swis, addr, city, lat, lng, anchor, folder, site_map, documents)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+        `INSERT INTO sites (name, type, swis, addr, city, lat, lng, anchor, folder, site_map, documents, compliance)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
         [
           name,
           site.type ?? null,
@@ -52,6 +52,7 @@ async function main() {
           site.folder ?? null,
           site.siteMap ?? null,
           JSON.stringify(site.documents ?? []),
+          site.compliance ? JSON.stringify(site.compliance) : null,
         ]
       );
       counts.sites++;

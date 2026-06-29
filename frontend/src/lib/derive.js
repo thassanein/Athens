@@ -72,13 +72,18 @@ export function portfolioStats(data) {
   let openFindings = 0
   let toVerify = 0
   let due30 = 0
+  let complianceGaps = 0
+  let sitesWithGaps = 0
   for (const name of Object.keys(data)) {
     const s = siteStats(data[name])
     openFindings += s.open
     toVerify += s.verify
     due30 += s.due30
+    const m = data[name].compliance?.missing || 0
+    complianceGaps += m
+    if (m > 0) sitesWithGaps += 1
   }
-  return { openFindings, toVerify, due30 }
+  return { openFindings, toVerify, due30, complianceGaps, sitesWithGaps }
 }
 
 // Flat list of open findings across all sites, each tagged with its site.

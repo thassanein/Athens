@@ -94,6 +94,7 @@ jobs:
             // document links round-trip: per-permit doc + per-site folder/documents
             if (typeof sv.permits[0].doc !== "string") throw new Error("SVMRF permit missing doc link");
             if (typeof sv.folder !== "string" || !sv.documents.length) throw new Error("SVMRF missing folder/documents links");
+            if (!sv.compliance || typeof sv.compliance.missing !== "number" || !Array.isArray(sv.compliance.categories)) throw new Error("SVMRF missing compliance data");
             // permit expiry dates come back as YYYY-MM-DD strings (or null)
             for (const n of names) for (const p of j[n].permits) {
               if (p.expires && !/^\d{4}-\d{2}-\d{2}$/.test(p.expires)) throw new Error("bad date: " + n + " " + p.expires);
