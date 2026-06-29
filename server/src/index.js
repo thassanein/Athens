@@ -7,6 +7,7 @@ import { pool } from './db.js';
 import { migrate } from '../db/migrate.js';
 import {
   authMode,
+  authEnabled,
   sessionMiddleware,
   mountAuthRoutes,
   requireAuth,
@@ -24,6 +25,18 @@ app.set('trust proxy', 1); // behind Render's proxy — needed for secure cookie
 // CORS_ORIGIN (e.g. a separate frontend URL) to allow a cross-origin frontend.
 if (process.env.CORS_ORIGIN) {
   app.use(cors({ origin: process.env.CORS_ORIGIN.split(','), credentials: true }));
+}
+// Open/public mode: let any origin read & write the API (and /auth/me) so other
+// apps and AI tools can consume it. No cookies are needed in this mode, so a
+// wildcard origin is safe. Locking auth (Entra/passcodes) disables this.
+if (!authEnabled) {
+  app.use(['/api', '/auth'], (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    next();
+  });
 }
 app.use(express.json({ limit: '25mb' })); // photos (findings + audit items) arrive as base64 data URLs
 app.use(sessionMiddleware);

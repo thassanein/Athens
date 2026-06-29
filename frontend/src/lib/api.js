@@ -33,6 +33,9 @@ export async function fetchMe(timeoutMs = 8000) {
     }
     if (!res.ok) return { state: 'demo' } // got a response but no API here (e.g. Pages 404)
     const user = await res.json()
+    // Open/public server → show the Auditor/Viewer chooser (role is picked on
+    // the client); live data still loads from the open API.
+    if (user.mode === 'open') return { state: 'demo' }
     return { state: 'authed', user }
   } catch (e) {
     clearTimeout(t)

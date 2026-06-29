@@ -30,9 +30,11 @@ export const passcodeEnabled = !entraEnabled && Boolean(AUDITOR_PASSCODE || VIEW
 export const authEnabled = entraEnabled || passcodeEnabled
 export const authMode = entraEnabled ? 'sso' : passcodeEnabled ? 'passcode' : 'open'
 
-const UNCONFIGURED = PROD && !authEnabled
-if (UNCONFIGURED) {
-  console.warn('[auth] PRODUCTION WITH NO AUTH CONFIGURED — API is locked (503). Set passcodes or Entra.')
+// OPEN/PUBLIC mode: no auth configured. The app and API are intentionally
+// public (so other apps and AI tools can reach the data); the client picks an
+// Auditor/Viewer role for its own UX. Set Entra or passcodes to lock it down.
+if (!authEnabled) {
+  console.warn(`[auth] OPEN/PUBLIC mode${PROD ? ' (PRODUCTION)' : ''} — no sign-in required; API is publicly accessible.`)
 }
 
 const SCOPES = ['openid', 'profile', 'email']
@@ -91,8 +93,7 @@ function safeRedirect(target) {
 export function mountAuthRoutes(app) {
   // Who am I? Drives the frontend: authed / which-login-to-show / demo.
   app.get('/auth/me', (req, res) => {
-    if (UNCONFIGURED) return res.status(503).json({ error: 'auth not configured', mode: 'unconfigured' })
-    if (!authEnabled) return res.json({ ...DEV_USER, mode: 'open' }) // local dev only
+    if (!authEnabled) return res.json({ ...DEV_USER, mode: 'open' }) // open/public mode
     if (req.session?.user) return res.json({ ...req.session.user, mode: authMode })
     return res.status(401).json({ error: 'not authenticated', mode: authMode })
   })
@@ -183,9 +184,8 @@ export function mountAuthRoutes(app) {
 }
 
 export function requireAuth(req, res, next) {
-  if (UNCONFIGURED) return res.status(503).json({ error: 'auth not configured' })
   if (!authEnabled) {
-    req.user = DEV_USER // local dev only
+    req.user = DEV_USER // open/public mode — no sign-in required
     return next()
   }
   if (req.session?.user) {

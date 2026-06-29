@@ -32,21 +32,9 @@ services:
           property: connectionString
       - key: SESSION_SECRET
         generateValue: true # Render generates a long random secret
-      - key: DEFAULT_ROLE
-        value: viewer
-      # ---- Option A: shared team passcodes (no Microsoft admin needed) ----
-      - key: AUDITOR_PASSCODE
-        sync: false # passcode that grants edit (auditor) access
-      - key: VIEWER_PASSCODE
-        sync: false # passcode that grants read-only (viewer) access
-      # ---- Option B: Microsoft Entra SSO (leave blank to use passcodes above) ----
-      - key: ENTRA_CLIENT_ID
-        sync: false
-      - key: ENTRA_TENANT_ID
-        sync: false
-      - key: ENTRA_CLIENT_SECRET
-        sync: false
-      - key: ENTRA_REDIRECT_URI
-        sync: false # e.g. https://athens-compliance.onrender.com/auth/redirect
-      - key: AUDITOR_EMAILS
-        sync: false # comma-separated emails that should get the Auditor (edit) role
+      # OPEN / PUBLIC mode (no sign-in): the app shows an Auditor/Viewer chooser
+      # and the API is publicly accessible so other apps and AI tools can reach
+      # it. To lock it down later, set Microsoft Entra (ENTRA_*) or shared
+      # passcodes (AUDITOR_PASSCODE / VIEWER_PASSCODE) in the service's
+      # Environment tab — see DEPLOY.md. IMPORTANT: if any of those were set
+      # previously, delete them in the Render dashboard so the service stays open.
