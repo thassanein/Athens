@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import {
   siteStats,
   daysUntil,
@@ -20,6 +20,7 @@ import {
 } from '../components/Icons.jsx'
 import { listAudits, getAudit } from '../lib/api.js'
 import { AUDIT_TEMPLATES, templateItemCount } from '../lib/audit-templates.js'
+import { demoAuditFor } from '../lib/demo-audits.js'
 import FacilityMap from './FacilityMap.jsx'
 
 const TPL_NAME = { hauling: 'Hauling Division', mrf: 'MRF Master Form', facility: 'Facility Review', ts: 'Transfer Station', organics: 'American Organics / Compost', landfill: 'Landfill' }
@@ -397,9 +398,41 @@ export default function SiteRecord({
   flash,
 }) {
   const [tab, setTab] = useState(initialTab || 'findings')
-  const [audits, setAudits] = useState(null) // null = loading, [] = none
+  const [audits, setAudits] = useState(null) // null = loading, [] = none (live)
   const [reportAudit, setReportAudit] = useState(null) // latest completed audit detail (for the report)
+  const [resultAudit, setResultAudit] = useState(null) // an audit detail to show inline ("results")
+  const [resultLoading, setResultLoading] = useState(false)
   const focusRef = useRef(null)
+  const tabsRef = useRef(null)
+  const didMountRef = useRef(false)
+
+  // Bring the tab strip (and the content under it) into view on tab change.
+  const scrollToTabs = () => tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  const isLive = source === 'postgres'
+  // In demo mode (no backend) synthesize one completed audit so last-audit
+  // results and the printable report are populated; live mode uses the DB.
+  const demoAudit = useMemo(() => (isLive ? null : demoAuditFor(name, site)), [isLive, name, site])
+  const effectiveAudits = isLive ? audits : demoAudit ? [demoAudit] : []
+  const latestComplete = (effectiveAudits || []).find((a) => a.status === 'complete') || (effectiveAudits || [])[0] || null
+  const latestDetail = isLive ? reportAudit : demoAudit
+
+  // Open an audit's full results inline (read-only). Demo audits carry their
+  // responses; live audits are fetched on demand.
+  const openResult = (a) => {
+    if (!a) return
+    scrollToTabs()
+    if (a.responses) {
+      setResultAudit(a)
+      return
+    }
+    setResultLoading(true)
+    setResultAudit({ ...a }) // show header immediately
+    getAudit(a.id)
+      .then((d) => setResultAudit(d))
+      .catch(() => {})
+      .finally(() => setResultLoading(false))
+  }
 
   // scroll to top on open
   useEffect(() => {
@@ -434,6 +467,14 @@ export default function SiteRecord({
       alive = false
     }
   }, [tab, source, name])
+
+  // Close the inline results view when navigating away from the Audits tab,
+  // and scroll the content into view on every tab switch (but not first mount).
+  useEffect(() => {
+    if (tab !== 'audits') setResultAudit(null)
+    if (didMountRef.current) scrollToTabs()
+    else didMountRef.current = true
+  }, [tab])
 
   const s = siteStats(site)
   const checklist = site.checklist || []
@@ -476,7 +517,7 @@ export default function SiteRecord({
       }}
     >
       {/* header */}
-      <div className="header" style={{ position: 'sticky', top: 0, zIndex: 5 }}>
+      <div className="header" style={{ zIndex: 5 }}>
         <div className="row spread">
           <button onClick={onClose} aria-label="Back" style={{ color: '#fff', marginLeft: -6 }}>
             <IconBack />
@@ -492,7 +533,7 @@ export default function SiteRecord({
             >
               {canEdit ? 'Auditor · editing' : 'View only'}
             </span>
-            <button onClick={() => flash('Audit packet exported (PDF)')} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: '#fff' }}>
+            <button onClick={() => openReport(name, site, latestDetail, userName)} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: '#fff', cursor: 'pointer' }}>
               <IconExport size={15} />
               Site packet
             </button>
@@ -561,8 +602,8 @@ export default function SiteRecord({
         </div>
       </div>
 
-      {/* tabs */}
-      <div className="pad" style={{ background: 'var(--bg)', zIndex: 4, paddingTop: 14 }}>
+      {/* tabs (sticky so content is always reachable as you scroll) */}
+      <div ref={tabsRef} className="pad" style={{ background: 'var(--bg)', position: 'sticky', top: 0, zIndex: 6, paddingTop: 14, paddingBottom: 6, boxShadow: '0 6px 10px -8px rgba(0,0,0,.25)' }}>
         <div className="chips">
           {TABS.map((t) => (
             <button key={t.id} className={`chip ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
@@ -632,7 +673,7 @@ export default function SiteRecord({
         {tab === 'reports' && (
           <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <button
-              onClick={() => openReport(name, site, reportAudit, userName)}
+              onClick={() => openReport(name, site, latestDetail, userName)}
               className="pill"
               style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}
             >
@@ -653,11 +694,9 @@ export default function SiteRecord({
 
             <div className="card" style={{ padding: '12px 14px' }}>
               <div className="label" style={{ color: 'var(--grey)' }}>Latest audit</div>
-              {source !== 'postgres' ? (
-                <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>Audit detail loads in the live app.</div>
-              ) : reportAudit ? (
+              {latestDetail ? (
                 <div style={{ fontSize: 13.5, marginTop: 3 }}>
-                  {TPL_NAME[reportAudit.template] || reportAudit.template} · {fmtWhen(reportAudit.updated)} · {auditDeficiencies(reportAudit).length} deficienc{auditDeficiencies(reportAudit).length === 1 ? 'y' : 'ies'}
+                  {TPL_NAME[latestDetail.template] || latestDetail.template} · {fmtWhen(latestDetail.updated)} · {auditDeficiencies(latestDetail).length} deficienc{auditDeficiencies(latestDetail).length === 1 ? 'y' : 'ies'}
                 </div>
               ) : (
                 <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>No completed audit yet.</div>
@@ -819,29 +858,41 @@ export default function SiteRecord({
           </div>
         )}
 
-        {tab === 'audits' && (
+        {tab === 'audits' && resultAudit && (
+          <AuditResults
+            audit={resultAudit}
+            loading={resultLoading}
+            canEdit={canEdit}
+            onBack={() => setResultAudit(null)}
+            onResume={onStartAudit && resultAudit.status !== 'complete' ? () => onStartAudit({ openId: resultAudit.id, template: resultAudit.template }) : null}
+          />
+        )}
+
+        {tab === 'audits' && !resultAudit && (
           <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {(() => {
-              const latest = (audits || []).find((a) => a.status === 'complete') || (audits || [])[0]
-              if (!latest) return null
-              const total = templateItemCount(latest.template)
-              return (
-                <div className="card bd-pass" style={{ padding: '12px 14px' }}>
-                  <div className="label" style={{ color: 'var(--grey)' }}>Last audit result</div>
-                  <div className="row spread" style={{ marginTop: 4 }}>
-                    <span style={{ fontSize: 14.5, fontWeight: 700 }}>{TPL_NAME[latest.template] || latest.template}</span>
-                    <span className={`pill ${latest.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
-                      {latest.status === 'complete' ? 'Complete' : 'In progress'}
-                    </span>
-                  </div>
-                  <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>{fmtWhen(latest.updated)} · {latest.auditor || '—'}</div>
-                  <div className="row gap" style={{ marginTop: 7, gap: 6 }}>
-                    <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>{latest.answered ?? 0}/{total} answered</span>
-                    <span className={`pill ${latest.deficiencies > 0 ? 'bg-fail s-fail' : 'bg-pass s-pass'}`} style={{ fontSize: 10 }}>{latest.deficiencies || 0} deficienc{latest.deficiencies === 1 ? 'y' : 'ies'}</span>
-                  </div>
+            {latestComplete && (
+              <button
+                onClick={() => openResult(latestComplete)}
+                className="card bd-pass"
+                style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
+              >
+                <div className="row spread">
+                  <span className="label" style={{ color: 'var(--grey)' }}>Last audit result</span>
+                  <span className="label" style={{ color: 'var(--blue)' }}>View results →</span>
                 </div>
-              )
-            })()}
+                <div className="row spread" style={{ marginTop: 4 }}>
+                  <span style={{ fontSize: 14.5, fontWeight: 700 }}>{TPL_NAME[latestComplete.template] || latestComplete.template}</span>
+                  <span className={`pill ${latestComplete.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
+                    {latestComplete.status === 'complete' ? 'Complete' : 'In progress'}
+                  </span>
+                </div>
+                <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>{fmtWhen(latestComplete.updated)} · {latestComplete.auditor || '—'}</div>
+                <div className="row gap" style={{ marginTop: 7, gap: 6 }}>
+                  <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>{latestComplete.answered ?? 0}/{templateItemCount(latestComplete.template)} answered</span>
+                  <span className={`pill ${latestComplete.deficiencies > 0 ? 'bg-fail s-fail' : 'bg-pass s-pass'}`} style={{ fontSize: 10 }}>{latestComplete.deficiencies || 0} deficienc{latestComplete.deficiencies === 1 ? 'y' : 'ies'}</span>
+                </div>
+              </button>
+            )}
             {onStartAudit && (
               <button
                 onClick={() => onStartAudit()}
@@ -851,24 +902,24 @@ export default function SiteRecord({
                 <IconCheck size={16} /> Start new audit
               </button>
             )}
-            {source !== 'postgres' && (
+            {!isLive && (
               <div className="muted" style={{ fontSize: 12.5, padding: '4px 2px' }}>
-                Saved audit history appears here in the live app.
+                Showing a demo audit. In the live app every saved audit appears here.
               </div>
             )}
-            {source === 'postgres' && audits === null && (
+            {isLive && audits === null && (
               <div className="muted" style={{ fontSize: 13, padding: '8px 2px' }}>Loading audits…</div>
             )}
-            {source === 'postgres' && audits && audits.length === 0 && (
+            {isLive && audits && audits.length === 0 && (
               <div className="card" style={{ padding: 20, textAlign: 'center' }}><div className="muted">No audits yet for this site.</div></div>
             )}
-            {audits &&
-              audits.map((a) => {
+            {isLive &&
+              (audits || []).map((a) => {
                 const total = templateItemCount(a.template)
                 return (
                   <button
                     key={a.id}
-                    onClick={() => onStartAudit && onStartAudit({ openId: a.id, template: a.template })}
+                    onClick={() => (a.status === 'complete' ? openResult(a) : onStartAudit && onStartAudit({ openId: a.id, template: a.template }))}
                     className="card lrow"
                     style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
                   >
@@ -910,6 +961,66 @@ export default function SiteRecord({
           />
         )}
       </div>
+    </div>
+  )
+}
+
+// Read-only results for a single audit: counts + the list of deficiencies.
+function AuditResults({ audit, loading, canEdit, onBack, onResume }) {
+  const total = templateItemCount(audit.template)
+  const responses = audit.responses || {}
+  const counts = { yes: 0, no: 0, na: 0 }
+  for (const r of Object.values(responses)) if (r && r.val) counts[r.val]++
+  const answered = counts.yes + counts.no + counts.na
+  const defs = auditDeficiencies(audit)
+  return (
+    <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <button onClick={onBack} className="label" style={{ color: 'var(--blue)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
+        ← Back to audits
+      </button>
+      <div className="card" style={{ padding: '12px 14px' }}>
+        <div className="row spread">
+          <span style={{ fontSize: 15.5, fontWeight: 700 }}>{TPL_NAME[audit.template] || audit.template}</span>
+          <span className={`pill ${audit.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
+            {audit.status === 'complete' ? 'Complete' : 'In progress'}
+          </span>
+        </div>
+        <div className="muted" style={{ fontSize: 12.5, marginTop: 3 }}>{fmtWhen(audit.updated)} · {audit.auditor || '—'}</div>
+      </div>
+
+      {loading ? (
+        <div className="muted" style={{ fontSize: 13, padding: '4px 2px' }}>Loading results…</div>
+      ) : (
+        <>
+          <div className="row gap">
+            {[['Yes', counts.yes, 'pass'], ['No', counts.no, 'fail'], ['N/A', counts.na, 'open'], ['Left', Math.max(0, total - answered), '']].map(([l, n, t]) => (
+              <div key={l} className="card" style={{ flex: 1, padding: '12px 8px', textAlign: 'center' }}>
+                <div className="stat-num" style={{ color: t === 'fail' ? 'var(--red)' : t === 'pass' ? 'var(--green,#2E9E5B)' : t === 'open' ? 'var(--amber)' : 'var(--navy)' }}>{n}</div>
+                <div className="label" style={{ marginTop: 3 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="label">Deficiencies ({defs.length})</div>
+          {defs.length === 0 ? (
+            <div className="card" style={{ padding: 18, textAlign: 'center' }}><div className="muted">No “No” answers — site is clear.</div></div>
+          ) : (
+            defs.map((d, i) => (
+              <div key={i} className="card bd-fail" style={{ padding: '11px 14px' }}>
+                <div className="label" style={{ color: 'var(--grey)' }}>{d.section}</div>
+                <div style={{ fontSize: 13.5, marginTop: 3 }}>{d.ref ? `${d.ref}. ` : ''}{d.text}</div>
+                {d.note && <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>“{d.note}”</div>}
+              </div>
+            ))
+          )}
+
+          {onResume && canEdit && (
+            <button onClick={onResume} className="pill" style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <IconCheck size={16} /> Resume audit
+            </button>
+          )}
+        </>
+      )}
     </div>
   )
 }

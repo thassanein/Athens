@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import {
   AUDIT_TEMPLATES,
-  TEMPLATE_LIST,
   templateKeyForType,
   templateItemCount,
 } from '../lib/audit-templates.js'
@@ -294,17 +293,12 @@ export default function AuditRunner({ name, site, source, openId, openTemplate, 
         </div>
         <div className="title" style={{ marginTop: 10 }}>Audit · {name}</div>
         <div style={{ color: '#9FB0C4', fontSize: 12.5, marginTop: 2 }}>{site.type} · {site.city}</div>
-        <div className="row gap" style={{ marginTop: 10, flexWrap: 'wrap' }}>
-          {TEMPLATE_LIST.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTplKey(t.key)}
-              className="pill"
-              style={{ fontSize: 11, background: t.key === tplKey ? '#fff' : 'rgba(255,255,255,.12)', color: t.key === tplKey ? 'var(--navy)' : '#fff', cursor: 'pointer' }}
-            >
-              {t.title.replace(/^Facility (Inspection|Site Check|Compliance) — ?/, '').replace('Facility Compliance Review', 'Facility Review') || t.title}
-            </button>
-          ))}
+        {/* The form is fixed to the one that matches this facility type. */}
+        <div className="row gap" style={{ marginTop: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          <span className="pill" style={{ fontSize: 11, background: '#fff', color: 'var(--navy)', fontWeight: 700 }}>
+            {tpl.title}
+          </span>
+          <span className="muted" style={{ fontSize: 11, color: '#9FB0C4' }}>matched to {site.type}</span>
         </div>
         <div style={{ marginTop: 12, height: 6, background: 'rgba(255,255,255,.16)', borderRadius: 99 }}>
           <div style={{ width: `${pct}%`, height: '100%', background: 'var(--green, #2E9E5B)', borderRadius: 99, transition: 'width .2s' }} />

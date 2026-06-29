@@ -254,9 +254,10 @@ export default function App() {
         <Login
           source={source}
           mode={authMode}
-          onEnter={(roleKey) => {
+          onEnter={(u) => {
             // Demo mode only — SSO mode redirects to Microsoft instead.
-            setUser(USERS[roleKey] || USERS.auditor)
+            // Login passes a full user object (chosen employee + role).
+            setUser(u && typeof u === 'object' ? u : USERS[u] || USERS.auditor)
             setScreen('map')
           }}
         />
