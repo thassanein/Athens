@@ -94,17 +94,14 @@ const LAYOUTS = {
   ],
 }
 
-// Per-style palette (kept from the previous map: plan / blueprint / terrain).
+// Single clean "plan" palette. (The toggle now switches the data lens, not the
+// cosmetic skin, so the old blueprint/terrain themes were dropped.)
 const STYLES = {
   plan: { bg: '#F4F6F9', grid: null, text: '#46566B', sub: '#7C8AA0', stroke: '#D2DAE4' },
-  blueprint: { bg: '#13233B', grid: 'rgba(120,190,255,.10)', text: '#CFE6FF', sub: '#7FA8D4', stroke: '#3E72A8' },
-  terrain: { bg: '#EAE5DA', grid: null, text: '#5A5340', sub: '#897F63', stroke: '#C3CDB6' },
 }
-// Base tint per zone kind (before status colouring), per style.
+// Base tint per zone kind (before status colouring).
 const KIND_TINT = {
   plan: { core: '#E4ECF6', env: '#E3F0EA', haz: '#F6ECE2', gate: '#ECEAF6', support: '#EAEEF3' },
-  blueprint: { core: 'rgba(120,190,255,.14)', env: 'rgba(120,255,190,.10)', haz: 'rgba(255,190,120,.12)', gate: 'rgba(190,160,255,.12)', support: 'rgba(120,190,255,.07)' },
-  terrain: { core: '#DEE4D2', env: '#D8E6D6', haz: '#E8DEC8', gate: '#E0DAC8', support: '#E1E0D2' },
 }
 const TONE_HEX = { fail: '#D5172A', open: '#B7791F', pass: '#1A5632', idle: '#9AA7B6' }
 const RAG_HEX = { active: '#1A5632', renew: '#B7791F', verify: '#D5172A' }
@@ -126,16 +123,29 @@ function buildModel(site, layout) {
     const hit = layout.find((z) => z.label === f.area)
     if (hit) byZone[hit.key].findings.push(f)
   }
+  const RANK = { idle: 0, pass: 1, open: 2, fail: 3 }
   for (const k of Object.keys(byZone)) {
     const e = byZone[k]
-    let worst = 0
-    for (const p of e.permits) worst = Math.max(worst, sev[p.status] || 0)
-    if (e.findings.length) worst = Math.max(worst, 3)
-    e.tone = e.findings.length ? 'fail' : worst >= 3 ? 'fail' : worst === 2 ? 'open' : worst === 1 ? 'pass' : 'idle'
+    // Permit lens: worst RAG status of the permits governing this zone.
+    let pworst = 0
+    for (const p of e.permits) pworst = Math.max(pworst, sev[p.status] || 0)
+    e.permitTone = pworst >= 3 ? 'fail' : pworst === 2 ? 'open' : pworst === 1 ? 'pass' : 'idle'
+    // Findings lens: open work logged to this area.
+    e.findingTone = e.findings.some((f) => f.status === 'fail') ? 'fail' : e.findings.length ? 'open' : 'idle'
+    // Status lens: the worse of the two.
+    e.statusTone = RANK[e.findingTone] > RANK[e.permitTone] ? e.findingTone : e.permitTone
     e.count = e.permits.length + e.findings.length
   }
   return byZone
 }
+
+// Which tone a zone shows for the selected lens.
+const toneFor = (e, lens) => (lens === 'permits' ? e.permitTone : lens === 'findings' ? e.findingTone : e.statusTone)
+const LENSES = [
+  { key: 'status', label: 'Status' },
+  { key: 'permits', label: 'Permits' },
+  { key: 'findings', label: 'Findings' },
+]
 
 const centerOf = (z) => ({ x: z.x + z.w / 2, y: z.y + z.h / 2 })
 
@@ -157,17 +167,19 @@ function fitLabel(label, w) {
 }
 
 export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
-  const [styleKey, setStyleKey] = useState('plan')
+  const [lens, setLens] = useState('status') // status | permits | findings
   const [selKey, setSelKey] = useState(null)
   const layout = LAYOUTS[templateKeyForType(type)] || LAYOUTS.hauling
-  const S = STYLES[styleKey]
-  const tint = KIND_TINT[styleKey]
+  const S = STYLES.plan
+  const tint = KIND_TINT.plan
   const model = useMemo(() => buildModel(site, layout), [site, layout])
 
   const gate = layout.find((z) => z.kind === 'gate')
   const core = layout.find((z) => z.kind === 'core') || layout[0]
   const route = gate && core ? `M ${centerOf(gate).x} ${centerOf(gate).y} L ${centerOf(core).x} ${centerOf(core).y}` : null
-  const attention = layout.filter((z) => model[z.key].tone === 'fail').length
+  const attention = layout.filter((z) => toneFor(model[z.key], lens) === 'fail').length
+  const showPermits = lens !== 'findings'
+  const showFindings = lens !== 'permits'
   const sel = selKey ? model[selKey] : null
 
   return (
@@ -177,7 +189,7 @@ export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
           <svg viewBox={`0 0 ${VB_W} ${VB_H}`} width="100%" height="100%" role="img" aria-label={`${site.name || 'Site'} facility plan`}>
             <defs>
               <radialGradient id="fm-sweep" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor={styleKey === 'blueprint' ? 'rgba(140,200,255,.30)' : 'rgba(26,86,50,.18)'} />
+                <stop offset="0%" stopColor="rgba(26,86,50,.18)" />
                 <stop offset="100%" stopColor="rgba(0,0,0,0)" />
               </radialGradient>
             </defs>
@@ -205,7 +217,7 @@ export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
               <>
                 <path d={route} stroke={S.stroke} strokeWidth="2" strokeDasharray="3 5" fill="none" opacity="0.7" />
                 <g>
-                  <rect x="-4" y="-3" width="8" height="6" rx="1.5" fill={styleKey === 'blueprint' ? '#CFE6FF' : '#1A2736'} />
+                  <rect x="-4" y="-3" width="8" height="6" rx="1.5" fill="#1A2736" />
                   <animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear" path={route} rotate="auto" />
                 </g>
               </>
@@ -214,9 +226,10 @@ export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
             {/* zones */}
             {layout.map((z, i) => {
               const e = model[z.key]
+              const tone = toneFor(e, lens)
               const isSel = selKey === z.key
-              const toneHex = TONE_HEX[e.tone]
-              const fill = e.tone === 'idle' ? tint[z.kind] : `${toneHex}${styleKey === 'blueprint' ? '33' : '22'}`
+              const toneHex = TONE_HEX[tone]
+              const fill = tone === 'idle' ? tint[z.kind] : `${toneHex}22`
               return (
                 <g
                   key={z.key}
@@ -232,13 +245,13 @@ export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
                     height={z.h}
                     rx="8"
                     fill={fill}
-                    stroke={isSel ? toneHex : e.tone === 'idle' ? S.stroke : toneHex}
-                    strokeWidth={isSel ? 2.5 : e.tone === 'idle' ? 1.25 : 1.75}
+                    stroke={isSel ? toneHex : tone === 'idle' ? S.stroke : toneHex}
+                    strokeWidth={isSel ? 2.5 : tone === 'idle' ? 1.25 : 1.75}
                   />
                   {/* status accent bar on the left edge */}
-                  {e.tone !== 'idle' && <rect x={z.x} y={z.y + 6} width="4" height={z.h - 12} rx="2" fill={toneHex} />}
+                  {tone !== 'idle' && <rect x={z.x} y={z.y + 6} width="4" height={z.h - 12} rx="2" fill={toneHex} />}
                   {/* pulsing ring for areas needing attention */}
-                  {e.tone === 'fail' && (
+                  {tone === 'fail' && (
                     <rect x={z.x} y={z.y} width={z.w} height={z.h} rx="8" fill="none" stroke={toneHex} strokeWidth="2" style={{ pointerEvents: 'none' }}>
                       <animate attributeName="opacity" values="0.75;0.05;0.75" dur="2s" repeatCount="indefinite" />
                     </rect>
@@ -251,11 +264,11 @@ export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
                     ))}
                   </text>
                   {/* permit status dots along the bottom of the zone */}
-                  {e.permits.slice(0, 6).map((p, k) => (
+                  {showPermits && e.permits.slice(0, 6).map((p, k) => (
                     <circle key={p.id} cx={z.x + 11 + k * 11} cy={z.y + z.h - 11} r="3.6" fill={RAG_HEX[p.status]} stroke="#fff" strokeWidth="1" />
                   ))}
                   {/* finding marker (rounded square) top-right */}
-                  {e.findings.length > 0 && (
+                  {showFindings && e.findings.length > 0 && (
                     <g>
                       <rect x={z.x + z.w - 18} y={z.y + 7} width="11" height="11" rx="3" fill={TONE_HEX.fail} stroke="#fff" strokeWidth="1.5" />
                       <text x={z.x + z.w - 12.5} y={z.y + 16} fontSize="8" fontWeight="800" fill="#fff" textAnchor="middle">
@@ -269,36 +282,40 @@ export default function FacilityMap({ site, type, onCapture, onOpenPermit }) {
           </svg>
         </div>
 
-        {/* style selector (bottom-right — zone labels are top-aligned) */}
+        {/* lens selector — recolours the zones by what you want to see */}
         <div style={{ position: 'absolute', bottom: 10, right: 10, display: 'flex', gap: 5 }}>
-          {['plan', 'blueprint', 'terrain'].map((m) => (
+          {LENSES.map((l) => (
             <button
-              key={m}
-              onClick={() => setStyleKey(m)}
+              key={l.key}
+              onClick={() => setLens(l.key)}
               className="pill"
               style={{
                 fontSize: 10,
-                textTransform: 'capitalize',
-                background: styleKey === m ? 'var(--navy)' : 'rgba(255,255,255,.92)',
-                color: styleKey === m ? '#fff' : 'var(--navy)',
+                background: lens === l.key ? 'var(--navy)' : 'rgba(255,255,255,.92)',
+                color: lens === l.key ? '#fff' : 'var(--navy)',
                 boxShadow: 'var(--shadow-card)',
               }}
             >
-              {m}
+              {l.label}
             </button>
           ))}
         </div>
 
       </div>
 
-      {/* attention status — below the map (avoids overlapping the style selector
-          on narrow phones) */}
-      <div style={{ marginTop: 8, fontSize: 12, fontWeight: 700 }}>
-        {attention > 0 ? (
-          <span style={{ color: 'var(--red)' }}>● {attention} area{attention > 1 ? 's' : ''} need attention</span>
-        ) : (
-          <span style={{ color: 'var(--green)' }}>● All areas clear</span>
-        )}
+      {/* attention status — below the map (avoids overlapping the selector on
+          narrow phones); reflects the active lens. */}
+      <div className="row spread" style={{ marginTop: 8, alignItems: 'baseline', gap: 8 }}>
+        <span style={{ fontSize: 12, fontWeight: 700 }}>
+          {attention > 0 ? (
+            <span style={{ color: 'var(--red)' }}>● {attention} area{attention > 1 ? 's' : ''} need attention</span>
+          ) : (
+            <span style={{ color: 'var(--green)' }}>● All areas clear</span>
+          )}
+        </span>
+        <span className="muted" style={{ fontSize: 11 }}>
+          {lens === 'permits' ? 'by permit status' : lens === 'findings' ? 'by open findings' : 'by overall status'}
+        </span>
       </div>
 
       {/* selected-zone obligations */}
