@@ -67,9 +67,17 @@ export default function App() {
       setWaking(false)
       if (!alive) return
 
+      // The server requires auth (passcode/SSO) → 401. We no longer surface a
+      // passcode/Microsoft UI; the login is the credential-free Auditor/Viewer
+      // chooser. Load whatever data we can (the API may 401 → snapshot fallback)
+      // so picking a role always works instead of hanging on "Loading…".
       if (me.state === 'login') {
-        setAuthMode(me.mode === 'passcode' ? 'passcode' : 'sso')
-        setLoading(false) // show the login screen (passcode or Microsoft)
+        setAuthMode('demo')
+        const portfolio = await loadPortfolio()
+        if (!alive) return
+        setData(portfolio.data)
+        setSource(portfolio.source)
+        setLoading(false)
         return
       }
 
