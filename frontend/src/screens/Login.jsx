@@ -123,8 +123,8 @@ export default function Login({ source, onEnter, mode = 'demo' }) {
           A
         </div>
         <div style={{ fontSize: 24, fontWeight: 700, marginTop: 18 }}>Facility Compliance</div>
-        <div style={{ color: '#9FB0C4', marginTop: 6, fontSize: 14, textAlign: 'center', maxWidth: 280 }}>
-          Permits, leases & inspection findings across the Athens portfolio.
+        <div style={{ color: '#9FB0C4', marginTop: 6, fontSize: 13.5, textAlign: 'center', maxWidth: 300, lineHeight: 1.5 }}>
+          Track facility compliance status, open gaps, due dates, owners, and audit readiness.
         </div>
       </div>
 

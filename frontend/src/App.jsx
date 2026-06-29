@@ -272,7 +272,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {screen === 'map' && <MapScreen data={data} onOpenSite={openSite} onNav={setScreen} setTaskFilter={setTaskFilter} />}
+      {screen === 'map' && <MapScreen data={data} user={user} onOpenSite={openSite} onNav={setScreen} />}
       {screen === 'tasks' && (
         <Tasks
           data={data}

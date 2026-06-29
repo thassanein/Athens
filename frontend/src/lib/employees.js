@@ -15,6 +15,20 @@ export const EMPLOYEES = [
 // Demo auditor passcode (viewers need none).
 export const AUDITOR_PASSCODE = 'athens'
 
+function hash(str) {
+  let h = 2166136261
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return h >>> 0
+}
+
+// Deterministic compliance owner assigned to a facility (demo). Stable per name.
+export function ownerFor(name) {
+  return EMPLOYEES[hash(`owner:${name}`) % EMPLOYEES.length]
+}
+
 export function makeUser(emp, role) {
   return {
     name: emp.name,
