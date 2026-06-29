@@ -2,8 +2,9 @@ import { useMemo, useState } from 'react'
 import { siteStats, siteTone, portfolioRollup, riskTier, nextDue, fmtShort } from '../lib/derive.js'
 import { ownerFor } from '../lib/employees.js'
 import { demoAuditFor } from '../lib/demo-audits.js'
-import { openPortfolioReport } from '../lib/portfolio-report.js'
+import { buildPortfolioReport } from '../lib/portfolio-report.js'
 import { IconChevron, IconExport } from '../components/Icons.jsx'
+import ReportOverlay from '../components/ReportOverlay.jsx'
 
 const TONE_HEX = { fail: '#D5172A', open: '#B7791F', pass: '#1A5632' }
 const TIER_HEX = { compliant: '#1A5632', risk: '#B7791F', noncompliant: '#D5172A' }
@@ -74,6 +75,7 @@ export default function MapScreen({ data, user, onOpenSite, onNav }) {
   const [type, setType] = useState('all')
   const [sort, setSort] = useState('risk')
   const [q, setQ] = useState('')
+  const [reportHtml, setReportHtml] = useState(null)
 
   const W = 408,
     H = 200
@@ -127,7 +129,7 @@ export default function MapScreen({ data, user, onOpenSite, onNav }) {
             <div className="title" style={{ marginTop: 2 }}>Compliance command center</div>
           </div>
           <button
-            onClick={() => openPortfolioReport(data, user?.name)}
+            onClick={() => setReportHtml(buildPortfolioReport(data, user?.name))}
             className="pill"
             style={{ background: 'rgba(255,255,255,.14)', color: '#fff', display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer', flex: '0 0 auto' }}
           >
@@ -269,6 +271,10 @@ export default function MapScreen({ data, user, onOpenSite, onNav }) {
           })}
         </div>
       </div>
+
+      {reportHtml && (
+        <ReportOverlay html={reportHtml} title="Portfolio compliance summary" onClose={() => setReportHtml(null)} />
+      )}
     </div>
   )
 }

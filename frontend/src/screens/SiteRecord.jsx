@@ -22,6 +22,7 @@ import { listAudits, getAudit, deleteAudit } from '../lib/api.js'
 import { AUDIT_TEMPLATES, templateItemCount, TYPE_TEMPLATE } from '../lib/audit-templates.js'
 import { demoAuditFor } from '../lib/demo-audits.js'
 import FacilityMap from './FacilityMap.jsx'
+import ReportOverlay from '../components/ReportOverlay.jsx'
 
 const TPL_NAME = { hauling: 'Hauling Division', mrf: 'MRF Master Form', facility: 'Facility Review', ts: 'Transfer Station', organics: 'American Organics / Compost', landfill: 'Landfill' }
 const fmtWhen = (iso) => {
@@ -51,8 +52,9 @@ function auditDeficiencies(audit) {
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 
-// Build a standalone, print-ready HTML report and open it for Print / Save-as-PDF.
-function openReport(name, site, latestAudit, userName) {
+// Build a standalone, print-ready HTML report. Returns the HTML string; the
+// caller shows it in-app (ReportOverlay) so there's always a Back option.
+function buildReport(name, site, latestAudit, userName) {
   const now = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' })
   const c = site.compliance
   const findings = site.checklist || []
@@ -89,10 +91,7 @@ function openReport(name, site, latestAudit, userName) {
     table{border-collapse:collapse;width:100%;font-size:12.5px} th,td{border:1px solid #d7dde5;padding:6px 8px;text-align:left;vertical-align:top}
     th{background:#f2f5f8} .kpi{padding:10px 12px;border-radius:8px;margin:6px 0} .kpi.bad{background:#fdecee;border:1px solid #f3b8bf} .kpi.ok{background:#eaf6ee;border:1px solid #b6e2c5}
     .chip{display:inline-block;border:1px solid #d7dde5;border-radius:20px;padding:2px 9px;margin:2px;font-size:12px} .chip.bad{color:#D5172A;border-color:#f3b8bf} .chip.ok{color:#1A5632;border-color:#b6e2c5}
-    .toolbar{position:fixed;top:10px;right:10px} button{font:14px sans-serif;padding:8px 14px;border-radius:8px;border:0;background:#1A2736;color:#fff;cursor:pointer}
-    @media print{.toolbar{display:none}}
   </style></head><body>
-  <div class="toolbar"><button onclick="window.print()">Print / Save PDF</button></div>
   <h1>Facility Compliance Report</h1>
   <div class="sub"><b>${esc(name)}</b> · ${esc(site.type)} · ${esc(site.city)}${site.swis ? ` · SWIS ${esc(site.swis)}` : ''}</div>
   <div class="muted">Generated ${esc(now)}${userName ? ` · by ${esc(userName)}` : ''}</div>
@@ -102,11 +101,7 @@ function openReport(name, site, latestAudit, userName) {
   <h2>Permits needing attention</h2>${permitsBlock}
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (w) {
-    w.document.write(html)
-    w.document.close()
-  }
+  return html
 }
 
 // ----------------------------------------------------------------------------
@@ -425,6 +420,7 @@ export default function SiteRecord({
   const [resultAudit, setResultAudit] = useState(null) // an audit detail to show inline ("results")
   const [resultLoading, setResultLoading] = useState(false)
   const [auditsReload, setAuditsReload] = useState(0) // bump to refetch the audit list
+  const [reportHtml, setReportHtml] = useState(null) // in-app report overlay
   const [focusItem, setFocusItem] = useState(null) // a permit/lease id to expand + highlight
   const focusRef = useRef(null)
   const tabsRef = useRef(null)
@@ -584,7 +580,7 @@ export default function SiteRecord({
             >
               {canEdit ? 'Auditor · editing' : 'View only'}
             </span>
-            <button onClick={() => openReport(name, site, latestDetail, userName)} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: '#fff', cursor: 'pointer' }}>
+            <button onClick={() => setReportHtml(buildReport(name, site, latestDetail, userName))} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: '#fff', cursor: 'pointer' }}>
               <IconExport size={15} />
               Site packet
             </button>
@@ -733,7 +729,7 @@ export default function SiteRecord({
         {tab === 'reports' && (
           <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <button
-              onClick={() => openReport(name, site, latestDetail, userName)}
+              onClick={() => setReportHtml(buildReport(name, site, latestDetail, userName))}
               className="pill"
               style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}
             >
@@ -1040,6 +1036,10 @@ export default function SiteRecord({
           />
         )}
       </div>
+
+      {reportHtml && (
+        <ReportOverlay html={reportHtml} title={`Report — ${name}`} onClose={() => setReportHtml(null)} />
+      )}
     </div>
   )
 }

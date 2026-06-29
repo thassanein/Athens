@@ -4,8 +4,10 @@ import { ownerFor } from './employees.js'
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
 
 // Build a standalone, print-ready portfolio compliance summary (Save as PDF
-// from the print dialog) — the leadership / monthly summary view.
-export function openPortfolioReport(data, userName) {
+// from the print dialog) — the leadership / monthly summary view. Returns the
+// HTML string; the caller renders it in-app (ReportOverlay) so there's always a
+// way back, instead of opening a detached window.
+export function buildPortfolioReport(data, userName) {
   const now = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' })
   const r = portfolioRollup(data)
   const rows = r.sites
@@ -45,10 +47,7 @@ export function openPortfolioReport(data, userName) {
     th,td{border:1px solid #dde3ea;padding:6px 8px;text-align:left}th{background:#f2f5f8}
     .tag{display:inline-block;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:700}
     .tag.ok{background:#eaf6ee;color:#1A5632}.tag.warn{background:#fdf4e3;color:#8a5a00}.tag.bad{background:#fdecee;color:#D5172A}
-    .toolbar{position:fixed;top:10px;right:10px}button{font:14px sans-serif;padding:8px 14px;border-radius:8px;border:0;background:#1A2736;color:#fff;cursor:pointer}
-    @media print{.toolbar{display:none}}
   </style></head><body>
-  <div class="toolbar"><button onclick="window.print()">Print / Save PDF</button></div>
   <h1>Portfolio Compliance Summary</h1>
   <div class="muted">Athens Services · ${r.total} facilities · generated ${esc(now)}${userName ? ` · by ${esc(userName)}` : ''}</div>
   <div class="grid">
@@ -65,9 +64,5 @@ export function openPortfolioReport(data, userName) {
   </table>
   </body></html>`
 
-  const w = window.open('', '_blank')
-  if (w) {
-    w.document.write(html)
-    w.document.close()
-  }
+  return html
 }
