@@ -1,6 +1,7 @@
-// AUTO-GENERATED from Athens_Facility_Audit_Master_6.10.2026.xlsx — do not edit by hand.
-// Three audit checklists (Hauling Division, MRF Master Form, Facility Review),
-// each a list of sections -> items. Used by the Audit module.
+// AUTO-GENERATED — audit checklists for the Athens facility audit module.
+// hauling / mrf / facility are extracted from Athens_Facility_Audit_Master_6.10.2026.xlsx;
+// ts (Transfer Station) and organics (American Organics / Compost) are area-based
+// forms authored for those facility types. Regenerate via scratchpad/gen-templates.py.
 
 export const AUDIT_TEMPLATES = {
   "hauling": {
@@ -2602,6 +2603,846 @@ export const AUDIT_TEMPLATES = {
         ]
       }
     ]
+  },
+  "ts": {
+    "title": "Facility Inspection — Transfer Station",
+    "sections": [
+      {
+        "title": "Entrance / Scale / Gate",
+        "items": [
+          {
+            "ref": "",
+            "text": "Gate, fencing, and locks in good condition and secured after hours?",
+            "id": "ts-0-0"
+          },
+          {
+            "ref": "",
+            "text": "All required permit postings displayed at the gate (SWFP, hours, 24-hr emergency contacts)?",
+            "id": "ts-0-1"
+          },
+          {
+            "ref": "",
+            "text": "\"No Trespassing\" and required caution signs posted along the perimeter?",
+            "id": "ts-0-2"
+          },
+          {
+            "ref": "",
+            "text": "Scales calibrated and current certificate posted?",
+            "id": "ts-0-3"
+          },
+          {
+            "ref": "",
+            "text": "Radiation monitors operational and calibrated?",
+            "id": "ts-0-4"
+          },
+          {
+            "ref": "",
+            "text": "Working video surveillance with correct camera placement and active recording?",
+            "id": "ts-0-5"
+          },
+          {
+            "ref": "",
+            "text": "Traffic flow controlled with adequate signage and spotters at the scale?",
+            "id": "ts-0-6"
+          },
+          {
+            "ref": "",
+            "text": "Entrance/exit and parking areas well lit and free of trip/slip hazards?",
+            "id": "ts-0-7"
+          }
+        ]
+      },
+      {
+        "title": "Tipping Floor / Transfer Area",
+        "items": [
+          {
+            "ref": "",
+            "text": "Tipping floor clean; waste contained and not accumulating beyond permit limits?",
+            "id": "ts-1-0"
+          },
+          {
+            "ref": "",
+            "text": "Random load checks / inspections performed and documented?",
+            "id": "ts-1-1"
+          },
+          {
+            "ref": "",
+            "text": "Hazardous, e-waste, and other prohibited materials screened and properly segregated?",
+            "id": "ts-1-2"
+          },
+          {
+            "ref": "",
+            "text": "Spotters present and wearing ANSI Class II/III high-visibility PPE?",
+            "id": "ts-1-3"
+          },
+          {
+            "ref": "",
+            "text": "Required signage posted (10-ft spacing, driver-only exit, PPE required)?",
+            "id": "ts-1-4"
+          },
+          {
+            "ref": "",
+            "text": "Fire suppression, hydrants, and extinguishers accessible and serviced?",
+            "id": "ts-1-5"
+          },
+          {
+            "ref": "",
+            "text": "Fall protection devices and procedures in place at open edges/pits?",
+            "id": "ts-1-6"
+          },
+          {
+            "ref": "",
+            "text": "Dust and odor control systems operating?",
+            "id": "ts-1-7"
+          },
+          {
+            "ref": "",
+            "text": "Floor drainage / wash-down contained with no discharge of pollutants?",
+            "id": "ts-1-8"
+          },
+          {
+            "ref": "",
+            "text": "Litter controlled at and beyond the perimeter fence?",
+            "id": "ts-1-9"
+          }
+        ]
+      },
+      {
+        "title": "Yard / Grounds / Exterior",
+        "items": [
+          {
+            "ref": "",
+            "text": "General appearance of grounds/landscape in good condition?",
+            "id": "ts-2-0"
+          },
+          {
+            "ref": "",
+            "text": "Building exterior, walls, doors, and bollards in good repair and painted?",
+            "id": "ts-2-1"
+          },
+          {
+            "ref": "",
+            "text": "Paved surfaces free of potholes, debris, and trip/slip hazards?",
+            "id": "ts-2-2"
+          },
+          {
+            "ref": "",
+            "text": "Stormwater BMPs in place and monthly inspection filed in the SWPPP (where required)?",
+            "id": "ts-2-3"
+          },
+          {
+            "ref": "",
+            "text": "Fuel island/dispensers (if present) in good repair with spill kit and signage?",
+            "id": "ts-2-4"
+          },
+          {
+            "ref": "",
+            "text": "Barriers and bollards painted yellow where needed?",
+            "id": "ts-2-5"
+          }
+        ]
+      },
+      {
+        "title": "Office / Postings / Records",
+        "items": [
+          {
+            "ref": "",
+            "text": "Portable fire extinguishers mounted, charged, tagged, and inspected?",
+            "id": "ts-3-0"
+          },
+          {
+            "ref": "",
+            "text": "First aid kits stocked and current (no expired or oral meds)?",
+            "id": "ts-3-1"
+          },
+          {
+            "ref": "",
+            "text": "Electrical panels: 36\" clearance, labeled, covers intact, no exposed wiring?",
+            "id": "ts-3-2"
+          },
+          {
+            "ref": "",
+            "text": "Company and Federal/State required postings displayed?",
+            "id": "ts-3-3"
+          },
+          {
+            "ref": "",
+            "text": "SWFP, TPR, and current permits on file and accessible?",
+            "id": "ts-3-4"
+          },
+          {
+            "ref": "",
+            "text": "Operating records complete (load counts, special occurrences, odor, inspections)?",
+            "id": "ts-3-5"
+          },
+          {
+            "ref": "",
+            "text": "Latest Safety Alert posted and prior alerts filed for training?",
+            "id": "ts-3-6"
+          }
+        ]
+      },
+      {
+        "title": "Maintenance / Equipment",
+        "items": [
+          {
+            "ref": "",
+            "text": "Positive Lockout/Tagout system in place with individually keyed locks?",
+            "id": "ts-4-0"
+          },
+          {
+            "ref": "",
+            "text": "PPE available and used; eyewash/shower accessible where required?",
+            "id": "ts-4-1"
+          },
+          {
+            "ref": "",
+            "text": "Machine guarding intact and emergency stops functional?",
+            "id": "ts-4-2"
+          },
+          {
+            "ref": "",
+            "text": "Forklift/loader: certified operators, daily inspection logs, beacons/alarms working?",
+            "id": "ts-4-3"
+          },
+          {
+            "ref": "",
+            "text": "Equipment fire suppression systems serviced as required?",
+            "id": "ts-4-4"
+          },
+          {
+            "ref": "",
+            "text": "SDS / Hazard Communication program complete and chemical inventory current?",
+            "id": "ts-4-5"
+          }
+        ]
+      },
+      {
+        "title": "Environmental & Permits",
+        "items": [
+          {
+            "ref": "",
+            "text": "SWFP current and within the permit review/expiration window?",
+            "id": "ts-5-0"
+          },
+          {
+            "ref": "",
+            "text": "CUPA / Hazardous Materials Business Plan current (CERS)?",
+            "id": "ts-5-1"
+          },
+          {
+            "ref": "",
+            "text": "EPA ID and hazardous waste handling compliant?",
+            "id": "ts-5-2"
+          },
+          {
+            "ref": "",
+            "text": "Industrial stormwater (IGP) coverage and SWPPP current (where required)?",
+            "id": "ts-5-3"
+          },
+          {
+            "ref": "",
+            "text": "Waste tire program (TPID) certificate current (where applicable)?",
+            "id": "ts-5-4"
+          },
+          {
+            "ref": "",
+            "text": "Emergency Action Plan current and posted?",
+            "id": "ts-5-5"
+          }
+        ]
+      },
+      {
+        "title": "Safety & Emergency",
+        "items": [
+          {
+            "ref": "",
+            "text": "Evacuation map and emergency contact numbers posted?",
+            "id": "ts-6-0"
+          },
+          {
+            "ref": "",
+            "text": "Confined spaces identified and labeled?",
+            "id": "ts-6-1"
+          },
+          {
+            "ref": "",
+            "text": "Monthly safety meetings documented?",
+            "id": "ts-6-2"
+          },
+          {
+            "ref": "",
+            "text": "Required employee training current (Hazcom, PPE, forklift, etc.)?",
+            "id": "ts-6-3"
+          },
+          {
+            "ref": "",
+            "text": "Spill kits stocked and accessible?",
+            "id": "ts-6-4"
+          }
+        ]
+      }
+    ]
+  },
+  "organics": {
+    "title": "Facility Inspection — American Organics / Compost",
+    "sections": [
+      {
+        "title": "Entrance / Scale / Weighmaster",
+        "items": [
+          {
+            "ref": "",
+            "text": "Scales calibrated and W&M certificate current?",
+            "id": "organics-0-0"
+          },
+          {
+            "ref": "",
+            "text": "Weighmaster registered/licensed with document on file?",
+            "id": "organics-0-1"
+          },
+          {
+            "ref": "",
+            "text": "Required postings and 24-hr emergency contacts at the gate?",
+            "id": "organics-0-2"
+          },
+          {
+            "ref": "",
+            "text": "Cameras operational and gate/fencing secure?",
+            "id": "organics-0-3"
+          }
+        ]
+      },
+      {
+        "title": "Receiving / Tipping",
+        "items": [
+          {
+            "ref": "",
+            "text": "Incoming feedstock inspected for contamination and prohibited materials?",
+            "id": "organics-1-0"
+          },
+          {
+            "ref": "",
+            "text": "Physical contaminant removal documented?",
+            "id": "organics-1-1"
+          },
+          {
+            "ref": "",
+            "text": "Tipping/receiving area clean and material contained?",
+            "id": "organics-1-2"
+          },
+          {
+            "ref": "",
+            "text": "Vector and litter control effective?",
+            "id": "organics-1-3"
+          }
+        ]
+      },
+      {
+        "title": "Active Composting / Windrows (PFRP)",
+        "items": [
+          {
+            "ref": "",
+            "text": "Windrow temperatures monitored and logged (>=55C for 15 days, 5 turnings — PFRP)?",
+            "id": "organics-2-0"
+          },
+          {
+            "ref": "",
+            "text": "Temperature and turning records complete and current?",
+            "id": "organics-2-1"
+          },
+          {
+            "ref": "",
+            "text": "Windrow spacing and fire lanes maintained?",
+            "id": "organics-2-2"
+          },
+          {
+            "ref": "",
+            "text": "Pathogen reduction (PFRP/VAR) documentation maintained?",
+            "id": "organics-2-3"
+          },
+          {
+            "ref": "",
+            "text": "Moisture management adequate with no anaerobic/odor conditions?",
+            "id": "organics-2-4"
+          }
+        ]
+      },
+      {
+        "title": "Curing / Finished Product / CDFA",
+        "items": [
+          {
+            "ref": "",
+            "text": "Finished product stored separately from active/incoming material?",
+            "id": "organics-3-0"
+          },
+          {
+            "ref": "",
+            "text": "CDFA fertilizing materials license current?",
+            "id": "organics-3-1"
+          },
+          {
+            "ref": "",
+            "text": "OMRI / STA (US Composting Council) certification current (where applicable)?",
+            "id": "organics-3-2"
+          },
+          {
+            "ref": "",
+            "text": "Product testing/sampling performed and on file?",
+            "id": "organics-3-3"
+          },
+          {
+            "ref": "",
+            "text": "Compostable Materials Handling Permit (SWFP) conditions met?",
+            "id": "organics-3-4"
+          }
+        ]
+      },
+      {
+        "title": "Ponds / Stormwater / Leachate (WDR)",
+        "items": [
+          {
+            "ref": "",
+            "text": "Retention pond freeboard at or above required level with no overtopping risk?",
+            "id": "organics-4-0"
+          },
+          {
+            "ref": "",
+            "text": "BMP inspection logs current and last storm event sampled?",
+            "id": "organics-4-1"
+          },
+          {
+            "ref": "",
+            "text": "WDR (Waste Discharge Requirements) monitoring and reporting current?",
+            "id": "organics-4-2"
+          },
+          {
+            "ref": "",
+            "text": "Leachate/contact water contained and managed per WDR?",
+            "id": "organics-4-3"
+          },
+          {
+            "ref": "",
+            "text": "Recycled water use compliant (where applicable)?",
+            "id": "organics-4-4"
+          }
+        ]
+      },
+      {
+        "title": "Air / Odor / Dust Control",
+        "items": [
+          {
+            "ref": "",
+            "text": "Air permit (MDAQMD) current and conditions met?",
+            "id": "organics-5-0"
+          },
+          {
+            "ref": "",
+            "text": "Odor management plan implemented; neutralizer/biofilter operating?",
+            "id": "organics-5-1"
+          },
+          {
+            "ref": "",
+            "text": "Dust/PM control adequate; no visible dust off the working face?",
+            "id": "organics-5-2"
+          },
+          {
+            "ref": "",
+            "text": "Air monitoring and recordkeeping current?",
+            "id": "organics-5-3"
+          }
+        ]
+      },
+      {
+        "title": "Yard / Grounds / Fuel",
+        "items": [
+          {
+            "ref": "",
+            "text": "Grounds, fencing, lighting, and paved surfaces in good condition?",
+            "id": "organics-6-0"
+          },
+          {
+            "ref": "",
+            "text": "Fuel island/CNG dispensers in good repair with spill kit and signage?",
+            "id": "organics-6-1"
+          },
+          {
+            "ref": "",
+            "text": "Stormwater BMPs and barriers/bollards in place?",
+            "id": "organics-6-2"
+          }
+        ]
+      },
+      {
+        "title": "Office / Postings / Records",
+        "items": [
+          {
+            "ref": "",
+            "text": "Fire extinguishers, first aid, and electrical panels compliant?",
+            "id": "organics-7-0"
+          },
+          {
+            "ref": "",
+            "text": "Required company and Federal/State postings displayed?",
+            "id": "organics-7-1"
+          },
+          {
+            "ref": "",
+            "text": "Permits and operating records on file (SWFP, WDR, air, logs)?",
+            "id": "organics-7-2"
+          }
+        ]
+      },
+      {
+        "title": "Maintenance / Equipment",
+        "items": [
+          {
+            "ref": "",
+            "text": "Lockout/Tagout, PPE, machine guarding, and SDS/Hazcom in place?",
+            "id": "organics-8-0"
+          },
+          {
+            "ref": "",
+            "text": "Heavy equipment (loaders, grinders, screens, turners): inspections, certified operators, beacons/alarms?",
+            "id": "organics-8-1"
+          },
+          {
+            "ref": "",
+            "text": "Pressure vessels / compressors inspected and certified?",
+            "id": "organics-8-2"
+          }
+        ]
+      },
+      {
+        "title": "Environmental & Permits",
+        "items": [
+          {
+            "ref": "",
+            "text": "SWFP / Compostable Materials Handling Permit current?",
+            "id": "organics-9-0"
+          },
+          {
+            "ref": "",
+            "text": "CUPA / HMBP current and EPA ID compliant?",
+            "id": "organics-9-1"
+          },
+          {
+            "ref": "",
+            "text": "SPCC plan current (if storage >= 1,320 gallons)?",
+            "id": "organics-9-2"
+          },
+          {
+            "ref": "",
+            "text": "US FWS bird depredation permit current (where applicable)?",
+            "id": "organics-9-3"
+          },
+          {
+            "ref": "",
+            "text": "Emergency Action Plan current and posted?",
+            "id": "organics-9-4"
+          }
+        ]
+      }
+    ]
+  },
+  "landfill": {
+    "title": "Facility Inspection — Landfill",
+    "sections": [
+      {
+        "title": "Entrance / Scale / Gate",
+        "items": [
+          {
+            "ref": "",
+            "text": "Gate, fencing, and locks in good condition and secured after hours?",
+            "id": "landfill-0-0"
+          },
+          {
+            "ref": "",
+            "text": "All required permit postings displayed at the gate (SWFP, hours, 24-hr emergency contacts)?",
+            "id": "landfill-0-1"
+          },
+          {
+            "ref": "",
+            "text": "\"No Trespassing\" and required caution signs posted along the perimeter?",
+            "id": "landfill-0-2"
+          },
+          {
+            "ref": "",
+            "text": "Scales calibrated and current certificate posted?",
+            "id": "landfill-0-3"
+          },
+          {
+            "ref": "",
+            "text": "Radiation monitors operational and calibrated?",
+            "id": "landfill-0-4"
+          },
+          {
+            "ref": "",
+            "text": "Working video surveillance with active recording?",
+            "id": "landfill-0-5"
+          },
+          {
+            "ref": "",
+            "text": "Traffic flow controlled with adequate signage and spotters at the scale?",
+            "id": "landfill-0-6"
+          }
+        ]
+      },
+      {
+        "title": "Active Face / Working Area",
+        "items": [
+          {
+            "ref": "",
+            "text": "Working face kept as small as practical and waste contained?",
+            "id": "landfill-1-0"
+          },
+          {
+            "ref": "",
+            "text": "Random load checks / inspections performed and documented?",
+            "id": "landfill-1-1"
+          },
+          {
+            "ref": "",
+            "text": "Hazardous and prohibited materials screened and properly handled?",
+            "id": "landfill-1-2"
+          },
+          {
+            "ref": "",
+            "text": "Spotters present and wearing ANSI Class II/III high-visibility PPE?",
+            "id": "landfill-1-3"
+          },
+          {
+            "ref": "",
+            "text": "Litter controlled at the face and along the perimeter (litter fences in use)?",
+            "id": "landfill-1-4"
+          },
+          {
+            "ref": "",
+            "text": "Slope and traffic safety maintained at the active face?",
+            "id": "landfill-1-5"
+          },
+          {
+            "ref": "",
+            "text": "Fire control measures and water/soil available at the working area?",
+            "id": "landfill-1-6"
+          }
+        ]
+      },
+      {
+        "title": "Cover & Grading",
+        "items": [
+          {
+            "ref": "",
+            "text": "Daily cover applied at end of operations (6 inches soil or approved ADC)?",
+            "id": "landfill-2-0"
+          },
+          {
+            "ref": "",
+            "text": "Intermediate cover maintained on inactive areas (12 inches)?",
+            "id": "landfill-2-1"
+          },
+          {
+            "ref": "",
+            "text": "Slopes stable with no exposed waste, erosion, or seeps?",
+            "id": "landfill-2-2"
+          },
+          {
+            "ref": "",
+            "text": "Erosion and sediment controls in place and maintained?",
+            "id": "landfill-2-3"
+          },
+          {
+            "ref": "",
+            "text": "Final cover / closed areas vegetated and intact (where applicable)?",
+            "id": "landfill-2-4"
+          }
+        ]
+      },
+      {
+        "title": "Landfill Gas (LFG)",
+        "items": [
+          {
+            "ref": "",
+            "text": "Gas collection and control system operating?",
+            "id": "landfill-3-0"
+          },
+          {
+            "ref": "",
+            "text": "Gas wells / collection header in good condition and monitored?",
+            "id": "landfill-3-1"
+          },
+          {
+            "ref": "",
+            "text": "Flare / blower station operating and inspected?",
+            "id": "landfill-3-2"
+          },
+          {
+            "ref": "",
+            "text": "Surface emissions monitoring performed and records current?",
+            "id": "landfill-3-3"
+          },
+          {
+            "ref": "",
+            "text": "Methane monitoring at structures/perimeter within limits?",
+            "id": "landfill-3-4"
+          }
+        ]
+      },
+      {
+        "title": "Leachate & Groundwater",
+        "items": [
+          {
+            "ref": "",
+            "text": "Leachate collection and containment system functioning with no surface seeps?",
+            "id": "landfill-4-0"
+          },
+          {
+            "ref": "",
+            "text": "Leachate storage/disposal within permitted limits and documented?",
+            "id": "landfill-4-1"
+          },
+          {
+            "ref": "",
+            "text": "Groundwater monitoring wells secure and sampled per WDR schedule?",
+            "id": "landfill-4-2"
+          },
+          {
+            "ref": "",
+            "text": "WDR (Waste Discharge Requirements) monitoring and reporting current?",
+            "id": "landfill-4-3"
+          }
+        ]
+      },
+      {
+        "title": "Ponds / Stormwater",
+        "items": [
+          {
+            "ref": "",
+            "text": "Retention/sedimentation pond freeboard adequate with no overtopping risk?",
+            "id": "landfill-5-0"
+          },
+          {
+            "ref": "",
+            "text": "Run-on / run-off controls in place and maintained?",
+            "id": "landfill-5-1"
+          },
+          {
+            "ref": "",
+            "text": "Stormwater BMP inspection logs current and last storm event sampled?",
+            "id": "landfill-5-2"
+          }
+        ]
+      },
+      {
+        "title": "Roads / Heavy Equipment",
+        "items": [
+          {
+            "ref": "",
+            "text": "Haul roads maintained and dust controlled (water truck coverage)?",
+            "id": "landfill-6-0"
+          },
+          {
+            "ref": "",
+            "text": "Heavy equipment (compactors, dozers, loaders): daily inspection logs?",
+            "id": "landfill-6-1"
+          },
+          {
+            "ref": "",
+            "text": "Certified/trained operators with functioning beacons, alarms, and backup cameras?",
+            "id": "landfill-6-2"
+          },
+          {
+            "ref": "",
+            "text": "Equipment fire suppression systems serviced as required?",
+            "id": "landfill-6-3"
+          }
+        ]
+      },
+      {
+        "title": "Office / Postings / Records",
+        "items": [
+          {
+            "ref": "",
+            "text": "Portable fire extinguishers mounted, charged, tagged, and inspected?",
+            "id": "landfill-7-0"
+          },
+          {
+            "ref": "",
+            "text": "First aid kits stocked and current; electrical panels compliant?",
+            "id": "landfill-7-1"
+          },
+          {
+            "ref": "",
+            "text": "Company and Federal/State required postings displayed?",
+            "id": "landfill-7-2"
+          },
+          {
+            "ref": "",
+            "text": "SWFP, JTD, and current permits on file and accessible?",
+            "id": "landfill-7-3"
+          },
+          {
+            "ref": "",
+            "text": "Operating records complete (load counts, special occurrences, cover, gas, inspections)?",
+            "id": "landfill-7-4"
+          }
+        ]
+      },
+      {
+        "title": "Maintenance / Equipment",
+        "items": [
+          {
+            "ref": "",
+            "text": "Positive Lockout/Tagout system in place with individually keyed locks?",
+            "id": "landfill-8-0"
+          },
+          {
+            "ref": "",
+            "text": "PPE available and used; machine guarding intact; emergency stops functional?",
+            "id": "landfill-8-1"
+          },
+          {
+            "ref": "",
+            "text": "SDS / Hazard Communication program complete and chemical inventory current?",
+            "id": "landfill-8-2"
+          }
+        ]
+      },
+      {
+        "title": "Environmental & Permits",
+        "items": [
+          {
+            "ref": "",
+            "text": "SWFP current and within the permit review/expiration window?",
+            "id": "landfill-9-0"
+          },
+          {
+            "ref": "",
+            "text": "WDR current; air permit (Title V / MDAQMD) current and conditions met?",
+            "id": "landfill-9-1"
+          },
+          {
+            "ref": "",
+            "text": "CUPA / HMBP current and EPA ID compliant?",
+            "id": "landfill-9-2"
+          },
+          {
+            "ref": "",
+            "text": "County DPH permit current (where applicable)?",
+            "id": "landfill-9-3"
+          },
+          {
+            "ref": "",
+            "text": "Septic / onsite wastewater compliant (where applicable)?",
+            "id": "landfill-9-4"
+          },
+          {
+            "ref": "",
+            "text": "Emergency Action Plan current and posted?",
+            "id": "landfill-9-5"
+          }
+        ]
+      }
+    ]
   }
 }
 
@@ -2610,9 +3451,9 @@ export const TYPE_TEMPLATE = {
   'Materials Recovery Facility': 'mrf',
   'Hauling Yard': 'hauling',
   'Operations Yard': 'hauling',
-  'Transfer Station': 'hauling',
-  'Landfill': 'hauling',
-  'Compost / Organics': 'hauling',
+  'Transfer Station': 'ts',
+  'Landfill': 'landfill',
+  'Compost / Organics': 'organics',
   'Office / Other': 'facility',
 }
 

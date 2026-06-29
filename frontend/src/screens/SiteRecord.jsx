@@ -21,7 +21,7 @@ import {
 import { listAudits } from '../lib/api.js'
 import { templateItemCount } from '../lib/audit-templates.js'
 
-const TPL_NAME = { hauling: 'Hauling Division', mrf: 'MRF Master Form', facility: 'Facility Review' }
+const TPL_NAME = { hauling: 'Hauling Division', mrf: 'MRF Master Form', facility: 'Facility Review', ts: 'Transfer Station', organics: 'American Organics / Compost', landfill: 'Landfill' }
 const fmtWhen = (iso) => {
   if (!iso) return '—'
   try {
