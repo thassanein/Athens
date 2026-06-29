@@ -5,6 +5,7 @@ import { demoAuditFor } from '../lib/demo-audits.js'
 import { buildPortfolioReport } from '../lib/portfolio-report.js'
 import { IconChevron, IconExport } from '../components/Icons.jsx'
 import ReportOverlay from '../components/ReportOverlay.jsx'
+import BackButton from '../components/BackButton.jsx'
 
 const TONE_HEX = { fail: '#D5172A', open: '#B7791F', pass: '#1A5632' }
 const TIER_HEX = { compliant: '#1A5632', risk: '#B7791F', noncompliant: '#D5172A' }
@@ -69,7 +70,7 @@ const SORTS = [
   { key: 'name', label: 'Name' },
 ]
 
-export default function MapScreen({ data, user, onOpenSite, onNav }) {
+export default function MapScreen({ data, user, onOpenSite, onNav, onBack }) {
   const roll = useMemo(() => portfolioRollup(data), [data])
   const [tier, setTier] = useState('all')
   const [type, setType] = useState('all')
@@ -121,6 +122,7 @@ export default function MapScreen({ data, user, onOpenSite, onNav }) {
   return (
     <div className="screen">
       <div className="header">
+        <BackButton onClick={onBack} label="Switch profile" />
         <div className="row spread" style={{ alignItems: 'flex-start' }}>
           <div>
             <div className="muted" style={{ color: '#9FB0C4', fontSize: 13.5, fontWeight: 600 }}>

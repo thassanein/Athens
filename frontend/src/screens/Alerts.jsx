@@ -1,5 +1,6 @@
 import { buildAlerts } from '../lib/derive.js'
 import { IconAlerts, IconDoc, IconPin, IconChevron } from '../components/Icons.jsx'
+import BackButton from '../components/BackButton.jsx'
 
 const KIND_ICON = {
   unowned: <IconProfileless />,
@@ -11,12 +12,13 @@ function IconProfileless() {
   return <IconAlerts size={18} />
 }
 
-export default function Alerts({ data, onOpenSite }) {
+export default function Alerts({ data, onOpenSite, onBack }) {
   const alerts = buildAlerts(data)
 
   return (
     <div className="screen">
       <div className="header">
+        <BackButton onClick={onBack} label="Home" />
         <div className="title">Alerts</div>
         <div style={{ color: '#9FB0C4', fontSize: 13, marginTop: 4 }}>
           {alerts.length} item{alerts.length === 1 ? '' : 's'} need attention

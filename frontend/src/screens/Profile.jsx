@@ -1,5 +1,6 @@
 import { useState, useEffect, useReducer } from 'react'
 import { isStandalone, isIOS, canPrompt, promptInstall } from '../lib/pwa.js'
+import BackButton from '../components/BackButton.jsx'
 
 // "Add to Home Screen" — real PWA install. Native prompt on Android/desktop
 // Chrome; step-by-step instructions on iOS (no install API there).
@@ -122,13 +123,14 @@ function SettingRow({ label, sub, on, toggle }) {
   )
 }
 
-export default function Profile({ user, source, settings, setSettings, onSignOut }) {
+export default function Profile({ user, source, settings, setSettings, onSignOut, onBack }) {
   const set = (k) => setSettings({ ...settings, [k]: !settings[k] })
   const live = source === 'postgres'
 
   return (
     <div className="screen">
       <div className="header">
+        <BackButton onClick={onBack} label="Home" />
         <div className="title">Profile</div>
       </div>
 

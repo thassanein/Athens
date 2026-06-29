@@ -249,22 +249,24 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      {screen === 'map' && <MapScreen data={data} user={user} onOpenSite={openSite} onNav={setScreen} />}
+      {screen === 'map' && <MapScreen data={data} user={user} onOpenSite={openSite} onNav={setScreen} onBack={() => setScreen('login')} />}
       {screen === 'tasks' && (
         <Tasks
           data={data}
           filter={taskFilter}
           setFilter={setTaskFilter}
           onOpenFinding={(site, id) => openSite(site, { tab: 'findings', focus: id })}
+          onBack={() => setScreen('map')}
         />
       )}
-      {screen === 'alerts' && <Alerts data={data} onOpenSite={openSite} />}
+      {screen === 'alerts' && <Alerts data={data} onOpenSite={openSite} onBack={() => setScreen('map')} />}
       {screen === 'profile' && (
         <Profile
           user={user}
           source={source}
           settings={settings}
           setSettings={setSettings}
+          onBack={() => setScreen('map')}
           onSignOut={() => {
             if (authMode === 'sso' || authMode === 'passcode') window.location.href = authLogoutUrl
             else setScreen('login')
