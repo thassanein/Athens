@@ -601,7 +601,7 @@ export default function SiteRecord({
         <div style={{ color: '#9FB0C4', fontSize: 12.5, marginTop: 3 }}>
           {site.type} · {site.city}{site.swis ? ` · SWIS ${site.swis}` : ''}
         </div>
-        {onStartAudit && (
+        {canEdit && onStartAudit && (
           <button
             onClick={onStartAudit}
             className="pill"
@@ -957,7 +957,7 @@ export default function SiteRecord({
                 </div>
               </button>
             )}
-            {onStartAudit && (
+            {canEdit && onStartAudit && (
               <button
                 onClick={() => onStartAudit()}
                 className="pill"

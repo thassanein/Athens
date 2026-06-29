@@ -45,17 +45,17 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [waking, setWaking] = useState(false) // server cold-starting (free tier)
 
-  // Bootstrap: ask the server who we are, then load the portfolio.
-  //  - authed  → set the signed-in user and go straight to the app.
-  //  - login   → server requires Microsoft sign-in → show the SSO login screen.
-  //  - demo    → no server (e.g. Pages) → snapshot + the two demo logins.
+  // Bootstrap: load the portfolio in the background and ALWAYS land on the
+  // Auditor/Viewer chooser. This is an open-access app — the role is a
+  // deliberate client-side choice, so we never auto-enter (even if the server
+  // reports a session). The chooser is mandatory; each role carries its own
+  // access (auditor = edit, viewer = read-only).
   useEffect(() => {
     let alive = true
     ;(async () => {
-      // Reach the server, retrying through a free-tier cold start (~30-60s).
-      // A timed-out /auth/me means the service is waking; keep trying (with a
-      // "waking up" message) until it answers or the window closes, then fall
-      // back to the bundled snapshot so the app is never stuck on a spinner.
+      // Probe the server, retrying through a free-tier cold start (~30-60s) so a
+      // sleeping service wakes before we read its data. We only use this to pick
+      // live vs snapshot data — never to skip the chooser.
       const deadline = Date.now() + 75000
       let me = await fetchMe()
       while (alive && me.state === 'demo' && me.timedOut && Date.now() < deadline) {
@@ -67,40 +67,6 @@ export default function App() {
       setWaking(false)
       if (!alive) return
 
-      // The server requires auth (passcode/SSO) → 401. We no longer surface a
-      // passcode/Microsoft UI; the login is the credential-free Auditor/Viewer
-      // chooser. Load whatever data we can (the API may 401 → snapshot fallback)
-      // so picking a role always works instead of hanging on "Loading…".
-      if (me.state === 'login') {
-        setAuthMode('demo')
-        const portfolio = await loadPortfolio()
-        if (!alive) return
-        setData(portfolio.data)
-        setSource(portfolio.source)
-        setLoading(false)
-        return
-      }
-
-      if (me.state === 'authed') {
-        const u = me.user
-        setAuthMode(u.mode === 'open' ? 'demo' : u.mode === 'passcode' ? 'passcode' : 'sso')
-        setUser({
-          name: u.name,
-          role: u.role,
-          title: u.role === 'auditor' ? 'Field Auditor · EHS' : 'Site Viewer · Read-only',
-          initials: u.initials || 'A',
-          email: u.email,
-        })
-        const portfolio = await loadPortfolio()
-        if (!alive) return
-        setData(portfolio.data)
-        setSource(portfolio.source)
-        setScreen('map') // already signed in — skip the login screen
-        setLoading(false)
-        return
-      }
-
-      // demo: no server reachable
       setAuthMode('demo')
       const portfolio = await loadPortfolio()
       if (!alive) return
@@ -264,8 +230,9 @@ export default function App() {
           source={source}
           mode={authMode}
           onEnter={(u) => {
-            // Demo mode only — SSO mode redirects to Microsoft instead.
-            // Login passes a full user object (chosen employee + role).
+            // The user explicitly picked a profile (Auditor or Viewer); each
+            // carries its own access (auditor = edit, viewer = read-only) and
+            // identity. This is the only way into the app — no auto-enter.
             setUser(u && typeof u === 'object' ? u : USERS[u] || USERS.auditor)
             setScreen('map')
           }}
