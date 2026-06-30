@@ -314,6 +314,21 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .att-row:last-child { border-bottom: none; }
 .att-ico { font-size: 16px; }
 
+/* ---- capital allocation board -------------------------------------------- */
+.meter { position: relative; height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.meter > i { display: block; height: 100%; border-radius: 999px; transition: width 0.18s ease, background 0.18s ease; }
+.alloc-grid { align-items: start; }
+.dropzone { transition: box-shadow 0.15s ease, border-color 0.15s ease; }
+.dropzone.over { border-color: var(--navy); box-shadow: 0 0 0 3px var(--tint-navy); }
+.alloc-list { display: flex; flex-direction: column; gap: 8px; min-height: 80px; margin-top: 4px; }
+.alloc-empty { border: 1.5px dashed var(--line); border-radius: 10px; padding: 22px 14px; text-align: center; color: var(--grey-2); font-size: 13px; }
+.alloc-card { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: #fff; cursor: grab; }
+.alloc-card:active { cursor: grabbing; }
+.alloc-card .grip { color: var(--grey-2); font-size: 14px; cursor: grab; }
+.alloc-title { flex: 1; min-width: 0; text-align: left; background: none; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.alloc-meta { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+@media (max-width: 720px) { .alloc-meta .muted { display: none; } }
+
 @media print {
   .sidebar, .topbar, .no-print { display: none !important; }
   .content { max-width: none; padding: 0; }
