@@ -24,24 +24,37 @@ cd evro/server && npm run sql      # rewrites db/schema.sql + db/seed.sql from d
 
 ---
 
-## Option A — Render (managed PostgreSQL, recommended)
+## Option A — Render, sharing the existing `athens-db` (recommended, free)
 
-`evro/render.yaml` provisions a managed Postgres (`evro-db`) and the web service.
-On deploy, Render injects `DATABASE_URL`; `migrate.js` creates the tables and
-seeds them on first boot. **Nothing else to do — the database is added and seeded
-automatically.**
+Render's free tier allows only **one** free PostgreSQL, and the facilities app
+already uses it (`athens-db`). EVRO therefore **shares that database**: all its
+tables are prefixed `evro_` (so they can't collide with the facilities tables),
+and `evro/render.yaml` does **not** provision a new database — it expects you to
+point `DATABASE_URL` at `athens-db`.
 
-1. In the Render dashboard: **New → Blueprint**, connect this repo.
-   - Render reads `render.yaml` from the **repo root**, so if you deploy EVRO on
-     its own, move/symlink `evro/render.yaml` to the repo root first (the repo
-     root currently holds the facilities-app blueprint).
-2. Render creates `evro-db` (Postgres) + `athens-evro` (web) and runs:
-   - build: `cd evro/frontend && npm ci --include=dev && npm run build && cd ../server && npm ci --omit=dev`
-   - start: `cd evro/server && npm start`
-3. First boot logs `[migrate] seeded 40 initiatives · 116 categories · 10 opportunities`.
-4. App is live at the service URL; health at `/api/health`, summary at `/overview`.
+1. **New → Blueprint** → connect this repo.
+   - Branch: the branch that contains `evro/` (the default branch, once merged).
+   - **Blueprint Path:** `evro/render.yaml` (Render supports a non-root blueprint;
+     no need to move the file). Build runs `cd evro/...` from the repo root.
+2. Render creates the **web service `athens-evro`** (no new database). The first
+   build comes up healthy even without a database — `/api/health` returns 200
+   (`db:false`) and the SPA serves in demo mode.
+3. **Wire the shared DB:** Dashboard → **athens-db → Connections → Internal
+   Database URL** (copy it) → **athens-evro → Environment → `DATABASE_URL`** →
+   paste → **Save** (this redeploys).
+4. On that boot, `migrate.js` creates the `evro_*` tables in `athens-db` and
+   seeds them — logs `[migrate] seeded 40 initiatives · 116 categories · 10 opportunities`.
+   The facilities tables are untouched.
+5. App is live at the service URL; health `/api/health`, summary `/overview`.
 
-> Free Postgres expires after ~30 days and free web services cold-start (~30s).
+> Sharing is safe: EVRO only ever touches `evro_*` tables (incl. its own
+> `evro_meta`); the facilities app only touches `sites/permits/leases/.../app_meta`.
+> Free web services cold-start (~30s) and free Postgres expires after ~30 days.
+
+### Prefer a dedicated database instead?
+Add a `databases:` block back to `evro/render.yaml` (name `evro-db`) and change
+`DATABASE_URL` to `fromDatabase`, then set that database's `plan` to a **paid**
+tier (free is limited to one). EVRO then runs fully isolated with no manual step.
 
 ---
 
@@ -94,7 +107,7 @@ The data is real, queryable PostgreSQL (JSONB payloads), e.g.:
 ```sql
 SELECT data->>'pillar' AS pillar, count(*),
        sum((data->>'gross_annual_value')::numeric) AS gross
-FROM initiatives GROUP BY 1;
+FROM evro_initiatives GROUP BY 1;
 ```
 
 ## Environment variables
