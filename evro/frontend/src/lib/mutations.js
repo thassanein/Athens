@@ -233,20 +233,60 @@ export function recoverLeakage(db, id, actorId) {
   return { db: next }
 }
 
-// ---- collaboration: post a comment on an initiative -----------------------
+// Parse "@First" tokens in free text into mentioned person ids (first-name match).
+function parseMentions(db, text) {
+  return (text.match(/@([A-Za-z][A-Za-z.]*)/g) || [])
+    .map((t) => db.people.find((p) => p.name.split(' ')[0].toLowerCase() === t.slice(1).toLowerCase())?.id)
+    .filter(Boolean)
+}
+
+// ---- collaboration: post a comment on an initiative (with @mentions) -------
 export function addComment(db, id, text, actorId) {
   const next = clone(db)
   const i = next.initiatives.find((x) => x.id === id)
   if (!i || !text?.trim()) return { db }
   i.comments = i.comments || []
-  i.comments.unshift({ id: uid('cm'), by: actorId, at: today(), text: text.trim() })
-  log(next, actorId, 'comment', id, 'Comment added.')
+  const mentions = parseMentions(next, text)
+  i.comments.unshift({ id: uid('cm'), by: actorId, at: today(), text: text.trim(), mentions })
+  log(next, actorId, 'comment', id, mentions.length ? `Comment added (mentioned ${mentions.length}).` : 'Comment added.')
+  return { db: next }
+}
+
+// ---- collaboration: action tasks on an initiative -------------------------
+export function addTask(db, id, text, assigneeId, actorId) {
+  const next = clone(db)
+  const i = next.initiatives.find((x) => x.id === id)
+  if (!i || !text?.trim()) return { db }
+  i.tasks = i.tasks || []
+  i.tasks.push({ id: uid('tk'), text: text.trim(), assignee_id: assigneeId || null, status: 'open', created_by: actorId, at: today() })
+  log(next, actorId, 'task', id, 'Task added.')
+  return { db: next }
+}
+
+export function toggleTask(db, id, taskId, actorId) {
+  const next = clone(db)
+  const i = next.initiatives.find((x) => x.id === id)
+  const t = (i?.tasks || []).find((x) => x.id === taskId)
+  if (!t) return { db }
+  t.status = t.status === 'done' ? 'open' : 'done'
+  log(next, actorId, 'task', id, `Task ${t.status === 'done' ? 'completed' : 'reopened'}.`)
+  return { db: next }
+}
+
+// ---- collaboration: attach a document reference ---------------------------
+export function addAttachment(db, id, att, actorId) {
+  const next = clone(db)
+  const i = next.initiatives.find((x) => x.id === id)
+  if (!i || !att?.name?.trim()) return { db }
+  i.attachments = i.attachments || []
+  i.attachments.unshift({ id: uid('at'), name: att.name.trim(), kind: att.kind || 'doc', url: att.url || null, by: actorId, at: today() })
+  log(next, actorId, 'attachment', id, `Attached "${att.name.trim()}".`)
   return { db: next }
 }
 
 export const MUTATIONS = {
   createInitiative, requestGate, approveRequest, rejectRequest,
   validateBaseline, validateActual, addActual, addRisk, claimOpportunity, setSavingsPct,
-  claimMined, recoverLeakage, addComment,
+  claimMined, recoverLeakage, addComment, addTask, toggleTask, addAttachment,
 }
 export { STAGES }

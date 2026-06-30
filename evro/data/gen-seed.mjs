@@ -422,6 +422,8 @@ for (const stage of STAGE_PLAN) {
     contributions,
     request: null,
     comments: [],
+    tasks: [],
+    attachments: [],
     spend_category_id: cat.id,
     vendor: null,
     gross_annual_value: gross,
@@ -453,7 +455,7 @@ function proposed(id, { title, ownerId, groupId, catId, pillar, benefitType, app
     pillar, benefit_type: benefitType, approach,
     stage: 'proposed', confidence: 0,
     group_id: groupId, department: people.find((p) => p.id === ownerId)?.fn, owner_id: ownerId,
-    contributions: [{ user_id: ownerId, credit_pct: 100 }], request: null, comments: [],
+    contributions: [{ user_id: ownerId, credit_pct: 100 }], request: null, comments: [], tasks: [], attachments: [],
     spend_category_id: catId, vendor: null, gross_annual_value: gross, negotiated_value: null,
     implementation_cost: round(gross * 0.3), profile: 'ramp',
     effort_score: effort, realization_factor: 1,
@@ -601,20 +603,49 @@ for (const i of initiatives.filter((x) => ['launch', 'realization', 'sustainment
 }
 for (const i of initiatives) if (!i.workstreams) i.workstreams = []
 
-// Seed collaboration comments on realizing initiatives (activity feed demo)
+// Seed collaboration on realizing initiatives — comments (with @mentions),
+// action tasks, and document attachments (the "work system" demo).
+const firstName = (uid) => (people.find((p) => p.id === uid)?.name || '').split(' ')[0]
 let cmSeq = 0
 const CM = [
   (i) => `Baseline tied to the 2025 AP run-rate for ${(i.title.split(' — ')[1] || 'this category')}. Looks solid.`,
-  () => `Implementation on track — first months of actuals are landing close to plan.`,
-  () => `Watch the latest month vs forecast; flag if we slip two consecutive cycles.`,
+  (i) => `Implementation on track — first months of actuals are landing close to plan. @${firstName(i.owner_id)} can you confirm the latest invoice volume?`,
+  () => `Watch the latest month vs forecast; flag if we slip two consecutive cycles. @Rosa please validate once the period closes.`,
 ]
-const CM_WHO = [null, null, 'u-schwartz']
+const CM_WHO = [null, 'u-schwartz', 'u-brooks']
+let tkSeq = 0, atSeq = 0
+const TASKS = [
+  (i) => ['Confirm implemented run-rate vs negotiated price', i.owner_id],
+  () => ['Attach signed contract + savings memo to the record', 'u-nguyen'],
+  (i) => ['Schedule month-2 actuals review with FP&A', i.owner_id],
+]
+const ATTACH = [
+  { name: 'Savings_memo.pdf', kind: 'doc' },
+  { name: 'Cleansheet_model.xlsx', kind: 'sheet' },
+  { name: 'Signed_contract.pdf', kind: 'doc' },
+]
 for (const i of initiatives.filter((x) => ['launch', 'realization', 'sustainment'].includes(x.stage)).slice(0, 14)) {
   const n = 1 + (cmSeq % 2)
   i.comments = Array.from({ length: n }, (_, k) => {
     const idx = (cmSeq + k) % CM.length
-    return { id: `cm-${++cmSeq}`, by: CM_WHO[idx] || i.owner_id, at: isoDaysAgo(randInt(2, 30)), text: CM[idx](i) }
+    const text = CM[idx](i)
+    const mentions = (text.match(/@([A-Za-z][A-Za-z.]*)/g) || [])
+      .map((t) => people.find((p) => p.name.split(' ')[0].toLowerCase() === t.slice(1).toLowerCase())?.id)
+      .filter(Boolean)
+    return { id: `cm-${++cmSeq}`, by: CM_WHO[idx] || i.owner_id, at: isoDaysAgo(randInt(2, 30)), text, mentions }
   })
+  // tasks: 1–2 action items per initiative
+  const tn = 1 + (tkSeq % 2)
+  i.tasks = Array.from({ length: tn }, (_, k) => {
+    const [text, assignee] = TASKS[(tkSeq + k) % TASKS.length](i)
+    const seq = ++tkSeq
+    return { id: `tk-${seq}`, text, assignee_id: assignee, status: seq % 3 === 0 ? 'done' : 'open', created_by: i.owner_id, at: isoDaysAgo(randInt(3, 24)) }
+  })
+  // attachments on every other initiative
+  if (atSeq % 2 === 0) {
+    const a = ATTACH[atSeq % ATTACH.length]
+    i.attachments = [{ id: `at-${++atSeq}`, name: a.name, kind: a.kind, by: i.owner_id, at: isoDaysAgo(randInt(3, 20)) }]
+  } else { atSeq++ }
 }
 
 // Dependency graph — a DAG (edges only from earlier to later initiative index).

@@ -36,6 +36,9 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
   const approve = async () => { const r = await dispatch('approveRequest', i.id, user.id); if (!r.error) flash('Approved') }
   const reject = async () => { const r = await dispatch('rejectRequest', i.id, user.id, 'Returned for rework'); if (!r.error) flash('Returned for rework') }
 
+  const [pane, setPane] = useState('financials')
+  const openTaskCount = (i.tasks || []).filter((t) => t.status === 'open').length
+
   return (
     <>
       {!embedded && <button className="btn no-print" onClick={() => navigate(home)}><IconBack /> Back</button>}
@@ -62,8 +65,24 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
         </div>
         <p className="muted" style={{ marginTop: 4 }}>{i.description}</p>
         <div className="tiny muted">{groupName(db, i.group_id)} · {categoryName(db, i.spend_category_id)} · started {dateLabel(i.start_date)} · target close {dateLabel(i.target_close)}</div>
+        <div className="ws-kpis">
+          <KPI label="Gross annual" value={money(i.gross_annual_value)} />
+          <KPI label="Risk-adjusted" value={money(rav(i))} tone="navy" />
+          <KPI label="Realized YTD" value={money(realized)} tone="green" />
+          <KPI label={`NPV ${db.meta.npvHorizonYears}-yr`} value={money(npv(i, db))} tone={npv(i, db) >= 0 ? 'green' : 'red'} />
+          <KPI label="Payback" value={paybackMonths(i) ? paybackMonths(i).toFixed(1) + ' mo' : '—'} />
+        </div>
       </div>
 
+      <div className="ws-tabs no-print">
+        {[['timeline', 'Timeline'], ['financials', 'Financials'], ['collaboration', 'Collaboration']].map(([k, lbl]) => (
+          <button key={k} className={pane === k ? 'active' : ''} onClick={() => setPane(k)}>
+            {lbl}{k === 'collaboration' && openTaskCount > 0 && <span className="ws-pill">{openTaskCount}</span>}
+          </button>
+        ))}
+      </div>
+
+      {pane === 'financials' && <>
       {/* value + baseline */}
       <div className="grid cols-2 section-gap">
         <div className="card pad">
@@ -116,6 +135,32 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
         </div>
       </div>
 
+      {/* benefit lines + contributors */}
+      <div className="grid cols-2 section-gap">
+        <div className="card pad">
+          <div className="card-h"><h3>Benefit lines (P&L mapping)</h3></div>
+          <div className="table-wrap">
+            <table className="tbl">
+              <thead><tr><th>P&L line</th><th>Recurrence</th><th className="num">Annual</th></tr></thead>
+              <tbody>
+                {i.benefit_lines.map((b, k) => (
+                  <tr key={k}><td>{b.pnl_line === 'cogs' ? 'COGS' : 'OpEx'}</td><td style={{ textTransform: 'capitalize' }}>{b.recurrence.replace('_', '-')}</td><td className="num mono">{money(b.annual_amount)}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="card pad">
+          <div className="card-h"><h3>Contributors</h3></div>
+          {i.contributions.map((c) => (
+            <div key={c.user_id} className="kv"><span className="k" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Avatar name={personName(db, c.user_id)} /> {personName(db, c.user_id)}</span><span className="v">{c.credit_pct}%</span></div>
+          ))}
+          <p className="tiny muted section-gap">Split attribution credits the leaderboard without double-counting the enterprise total.</p>
+        </div>
+      </div>
+      </>}
+
+      {pane === 'timeline' && <>
       {/* stage gates + approval workflow */}
       <div className="card pad section-gap">
         <div className="card-h"><h3>Stage-gate tracker</h3><span className="spacer" /><span className="tiny muted">Every phase change needs line manager + FP&A · Launch ≥ {money(MATERIALITY)} also needs Steering</span></div>
@@ -167,46 +212,56 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
         </div>
       </div>
 
-      {/* benefit lines (P&L) */}
-      <div className="grid cols-2 section-gap">
-        <div className="card pad">
-          <div className="card-h"><h3>Benefit lines (P&L mapping)</h3></div>
-          <div className="table-wrap">
-            <table className="tbl">
-              <thead><tr><th>P&L line</th><th>Recurrence</th><th className="num">Annual</th></tr></thead>
-              <tbody>
-                {i.benefit_lines.map((b, k) => (
-                  <tr key={k}><td>{b.pnl_line === 'cogs' ? 'COGS' : 'OpEx'}</td><td style={{ textTransform: 'capitalize' }}>{b.recurrence.replace('_', '-')}</td><td className="num mono">{money(b.annual_amount)}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className="card pad">
-          <div className="card-h"><h3>Contributors</h3></div>
-          {i.contributions.map((c) => (
-            <div key={c.user_id} className="kv"><span className="k" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Avatar name={personName(db, c.user_id)} /> {personName(db, c.user_id)}</span><span className="v">{c.credit_pct}%</span></div>
-          ))}
-          <p className="tiny muted section-gap">Split attribution credits the leaderboard without double-counting the enterprise total.</p>
-        </div>
-      </div>
-
       <Actuals i={i} db={db} caps={caps} user={user} dispatch={dispatch} flash={flash} fyMonths={fyMonths} nowMonth={nowMonth} />
       <Risks i={i} db={db} caps={caps} user={user} dispatch={dispatch} flash={flash} />
+      </>}
 
-      <Collaboration i={i} db={db} caps={caps} user={user} dispatch={dispatch} flash={flash} />
+      {pane === 'collaboration' && <Collaboration i={i} db={db} caps={caps} user={user} dispatch={dispatch} flash={flash} />}
     </>
   )
 }
 
-// Collaboration workspace — discussion thread + decision log side by side.
+// Compact KPI tile for the workspace header strip.
+function KPI({ label, value, tone }) {
+  const c = { navy: 'var(--navy)', green: 'var(--green)', red: 'var(--red)' }[tone]
+  return (
+    <div className="ws-kpi">
+      <div className="tiny label" style={{ marginBottom: 2 }}>{label}</div>
+      <div className="mono" style={{ fontSize: 17, fontWeight: 800, color: c }}>{value}</div>
+    </div>
+  )
+}
+
+// Render free text with @mentions highlighted.
+function withMentions(text, db) {
+  const parts = String(text).split(/(@[A-Za-z][A-Za-z.]*)/g)
+  return parts.map((p, k) => {
+    if (p[0] === '@') {
+      const person = db.people.find((x) => x.name.split(' ')[0].toLowerCase() === p.slice(1).toLowerCase())
+      if (person) return <span key={k} className="mention" title={person.name}>@{person.name.split(' ')[0]}</span>
+    }
+    return <span key={k}>{p}</span>
+  })
+}
+
+const ATT_ICON = { doc: '📄', sheet: '📊', image: '🖼️', link: '🔗' }
+
+// Collaboration workspace — discussion + tasks + attachments + decision log.
 function Collaboration({ i, db, caps, user, dispatch, flash }) {
   const [text, setText] = useState('')
+  const [task, setTask] = useState('')
+  const [assignee, setAssignee] = useState(i.owner_id)
+  const [attName, setAttName] = useState('')
+  const [attKind, setAttKind] = useState('doc')
   const comments = i.comments || []
-  const add = async () => {
-    if (!text.trim()) return
-    await dispatch('addComment', i.id, text, user.id); setText(''); flash('Comment posted')
-  }
+  const tasks = i.tasks || []
+  const attachments = i.attachments || []
+
+  const post = async () => { if (!text.trim()) return; await dispatch('addComment', i.id, text, user.id); setText(''); flash('Comment posted') }
+  const addTask = async () => { if (!task.trim()) return; await dispatch('addTask', i.id, task, assignee, user.id); setTask(''); flash('Task added') }
+  const toggle = async (tid) => { await dispatch('toggleTask', i.id, tid, user.id) }
+  const attach = async () => { if (!attName.trim()) return; await dispatch('addAttachment', i.id, { name: attName, kind: attKind }, user.id); setAttName(''); flash('Attachment added') }
+
   // Decision log: validation events + workflow approvals, newest first.
   const log = []
   for (const v of i.validations || []) log.push({ ts: v.decided_at, who: personName(db, v.actor_id), kind: v.type, decision: v.decision, note: v.note })
@@ -215,14 +270,15 @@ function Collaboration({ i, db, caps, user, dispatch, flash }) {
 
   return (
     <div className="card pad section-gap">
-      <div className="card-h"><h3>Collaboration</h3><span className="spacer" /><span className="tiny muted">discussion &amp; decision log</span></div>
+      <div className="card-h"><h3>Collaboration</h3><span className="spacer" /><span className="tiny muted">discussion · tasks · files · decisions</span></div>
       <div className="ws-grid">
         <div>
+          {/* discussion */}
           <div className="label">Discussion</div>
           {caps.edit && (
             <div className="copilot-ask section-gap" style={{ marginTop: 6 }}>
-              <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} placeholder="Add a comment for the team…" />
-              <button className="btn primary sm" onClick={add}>Post</button>
+              <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && post()} placeholder="Comment… use @name to mention" />
+              <button className="btn primary sm" onClick={post}>Post</button>
             </div>
           )}
           <div className="section-gap">
@@ -231,12 +287,55 @@ function Collaboration({ i, db, caps, user, dispatch, flash }) {
                 <Avatar name={personName(db, c.by)} />
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}><b style={{ fontSize: 13 }}>{personName(db, c.by)}</b><span className="tiny muted">{dateLabel(c.at)}</span></div>
-                  <p style={{ margin: '2px 0 0', fontSize: 13.5 }}>{c.text}</p>
+                  <p style={{ margin: '2px 0 0', fontSize: 13.5 }}>{withMentions(c.text, db)}</p>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* tasks */}
+          <div className="label section-gap">Action items</div>
+          {caps.edit && (
+            <div className="ws-compose">
+              <input value={task} onChange={(e) => setTask(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addTask()} placeholder="New task…" />
+              <select value={assignee} onChange={(e) => setAssignee(e.target.value)} title="Assignee">
+                {db.people.map((p) => <option key={p.id} value={p.id}>{p.name.split(' ')[0]}</option>)}
+              </select>
+              <button className="btn sm" onClick={addTask}>Add</button>
+            </div>
+          )}
+          <div className="section-gap">
+            {tasks.length === 0 ? <p className="muted tiny">No action items yet.</p> : tasks.map((t) => (
+              <label key={t.id} className={`task-row ${t.status === 'done' ? 'done' : ''}`}>
+                <input type="checkbox" checked={t.status === 'done'} disabled={!caps.edit} onChange={() => toggle(t.id)} />
+                <span style={{ flex: 1 }}>{t.text}</span>
+                {t.assignee_id && <span className="badge b-grey" title={personName(db, t.assignee_id)}>{personName(db, t.assignee_id).split(' ')[0]}</span>}
+              </label>
+            ))}
+          </div>
+
+          {/* attachments */}
+          <div className="label section-gap">Attachments</div>
+          {caps.edit && (
+            <div className="ws-compose">
+              <input value={attName} onChange={(e) => setAttName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && attach()} placeholder="File or link name…" />
+              <select value={attKind} onChange={(e) => setAttKind(e.target.value)}>
+                {['doc', 'sheet', 'image', 'link'].map((k) => <option key={k} value={k}>{k}</option>)}
+              </select>
+              <button className="btn sm" onClick={attach}>Attach</button>
+            </div>
+          )}
+          <div className="section-gap">
+            {attachments.length === 0 ? <p className="muted tiny">No files attached.</p> : attachments.map((a) => (
+              <div key={a.id} className="att-row">
+                <span className="att-ico">{ATT_ICON[a.kind] || '📄'}</span>
+                <span style={{ flex: 1 }}>{a.url ? <a href={a.url} target="_blank" rel="noreferrer">{a.name}</a> : a.name}</span>
+                <span className="tiny muted">{personName(db, a.by).split(' ')[0]} · {dateLabel(a.at)}</span>
+              </div>
+            ))}
+          </div>
         </div>
+
         <div className="ws-side">
           <div className="label">Decision log</div>
           <div className="feed section-gap">
