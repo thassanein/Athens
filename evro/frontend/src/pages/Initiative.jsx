@@ -4,12 +4,13 @@ import {
   implementedRunRate, valueLeakage, STAGES, GATE_STAGES, STAGE_LABEL, STAGE_CONFIDENCE,
   MATERIALITY, BENEFIT_LABEL, personName, categoryName, groupName, canSeeInitiative,
   approvalState, canApproveRoles, canRequestAdvance, nextStage, ROLE_APPROVE_LABEL,
+  npv, paybackMonths, netAnnual, PROFILE_LABEL,
 } from '../lib/engine.js'
 import { money, pct, monthLabel, dateLabel } from '../lib/format.js'
 import { StagePip, PillarBadge, RagBadge, Avatar } from '../components/ui.jsx'
 import { IconBack } from '../components/Icons.jsx'
 
-export default function Initiative({ db, id, caps, user, dispatch, navigate, flash, home = 'exec' }) {
+export default function Initiative({ db, id, caps, user, dispatch, navigate, flash, home = 'exec', embedded = false }) {
   const i = db.initiatives.find((x) => x.id === id)
   if (!i) return <button className="btn" onClick={() => navigate(home)}><IconBack /> Back</button>
   if (!canSeeInitiative(user, i)) {
@@ -37,7 +38,7 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
 
   return (
     <>
-      <button className="btn no-print" onClick={() => navigate(home)}><IconBack /> Back</button>
+      {!embedded && <button className="btn no-print" onClick={() => navigate(home)}><IconBack /> Back</button>}
 
       <div className="card pad section-gap">
         <div className="card-h" style={{ alignItems: 'flex-start', flexWrap: 'wrap', rowGap: 8 }}>
@@ -72,8 +73,14 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
           <div className="kv"><span className="k">Realized YTD (validated)</span><span className="v mono" style={{ color: 'var(--green)' }}>{money(realized)}</span></div>
           {pendingValue(i) > 0 && <div className="kv"><span className="k">Pending validation</span><span className="v mono" style={{ color: 'var(--amber)' }}>{money(pendingValue(i))}</span></div>}
           <div className="kv"><span className="k">Risk-adjusted forecast (rest of FY)</span><span className="v mono">{money(forecastRemainderFY(i, db))}</span></div>
-          <div className="kv"><span className="k">Effort · ROI</span><span className="v mono">{i.effort_score} · {money(roi(i))}</span></div>
-          <div className="kv"><span className="k">Recurring ratio</span><span className="v mono">{pct(recur)}</span></div>
+          <div className="kv"><span className="k">Net recurring (run-rate)</span><span className="v mono">{money(netAnnual(i))}</span></div>
+          <div className="kv"><span className="k">Effort · ROI · Recurring</span><span className="v mono">{i.effort_score} · {money(roi(i))} · {pct(recur)}</span></div>
+          <div className="divider" />
+          <div className="label">Capital case</div>
+          <div className="kv"><span className="k">Implementation cost</span><span className="v mono">{money(i.implementation_cost || 0)}</span></div>
+          <div className="kv"><span className="k">Payback</span><span className="v mono">{paybackMonths(i) ? paybackMonths(i).toFixed(1) + ' mo' : '—'}</span></div>
+          <div className="kv"><span className="k">NPV ({db.meta.npvHorizonYears}-yr @ {pct(db.meta.discountRate)})</span><span className="v mono" style={{ color: npv(i, db) >= 0 ? 'var(--green)' : 'var(--red)' }}>{money(npv(i, db))}</span></div>
+          <div className="kv"><span className="k">Forecast profile</span><span className="v">{PROFILE_LABEL[i.profile] || 'Linear'}</span></div>
           {i.realization_factor < 1 && <div className="note section-gap"><span>⚑</span><span>At-risk Launch: a realization factor of {pct(i.realization_factor)} reduces recognized value (transparent haircut).</span></div>}
         </div>
 

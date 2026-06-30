@@ -208,8 +208,34 @@ export function setSavingsPct(db, groupId, { conservative, stretch }, actorId) {
   return { db: next }
 }
 
+// ---- claim an AI-mined opportunity → a proposed initiative -----------------
+export function claimMined(db, payload, actorId) {
+  const { group_id, lever, estValue } = payload
+  const cat = db.spend_categories.find((c) => c.group_id === group_id && c.addressable)
+  const g = db.sourcing_groups.find((x) => x.id === group_id)
+  return createInitiative(db, {
+    title: `${lever} — ${g?.name}`,
+    description: `AI-mined opportunity in ${g?.name} (rules-based spend signal). Estimated value ${estValue}.`,
+    pillar: 'savings', benefit_type: 'reduction', approach: lever, group_id, spend_category_id: cat?.id,
+    owner_id: actorId, department: db.people.find((p) => p.id === actorId)?.fn,
+    gross_annual_value: Number(estValue) || 0, effort_score: 3,
+  }, actorId)
+}
+
+// ---- open a value-leakage recovery on an initiative ------------------------
+export function recoverLeakage(db, id, actorId) {
+  const next = clone(db)
+  const i = next.initiatives.find((x) => x.id === id)
+  if (!i) return { db }
+  i.recovery = { opened_by: actorId, opened_at: today() }
+  i.validations.unshift({ type: 'recovery', decision: 'approved', actor_id: actorId, decided_at: today(), note: 'Value-leakage recovery opened.' })
+  log(next, actorId, 'recovery', id, 'Leakage recovery opened.')
+  return { db: next }
+}
+
 export const MUTATIONS = {
   createInitiative, requestGate, approveRequest, rejectRequest,
   validateBaseline, validateActual, addActual, addRisk, claimOpportunity, setSavingsPct,
+  claimMined, recoverLeakage,
 }
 export { STAGES }

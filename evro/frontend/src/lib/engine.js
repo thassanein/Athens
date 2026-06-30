@@ -15,10 +15,12 @@
 // 'proposed' is a pre-pipeline holding state: a newly intake'd project awaiting
 // line-manager + FP&A approval. It carries 0 confidence and is excluded from all
 // value rollups until approved into 'idea'.
-export const STAGES = ['proposed', 'idea', 'feasibility', 'capability', 'launch', 'closed']
-export const GATE_STAGES = ['idea', 'feasibility', 'capability', 'launch']
-export const STAGE_LABEL = { proposed: 'Proposed', idea: 'Idea', feasibility: 'Feasibility', capability: 'Capability', launch: 'Launch', closed: 'Closed' }
-export const STAGE_CONFIDENCE = { proposed: 0, idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, closed: 1.0 }
+export const STAGES = ['proposed', 'idea', 'feasibility', 'capability', 'launch', 'realization', 'sustainment', 'retired']
+export const GATE_STAGES = ['idea', 'feasibility', 'capability', 'launch'] // the four value gates (funnel)
+export const LIFECYCLE_STAGES = ['idea', 'feasibility', 'capability', 'launch', 'realization', 'sustainment', 'retired']
+export const STAGE_LABEL = { proposed: 'Proposed', idea: 'Idea', feasibility: 'Feasibility', capability: 'Capability', launch: 'Launch', realization: 'Realization', sustainment: 'Sustainment', retired: 'Retired' }
+export const STAGE_CONFIDENCE = { proposed: 0, idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, realization: 1.0, sustainment: 1.0, retired: 0 }
+export const REALIZING_STAGES = ['launch', 'realization', 'sustainment']
 export const PILLAR_LABEL = { savings: 'Cost Savings', avoidance: 'Cost Avoidance' }
 export const BENEFIT_LABEL = { reduction: 'Cost Reduction', savings: 'Cost Savings', avoidance: 'Cost Avoidance' }
 export const MATERIALITY = 100_000 // ≥ this gross → Steering approval to enter Launch
@@ -121,7 +123,7 @@ export function frame(db) {
 
 // ---- per-initiative measures ----------------------------------------------
 // Proposed (awaiting approval) and Closed are excluded from "active" value.
-export const isActive = (i) => i.stage !== 'closed' && i.stage !== 'proposed'
+export const isActive = (i) => i.stage !== 'retired' && i.stage !== 'proposed'
 
 // Risk-Adjusted Value = gross × stage confidence × realization factor.
 export function rav(i) {
@@ -142,7 +144,7 @@ export function pendingValue(i) {
 }
 // Risk-adjusted value time-phased into the REMAINING fiscal-year months.
 export function forecastRemainderFY(i, db) {
-  if (i.stage === 'closed') return 0
+  if (i.stage === 'retired') return 0
   const { remaining, fyMonths } = frame(db)
   return rav(i) * (remaining / fyMonths.length)
 }
@@ -182,7 +184,7 @@ export function gateCheck(i) {
   const idx = STAGES.indexOf(i.stage)
   const next = STAGES[idx + 1]
   const reasons = []
-  if (!next || next === 'closed') return { ok: false, next: null, reasons: ['No further gate.'] }
+  if (!next) return { ok: false, next: null, reasons: ['No further gate.'] }
   if (next === 'feasibility') {
     if (!i.baseline?.validated_by) reasons.push('FP&A-validated baseline required.')
   }
@@ -202,7 +204,7 @@ export function gateCheck(i) {
 // (plus Steering when entering Launch at ≥ $100K). Approvals are first-class and
 // enforced in the reducers (single source of truth for client + server paths).
 export const ROLE_APPROVE_LABEL = { line_manager: 'Line manager', fpna: 'FP&A', steering: 'Steering' }
-export const nextStage = (i) => { const n = STAGES[STAGES.indexOf(i.stage) + 1]; return n === 'closed' ? null : n }
+export const nextStage = (i) => STAGES[STAGES.indexOf(i.stage) + 1] || null
 
 export function requiredRoles(i, toStage) {
   const roles = ['line_manager', 'fpna']
@@ -306,9 +308,9 @@ export function enterpriseRollup(db) {
 // Upside = gross of Capability + Launch.
 export function scenarioTotals(db) {
   const inits = db.initiatives
-  const committed = sum(inits.filter((i) => i.stage === 'launch' || i.stage === 'closed'), rav)
+  const committed = sum(inits.filter((i) => REALIZING_STAGES.includes(i.stage)), rav)
   const expected = sum(inits.filter(isActive), rav)
-  const upside = sum(inits.filter((i) => i.stage === 'capability' || i.stage === 'launch'), (i) => i.gross_annual_value)
+  const upside = sum(inits.filter((i) => i.stage === 'capability' || REALIZING_STAGES.includes(i.stage)), (i) => i.gross_annual_value)
   return { committed, expected, upside }
 }
 
@@ -327,9 +329,9 @@ export function forecastCurve(db) {
     let committed = 0, expected = 0, upside = 0
     if (!past) {
       for (const i of inits) {
-        if (i.stage === 'launch') committed += rav(i) / 12
+        if (REALIZING_STAGES.includes(i.stage)) committed += rav(i) / 12
         if (isActive(i)) expected += rav(i) / 12
-        if (i.stage === 'capability' || i.stage === 'launch') upside += i.gross_annual_value / 12
+        if (i.stage === 'capability' || REALIZING_STAGES.includes(i.stage)) upside += i.gross_annual_value / 12
       }
     }
     return { month: mk, past, actual, committed, expected, upside }
@@ -365,7 +367,7 @@ export function funnel(db) {
     return { stage: s, count: list.length, value: sum(list, rav), gross: sum(list, (i) => i.gross_annual_value) }
   })
   // conversion = countAtOrBeyond(next) / countAtOrBeyond(this) — monotonic ≤ 1
-  const atOrBeyond = (s) => db.initiatives.filter((i) => order.indexOf(i.stage) >= order.indexOf(s) || i.stage === 'closed').length
+  const atOrBeyond = (s) => db.initiatives.filter((i) => i.stage !== 'proposed' && STAGES.indexOf(i.stage) >= STAGES.indexOf(s)).length
   const conversions = order.slice(0, -1).map((s, idx) => ({
     from: s, to: order[idx + 1],
     rate: atOrBeyond(s) ? atOrBeyond(order[idx + 1]) / atOrBeyond(s) : 0,
@@ -458,7 +460,7 @@ function initiativePoints(i, db) {
   for (const s of ['feasibility', 'capability', 'launch']) {
     if (reached >= STAGES.indexOf(s)) pts += ADVANCE_PTS[s]
   }
-  if (i.stage === 'launch' || i.stage === 'closed') pts += Math.floor(rav(i) / 10_000) * 25 // per $10k RA at Launch
+  if (STAGES.indexOf(i.stage) >= STAGES.indexOf('launch')) pts += Math.floor(rav(i) / 10_000) * 25 // per $10k RA at Launch+
   const realized = realizedYTD(i, db)
   const realizedPts = Math.floor(realized / 10_000) * 50 // per $10k realized & validated
   pts += Math.round(realizedPts * (recurringRatio(i) >= 0.5 ? 1.5 : 1)) // recurring bonus
@@ -532,4 +534,228 @@ export function pnlImpact(db) {
 // ---- audit log helper (writes) ---------------------------------------------
 export function auditEntry(actor_id, action, entity, detail, ts) {
   return { id: `al-${ts || ''}-${Math.floor((Number(ts) || 0) % 100000)}`, ts, actor_id, action, entity, detail }
+}
+
+// ===========================================================================
+// v2 — EVROS engines: hierarchy, financial extras, forecast profiles, value
+// leakage, dependency graph, scenarios/Monte Carlo, optimization, AI mining,
+// value matrices, executive control tower + decision queue.
+// ===========================================================================
+
+// ---- forecast profiles (time-phasing shapes) -------------------------------
+export const PROFILE_LABEL = { linear: 'Linear', ramp: 'Ramp', scurve: 'S-curve', seasonal: 'Seasonal' }
+export function profileWeights(profile, n) {
+  if (n <= 0) return []
+  let w
+  if (profile === 'ramp') w = Array.from({ length: n }, (_, k) => k + 1)
+  else if (profile === 'scurve') w = Array.from({ length: n }, (_, k) => { const x = (k + 0.5) / n; return 1 / (1 + Math.exp(-10 * (x - 0.5))) })
+  else if (profile === 'seasonal') w = Array.from({ length: n }, (_, k) => 1 + 0.5 * Math.sin((k / n) * 2 * Math.PI))
+  else w = Array.from({ length: n }, () => 1)
+  const s = w.reduce((a, b) => a + b, 0)
+  return w.map((x) => x / s)
+}
+
+// ---- financial extras (net, payback, NPV) ----------------------------------
+export const netAnnual = (i) => i.gross_annual_value * recurringRatio(i)
+export function paybackMonths(i) {
+  const monthly = i.gross_annual_value / 12
+  return i.implementation_cost && monthly > 0 ? i.implementation_cost / monthly : 0
+}
+export function npv(i, db) {
+  const r = db.meta.discountRate ?? 0.1, H = db.meta.npvHorizonYears ?? 3
+  const annual = netAnnual(i) || i.gross_annual_value
+  let v = -(i.implementation_cost || 0)
+  for (let y = 1; y <= H; y++) v += annual / Math.pow(1 + r, y)
+  return v
+}
+export function financials(i, db) {
+  return { gross: i.gross_annual_value, net: netAnnual(i), rav: rav(i), roi: roi(i),
+    implementationCost: i.implementation_cost || 0, paybackMonths: paybackMonths(i), npv: npv(i, db), recurringRatio: recurringRatio(i) }
+}
+
+// ---- value leakage engine (forecast vs actual + classification) ------------
+export function expectedToDate(i, db) {
+  if (!REALIZING_STAGES.includes(i.stage) && i.stage !== 'retired') return 0
+  const { elapsed } = frame(db)
+  const sofar = profileWeights(i.profile || 'linear', 12).slice(0, elapsed).reduce((a, b) => a + b, 0)
+  return rav(i) * sofar
+}
+export function leakage(i, db) {
+  const expected = expectedToDate(i, db)
+  const realized = realizedYTD(i, db)
+  const timing = Math.max(0, expected - realized)
+  const contract = valueLeakage(i, db) || 0
+  return { timing, contract, total: timing + Math.max(0, contract - timing), expected, realized }
+}
+export function leakageBreakdown(db) {
+  let timing = 0, contract = 0
+  const items = []
+  for (const i of db.initiatives.filter((x) => REALIZING_STAGES.includes(x.stage))) {
+    const l = leakage(i, db)
+    timing += l.timing; contract += l.contract
+    if (l.total > 1000) items.push({ id: i.id, title: i.title, ...l, recoverable: l.timing })
+  }
+  items.sort((a, b) => b.total - a.total)
+  return { timing, contract, total: timing + contract, items }
+}
+
+// ---- dependency engine -----------------------------------------------------
+export const depEdges = (db) => db.dependencies || []
+export const dependents = (db, id) => depEdges(db).filter((e) => e.from === id).map((e) => e.to)
+export const prerequisites = (db, id) => depEdges(db).filter((e) => e.to === id).map((e) => e.from)
+export function downstreamImpact(db, id) {
+  const seen = new Set(), stack = [...dependents(db, id)]
+  while (stack.length) { const x = stack.pop(); if (seen.has(x)) continue; seen.add(x); for (const d of dependents(db, x)) stack.push(d) }
+  const byId = Object.fromEntries(db.initiatives.map((i) => [i.id, i]))
+  const list = [...seen].map((x) => byId[x]).filter(Boolean)
+  return { ids: [...seen], count: seen.size, ravAtRisk: sum(list, rav), initiatives: list }
+}
+export function criticalPath(db) {
+  const byId = Object.fromEntries(db.initiatives.map((i) => [i.id, i]))
+  const memo = {}
+  // Longest dependency chain (most nodes), tie-broken by total risk-adjusted value.
+  const better = (a, b) => a.len > b.len || (a.len === b.len && a.val > b.val)
+  const best = (id) => {
+    if (memo[id]) return memo[id]
+    const w = rav(byId[id] || {}) || 0
+    let nx = { len: 0, val: 0, path: [] }
+    for (const d of dependents(db, id)) { const r = best(d); if (better(r, nx)) nx = r }
+    return (memo[id] = { len: 1 + nx.len, val: w + nx.val, path: [id, ...nx.path] })
+  }
+  let top = { len: 0, val: 0, path: [] }
+  for (const i of db.initiatives) { const r = best(i.id); if (better(r, top)) top = r }
+  return { path: top.path.map((id) => byId[id]).filter(Boolean), value: top.val, length: top.path.length }
+}
+export function dependencyGraph(db) {
+  const nodes = db.initiatives.filter((i) => i.stage !== 'proposed').map((i) => ({ id: i.id, title: i.title, stage: i.stage, rav: rav(i), rag: i.status_rag, program_id: i.program_id }))
+  const ids = new Set(nodes.map((n) => n.id))
+  return { nodes, edges: depEdges(db).filter((e) => ids.has(e.from) && ids.has(e.to)) }
+}
+
+// ---- hierarchy rollups (Portfolio > Program > Initiative) -------------------
+export function programRollup(db) {
+  const m = {}
+  for (const i of db.initiatives) {
+    const k = i.program_id || '—'
+    m[k] ||= { id: k, realized: 0, raPipeline: 0, forecastRA: 0, gross: 0, count: 0, atRisk: 0 }
+    m[k].realized += realizedYTD(i, db); m[k].forecastRA += forecastRemainderFY(i, db); m[k].gross += i.gross_annual_value
+    if (isActive(i)) { m[k].raPipeline += rav(i); m[k].count++; if (i.status_rag === 'red') m[k].atRisk += rav(i) }
+  }
+  const byId = Object.fromEntries((db.programs || []).map((p) => [p.id, p]))
+  return Object.values(m).map((r) => ({ ...r, name: byId[r.id]?.name || r.id, portfolio_id: byId[r.id]?.portfolio_id, totalFY: r.realized + r.forecastRA }))
+}
+export function portfolioRollup(db) {
+  const m = {}
+  for (const p of programRollup(db)) {
+    const k = p.portfolio_id || '—'
+    m[k] ||= { id: k, realized: 0, raPipeline: 0, forecastRA: 0, atRisk: 0, count: 0, programs: [] }
+    m[k].realized += p.realized; m[k].raPipeline += p.raPipeline; m[k].forecastRA += p.forecastRA
+    m[k].atRisk += p.atRisk; m[k].count += p.count; m[k].programs.push(p)
+  }
+  const byId = Object.fromEntries((db.portfolios || []).map((p) => [p.id, p]))
+  return Object.values(m).map((r) => ({ ...r, name: byId[r.id]?.name || r.id, totalFY: r.realized + r.forecastRA })).sort((a, b) => b.totalFY - a.totalFY)
+}
+
+// ---- scenarios + Monte Carlo (deterministic analytic band) -----------------
+export function monteCarlo(db) {
+  const active = db.initiatives.filter(isActive)
+  let mean = 0, variance = 0
+  for (const i of active) {
+    const m = rav(i)
+    const sd = m * (1 - confidence(i.stage)) * 0.6 + i.gross_annual_value * 0.05 * (1 - confidence(i.stage))
+    mean += m; variance += sd * sd
+  }
+  const sd = Math.sqrt(variance)
+  return { p10: Math.max(0, mean - 1.2816 * sd), p50: mean, p90: mean + 1.2816 * sd, mean, sd }
+}
+export function sensitivity(db) {
+  return db.initiatives.filter(isActive)
+    .map((i) => ({ id: i.id, title: i.title, swing: rav(i) * (1 - confidence(i.stage)) }))
+    .sort((a, b) => b.swing - a.swing).slice(0, 8)
+}
+
+// ---- portfolio optimization / capital allocation (greedy knapsack) ---------
+export function optimize(db, budget, mode = 'roi') {
+  const cands = db.initiatives.filter((i) => isActive(i) && STAGES.indexOf(i.stage) < STAGES.indexOf('launch') && (i.implementation_cost || 0) > 0)
+  const ranked = cands.map((i) => ({ i, value: rav(i), cost: i.implementation_cost, eff: rav(i) / Math.max(1, i.implementation_cost) }))
+    .sort((a, b) => (mode === 'roi' ? b.eff - a.eff : b.value - a.value))
+  const picked = new Set(); let spend = 0, value = 0
+  for (const c of ranked) if (spend + c.cost <= budget) { picked.add(c); spend += c.cost; value += c.value }
+  const row = (c) => ({ id: c.i.id, title: c.i.title, stage: c.i.stage, value: c.value, cost: c.cost, eff: c.eff })
+  return {
+    budget, spend, value, count: picked.size,
+    selected: ranked.filter((c) => picked.has(c)).map(row),
+    deferred: ranked.filter((c) => !picked.has(c)).map(row),
+    candidateCost: sum(cands, (i) => i.implementation_cost), candidateValue: sum(cands, rav),
+  }
+}
+
+// ---- AI opportunity mining (heuristic over the spend cube; labeled) --------
+export function mineOpportunities(db) {
+  const covered = new Set(db.initiatives.map((i) => i.group_id))
+  const cfgByGroup = idx(db).cfgByGroup
+  const out = []
+  for (const g of spendRollup(db).groups) {
+    const inflation = db.sourcing_groups.find((x) => x.id === g.id)?.inflation || 0
+    const signals = []
+    if (g.spend >= 30e6) signals.push('large category')
+    if (g.fragmented) signals.push('supplier fragmentation')
+    if (g.maverickPct >= 0.12) signals.push('high off-contract spend')
+    if (inflation >= 0.05) signals.push('inflation exposure')
+    if (!signals.length) continue
+    out.push({
+      id: `mine-${g.id}`, group_id: g.id, group: g.name, spend: g.spend,
+      estValue: Math.round(g.spend * (cfgByGroup[g.id]?.conservative_pct ?? 0.03)),
+      signals, confidence: Math.min(0.95, 0.4 + signals.length * 0.15), alreadyCovered: covered.has(g.id),
+      lever: g.fragmented ? 'Supplier consolidation' : g.maverickPct >= 0.12 ? 'On-contract / maverick capture' : inflation >= 0.05 ? 'Index cap / price lock' : 'Cleansheet / should-cost',
+    })
+  }
+  return out.sort((a, b) => b.estValue - a.estValue)
+}
+
+// ---- value matrices (heatmaps: value vs risk / value vs effort) ------------
+export function valueMatrix(db) {
+  return db.initiatives.filter(isActive).map((i) => ({
+    id: i.id, title: i.title, stage: i.stage, pillar: i.pillar, rag: i.status_rag,
+    value: rav(i), risk: worstRisk(i) || 1, effort: i.effort_score || 1,
+  }))
+}
+
+// ---- executive control tower + decision queue ------------------------------
+export function inflationExposure(db) {
+  let total = 0; const byGroup = []
+  for (const g of db.sourcing_groups) {
+    const addr = sum(db.spend_categories.filter((c) => c.group_id === g.id && c.addressable), (c) => c.spend * (c.addressable_pct / 100))
+    const exposure = addr * (g.inflation || 0)
+    total += exposure; byGroup.push({ id: g.id, name: g.name, inflation: g.inflation, exposure })
+  }
+  return { total, byGroup: byGroup.sort((a, b) => b.exposure - a.exposure) }
+}
+export function controlTower(db) {
+  const r = enterpriseRollup(db)
+  const leak = leakageBreakdown(db)
+  const opt = optimize(db, db.meta.capitalBudget || 6e6)
+  return {
+    valueCreated: r.realizedYTD, raPipeline: r.raPipeline, forecastRA: r.forecastRemainderFY,
+    identifiedOpportunity: r.identifiedOpportunity, blendedROI: r.blendedROI,
+    valueAtRisk: sum(db.initiatives.filter((i) => isActive(i) && i.status_rag === 'red'), rav) + leak.total,
+    leakage: leak.total, inflationExposure: inflationExposure(db).total,
+    capitalBudget: db.meta.capitalBudget || 6e6, capitalDeployed: sum(db.initiatives.filter(isActive), (i) => i.implementation_cost || 0),
+    optimizableValue: opt.value,
+  }
+}
+// What needs a human, ranked by value — the cockpit's decision queue.
+export function decisionsRequired(db, user) {
+  const out = []
+  for (const i of db.initiatives.filter((x) => x.request)) {
+    const roles = canApproveRoles(user, i)
+    if (!roles.length) continue
+    out.push({ kind: 'approval', id: i.id, title: i.title, value: i.gross_annual_value,
+      detail: i.request.kind === 'intake' ? 'New project — approve into pipeline' : `Advance → ${STAGE_LABEL[i.request.to_stage]}`, action: 'approve', roles })
+  }
+  for (const l of leakageBreakdown(db).items.slice(0, 6))
+    out.push({ kind: 'leakage', id: l.id, title: l.title, value: l.total, detail: 'Value leaking vs plan — open recovery', action: 'open' })
+  for (const i of db.initiatives.filter((x) => REALIZING_STAGES.includes(x.stage) && x.status_rag === 'red'))
+    out.push({ kind: 'risk', id: i.id, title: i.title, value: rav(i), detail: 'At-risk in realization — review countermeasure', action: 'open' })
+  return out.sort((a, b) => b.value - a.value)
 }

@@ -2,11 +2,14 @@
 CREATE TABLE IF NOT EXISTS evro_meta              (key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS evro_krs               (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_people            (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_portfolios        (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_programs          (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_sourcing_groups   (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_spend_categories  (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_savings_pct_config(group_id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_opportunities     (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_initiatives       (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_dependencies      (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_badges            (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_points_ledger     (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_audit_log         (id TEXT PRIMARY KEY, data JSONB, ts TIMESTAMPTZ);
