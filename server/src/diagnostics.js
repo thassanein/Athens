@@ -252,9 +252,11 @@ export function renderFacilityHTML(name, site, { authMode } = {}) {
         .join('')}</tbody></table>`
     : '<p class="muted">No open findings.</p>'
 
+  // Document links are stripped server-side for security; when a url is absent we
+  // still list the document name as plain (non-linked) text for reference.
   const docsBlock = [
     ...(f.siteMap ? [`<li><a href="${esc(f.siteMap)}">Site map / plan</a></li>`] : []),
-    ...f.documents.map((x) => `<li><a href="${esc(x.url)}">${esc(x.name)}</a></li>`),
+    ...f.documents.map((x) => `<li>${x.url ? `<a href="${esc(x.url)}">${esc(x.name)}</a>` : esc(x.name)}</li>`),
     ...(f.folder ? [`<li><a href="${esc(f.folder)}">All documents (facility folder)</a></li>`] : []),
   ].join('')
 

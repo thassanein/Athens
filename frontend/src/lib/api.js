@@ -11,6 +11,24 @@ const TIMEOUT_MS = 6000 // generous: server presence is already gated by fetchMe
 const LS_KEY = 'athens.portfolio.v1'
 const BASE = import.meta.env.BASE_URL // '/' on the single-host deploy, '/Athens/' on Pages
 
+// SECURITY (temporary lockdown): no links into the external document store
+// (SharePoint) are surfaced in the app. The server and the bundled snapshot are
+// already stripped; this is defense-in-depth that also scrubs any portfolio held
+// in localStorage from before the lockdown. Flip to true to restore doc links.
+export const EXPOSE_DOC_LINKS = false
+
+// Remove external document/permit URLs from a portfolio, in place. Keeps the
+// document names — only the links are stripped.
+function redactDocLinks(data) {
+  for (const site of Object.values(data || {})) {
+    site.folder = null
+    site.siteMap = null
+    if (Array.isArray(site.documents)) site.documents = site.documents.map((d) => ({ name: d.name }))
+    for (const p of site.permits || []) p.doc = null
+  }
+  return data
+}
+
 /**
  * Determine the auth situation by calling the server's /auth/me:
  *   - 'authed' → signed in (or server is in open/dev mode); returns the user.
@@ -115,11 +133,12 @@ export async function loadPortfolio() {
     clearTimeout(t)
     if (!res.ok) throw new Error('bad status ' + res.status)
     const data = await res.json()
-    return { data, source: 'postgres' }
+    return { data: EXPOSE_DOC_LINKS ? data : redactDocLinks(data), source: 'postgres' }
   } catch {
     clearTimeout(t)
     // demo / snapshot mode → enrich with deterministic per-site demo findings
-    return { data: withDemoFindings(loadLocal()), source: 'local' }
+    const data = withDemoFindings(loadLocal())
+    return { data: EXPOSE_DOC_LINKS ? data : redactDocLinks(data), source: 'local' }
   }
 }
 

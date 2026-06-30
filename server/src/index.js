@@ -96,6 +96,24 @@ app.get('/api/health', async (_req, res) => {
 });
 
 // Build the full portfolio object (same shape the SPA consumes). Shared by
+// SECURITY (temporary lockdown): do not expose links into the external document
+// store (SharePoint) from the app. When false, every served surface — /api/sites,
+// /api/facility, /api/portfolio, and the /overview HTML — is stripped of folder /
+// siteMap / per-document url / per-permit doc URLs. Flip to true to restore.
+const EXPOSE_DOC_LINKS = false;
+
+// Strip every external document/permit URL from a loaded portfolio, in place.
+// Document names are kept (they're not secret); only the links are removed.
+function redactDocLinks(portfolio) {
+  for (const site of Object.values(portfolio)) {
+    site.folder = null;
+    site.siteMap = null;
+    site.documents = (site.documents || []).map((d) => ({ name: d.name }));
+    for (const p of site.permits || []) p.doc = null;
+  }
+  return portfolio;
+}
+
 // /api/sites and the server-rendered diagnostics surfaces.
 async function loadPortfolio() {
   const [sites, permits, leases, checklist] = await Promise.all([
@@ -131,6 +149,7 @@ async function loadPortfolio() {
     if (!out[c.site]) continue;
     out[c.site].checklist.push(shapeChecklistRow(c));
   }
+  if (!EXPOSE_DOC_LINKS) redactDocLinks(out);
   return out;
 }
 
