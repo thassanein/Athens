@@ -25,33 +25,36 @@ const TITLES = { exec: 'Executive dashboard', mywork: 'My initiatives', departme
 // Nav + page visibility per role. Opportunities and Reporting are limited to the
 // enterprise roles (exec / EVRO lead / FP&A). Leaders and owners get a scoped
 // home (My Department / My Initiatives) instead of the enterprise dashboard.
+const OWNER_ROLES = ['owner', 'procurement']
 const NAV_ITEMS = [
   { key: 'exec', label: 'Executive', roles: ['exec', 'admin', 'fpna'] },
   { key: 'department', label: 'My Department', roles: ['leader'] },
-  { key: 'mywork', label: 'My Initiatives', roles: ['owner'] },
+  { key: 'mywork', label: 'My Initiatives', roles: OWNER_ROLES },
   { key: 'portfolio', label: 'Portfolio', roles: ['exec', 'admin', 'fpna', 'leader'] },
-  { key: 'forecast', label: 'Forecast', roles: ['exec', 'admin', 'fpna', 'leader', 'owner'] },
+  { key: 'forecast', label: 'Forecast', roles: ['exec', 'admin', 'fpna', 'leader', ...OWNER_ROLES] },
   { key: 'reporting', label: 'Reporting', roles: ['exec', 'admin', 'fpna'] },
   { key: 'opportunities', label: 'Opportunities', roles: ['exec', 'admin', 'fpna'] },
-  { key: 'spend', label: 'Spend Explorer', roles: ['exec', 'admin', 'fpna', 'leader', 'owner'] },
-  { key: 'leaderboard', label: 'Leaderboard', roles: ['exec', 'admin', 'fpna', 'leader', 'owner'] },
-  { key: 'sustainability', label: 'Sustainability', roles: ['exec', 'admin', 'fpna', 'leader', 'owner'] },
-  { key: 'methodology', label: 'Methodology', roles: ['exec', 'admin', 'fpna', 'leader', 'owner'] },
+  { key: 'spend', label: 'Spend Explorer', roles: ['exec', 'admin', 'fpna', 'leader', ...OWNER_ROLES] },
+  { key: 'leaderboard', label: 'Leaderboard', roles: ['exec', 'admin', 'fpna', 'leader', ...OWNER_ROLES] },
+  { key: 'sustainability', label: 'Sustainability', roles: ['exec', 'admin', 'fpna', 'leader', ...OWNER_ROLES] },
+  { key: 'methodology', label: 'Methodology', roles: ['exec', 'admin', 'fpna', 'leader', ...OWNER_ROLES] },
 ]
-const HOME = { exec: 'exec', admin: 'exec', fpna: 'exec', leader: 'department', owner: 'mywork' }
+const HOME = { exec: 'exec', admin: 'exec', fpna: 'exec', leader: 'department', owner: 'mywork', procurement: 'mywork' }
 const ALWAYS_OK = ['initiative', 'intake'] // reachable by drill-down / action, not in the nav
 const SCOPED_PAGES = new Set(['portfolio', 'forecast', 'sustainability'])
-const ROLE_LABEL = { admin: 'EVRO Lead', fpna: 'FP&A', leader: 'Function leader', owner: 'Initiative owner', exec: 'Executive' }
+const ROLE_LABEL = { admin: 'EVRO Lead', fpna: 'FP&A', leader: 'Function leader', owner: 'Initiative owner', procurement: 'Procurement', exec: 'Executive' }
 const allowedKeys = (role) => NAV_ITEMS.filter((n) => n.roles.includes(role)).map((n) => n.key)
 
-// Role → capabilities (PoC RBAC). Exec is read-only; FP&A validates; owners and
-// leaders edit; leaders + admin can give Steering approval; admin edits config.
+// Role → capabilities (PoC RBAC). Exec is read-only; FP&A validates; owners,
+// procurement and leaders edit; leaders + admin can give Steering approval;
+// admin edits config.
 function capsFor(role) {
   switch (role) {
     case 'admin': return { edit: true, validate: true, steering: true, admin: true }
     case 'fpna': return { edit: false, validate: true, steering: false, admin: false }
     case 'leader': return { edit: true, validate: false, steering: true, admin: false }
     case 'owner': return { edit: true, validate: false, steering: false, admin: false }
+    case 'procurement': return { edit: true, validate: false, steering: false, admin: false }
     default: return { edit: false, validate: false, steering: false, admin: false } // exec / viewer
   }
 }

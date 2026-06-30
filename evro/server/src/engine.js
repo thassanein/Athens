@@ -12,9 +12,13 @@
 //    clearly-labelled total.
 //  • Opportunity bands read from the savings_pct config table — never hardcoded.
 
-export const STAGES = ['idea', 'feasibility', 'capability', 'launch', 'closed']
-export const STAGE_LABEL = { idea: 'Idea', feasibility: 'Feasibility', capability: 'Capability', launch: 'Launch', closed: 'Closed' }
-export const STAGE_CONFIDENCE = { idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, closed: 1.0 }
+// 'proposed' is a pre-pipeline holding state: a newly intake'd project awaiting
+// line-manager + FP&A approval. It carries 0 confidence and is excluded from all
+// value rollups until approved into 'idea'.
+export const STAGES = ['proposed', 'idea', 'feasibility', 'capability', 'launch', 'closed']
+export const GATE_STAGES = ['idea', 'feasibility', 'capability', 'launch']
+export const STAGE_LABEL = { proposed: 'Proposed', idea: 'Idea', feasibility: 'Feasibility', capability: 'Capability', launch: 'Launch', closed: 'Closed' }
+export const STAGE_CONFIDENCE = { proposed: 0, idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, closed: 1.0 }
 export const PILLAR_LABEL = { savings: 'Cost Savings', avoidance: 'Cost Avoidance' }
 export const BENEFIT_LABEL = { reduction: 'Cost Reduction', savings: 'Cost Savings', avoidance: 'Cost Avoidance' }
 export const MATERIALITY = 100_000 // ≥ this gross → Steering approval to enter Launch
@@ -116,7 +120,8 @@ export function frame(db) {
 }
 
 // ---- per-initiative measures ----------------------------------------------
-export const isActive = (i) => i.stage !== 'closed'
+// Proposed (awaiting approval) and Closed are excluded from "active" value.
+export const isActive = (i) => i.stage !== 'closed' && i.stage !== 'proposed'
 
 // Risk-Adjusted Value = gross × stage confidence × realization factor.
 export function rav(i) {
@@ -190,6 +195,48 @@ export function gateCheck(i) {
   }
   const requiresSteering = next === 'launch' && i.gross_annual_value >= MATERIALITY
   return { ok: reasons.length === 0, next, requiresSteering, reasons }
+}
+
+// ---- approval workflow (intake + phase change) -----------------------------
+// New projects and every phase change require LINE MANAGER + FP&A sign-off
+// (plus Steering when entering Launch at ≥ $100K). Approvals are first-class and
+// enforced in the reducers (single source of truth for client + server paths).
+export const ROLE_APPROVE_LABEL = { line_manager: 'Line manager', fpna: 'FP&A', steering: 'Steering' }
+export const nextStage = (i) => { const n = STAGES[STAGES.indexOf(i.stage) + 1]; return n === 'closed' ? null : n }
+
+export function requiredRoles(i, toStage) {
+  const roles = ['line_manager', 'fpna']
+  if (toStage === 'launch' && i.gross_annual_value >= MATERIALITY) roles.push('steering')
+  return roles
+}
+export function approvalState(i) {
+  const r = i.request
+  if (!r) return null
+  const filled = (r.approvals || []).map((a) => a.role)
+  return { kind: r.kind, to_stage: r.to_stage, need: r.need, approvals: r.approvals || [], filled, remaining: r.need.filter((n) => !filled.includes(n)) }
+}
+// Which still-needed approval roles this user is entitled to fill on this request.
+export function canApproveRoles(user, i) {
+  const st = approvalState(i)
+  if (!st || st.remaining.length === 0) return []
+  return st.remaining.filter((role) => {
+    if (role === 'line_manager') return user?.role === 'admin' || (user?.role === 'leader' && overseenDepts(user).includes(i.department))
+    if (role === 'fpna') return user?.role === 'fpna' || user?.role === 'admin'
+    if (role === 'steering') return user?.role === 'admin' || user?.role === 'leader'
+    return false
+  })
+}
+// Can this user open an advancement request (owner/editor, not already pending)?
+export function canRequestAdvance(user, i, caps) {
+  if (!caps?.edit || i.request || i.stage === 'proposed') return { ok: false }
+  const to = nextStage(i)
+  if (!to) return { ok: false }
+  if (to === 'launch' && hasUnmitigatedHigh(i)) return { ok: false, to, reason: 'High risks need a documented countermeasure first.' }
+  return { ok: true, to }
+}
+// Initiatives anywhere with a pending request this user may approve.
+export function pendingApprovalsFor(db, user) {
+  return db.initiatives.filter((i) => i.request && canApproveRoles(user, i).length > 0)
 }
 
 // ---- enterprise rollup (Executive dashboard) -------------------------------
@@ -405,7 +452,8 @@ export function spendRollup(db, { addressableOnly = true } = {}) {
 // value (Addendum A1.2). Risk-adjustment applies BEFORE points are awarded.
 const ADVANCE_PTS = { feasibility: 40, capability: 60, launch: 100 }
 function initiativePoints(i, db) {
-  let pts = 10 + 15 // submit + passes triage (all seeded ideas accepted)
+  if (i.stage === 'proposed') return 10 // submitted, awaiting approval (not yet in pipeline)
+  let pts = 10 + 15 // submit + passes triage
   const reached = STAGES.indexOf(i.stage)
   for (const s of ['feasibility', 'capability', 'launch']) {
     if (reached >= STAGES.indexOf(s)) pts += ADVANCE_PTS[s]
@@ -436,19 +484,28 @@ export function leaderboard(db) {
     }
   }
   for (const pl of db.points_ledger || []) if (rows[pl.user_id] && !pl.provisional) rows[pl.user_id].points += pl.points
+  const peopleById = idx(db).peopleById
   const list = Object.values(rows).map((r) => ({
     ...r,
+    procurement: !!peopleById[r.id]?.procurement,
     totalFY: r.realized + r.forecastRA,
     recurringRatio: r.recurringDen ? r.recurringNum / r.recurringDen : 0,
     badges: earnedBadges(r, db),
   }))
-  // headline rank = Total FY (Realized YTD + risk-adjusted forecast FY)
-  return {
-    total: list.slice().filter((r) => r.totalFY > 0 || r.points > 0).sort((a, b) => b.totalFY - a.totalFY),
-    realized: list.slice().sort((a, b) => b.realized - a.realized),
-    forecast: list.slice().sort((a, b) => b.forecastRA - a.forecastRA),
-    points: list.slice().sort((a, b) => b.points - a.points),
-  }
+  // Procurement is ranked on its OWN board, not the organization board.
+  // Procurement's mandate is to generate savings, so including them would
+  // dominate the engagement ranking — the org board keeps the rest of the
+  // organization competing (change-management). Enterprise value still counts
+  // every initiative once; only the leaderboard attribution is separated.
+  const board = (arr) => ({
+    total: arr.filter((r) => r.totalFY > 0 || r.points > 0).sort((a, b) => b.totalFY - a.totalFY),
+    realized: arr.slice().sort((a, b) => b.realized - a.realized),
+    forecast: arr.slice().sort((a, b) => b.forecastRA - a.forecastRA),
+    points: arr.slice().sort((a, b) => b.points - a.points),
+  })
+  const org = board(list.filter((r) => !r.procurement))
+  // headline `total/realized/...` default to the ORGANIZATION board (back-compat).
+  return { ...org, org, procurement: board(list.filter((r) => r.procurement)) }
 }
 
 function earnedBadges(r, db) {

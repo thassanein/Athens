@@ -5,6 +5,7 @@ import {
 import { money } from '../lib/format.js'
 import { Tile, StagePip, PillarBadge, RagBadge, Avatar } from '../components/ui.jsx'
 import { Funnel } from '../components/Charts.jsx'
+import ApprovalsCard from '../components/ApprovalsCard.jsx'
 
 export default function Department({ db, user, navigate }) {
   const dept = visibleInitiatives(db, user)
@@ -27,6 +28,8 @@ export default function Department({ db, user, navigate }) {
         <Tile tone="dark" label="Department total FY" value={money(realized + forecastRA)} sub="realized + RA forecast" />
         <Tile tone="red" label="Initiatives" value={dept.length} sub={`${active.length} active`} />
       </div>
+
+      <ApprovalsCard db={db} user={user} navigate={navigate} />
 
       <div className="grid cols-2 section-gap">
         <div className="card pad">

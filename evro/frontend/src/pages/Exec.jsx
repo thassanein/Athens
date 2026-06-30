@@ -2,8 +2,9 @@ import { enterpriseRollup, forecastCurve, personName, PILLAR_LABEL } from '../li
 import { money, pct, monthLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { Waterfall, Donut, LineChart, HBars } from '../components/Charts.jsx'
+import ApprovalsCard from '../components/ApprovalsCard.jsx'
 
-export default function Exec({ db, navigate }) {
+export default function Exec({ db, user, navigate }) {
   const r = enterpriseRollup(db)
   const curve = forecastCurve(db)
   const xLabels = curve.map((c) => monthLabel(c.month))
@@ -44,6 +45,8 @@ export default function Exec({ db, navigate }) {
         <Tile tone="red" label="Identified opportunity" value={money(r.identifiedOpportunity)} sub={`${money(r.identifiedOpportunityRange.low)}–${money(r.identifiedOpportunityRange.high)} · illustrative`} />
         <Tile tone="dark" label="Blended ROI" value={money(r.blendedROI)} sub="risk-adjusted value ÷ effort point" />
       </div>
+
+      <ApprovalsCard db={db} user={user} navigate={navigate} />
 
       <div className="grid cols-2 section-gap">
         <div className="card pad">

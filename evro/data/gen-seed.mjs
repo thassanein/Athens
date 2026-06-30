@@ -176,20 +176,25 @@ const people = [
   { id: 'u-train', name: 'Kofi Train', initials: 'KT', fn: 'OpEx', role: 'admin', title: 'EVRO Analyst' },
   { id: 'u-rivera', name: 'Jordan Rivera', initials: 'JR', fn: 'Fleet', role: 'owner', title: 'Fleet & Maintenance Lead' },
   { id: 'u-okafor', name: 'Sofia Okafor', initials: 'SO', fn: 'MRF Ops', role: 'owner', title: 'MRF Operations Manager' },
-  { id: 'u-chen', name: 'Marcus Chen', initials: 'MC', fn: 'Supply Chain', role: 'owner', title: 'Procurement Lead' },
+  { id: 'u-chen', name: 'Marcus Chen', initials: 'MC', fn: 'Procurement', role: 'procurement', procurement: true, title: 'Procurement Lead — Supply Chain' },
+  { id: 'u-anand', name: 'Priya Anand', initials: 'PA', fn: 'Procurement', role: 'procurement', procurement: true, title: 'Senior Sourcing Manager' },
   { id: 'u-patel', name: 'Dev Patel', initials: 'DP', fn: 'Logistics', role: 'owner', title: 'Logistics & Route Manager' },
   { id: 'u-gomez', name: 'Ana Gomez', initials: 'AG', fn: 'Facilities', role: 'owner', title: 'Facilities Manager' },
   { id: 'u-brooks', name: 'Tasha Brooks', initials: 'TB', fn: 'Operations', role: 'leader', title: 'VP Operations', oversees: ['Fleet', 'MRF Ops', 'Logistics'] },
   { id: 'u-underwood', name: 'Henry Underwood', initials: 'HU', fn: 'IT', role: 'owner', title: 'IT Director' },
 ]
 const owners = people.filter((p) => p.role === 'owner')
+// People who can own / contribute to initiatives (org owners + procurement).
+const assignables = people.filter((p) => p.role === 'owner' || p.role === 'procurement')
 const fpna = people.find((p) => p.role === 'fpna')
 
-// map a sourcing group to the most natural owner function
+// map a sourcing group to the most natural owner. Sourcing-led groups
+// (benefits/insurance, professional services, supplies, indirect) are owned by
+// Procurement; operational groups by their function owners.
 const GROUP_OWNER = {
   'g-fleet': 'u-rivera', 'g-maint': 'u-rivera', 'g-rental': 'u-rivera',
   'g-facilities': 'u-gomez', 'g-utilities': 'u-gomez',
-  'g-benefits': 'u-chen', 'g-prof': 'u-chen', 'g-supplies': 'u-chen', 'g-indirect': 'u-chen',
+  'g-benefits': 'u-chen', 'g-prof': 'u-chen', 'g-supplies': 'u-anand', 'g-indirect': 'u-anand',
   'g-disposal': 'u-patel', 'g-labor': 'u-patel',
   'g-containers': 'u-okafor',
   'g-fuel': 'u-rivera',
@@ -210,7 +215,7 @@ const krs = [
 // ---------------------------------------------------------------------------
 // 5) Initiatives (~40) across both pillars and all four stages
 // ---------------------------------------------------------------------------
-const STAGE_CONFIDENCE = { idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, closed: 1.0 }
+const STAGE_CONFIDENCE = { proposed: 0, idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, closed: 1.0 }
 const RISK_CATS = ['execution', 'financial', 'data', 'adoption', 'external']
 // Levers carry a benefit_type (reduction | savings | avoidance) and the McKinsey
 // approach they embody. Cost Reduction = active elimination of existing cost
@@ -280,7 +285,7 @@ for (const stage of STAGE_PLAN) {
   const pillar = rand() < 0.55 ? 'savings' : 'avoidance'
   const lever = pick(LEVERS[pillar])
   const benefit_type = lever.type // reduction | savings | avoidance
-  const ownerId = GROUP_OWNER[g.id] || pick(owners).id
+  const ownerId = GROUP_OWNER[g.id] || pick(assignables).id
 
   // gross annual value = slice of category spend × plausible lever %
   const slice = cat.spend * (0.25 + rand() * 0.6) // the portion this initiative touches
@@ -389,7 +394,7 @@ for (const stage of STAGE_PLAN) {
   // contributors (split attribution) — sometimes a second person at 20–35%
   const contributions = [{ user_id: ownerId, credit_pct: 100 }]
   if (rand() < 0.35) {
-    const other = pick(owners.filter((o) => o.id !== ownerId))
+    const other = pick(assignables.filter((o) => o.id !== ownerId))
     const share = randInt(20, 35)
     contributions[0].credit_pct = 100 - share
     contributions.push({ user_id: other.id, credit_pct: share })
@@ -405,9 +410,10 @@ for (const stage of STAGE_PLAN) {
     stage,
     confidence,
     group_id: g.id,
-    department: owners.find((o) => o.id === ownerId)?.fn || people.find((p) => p.id === ownerId)?.fn,
+    department: people.find((p) => p.id === ownerId)?.fn,
     owner_id: ownerId,
     contributions,
+    request: null,
     spend_category_id: cat.id,
     vendor: null,
     gross_annual_value: gross,
@@ -426,6 +432,38 @@ for (const stage of STAGE_PLAN) {
     validations,
   })
 }
+
+// Two PROPOSED projects awaiting line manager + FP&A approval — they demo the
+// intake approval queue and stay out of all value rollups until approved.
+function proposed(id, { title, ownerId, groupId, catId, pillar, benefitType, approach, gross, effort, requestedAgo }) {
+  const cat = spend_categories.find((c) => c.id === catId)
+  return {
+    id, title,
+    description: `${approach} initiative proposed for ${cat?.name} (${GROUPS.find((g) => g.id === groupId)?.name}). Awaiting line manager + FP&A approval before entering the pipeline.`,
+    pillar, benefit_type: benefitType, approach,
+    stage: 'proposed', confidence: 0,
+    group_id: groupId, department: people.find((p) => p.id === ownerId)?.fn, owner_id: ownerId,
+    contributions: [{ user_id: ownerId, credit_pct: 100 }], request: null,
+    spend_category_id: catId, vendor: null, gross_annual_value: gross, negotiated_value: null,
+    effort_score: effort, realization_factor: 1,
+    start_date: isoDaysAgo(requestedAgo), target_close: isoMonthsAhead(randInt(8, 18)),
+    kr_link: pick(krs).id, status_rag: 'green', opportunity_id: null,
+    baseline: { basis: pillar === 'avoidance' ? 'forecast' : 'run_rate', formula: pillar === 'avoidance' ? 'Projected − Actual' : 'Original − New', amount: 0, source_ref: `2025 AP register · ${cat?.name}`, validated_by: null, validated_at: null },
+    benefit_lines: [{ pnl_line: cat?.pnl_line || 'opex', recurrence: 'recurring', annual_amount: gross }],
+    actuals: [], risks: [], validations: [],
+    request: { kind: 'intake', to_stage: 'idea', need: ['line_manager', 'fpna'], approvals: [], requested_by: ownerId, requested_at: isoDaysAgo(requestedAgo) },
+  }
+}
+initiatives.push(proposed('i-p1', {
+  title: 'Telematics-led idle reduction — Fleet Capital', ownerId: 'u-rivera', groupId: 'g-fleet',
+  catId: spend_categories.find((c) => c.group_id === 'g-fleet').id, pillar: 'savings', benefitType: 'savings',
+  approach: 'Operational redesign', gross: 180000, effort: 3, requestedAgo: 4,
+}))
+initiatives.push(proposed('i-p2', {
+  title: 'Health plan network re-sourcing — Benefits & Insurance', ownerId: 'u-chen', groupId: 'g-benefits',
+  catId: spend_categories.find((c) => c.group_id === 'g-benefits').id, pillar: 'savings', benefitType: 'reduction',
+  approach: 'Negotiation win-room', gross: 420000, effort: 4, requestedAgo: 6,
+}))
 
 // ---------------------------------------------------------------------------
 // 6) Opportunities (~10) from the largest groups — sized from the config table

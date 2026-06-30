@@ -1,13 +1,13 @@
 import {
   visibleInitiatives, rav, roi, realizedYTD, forecastRemainderFY, totalFY,
-  gateCheck, worstRisk, pendingValue, leaderboard, STAGE_LABEL,
+  canRequestAdvance, nextStage, worstRisk, pendingValue, leaderboard, STAGE_LABEL, isActive,
 } from '../lib/engine.js'
 import { money, num } from '../lib/format.js'
 import { Tile, StagePip, PillarBadge, RagBadge } from '../components/ui.jsx'
 
 export default function MyWork({ db, user, caps, navigate }) {
   const mine = visibleInitiatives(db, user)
-  const active = mine.filter((i) => i.stage !== 'closed')
+  const active = mine.filter(isActive)
   const realized = mine.reduce((a, i) => a + realizedYTD(i, db), 0)
   const raPipeline = active.reduce((a, i) => a + rav(i), 0)
   const totalFy = mine.reduce((a, i) => a + totalFY(i, db), 0)
@@ -15,18 +15,24 @@ export default function MyWork({ db, user, caps, navigate }) {
   const blendedROI = effort ? raPipeline / effort : 0
 
   // attention list
+  const awaiting = mine.filter((i) => i.request) // intake or advancement pending approval
+  const readyToRequest = caps.edit ? mine.filter((i) => canRequestAdvance(user, i, caps).ok) : []
   const pendingActuals = mine.filter((i) => i.actuals.some((a) => !a.validated))
-  const readyGates = caps.edit ? mine.filter((i) => gateCheck(i).ok) : []
   const highRisks = mine.filter((i) => worstRisk(i) >= 15)
 
-  const lb = leaderboard(db).total
+  const board = user.procurement ? leaderboard(db).procurement : leaderboard(db)
+  const lb = board.total
   const myIdx = lb.findIndex((p) => p.id === user.id)
   const me = myIdx >= 0 ? lb[myIdx] : null
   const rows = mine.slice().sort((a, b) => rav(b) - rav(a))
 
   return (
     <>
-      <p className="page-intro">Your initiatives only — {mine.length} owned or contributed. Value is risk-adjusted and ranked by return; only FP&amp;A-validated actuals count as realized.</p>
+      <p className="page-intro">
+        {user.procurement ? 'Your sourcing initiatives' : 'Your initiatives'} only — {mine.length} owned or contributed.
+        Value is risk-adjusted and ranked by return; only FP&amp;A-validated actuals count as realized.
+        {user.procurement && ' Procurement is ranked on its own board, separate from the organization leaderboard.'}
+      </p>
 
       <div className="tiles">
         <Tile tone="green" label="My realized YTD" value={money(realized)} sub="validated actuals" />
@@ -38,7 +44,8 @@ export default function MyWork({ db, user, caps, navigate }) {
       <div className="grid cols-2 section-gap">
         <div className="card pad">
           <div className="card-h"><h3>Needs your attention</h3></div>
-          <Attention title="Ready to advance a gate" items={readyGates} navigate={navigate} tone="b-green" empty="No gates ready." note={(i) => `→ ${STAGE_LABEL[gateCheck(i).next] || ''}`} />
+          <Attention title="Awaiting line manager + FP&A approval" items={awaiting} navigate={navigate} tone="b-amber" empty="Nothing awaiting approval." note={(i) => (i.request.kind === 'intake' ? 'new project' : `→ ${STAGE_LABEL[i.request.to_stage]}`)} />
+          <Attention title="Ready to request advancement" items={readyToRequest} navigate={navigate} tone="b-green" empty="Nothing ready." note={(i) => `→ ${STAGE_LABEL[nextStage(i)] || ''}`} />
           <Attention title="Actuals awaiting FP&A validation" items={pendingActuals} navigate={navigate} tone="b-amber" empty="Nothing pending." note={(i) => money(pendingValue(i)) + ' pending'} />
           <Attention title="High risks needing a countermeasure" items={highRisks} navigate={navigate} tone="b-red" empty="No high risks." note={(i) => `score ${worstRisk(i)}`} />
         </div>
@@ -47,7 +54,7 @@ export default function MyWork({ db, user, caps, navigate }) {
           {me ? (
             <>
               <div className="tile dark" style={{ marginBottom: 12 }}>
-                <div className="t-accent" /><div className="t-label">Leaderboard rank (Total FY)</div>
+                <div className="t-accent" /><div className="t-label">{user.procurement ? 'Procurement board rank' : 'Leaderboard rank'} (Total FY)</div>
                 <div className="t-value mono">#{myIdx + 1}<span style={{ fontSize: 14, color: 'var(--grey)', fontWeight: 600 }}> of {lb.length}</span></div>
                 <div className="t-sub">{money(me.totalFY)} total FY · {num(me.points)} pts</div>
               </div>

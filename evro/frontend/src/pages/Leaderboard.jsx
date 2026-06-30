@@ -21,6 +21,8 @@ export default function Leaderboard({ db }) {
     <>
       <p className="page-intro">People ranked by the savings they drive — realized and forecasted, each risk- and time-adjusted so the ranking reflects credible value. Split attribution credits contributors without double-counting the enterprise total.</p>
 
+      <div className="note info section-gap"><span>ℹ︎</span><span>This is the <b>organization</b> board. <b>Procurement is ranked separately</b> (below): their mandate is to generate savings, so keeping them off this board lets the rest of the organization compete — the change-management point of the leaderboard. Enterprise value still counts every initiative once.</span></div>
+
       <div className="card-h">
         <div className="seg" style={{ flexWrap: 'wrap' }}>
           {Object.entries(VIEWS).map(([k, vv]) => <button key={k} className={view === k ? 'active' : ''} onClick={() => setView(k)}>{vv.label}</button>)}
@@ -62,6 +64,30 @@ export default function Leaderboard({ db }) {
                   <td><div className="chip-row">{p.badges.map((b) => <span key={b} className="badge b-green">{b}</span>)}</div></td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>Procurement board</h3><span className="spacer" /><span className="badge b-navy">separate metrics</span></div>
+        <p className="tiny muted" style={{ marginTop: -6, marginBottom: 10 }}>Sourcing-driven savings, tracked on its own so it doesn't crowd the organization board.</p>
+        <div className="table-wrap">
+          <table className="tbl">
+            <thead><tr><th>#</th><th>Person</th><th className="num">Realized YTD</th><th className="num">Forecast FY (RA)</th><th className="num">Total FY</th><th className="num">Recurring</th><th className="num">Points</th></tr></thead>
+            <tbody>
+              {lb.procurement.total.map((p, i) => (
+                <tr key={p.id}>
+                  <td className="muted">{i + 1}</td>
+                  <td style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Avatar name={p.name} /> <b>{p.name}</b></td>
+                  <td className="num mono">{money(p.realized)}</td>
+                  <td className="num mono">{money(p.forecastRA)}</td>
+                  <td className="num mono"><b>{money(p.totalFY)}</b></td>
+                  <td className="num mono">{pct(p.recurringRatio)}</td>
+                  <td className="num mono">{num(p.points)}</td>
+                </tr>
+              ))}
+              {lb.procurement.total.length === 0 && <tr><td colSpan="7" className="muted">No procurement standings yet.</td></tr>}
             </tbody>
           </table>
         </div>

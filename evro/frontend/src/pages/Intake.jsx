@@ -18,7 +18,7 @@ export default function Intake({ db, user, caps, dispatch, navigate, flash, home
     if (!valid) return flash('Title, owner, category and rough value are required.')
     const owner = db.people.find((p) => p.id === f.owner_id)
     const res = await dispatch('createInitiative', { ...f, department: owner?.fn }, user.id)
-    if (res.id) { flash('Initiative submitted as Idea (25%)'); navigate('initiative', { id: res.id }) }
+    if (res.id) { flash('Proposed — sent to line manager + FP&A for approval'); navigate('initiative', { id: res.id }) }
   }
 
   if (!caps.edit) {
@@ -27,7 +27,7 @@ export default function Intake({ db, user, caps, dispatch, navigate, flash, home
 
   return (
     <>
-      <p className="page-intro">Capture an idea. Required fields are enforced before it enters the pipeline as an <b>Idea (25% confidence)</b>. It earns value as it advances through the gates and is validated.</p>
+      <p className="page-intro">Capture a project — its financials, timing, phase, cost category and savings/avoidance. On submit it enters as <b>Proposed</b> and is sent to the <b>line manager + FP&amp;A for approval</b> before joining the pipeline as an Idea (25%). It carries no value until approved.</p>
       <div className="card pad" style={{ maxWidth: 760 }}>
         <div className="field"><label>Title</label><input value={f.title} onChange={(e) => set('title', e.target.value)} placeholder="e.g. Tire program renegotiation — Maintenance Parts & Tires" /></div>
         <div className="field"><label>Problem statement / approach</label><textarea rows="3" value={f.description} onChange={(e) => set('description', e.target.value)} placeholder="What is the lever, and how does it create value?" /></div>

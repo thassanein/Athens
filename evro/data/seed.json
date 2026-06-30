@@ -101,9 +101,19 @@
       "id": "u-chen",
       "name": "Marcus Chen",
       "initials": "MC",
-      "fn": "Supply Chain",
-      "role": "owner",
-      "title": "Procurement Lead"
+      "fn": "Procurement",
+      "role": "procurement",
+      "procurement": true,
+      "title": "Procurement Lead — Supply Chain"
+    },
+    {
+      "id": "u-anand",
+      "name": "Priya Anand",
+      "initials": "PA",
+      "fn": "Procurement",
+      "role": "procurement",
+      "procurement": true,
+      "title": "Senior Sourcing Manager"
     },
     {
       "id": "u-patel",
@@ -1532,19 +1542,19 @@
       "id": "o-1",
       "group_id": "g-fleet",
       "title": "Fleet Capital sourcing & specification review",
-      "lever": "Demand management",
-      "approach": "Volume leverage / tiering",
-      "maverick_pct": 0.217,
+      "lever": "Renegotiation",
+      "approach": "Demand management",
+      "maverick_pct": 0.16,
       "est_low": 3198000,
       "est_high": 6396000,
       "size_score": 5,
-      "ease_score": 2,
+      "ease_score": 5,
       "risk_score": 3,
-      "attractiveness": 3.33,
-      "points": 167,
-      "priority": "Medium",
+      "attractiveness": 8.33,
+      "points": 417,
+      "priority": "Hot",
       "status": "in_flight",
-      "claimed_by": "u-chen",
+      "claimed_by": "u-anand",
       "initiative_id": "i-22"
     },
     {
@@ -1552,88 +1562,12 @@
       "group_id": "g-facilities",
       "title": "Facilities sourcing & specification review",
       "lever": "Demand management",
-      "approach": "Cleansheet / should-cost",
-      "maverick_pct": 0.113,
+      "approach": "Demand management",
+      "maverick_pct": 0.122,
       "est_low": 1758000,
       "est_high": 3516000,
       "size_score": 4,
-      "ease_score": 4,
-      "risk_score": 4,
-      "attractiveness": 4,
-      "points": 200,
-      "priority": "High",
-      "status": "open",
-      "claimed_by": null,
-      "initiative_id": null
-    },
-    {
-      "id": "o-3",
-      "group_id": "g-benefits",
-      "title": "Benefits & Insurance sourcing & specification review",
-      "lever": "Spec standardization",
-      "approach": "On-contract / maverick capture",
-      "maverick_pct": 0.139,
-      "est_low": 1536000,
-      "est_high": 3072000,
-      "size_score": 4,
-      "ease_score": 2,
-      "risk_score": 4,
-      "attractiveness": 2,
-      "points": 100,
-      "priority": "Low",
-      "status": "open",
-      "claimed_by": null,
-      "initiative_id": null
-    },
-    {
-      "id": "o-4",
-      "group_id": "g-disposal",
-      "title": "Disposal & Transportation Out sourcing & specification review",
-      "lever": "Renegotiation",
-      "approach": "On-contract / maverick capture",
-      "maverick_pct": 0.133,
-      "est_low": 1152000,
-      "est_high": 2304000,
-      "size_score": 4,
       "ease_score": 3,
-      "risk_score": 2,
-      "attractiveness": 6,
-      "points": 300,
-      "priority": "Hot",
-      "status": "claimed",
-      "claimed_by": "u-rivera",
-      "initiative_id": "i-23"
-    },
-    {
-      "id": "o-5",
-      "group_id": "g-maint",
-      "title": "Maintenance Parts & Tires sourcing & specification review",
-      "lever": "Consolidation",
-      "approach": "Volume leverage / tiering",
-      "maverick_pct": 0.092,
-      "est_low": 1149000,
-      "est_high": 2298000,
-      "size_score": 4,
-      "ease_score": 2,
-      "risk_score": 1,
-      "attractiveness": 8,
-      "points": 400,
-      "priority": "Hot",
-      "status": "open",
-      "claimed_by": null,
-      "initiative_id": null
-    },
-    {
-      "id": "o-6",
-      "group_id": "g-containers",
-      "title": "Containers & Bins sourcing & specification review",
-      "lever": "Demand management",
-      "approach": "Cleansheet / should-cost",
-      "maverick_pct": 0.167,
-      "est_low": 984000,
-      "est_high": 1968000,
-      "size_score": 3,
-      "ease_score": 4,
       "risk_score": 1,
       "attractiveness": 12,
       "points": 600,
@@ -1643,20 +1577,96 @@
       "initiative_id": null
     },
     {
+      "id": "o-3",
+      "group_id": "g-benefits",
+      "title": "Benefits & Insurance sourcing & specification review",
+      "lever": "Demand management",
+      "approach": "Negotiation win-room",
+      "maverick_pct": 0.047,
+      "est_low": 1536000,
+      "est_high": 3072000,
+      "size_score": 4,
+      "ease_score": 4,
+      "risk_score": 2,
+      "attractiveness": 8,
+      "points": 400,
+      "priority": "Hot",
+      "status": "open",
+      "claimed_by": null,
+      "initiative_id": null
+    },
+    {
+      "id": "o-4",
+      "group_id": "g-disposal",
+      "title": "Disposal & Transportation Out sourcing & specification review",
+      "lever": "Consolidation",
+      "approach": "Cleansheet / should-cost",
+      "maverick_pct": 0.103,
+      "est_low": 1152000,
+      "est_high": 2304000,
+      "size_score": 4,
+      "ease_score": 4,
+      "risk_score": 1,
+      "attractiveness": 16,
+      "points": 800,
+      "priority": "Hot",
+      "status": "claimed",
+      "claimed_by": "u-rivera",
+      "initiative_id": "i-23"
+    },
+    {
+      "id": "o-5",
+      "group_id": "g-maint",
+      "title": "Maintenance Parts & Tires sourcing & specification review",
+      "lever": "Renegotiation",
+      "approach": "Cleansheet / should-cost",
+      "maverick_pct": 0.156,
+      "est_low": 1149000,
+      "est_high": 2298000,
+      "size_score": 4,
+      "ease_score": 3,
+      "risk_score": 3,
+      "attractiveness": 4,
+      "points": 200,
+      "priority": "High",
+      "status": "open",
+      "claimed_by": null,
+      "initiative_id": null
+    },
+    {
+      "id": "o-6",
+      "group_id": "g-containers",
+      "title": "Containers & Bins sourcing & specification review",
+      "lever": "Demand management",
+      "approach": "On-contract / maverick capture",
+      "maverick_pct": 0.175,
+      "est_low": 984000,
+      "est_high": 1968000,
+      "size_score": 3,
+      "ease_score": 4,
+      "risk_score": 4,
+      "attractiveness": 3,
+      "points": 150,
+      "priority": "Medium",
+      "status": "open",
+      "claimed_by": null,
+      "initiative_id": null
+    },
+    {
       "id": "o-7",
       "group_id": "g-fuel",
       "title": "Fuel & CNG sourcing & specification review",
-      "lever": "Demand management",
-      "approach": "On-contract / maverick capture",
-      "maverick_pct": 0.155,
+      "lever": "Spec standardization",
+      "approach": "Volume leverage / tiering",
+      "maverick_pct": 0.108,
       "est_low": 810000,
       "est_high": 1620000,
       "size_score": 3,
-      "ease_score": 5,
-      "risk_score": 4,
-      "attractiveness": 3.75,
-      "points": 188,
-      "priority": "Medium",
+      "ease_score": 4,
+      "risk_score": 3,
+      "attractiveness": 4,
+      "points": 200,
+      "priority": "High",
       "status": "open",
       "claimed_by": null,
       "initiative_id": null
@@ -1665,16 +1675,16 @@
       "id": "o-8",
       "group_id": "g-labor",
       "title": "Outside & Subcontract Labor sourcing & specification review",
-      "lever": "Consolidation",
-      "approach": "Supplier-base redesign",
-      "maverick_pct": 0.177,
+      "lever": "Index cap",
+      "approach": "Volume leverage / tiering",
+      "maverick_pct": 0.134,
       "est_low": 729000,
       "est_high": 1458000,
       "size_score": 3,
-      "ease_score": 4,
+      "ease_score": 5,
       "risk_score": 2,
-      "attractiveness": 6,
-      "points": 300,
+      "attractiveness": 7.5,
+      "points": 375,
       "priority": "Hot",
       "status": "open",
       "claimed_by": null,
@@ -1685,16 +1695,16 @@
       "group_id": "g-itt",
       "title": "IT & Telecom sourcing & specification review",
       "lever": "Spec standardization",
-      "approach": "Demand management",
-      "maverick_pct": 0.056,
+      "approach": "On-contract / maverick capture",
+      "maverick_pct": 0.096,
       "est_low": 318000,
       "est_high": 636000,
       "size_score": 2,
-      "ease_score": 3,
-      "risk_score": 2,
-      "attractiveness": 3,
-      "points": 150,
-      "priority": "Medium",
+      "ease_score": 2,
+      "risk_score": 3,
+      "attractiveness": 1.33,
+      "points": 67,
+      "priority": "Low",
       "status": "open",
       "claimed_by": null,
       "initiative_id": null
@@ -1704,16 +1714,16 @@
       "group_id": "g-supplies",
       "title": "Supplies, Uniforms & PPE sourcing & specification review",
       "lever": "Consolidation",
-      "approach": "Volume leverage / tiering",
-      "maverick_pct": 0.175,
+      "approach": "Supplier-base redesign",
+      "maverick_pct": 0.131,
       "est_low": 285000,
       "est_high": 570000,
       "size_score": 2,
-      "ease_score": 4,
-      "risk_score": 4,
-      "attractiveness": 2,
-      "points": 100,
-      "priority": "Low",
+      "ease_score": 5,
+      "risk_score": 2,
+      "attractiveness": 5,
+      "points": 250,
+      "priority": "High",
       "status": "open",
       "claimed_by": null,
       "initiative_id": null
@@ -1738,6 +1748,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-8",
       "vendor": null,
       "gross_annual_value": 250000,
@@ -1807,6 +1818,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-36",
       "vendor": null,
       "gross_annual_value": 62000,
@@ -1881,6 +1893,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-8",
       "vendor": null,
       "gross_annual_value": 107000,
@@ -1962,6 +1975,7 @@
           "credit_pct": 26
         }
       ],
+      "request": null,
       "spend_category_id": "c-43",
       "vendor": null,
       "gross_annual_value": 447000,
@@ -2048,6 +2062,7 @@
           "credit_pct": 35
         }
       ],
+      "request": null,
       "spend_category_id": "c-15",
       "vendor": null,
       "gross_annual_value": 180000,
@@ -2114,7 +2129,7 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-benefits",
-      "department": "Supply Chain",
+      "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
         {
@@ -2122,10 +2137,11 @@
           "credit_pct": 79
         },
         {
-          "user_id": "u-gomez",
+          "user_id": "u-patel",
           "credit_pct": 21
         }
       ],
+      "request": null,
       "spend_category_id": "c-28",
       "vendor": null,
       "gross_annual_value": 69000,
@@ -2184,7 +2200,7 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-benefits",
-      "department": "Supply Chain",
+      "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
         {
@@ -2192,6 +2208,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-27",
       "vendor": null,
       "gross_annual_value": 64000,
@@ -2258,6 +2275,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-111",
       "vendor": null,
       "gross_annual_value": 60000,
@@ -2324,6 +2342,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-9",
       "vendor": null,
       "gross_annual_value": 34000,
@@ -2410,6 +2429,7 @@
           "credit_pct": 22
         }
       ],
+      "request": null,
       "spend_category_id": "c-5",
       "vendor": null,
       "gross_annual_value": 81000,
@@ -2479,6 +2499,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-66",
       "vendor": null,
       "gross_annual_value": 247000,
@@ -2556,6 +2577,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-90",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -2630,11 +2652,11 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-supplies",
-      "department": "Supply Chain",
-      "owner_id": "u-chen",
+      "department": "Procurement",
+      "owner_id": "u-anand",
       "contributions": [
         {
-          "user_id": "u-chen",
+          "user_id": "u-anand",
           "credit_pct": 79
         },
         {
@@ -2642,6 +2664,7 @@
           "credit_pct": 21
         }
       ],
+      "request": null,
       "spend_category_id": "c-98",
       "vendor": null,
       "gross_annual_value": 41000,
@@ -2719,6 +2742,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-29",
       "vendor": null,
       "gross_annual_value": 309000,
@@ -2788,6 +2812,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-5",
       "vendor": null,
       "gross_annual_value": 331000,
@@ -2862,6 +2887,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-13",
       "vendor": null,
       "gross_annual_value": 498000,
@@ -2947,6 +2973,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-39",
       "vendor": null,
       "gross_annual_value": 33000,
@@ -3008,14 +3035,15 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-supplies",
-      "department": "Supply Chain",
-      "owner_id": "u-chen",
+      "department": "Procurement",
+      "owner_id": "u-anand",
       "contributions": [
         {
-          "user_id": "u-chen",
+          "user_id": "u-anand",
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-98",
       "vendor": null,
       "gross_annual_value": 45000,
@@ -3090,6 +3118,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-52",
       "vendor": null,
       "gross_annual_value": 133000,
@@ -3164,6 +3193,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-45",
       "vendor": null,
       "gross_annual_value": 267000,
@@ -3233,14 +3263,15 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-indirect",
-      "department": "Supply Chain",
-      "owner_id": "u-chen",
+      "department": "Procurement",
+      "owner_id": "u-anand",
       "contributions": [
         {
-          "user_id": "u-chen",
+          "user_id": "u-anand",
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-72",
       "vendor": null,
       "gross_annual_value": 28000,
@@ -3310,14 +3341,15 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-indirect",
-      "department": "Supply Chain",
-      "owner_id": "u-chen",
+      "department": "Procurement",
+      "owner_id": "u-anand",
       "contributions": [
         {
-          "user_id": "u-chen",
+          "user_id": "u-anand",
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-84",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -3419,6 +3451,7 @@
           "credit_pct": 29
         }
       ],
+      "request": null,
       "spend_category_id": "c-37",
       "vendor": null,
       "gross_annual_value": 58000,
@@ -3516,6 +3549,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-63",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -3604,6 +3638,7 @@
           "credit_pct": 34
         }
       ],
+      "request": null,
       "spend_category_id": "c-31",
       "vendor": null,
       "gross_annual_value": 220000,
@@ -3672,7 +3707,7 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-benefits",
-      "department": "Supply Chain",
+      "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
         {
@@ -3680,6 +3715,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-24",
       "vendor": null,
       "gross_annual_value": 135000,
@@ -3776,6 +3812,7 @@
           "credit_pct": 33
         }
       ],
+      "request": null,
       "spend_category_id": "c-15",
       "vendor": null,
       "gross_annual_value": 163000,
@@ -3868,10 +3905,11 @@
           "credit_pct": 65
         },
         {
-          "user_id": "u-patel",
+          "user_id": "u-anand",
           "credit_pct": 35
         }
       ],
+      "request": null,
       "spend_category_id": "c-36",
       "vendor": null,
       "gross_annual_value": 88000,
@@ -3964,6 +4002,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-17",
       "vendor": null,
       "gross_annual_value": 56000,
@@ -4040,6 +4079,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-4",
       "vendor": null,
       "gross_annual_value": 228000,
@@ -4197,6 +4237,7 @@
           "credit_pct": 29
         }
       ],
+      "request": null,
       "spend_category_id": "c-52",
       "vendor": null,
       "gross_annual_value": 44000,
@@ -4358,6 +4399,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-6",
       "vendor": null,
       "gross_annual_value": 153000,
@@ -4519,6 +4561,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-14",
       "vendor": null,
       "gross_annual_value": 346000,
@@ -4657,6 +4700,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-35",
       "vendor": null,
       "gross_annual_value": 135000,
@@ -4810,6 +4854,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-14",
       "vendor": null,
       "gross_annual_value": 437000,
@@ -4975,6 +5020,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-8",
       "vendor": null,
       "gross_annual_value": 50000,
@@ -5120,6 +5166,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-1",
       "vendor": null,
       "gross_annual_value": 947000,
@@ -5284,10 +5331,11 @@
           "credit_pct": 67
         },
         {
-          "user_id": "u-chen",
+          "user_id": "u-anand",
           "credit_pct": 33
         }
       ],
+      "request": null,
       "spend_category_id": "c-65",
       "vendor": null,
       "gross_annual_value": 663000,
@@ -5437,6 +5485,7 @@
           "credit_pct": 20
         }
       ],
+      "request": null,
       "spend_category_id": "c-111",
       "vendor": null,
       "gross_annual_value": 79000,
@@ -5609,6 +5658,7 @@
           "credit_pct": 100
         }
       ],
+      "request": null,
       "spend_category_id": "c-42",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -5759,6 +5809,124 @@
           "note": "Realized 2026-06 validated."
         }
       ]
+    },
+    {
+      "id": "i-p1",
+      "title": "Telematics-led idle reduction — Fleet Capital",
+      "description": "Operational redesign initiative proposed for Capex Trucks/Trailers (Fleet Capital). Awaiting line manager + FP&A approval before entering the pipeline.",
+      "pillar": "savings",
+      "benefit_type": "savings",
+      "approach": "Operational redesign",
+      "stage": "proposed",
+      "confidence": 0,
+      "group_id": "g-fleet",
+      "department": "Fleet",
+      "owner_id": "u-rivera",
+      "contributions": [
+        {
+          "user_id": "u-rivera",
+          "credit_pct": 100
+        }
+      ],
+      "request": {
+        "kind": "intake",
+        "to_stage": "idea",
+        "need": [
+          "line_manager",
+          "fpna"
+        ],
+        "approvals": [],
+        "requested_by": "u-rivera",
+        "requested_at": "2026-06-26"
+      },
+      "spend_category_id": "c-1",
+      "vendor": null,
+      "gross_annual_value": 180000,
+      "negotiated_value": null,
+      "effort_score": 3,
+      "realization_factor": 1,
+      "start_date": "2026-06-26",
+      "target_close": "2027-04-30",
+      "kr_link": "KR13",
+      "status_rag": "green",
+      "opportunity_id": null,
+      "baseline": {
+        "basis": "run_rate",
+        "formula": "Original − New",
+        "amount": 0,
+        "source_ref": "2025 AP register · Capex Trucks/Trailers",
+        "validated_by": null,
+        "validated_at": null
+      },
+      "benefit_lines": [
+        {
+          "pnl_line": "cogs",
+          "recurrence": "recurring",
+          "annual_amount": 180000
+        }
+      ],
+      "actuals": [],
+      "risks": [],
+      "validations": []
+    },
+    {
+      "id": "i-p2",
+      "title": "Health plan network re-sourcing — Benefits & Insurance",
+      "description": "Negotiation win-room initiative proposed for Health Insurance (Benefits & Insurance). Awaiting line manager + FP&A approval before entering the pipeline.",
+      "pillar": "savings",
+      "benefit_type": "reduction",
+      "approach": "Negotiation win-room",
+      "stage": "proposed",
+      "confidence": 0,
+      "group_id": "g-benefits",
+      "department": "Procurement",
+      "owner_id": "u-chen",
+      "contributions": [
+        {
+          "user_id": "u-chen",
+          "credit_pct": 100
+        }
+      ],
+      "request": {
+        "kind": "intake",
+        "to_stage": "idea",
+        "need": [
+          "line_manager",
+          "fpna"
+        ],
+        "approvals": [],
+        "requested_by": "u-chen",
+        "requested_at": "2026-06-24"
+      },
+      "spend_category_id": "c-22",
+      "vendor": null,
+      "gross_annual_value": 420000,
+      "negotiated_value": null,
+      "effort_score": 4,
+      "realization_factor": 1,
+      "start_date": "2026-06-24",
+      "target_close": "2027-05-30",
+      "kr_link": "KR15",
+      "status_rag": "green",
+      "opportunity_id": null,
+      "baseline": {
+        "basis": "run_rate",
+        "formula": "Original − New",
+        "amount": 0,
+        "source_ref": "2025 AP register · Health Insurance",
+        "validated_by": null,
+        "validated_at": null
+      },
+      "benefit_lines": [
+        {
+          "pnl_line": "opex",
+          "recurrence": "recurring",
+          "annual_amount": 420000
+        }
+      ],
+      "actuals": [],
+      "risks": [],
+      "validations": []
     }
   ],
   "badges": [
