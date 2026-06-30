@@ -48,19 +48,28 @@ export function confidence(stage) {
   return STAGE_CONFIDENCE[stage] ?? 0
 }
 
-// Build fast lookups onto the raw db (idempotent).
+// Fast lookups, memoized in a WeakMap keyed by the db object — NOT as an own
+// property on db. A WeakMap means the cache never rides along through a
+// JSON.parse(JSON.stringify(db)) clone (the write reducers) or localStorage, so
+// a cloned/mutated db is a fresh object that gets a fresh index. Without this a
+// stale cfgByGroup would survive setSavingsPct and re-derive opportunity bands
+// from the OLD percentages.
+const IDX = new WeakMap()
 export function index(db) {
-  if (db._idx) return db
-  const peopleById = Object.fromEntries(db.people.map((p) => [p.id, p]))
-  const categoriesById = Object.fromEntries(db.spend_categories.map((c) => [c.id, c]))
-  const groupsById = Object.fromEntries(db.sourcing_groups.map((g) => [g.id, g]))
-  const cfgByGroup = Object.fromEntries(db.savings_pct_config.map((c) => [c.group_id, c]))
-  db._idx = { peopleById, categoriesById, groupsById, cfgByGroup }
+  if (!IDX.has(db)) {
+    IDX.set(db, {
+      peopleById: Object.fromEntries(db.people.map((p) => [p.id, p])),
+      categoriesById: Object.fromEntries(db.spend_categories.map((c) => [c.id, c])),
+      groupsById: Object.fromEntries(db.sourcing_groups.map((g) => [g.id, g])),
+      cfgByGroup: Object.fromEntries(db.savings_pct_config.map((c) => [c.group_id, c])),
+    })
+  }
   return db
 }
-export const personName = (db, id) => index(db)._idx.peopleById[id]?.name || '—'
-export const groupName = (db, id) => index(db)._idx.groupsById[id]?.name || '—'
-export const categoryName = (db, id) => index(db)._idx.categoriesById[id]?.name || '—'
+const idx = (db) => { index(db); return IDX.get(db) }
+export const personName = (db, id) => idx(db).peopleById[id]?.name || '—'
+export const groupName = (db, id) => idx(db).groupsById[id]?.name || '—'
+export const categoryName = (db, id) => idx(db).categoriesById[id]?.name || '—'
 
 // ---- fiscal frame ----------------------------------------------------------
 export function frame(db) {
@@ -304,10 +313,10 @@ export function departmentRollup(db) {
 // which were computed as group_spend × savings_pct (config table). We re-derive
 // here so the UI can show the live config % and re-size if config changes.
 export function sizedOpportunities(db) {
-  index(db)
+  const ix = idx(db)
   return db.opportunities.map((o) => {
-    const g = db._idx.groupsById[o.group_id]
-    const cfg = db._idx.cfgByGroup[o.group_id]
+    const g = ix.groupsById[o.group_id]
+    const cfg = ix.cfgByGroup[o.group_id]
     const low = g && cfg ? Math.round(g.spend * cfg.conservative_pct) : o.est_low
     const high = g && cfg ? Math.round(g.spend * cfg.stretch_pct) : o.est_high
     return {

@@ -4,7 +4,13 @@
 // Every reducer appends to the append-only audit_log.
 import { STAGES, STAGE_CONFIDENCE, gateCheck } from './engine.js'
 
-const clone = (o) => JSON.parse(JSON.stringify(o))
+// Drop any memoized engine cache before cloning (defensive — the engine now
+// keys its index off a WeakMap, but never persist a vestigial _idx).
+const clone = (o) => { const { _idx, ...rest } = o; return JSON.parse(JSON.stringify(rest)) }
+// Steering authority (mirrors capsFor in App.jsx). Kept here so the gate is
+// enforced in the reducer itself — the single source of truth for both the
+// optimistic local path AND the server /api/action path.
+const canSteer = (actor) => !!actor && (actor.role === 'admin' || actor.role === 'leader')
 const now = () => new Date().toISOString()
 const today = () => new Date().toISOString().slice(0, 10)
 const uid = (p) => `${p}-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4).toString(36)}`
@@ -60,6 +66,12 @@ export function advanceStage(db, id, actorId) {
   if (!i) return { db, error: 'not found' }
   const g = gateCheck(i)
   if (!g.ok) return { db, error: g.reasons.join(' ') }
+  // Materiality gate: entering Launch at ≥ $100K gross requires Steering
+  // approval. Enforced HERE (not only in the UI) so a direct POST /api/action
+  // can't bypass it.
+  if (g.requiresSteering && !canSteer(next.people.find((p) => p.id === actorId))) {
+    return { db, error: 'Steering approval (Function leader / EVRO Lead) is required to enter Launch for initiatives ≥ $100K.' }
+  }
   i.stage = g.next
   i.confidence = STAGE_CONFIDENCE[g.next]
   i.validations.unshift({ type: 'gate', decision: 'approved', actor_id: actorId, decided_at: today(), note: `Advanced to ${g.next}${g.requiresSteering ? ' (Steering approved — ≥ $100K)' : ''}.` })
