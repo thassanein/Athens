@@ -2,15 +2,11 @@
 // optimistic local writes (demo mode persists to localStorage) and mirrored by
 // the Express server for the Postgres path, so both produce identical state.
 // Every reducer appends to the append-only audit_log.
-import { STAGES, STAGE_CONFIDENCE, gateCheck } from './engine.js'
+import { STAGES, STAGE_CONFIDENCE, nextStage, requiredRoles, approvalState, canApproveRoles, hasUnmitigatedHigh, ROLE_APPROVE_LABEL } from './engine.js'
 
 // Drop any memoized engine cache before cloning (defensive — the engine now
 // keys its index off a WeakMap, but never persist a vestigial _idx).
 const clone = (o) => { const { _idx, ...rest } = o; return JSON.parse(JSON.stringify(rest)) }
-// Steering authority (mirrors capsFor in App.jsx). Kept here so the gate is
-// enforced in the reducer itself — the single source of truth for both the
-// optimistic local path AND the server /api/action path.
-const canSteer = (actor) => !!actor && (actor.role === 'admin' || actor.role === 'leader')
 const now = () => new Date().toISOString()
 const today = () => new Date().toISOString().slice(0, 10)
 const uid = (p) => `${p}-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4).toString(36)}`
@@ -19,7 +15,9 @@ function log(db, actor_id, action, entity, detail) {
   db.audit_log.unshift({ id: uid('al'), ts: now(), actor_id, action, entity, detail })
 }
 
-// ---- create an initiative (enters as Idea, 25%) ----------------------------
+// ---- create an initiative (enters as Proposed, awaiting approval) ----------
+// A new project does NOT enter the pipeline until a line manager AND FP&A
+// approve it (its financials, timing, phase, cost category, savings/avoidance).
 export function createInitiative(db, draft, actorId) {
   const next = clone(db)
   const id = uid('i')
@@ -31,8 +29,8 @@ export function createInitiative(db, draft, actorId) {
     pillar: draft.pillar || 'savings',
     benefit_type: draft.benefit_type || (draft.pillar === 'avoidance' ? 'avoidance' : 'savings'),
     approach: draft.approach || '',
-    stage: 'idea',
-    confidence: STAGE_CONFIDENCE.idea,
+    stage: 'proposed',
+    confidence: 0,
     group_id: cat?.group_id || draft.group_id || null,
     department: draft.department || '—',
     owner_id: draft.owner_id,
@@ -53,29 +51,67 @@ export function createInitiative(db, draft, actorId) {
     actuals: [],
     risks: [],
     validations: [],
+    request: { kind: 'intake', to_stage: 'idea', need: ['line_manager', 'fpna'], approvals: [], requested_by: actorId, requested_at: now() },
   }
   next.initiatives.unshift(init)
-  log(next, actorId, 'create', id, `Initiative "${init.title}" submitted as Idea.`)
+  log(next, actorId, 'create', id, `Project "${init.title}" proposed — awaiting line manager + FP&A approval.`)
   return { db: next, id }
 }
 
-// ---- advance a gate (validation-gated, $100K Steering threshold) -----------
-export function advanceStage(db, id, actorId) {
+// ---- commit an approved request (intake → Idea, or phase change) -----------
+function commitRequest(next, i, actorId) {
+  const r = i.request
+  if (r.kind === 'intake') {
+    i.stage = 'idea'; i.confidence = STAGE_CONFIDENCE.idea
+    i.validations.unshift({ type: 'intake', decision: 'approved', actor_id: actorId, decided_at: today(), note: 'New project approved into the pipeline (line manager + FP&A).' })
+    log(next, actorId, 'approve', i.id, 'New project approved into pipeline.')
+  } else {
+    i.stage = r.to_stage; i.confidence = STAGE_CONFIDENCE[r.to_stage]
+    i.validations.unshift({ type: 'gate', decision: 'approved', actor_id: actorId, decided_at: today(), note: `Advanced to ${r.to_stage} (line manager + FP&A${r.need.includes('steering') ? ' + Steering' : ''}).` })
+    log(next, actorId, 'advance', i.id, `Advanced to ${r.to_stage}.`)
+  }
+  i.request = null
+}
+
+// ---- owner requests advancement to the next phase --------------------------
+export function requestGate(db, id, actorId) {
   const next = clone(db)
   const i = next.initiatives.find((x) => x.id === id)
   if (!i) return { db, error: 'not found' }
-  const g = gateCheck(i)
-  if (!g.ok) return { db, error: g.reasons.join(' ') }
-  // Materiality gate: entering Launch at ≥ $100K gross requires Steering
-  // approval. Enforced HERE (not only in the UI) so a direct POST /api/action
-  // can't bypass it.
-  if (g.requiresSteering && !canSteer(next.people.find((p) => p.id === actorId))) {
-    return { db, error: 'Steering approval (Function leader / EVRO Lead) is required to enter Launch for initiatives ≥ $100K.' }
-  }
-  i.stage = g.next
-  i.confidence = STAGE_CONFIDENCE[g.next]
-  i.validations.unshift({ type: 'gate', decision: 'approved', actor_id: actorId, decided_at: today(), note: `Advanced to ${g.next}${g.requiresSteering ? ' (Steering approved — ≥ $100K)' : ''}.` })
-  log(next, actorId, 'advance', id, `Advanced to ${g.next}.`)
+  if (i.request) return { db, error: 'An approval is already pending.' }
+  if (i.stage === 'proposed') return { db, error: 'Project is still awaiting intake approval.' }
+  const to = nextStage(i)
+  if (!to) return { db, error: 'No further gate.' }
+  if (to === 'launch' && hasUnmitigatedHigh(i)) return { db, error: 'High risks need a documented countermeasure before requesting Launch.' }
+  i.request = { kind: 'gate', to_stage: to, need: requiredRoles(i, to), approvals: [], requested_by: actorId, requested_at: now() }
+  log(next, actorId, 'request', id, `Advancement to ${to} requested (needs ${i.request.need.map((r) => ROLE_APPROVE_LABEL[r]).join(' + ')}).`)
+  return { db: next }
+}
+
+// ---- approve a pending request (fills every role the actor is entitled to) --
+export function approveRequest(db, id, actorId) {
+  const next = clone(db)
+  const i = next.initiatives.find((x) => x.id === id)
+  if (!i || !i.request) return { db, error: 'No pending request.' }
+  const actor = next.people.find((p) => p.id === actorId)
+  const roles = canApproveRoles(actor, i)
+  if (roles.length === 0) return { db, error: 'You are not entitled to approve this request.' }
+  for (const role of roles) i.request.approvals.push({ role, by: actorId, at: today() })
+  log(next, actorId, 'approve', id, `Approved as ${roles.map((r) => ROLE_APPROVE_LABEL[r]).join(', ')}.`)
+  if (approvalState(i).remaining.length === 0) commitRequest(next, i, actorId)
+  return { db: next }
+}
+
+// ---- return a pending request for rework -----------------------------------
+export function rejectRequest(db, id, actorId, note) {
+  const next = clone(db)
+  const i = next.initiatives.find((x) => x.id === id)
+  if (!i || !i.request) return { db, error: 'No pending request.' }
+  const actor = next.people.find((p) => p.id === actorId)
+  if (canApproveRoles(actor, i).length === 0) return { db, error: 'You are not entitled to act on this request.' }
+  i.validations.unshift({ type: i.request.kind, decision: 'returned', actor_id: actorId, decided_at: today(), note: note || 'Returned for rework.' })
+  i.request = null
+  log(next, actorId, 'reject', id, 'Request returned for rework.')
   return { db: next }
 }
 
@@ -173,6 +209,7 @@ export function setSavingsPct(db, groupId, { conservative, stretch }, actorId) {
 }
 
 export const MUTATIONS = {
-  createInitiative, advanceStage, validateBaseline, validateActual, addActual, addRisk, claimOpportunity, setSavingsPct,
+  createInitiative, requestGate, approveRequest, rejectRequest,
+  validateBaseline, validateActual, addActual, addRisk, claimOpportunity, setSavingsPct,
 }
 export { STAGES }

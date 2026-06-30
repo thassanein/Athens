@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import {
   rav, roi, realizedYTD, recurringRatio, forecastRemainderFY, pendingValue,
-  implementedRunRate, valueLeakage, gateCheck, STAGES, STAGE_LABEL, STAGE_CONFIDENCE,
+  implementedRunRate, valueLeakage, STAGES, GATE_STAGES, STAGE_LABEL, STAGE_CONFIDENCE,
   MATERIALITY, BENEFIT_LABEL, personName, categoryName, groupName, canSeeInitiative,
+  approvalState, canApproveRoles, canRequestAdvance, nextStage, ROLE_APPROVE_LABEL,
 } from '../lib/engine.js'
 import { money, pct, monthLabel, dateLabel } from '../lib/format.js'
 import { StagePip, PillarBadge, RagBadge, Avatar } from '../components/ui.jsx'
@@ -21,18 +22,18 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
     )
   }
 
-  const gate = gateCheck(i)
   const realized = realizedYTD(i, db)
   const leak = valueLeakage(i, db)
   const recur = recurringRatio(i)
   const fyMonths = db.meta.fyMonths
   const nowMonth = db.meta.now.slice(0, 7)
 
-  const advance = async () => {
-    if (gate.requiresSteering && !caps.steering) return flash('Steering approval required (≥ $100K). Switch to a Function leader / EVRO Lead persona.')
-    const res = await dispatch('advanceStage', i.id, user.id)
-    if (!res.error) flash(`Advanced to ${gate.next}.`)
-  }
+  const reqState = approvalState(i)
+  const myRoles = canApproveRoles(user, i)
+  const reqInfo = canRequestAdvance(user, i, caps)
+  const requestAdv = async () => { const r = await dispatch('requestGate', i.id, user.id); if (!r.error) flash('Advancement requested — awaiting approvals') }
+  const approve = async () => { const r = await dispatch('approveRequest', i.id, user.id); if (!r.error) flash('Approved') }
+  const reject = async () => { const r = await dispatch('rejectRequest', i.id, user.id, 'Returned for rework'); if (!r.error) flash('Returned for rework') }
 
   return (
     <>
@@ -44,7 +45,8 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
             <h2 style={{ fontSize: 19 }}>{i.title}</h2>
             <div className="chip-row" style={{ marginTop: 8 }}>
               <PillarBadge pillar={i.pillar} benefit={i.benefit_type} />
-              <StagePip stage={i.stage} />
+              {i.stage === 'proposed' ? <span className="badge b-amber">Proposed — awaiting approval</span> : <StagePip stage={i.stage} />}
+              {i.request && i.stage !== 'proposed' && <span className="badge b-amber">Advancement pending</span>}
               <RagBadge rag={i.status_rag} />
               {i.kr_link && <span className="badge b-grey">↳ {i.kr_link}</span>}
               {i.opportunity_id && <span className="badge b-red">From opportunity</span>}
@@ -107,13 +109,13 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
         </div>
       </div>
 
-      {/* stage gates */}
+      {/* stage gates + approval workflow */}
       <div className="card pad section-gap">
-        <div className="card-h"><h3>Stage-gate tracker</h3><span className="spacer" /><span className="tiny muted">Materiality threshold: {money(MATERIALITY)} gross → Steering approval to enter Launch</span></div>
+        <div className="card-h"><h3>Stage-gate tracker</h3><span className="spacer" /><span className="tiny muted">Every phase change needs line manager + FP&A · Launch ≥ {money(MATERIALITY)} also needs Steering</span></div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'stretch' }}>
-          {STAGES.slice(0, 4).map((s) => {
-            const idx = STAGES.indexOf(s); const cur = STAGES.indexOf(i.stage)
-            const state = idx < cur || i.stage === 'closed' ? 'done' : idx === cur ? 'current' : 'todo'
+          {GATE_STAGES.map((s) => {
+            const cur = STAGES.indexOf(i.stage)
+            const state = STAGES.indexOf(s) < cur || i.stage === 'closed' ? 'done' : STAGES.indexOf(s) === cur ? 'current' : 'todo'
             return (
               <div key={s} style={{ flex: '1 1 120px', minWidth: 120, padding: 11, borderRadius: 10, border: '1px solid var(--line)',
                 background: state === 'done' ? 'var(--tint-green)' : state === 'current' ? 'var(--tint-navy)' : '#fff' }}>
@@ -124,17 +126,36 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
             )
           })}
         </div>
-        <div className="section-gap" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-          {gate.next ? (
-            <>
-              <button className="btn primary" disabled={!caps.edit || !gate.ok} onClick={advance}>
-                Advance to {STAGE_LABEL[gate.next]} →
-              </button>
-              {gate.requiresSteering && <span className="badge b-amber">Steering approval (≥ {money(MATERIALITY)})</span>}
-              {!gate.ok && <span className="tiny" style={{ color: 'var(--red)' }}>{gate.reasons.join(' ')}</span>}
-              {gate.ok && caps.edit && <span className="tiny muted">Gate checklist satisfied.</span>}
-              {!caps.edit && <span className="tiny muted">Read-only persona — switch to an owner/leader to advance.</span>}
-            </>
+
+        <div className="section-gap">
+          {reqState ? (
+            <div className="card pad" style={{ background: 'var(--tint-amber)', borderColor: '#f0e2c0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <b>{reqState.kind === 'intake' ? 'New-project approval' : `Advancement to ${STAGE_LABEL[reqState.to_stage]}`}</b>
+                <span className="tiny muted">requested by {personName(db, i.request.requested_by)}</span>
+              </div>
+              <div className="chip-row" style={{ marginTop: 8 }}>
+                {reqState.need.map((role) => {
+                  const ap = reqState.approvals.find((a) => a.role === role)
+                  return <span key={role} className={`badge ${ap ? 'b-green' : 'b-grey'}`}>{ap ? '✓ ' : '○ '}{ROLE_APPROVE_LABEL[role]}{ap ? ` · ${personName(db, ap.by)}` : ' · pending'}</span>
+                })}
+              </div>
+              {myRoles.length > 0 ? (
+                <div className="btn-row section-gap">
+                  <button className="btn go sm" onClick={approve}>Approve as {myRoles.map((r) => ROLE_APPROVE_LABEL[r]).join(' + ')}</button>
+                  <button className="btn sm" onClick={reject}>Return for rework</button>
+                </div>
+              ) : (
+                <div className="tiny muted section-gap">Awaiting {reqState.remaining.map((r) => ROLE_APPROVE_LABEL[r]).join(' + ')}. You aren't an approver for this request.</div>
+              )}
+            </div>
+          ) : nextStage(i) ? (
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+              <button className="btn primary" disabled={!reqInfo.ok} onClick={requestAdv}>Request advancement to {STAGE_LABEL[nextStage(i)]} →</button>
+              {reqInfo.reason && <span className="tiny" style={{ color: 'var(--red)' }}>{reqInfo.reason}</span>}
+              {!caps.edit && <span className="tiny muted">Read-only persona — owners request advancement.</span>}
+              {caps.edit && reqInfo.ok && <span className="tiny muted">Sends to line manager + FP&A{nextStage(i) === 'launch' && i.gross_annual_value >= MATERIALITY ? ' + Steering' : ''} for sign-off.</span>}
+            </div>
           ) : <span className="muted">Initiative is at its final stage.</span>}
         </div>
       </div>
