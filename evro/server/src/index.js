@@ -30,9 +30,12 @@ if (process.env.CORS_ORIGIN) app.use(cors({ origin: process.env.CORS_ORIGIN.spli
 app.use(express.json({ limit: '8mb' }))
 
 // ---- health ----------------------------------------------------------------
+// Returns 200 even when the DB is unreachable (db:false), so the service still
+// passes its health check before DATABASE_URL is wired (shared-DB setup) — the
+// SPA then runs from its bundled snapshot until the database is connected.
 app.get('/api/health', async (_req, res) => {
   try { await pool.query('SELECT 1'); res.json({ ok: true, db: true, model: 'return-maximization' }) }
-  catch (err) { res.status(503).json({ ok: true, db: false, error: err.message }) }
+  catch (err) { res.json({ ok: true, db: false, model: 'return-maximization', detail: err.message }) }
 })
 
 // ---- whole portfolio (the SPA consumes this) -------------------------------
