@@ -12,9 +12,9 @@ import { pool } from '../src/db.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DATA_PATH = path.resolve(__dirname, '../../data/seed.json')
 
-const TABLES = ['krs', 'people', 'sourcing_groups', 'spend_categories', 'savings_pct_config', 'opportunities', 'initiatives', 'badges', 'points_ledger', 'audit_log']
+export const TABLES = ['krs', 'people', 'sourcing_groups', 'spend_categories', 'savings_pct_config', 'opportunities', 'initiatives', 'badges', 'points_ledger', 'audit_log']
 
-const DDL = `
+export const DDL = `
 CREATE TABLE IF NOT EXISTS app_meta (key TEXT PRIMARY KEY, value TEXT);
 CREATE TABLE IF NOT EXISTS krs               (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS people            (id TEXT PRIMARY KEY, data JSONB);

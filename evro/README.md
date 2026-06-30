@@ -68,6 +68,19 @@ PGHOST=/tmp PGPORT=5601 PGUSER=postgres PGDATABASE=evro PORT=4100 NODE_ENV=produ
 # open http://localhost:4100/  → live (postgres) mode end-to-end
 ```
 
+## Add the database to PostgreSQL
+
+Two paths (details in [DEPLOY.md](./DEPLOY.md)):
+- **Automatic** — `server/db/migrate.js` creates the tables and seeds them on
+  first boot (this is how Render provisions the DB).
+- **Manual / portable** — load the whole database into any PostgreSQL with one
+  command, no Node required:
+  ```bash
+  createdb evro && psql -d evro -f evro/server/db/seed.sql
+  ```
+  `schema.sql` (DDL) and `seed.sql` (DDL + data) are generated from the seed by
+  `npm run sql` and are safe to re-run (transactional `TRUNCATE` + `INSERT`).
+
 ## Regenerating the seed
 `data/seed.json` and `frontend/src/lib/seed-snapshot.js` are **generated** —
 edit `data/gen-seed.mjs` then:
