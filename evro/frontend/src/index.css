@@ -341,6 +341,46 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .bridge-val { font-size: 12.5px; text-align: right; }
 @media (max-width: 560px) { .bridge-row { grid-template-columns: 96px 1fr 84px; } }
 
+/* ---- mobile polish (phones / small tablets) ------------------------------ */
+/* Dense tables: momentum scroll + a right-edge shadow that signals more columns,
+   and a sticky first column so the row label stays put while numbers scroll. */
+.table-wrap {
+  background:
+    radial-gradient(farthest-side at 100% 50%, rgba(16, 24, 40, 0.12), rgba(16, 24, 40, 0)) 100% 0,
+    radial-gradient(farthest-side at 0 50%, rgba(16, 24, 40, 0.10), rgba(16, 24, 40, 0)) 0 0;
+  background-repeat: no-repeat;
+  background-size: 16px 100%, 14px 100%;
+  background-attachment: scroll, scroll;
+}
+
+@media (max-width: 640px) {
+  .content { padding: 12px; }
+  .topbar { padding: 0 12px; gap: 8px; }
+  .topbar .page-title { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+  .topbar .spacer { flex: 0; }
+  .topbar select { max-width: 134px; font-size: 12px; }
+  .cmdk .kbd { display: none; }
+  .card.pad { padding: 13px; }
+
+  /* tighter table cells + sticky, opaque first column */
+  table.tbl { font-size: 12.5px; }
+  table.tbl th { padding: 7px 8px; font-size: 10px; }
+  table.tbl td { padding: 7px 8px; }
+  table.tbl th:first-child, table.tbl td:first-child {
+    position: sticky; left: 0; z-index: 1; background: var(--card);
+    box-shadow: 1px 0 0 var(--line-2);
+  }
+  table.tbl tr.clickable:hover td:first-child { background: var(--line-2); }
+
+  /* workspace tabs stay legible and tappable */
+  .ws-tabs button { padding: 9px 6px; font-size: 12px; }
+  .ws-kpi { flex: 1 1 calc(50% - 5px); }
+
+  /* allocation cards: drop the secondary number, keep title + RAV + action */
+  .alloc-card { gap: 7px; padding: 8px 9px; }
+  .alloc-card .grip { display: none; }
+}
+
 @media print {
   .sidebar, .topbar, .no-print { display: none !important; }
   .content { max-width: none; padding: 0; }
