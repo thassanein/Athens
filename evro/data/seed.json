@@ -1820,6 +1820,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-8",
       "vendor": null,
       "gross_annual_value": 250000,
@@ -1898,6 +1899,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-25",
       "vendor": null,
       "gross_annual_value": 119000,
@@ -1985,6 +1987,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-14",
       "vendor": null,
       "gross_annual_value": 227000,
@@ -2056,6 +2059,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-21",
       "vendor": null,
       "gross_annual_value": 22000,
@@ -2126,6 +2130,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-1",
       "vendor": null,
       "gross_annual_value": 953000,
@@ -2209,6 +2214,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-4",
       "vendor": null,
       "gross_annual_value": 317000,
@@ -2300,6 +2306,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-29",
       "vendor": null,
       "gross_annual_value": 319000,
@@ -2382,6 +2389,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-3",
       "vendor": null,
       "gross_annual_value": 408000,
@@ -2460,6 +2468,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-3",
       "vendor": null,
       "gross_annual_value": 488000,
@@ -2551,6 +2560,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-19",
       "vendor": null,
       "gross_annual_value": 111000,
@@ -2629,6 +2639,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-2",
       "vendor": null,
       "gross_annual_value": 1127000,
@@ -2695,6 +2706,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-67",
       "vendor": null,
       "gross_annual_value": 301000,
@@ -2789,6 +2801,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-1",
       "vendor": null,
       "gross_annual_value": 859000,
@@ -2871,6 +2884,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-114",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -2950,6 +2964,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-25",
       "vendor": null,
       "gross_annual_value": 105000,
@@ -3024,6 +3039,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-23",
       "vendor": null,
       "gross_annual_value": 624000,
@@ -3098,6 +3114,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-28",
       "vendor": null,
       "gross_annual_value": 70000,
@@ -3172,6 +3189,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-49",
       "vendor": null,
       "gross_annual_value": 28000,
@@ -3246,6 +3264,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-26",
       "vendor": null,
       "gross_annual_value": 342000,
@@ -3336,6 +3355,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-18",
       "vendor": null,
       "gross_annual_value": 104000,
@@ -3410,6 +3430,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-116",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -3504,6 +3525,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-30",
       "vendor": null,
       "gross_annual_value": 865000,
@@ -3601,6 +3623,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-92",
       "vendor": null,
       "gross_annual_value": 101000,
@@ -3690,6 +3713,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-3",
       "vendor": null,
       "gross_annual_value": 446000,
@@ -3776,6 +3800,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-23",
       "vendor": null,
       "gross_annual_value": 433000,
@@ -3857,6 +3882,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-114",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -3959,6 +3985,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-10",
       "vendor": null,
       "gross_annual_value": 68000,
@@ -4044,6 +4071,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-65",
       "vendor": null,
       "gross_annual_value": 192000,
@@ -4138,6 +4166,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-77",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -4223,6 +4252,14 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-1",
+          "by": "u-rivera",
+          "at": "2026-06-14",
+          "text": "Baseline tied to the 2025 AP run-rate for Fleet Capital. Looks solid."
+        }
+      ],
       "spend_category_id": "c-3",
       "vendor": null,
       "gross_annual_value": 418000,
@@ -4432,6 +4469,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-2",
+          "by": "u-gomez",
+          "at": "2026-06-05",
+          "text": "Implementation on track — first months of actuals are landing close to plan."
+        },
+        {
+          "id": "cm-3",
+          "by": "u-gomez",
+          "at": "2026-06-09",
+          "text": "Baseline tied to the 2025 AP run-rate for Facilities. Looks solid."
+        }
+      ],
       "spend_category_id": "c-15",
       "vendor": null,
       "gross_annual_value": 113000,
@@ -4640,6 +4691,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-4",
+          "by": "u-okafor",
+          "at": "2026-06-20",
+          "text": "Baseline tied to the 2025 AP run-rate for Containers & Bins. Looks solid."
+        },
+        {
+          "id": "cm-5",
+          "by": "u-schwartz",
+          "at": "2026-06-07",
+          "text": "Watch the latest month vs forecast; flag if we slip two consecutive cycles."
+        }
+      ],
       "spend_category_id": "c-47",
       "vendor": null,
       "gross_annual_value": 115000,
@@ -4844,6 +4909,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-6",
+          "by": "u-schwartz",
+          "at": "2026-06-24",
+          "text": "Watch the latest month vs forecast; flag if we slip two consecutive cycles."
+        },
+        {
+          "id": "cm-7",
+          "by": "u-gomez",
+          "at": "2026-06-25",
+          "text": "Implementation on track — first months of actuals are landing close to plan."
+        }
+      ],
       "spend_category_id": "c-18",
       "vendor": null,
       "gross_annual_value": 76000,
@@ -5033,6 +5112,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-8",
+          "by": "u-rivera",
+          "at": "2026-06-10",
+          "text": "Implementation on track — first months of actuals are landing close to plan."
+        },
+        {
+          "id": "cm-9",
+          "by": "u-rivera",
+          "at": "2026-06-23",
+          "text": "Baseline tied to the 2025 AP run-rate for Fuel & CNG. Looks solid."
+        }
+      ],
       "spend_category_id": "c-64",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -5237,6 +5330,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-10",
+          "by": "u-rivera",
+          "at": "2026-06-20",
+          "text": "Baseline tied to the 2025 AP run-rate for Fleet Capital. Looks solid."
+        },
+        {
+          "id": "cm-11",
+          "by": "u-schwartz",
+          "at": "2026-06-05",
+          "text": "Watch the latest month vs forecast; flag if we slip two consecutive cycles."
+        }
+      ],
       "spend_category_id": "c-7",
       "vendor": null,
       "gross_annual_value": 118000,
@@ -5441,6 +5548,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-12",
+          "by": "u-schwartz",
+          "at": "2026-06-14",
+          "text": "Watch the latest month vs forecast; flag if we slip two consecutive cycles."
+        },
+        {
+          "id": "cm-13",
+          "by": "u-rivera",
+          "at": "2026-06-16",
+          "text": "Implementation on track — first months of actuals are landing close to plan."
+        }
+      ],
       "spend_category_id": "c-12",
       "vendor": null,
       "gross_annual_value": 20000,
@@ -5611,6 +5732,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-14",
+          "by": "u-gomez",
+          "at": "2026-06-09",
+          "text": "Implementation on track — first months of actuals are landing close to plan."
+        },
+        {
+          "id": "cm-15",
+          "by": "u-gomez",
+          "at": "2026-06-07",
+          "text": "Baseline tied to the 2025 AP run-rate for Facilities. Looks solid."
+        }
+      ],
       "spend_category_id": "c-14",
       "vendor": null,
       "gross_annual_value": 514000,
@@ -5801,6 +5936,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-16",
+          "by": "u-patel",
+          "at": "2026-06-05",
+          "text": "Baseline tied to the 2025 AP run-rate for Outside & Subcontract Labor. Looks solid."
+        },
+        {
+          "id": "cm-17",
+          "by": "u-schwartz",
+          "at": "2026-06-03",
+          "text": "Watch the latest month vs forecast; flag if we slip two consecutive cycles."
+        }
+      ],
       "spend_category_id": "c-65",
       "vendor": null,
       "gross_annual_value": 623000,
@@ -5999,6 +6148,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-18",
+          "by": "u-schwartz",
+          "at": "2026-06-08",
+          "text": "Watch the latest month vs forecast; flag if we slip two consecutive cycles."
+        },
+        {
+          "id": "cm-19",
+          "by": "u-okafor",
+          "at": "2026-06-26",
+          "text": "Implementation on track — first months of actuals are landing close to plan."
+        }
+      ],
       "spend_category_id": "c-43",
       "vendor": null,
       "gross_annual_value": 409000,
@@ -6170,6 +6333,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-20",
+          "by": "u-gomez",
+          "at": "2026-06-20",
+          "text": "Implementation on track — first months of actuals are landing close to plan."
+        },
+        {
+          "id": "cm-21",
+          "by": "u-gomez",
+          "at": "2026-06-18",
+          "text": "Baseline tied to the 2025 AP run-rate for Facilities. Looks solid."
+        }
+      ],
       "spend_category_id": "c-20",
       "vendor": null,
       "gross_annual_value": 48000,
@@ -6372,6 +6549,20 @@
         }
       ],
       "request": null,
+      "comments": [
+        {
+          "id": "cm-22",
+          "by": "u-patel",
+          "at": "2026-06-17",
+          "text": "Baseline tied to the 2025 AP run-rate for Disposal & Transportation Out. Looks solid."
+        },
+        {
+          "id": "cm-23",
+          "by": "u-schwartz",
+          "at": "2026-06-03",
+          "text": "Watch the latest month vs forecast; flag if we slip two consecutive cycles."
+        }
+      ],
       "spend_category_id": "c-29",
       "vendor": null,
       "gross_annual_value": 1581000,
@@ -6569,6 +6760,7 @@
         }
       ],
       "request": null,
+      "comments": [],
       "spend_category_id": "c-17",
       "vendor": null,
       "gross_annual_value": 182000,
@@ -6742,6 +6934,7 @@
         "requested_by": "u-rivera",
         "requested_at": "2026-06-26"
       },
+      "comments": [],
       "spend_category_id": "c-1",
       "vendor": null,
       "gross_annual_value": 180000,
@@ -6805,6 +6998,7 @@
         "requested_by": "u-chen",
         "requested_at": "2026-06-24"
       },
+      "comments": [],
       "spend_category_id": "c-22",
       "vendor": null,
       "gross_annual_value": 420000,

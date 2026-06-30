@@ -233,9 +233,20 @@ export function recoverLeakage(db, id, actorId) {
   return { db: next }
 }
 
+// ---- collaboration: post a comment on an initiative -----------------------
+export function addComment(db, id, text, actorId) {
+  const next = clone(db)
+  const i = next.initiatives.find((x) => x.id === id)
+  if (!i || !text?.trim()) return { db }
+  i.comments = i.comments || []
+  i.comments.unshift({ id: uid('cm'), by: actorId, at: today(), text: text.trim() })
+  log(next, actorId, 'comment', id, 'Comment added.')
+  return { db: next }
+}
+
 export const MUTATIONS = {
   createInitiative, requestGate, approveRequest, rejectRequest,
   validateBaseline, validateActual, addActual, addRisk, claimOpportunity, setSavingsPct,
-  claimMined, recoverLeakage,
+  claimMined, recoverLeakage, addComment,
 }
 export { STAGES }

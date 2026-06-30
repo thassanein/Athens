@@ -421,6 +421,7 @@ for (const stage of STAGE_PLAN) {
     owner_id: ownerId,
     contributions,
     request: null,
+    comments: [],
     spend_category_id: cat.id,
     vendor: null,
     gross_annual_value: gross,
@@ -452,7 +453,7 @@ function proposed(id, { title, ownerId, groupId, catId, pillar, benefitType, app
     pillar, benefit_type: benefitType, approach,
     stage: 'proposed', confidence: 0,
     group_id: groupId, department: people.find((p) => p.id === ownerId)?.fn, owner_id: ownerId,
-    contributions: [{ user_id: ownerId, credit_pct: 100 }], request: null,
+    contributions: [{ user_id: ownerId, credit_pct: 100 }], request: null, comments: [],
     spend_category_id: catId, vendor: null, gross_annual_value: gross, negotiated_value: null,
     implementation_cost: round(gross * 0.3), profile: 'ramp',
     effort_score: effort, realization_factor: 1,
@@ -599,6 +600,22 @@ for (const i of initiatives.filter((x) => ['launch', 'realization', 'sustainment
   })
 }
 for (const i of initiatives) if (!i.workstreams) i.workstreams = []
+
+// Seed collaboration comments on realizing initiatives (activity feed demo)
+let cmSeq = 0
+const CM = [
+  (i) => `Baseline tied to the 2025 AP run-rate for ${(i.title.split(' — ')[1] || 'this category')}. Looks solid.`,
+  () => `Implementation on track — first months of actuals are landing close to plan.`,
+  () => `Watch the latest month vs forecast; flag if we slip two consecutive cycles.`,
+]
+const CM_WHO = [null, null, 'u-schwartz']
+for (const i of initiatives.filter((x) => ['launch', 'realization', 'sustainment'].includes(x.stage)).slice(0, 14)) {
+  const n = 1 + (cmSeq % 2)
+  i.comments = Array.from({ length: n }, (_, k) => {
+    const idx = (cmSeq + k) % CM.length
+    return { id: `cm-${++cmSeq}`, by: CM_WHO[idx] || i.owner_id, at: isoDaysAgo(randInt(2, 30)), text: CM[idx](i) }
+  })
+}
 
 // Dependency graph — a DAG (edges only from earlier to later initiative index).
 const order = Object.fromEntries(initiatives.map((i, idx) => [i.id, idx]))

@@ -194,24 +194,66 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
       <Actuals i={i} db={db} caps={caps} user={user} dispatch={dispatch} flash={flash} fyMonths={fyMonths} nowMonth={nowMonth} />
       <Risks i={i} db={db} caps={caps} user={user} dispatch={dispatch} flash={flash} />
 
-      {/* validation history / audit */}
-      <div className="card pad section-gap">
-        <div className="card-h"><h3>Validation &amp; audit history</h3></div>
-        <div className="table-wrap">
-          <table className="tbl">
-            <thead><tr><th>When</th><th>Type</th><th>Decision</th><th>Actor</th><th>Note</th></tr></thead>
-            <tbody>
-              {i.validations.map((v, k) => (
-                <tr key={k}><td className="nowrap">{dateLabel(v.decided_at)}</td><td style={{ textTransform: 'capitalize' }}>{v.type}</td>
-                  <td><span className={`badge ${v.decision === 'approved' ? 'b-green' : v.decision === 'rejected' ? 'b-red' : 'b-amber'}`}>{v.decision}</span></td>
-                  <td>{personName(db, v.actor_id)}</td><td className="tiny">{v.note}</td></tr>
-              ))}
-              {i.validations.length === 0 && <tr><td colSpan="5" className="muted">No validation events yet.</td></tr>}
-            </tbody>
-          </table>
+      <Collaboration i={i} db={db} caps={caps} user={user} dispatch={dispatch} flash={flash} />
+    </>
+  )
+}
+
+// Collaboration workspace — discussion thread + decision log side by side.
+function Collaboration({ i, db, caps, user, dispatch, flash }) {
+  const [text, setText] = useState('')
+  const comments = i.comments || []
+  const add = async () => {
+    if (!text.trim()) return
+    await dispatch('addComment', i.id, text, user.id); setText(''); flash('Comment posted')
+  }
+  // Decision log: validation events + workflow approvals, newest first.
+  const log = []
+  for (const v of i.validations || []) log.push({ ts: v.decided_at, who: personName(db, v.actor_id), kind: v.type, decision: v.decision, note: v.note })
+  if (i.request) for (const a of i.request.approvals || []) log.push({ ts: a.at, who: personName(db, a.by), kind: 'approval', decision: ROLE_APPROVE_LABEL[a.role] || a.role, note: 'Signed off advancement.' })
+  log.sort((a, b) => String(b.ts).localeCompare(String(a.ts)))
+
+  return (
+    <div className="card pad section-gap">
+      <div className="card-h"><h3>Collaboration</h3><span className="spacer" /><span className="tiny muted">discussion &amp; decision log</span></div>
+      <div className="ws-grid">
+        <div>
+          <div className="label">Discussion</div>
+          {caps.edit && (
+            <div className="copilot-ask section-gap" style={{ marginTop: 6 }}>
+              <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} placeholder="Add a comment for the team…" />
+              <button className="btn primary sm" onClick={add}>Post</button>
+            </div>
+          )}
+          <div className="section-gap">
+            {comments.length === 0 ? <p className="muted">No comments yet. Start the conversation.</p> : comments.map((c) => (
+              <div key={c.id} className="comment" style={{ display: 'flex', gap: 10 }}>
+                <Avatar name={personName(db, c.by)} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}><b style={{ fontSize: 13 }}>{personName(db, c.by)}</b><span className="tiny muted">{dateLabel(c.at)}</span></div>
+                  <p style={{ margin: '2px 0 0', fontSize: 13.5 }}>{c.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="ws-side">
+          <div className="label">Decision log</div>
+          <div className="feed section-gap">
+            {log.length === 0 ? <p className="muted tiny">No decisions recorded yet.</p> : log.map((e, k) => (
+              <div key={k} className="feed-row" style={{ alignItems: 'flex-start' }}>
+                <span className="feed-dot" style={{ marginTop: 6, background: e.decision === 'rejected' ? 'var(--red)' : e.kind === 'approval' || e.decision === 'approved' ? 'var(--green)' : 'var(--navy)' }} />
+                <div style={{ flex: 1 }}>
+                  <div className="tiny"><b style={{ textTransform: 'capitalize' }}>{e.kind}</b> · <span style={{ textTransform: 'capitalize' }}>{e.decision}</span></div>
+                  <div className="tiny muted">{e.who} · {dateLabel(e.ts)}</div>
+                  {e.note && <div className="tiny" style={{ color: 'var(--grey)' }}>{e.note}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -1,7 +1,9 @@
-import { controlTower, decisionsRequired, portfolioRollup, valueMatrix, inflationExposure, ROLE_APPROVE_LABEL } from '../lib/engine.js'
-import { money, pct } from '../lib/format.js'
+import { useState } from 'react'
+import { controlTower, decisionsRequired, portfolioRollup, valueMatrix, inflationExposure, execSummary, whatChanged, sustainmentBook, ROLE_APPROVE_LABEL } from '../lib/engine.js'
+import { money, pct, dateLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { Scatter, HBars } from '../components/Charts.jsx'
+import { IconAI } from '../components/Icons.jsx'
 
 // "The dashboard IS the application." Decisions, not lists.
 export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flash }) {
@@ -10,6 +12,10 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
   const portfolios = portfolioRollup(db)
   const infl = inflationExposure(db)
   const matrix = valueMatrix(db)
+  const summary = execSummary(db)
+  const changes = whatChanged(db)
+  const sustain = sustainmentBook(db)
+  const [story, setStory] = useState(false)
   const RAGC = { red: 'var(--red)', amber: 'var(--amber)', green: 'var(--green)' }
   const points = matrix.map((m) => ({ id: m.id, label: m.title, x: m.risk, y: m.value, value: m.value, color: RAGC[m.rag] }))
 
@@ -23,6 +29,34 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
   return (
     <>
       <p className="page-intro">Executive decision cockpit — what needs a decision, ranked by value. One-click actions; drill anywhere without leaving the page.</p>
+
+      <div className="card pad section-gap" style={{ borderLeft: '3px solid var(--navy)' }}>
+        <div className="card-h">
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: 7 }}><span className="copilot-logo" style={{ width: 24, height: 24 }}><IconAI /></span> Executive briefing</h3>
+          <span className="spacer" />
+          <span className="badge b-grey">AI · rules-based</span>
+          <button className={`btn sm ${story ? 'go' : ''}`} onClick={() => setStory((s) => !s)}>{story ? 'Exit story' : 'Story mode'}</button>
+        </div>
+        <p style={{ fontSize: 15, fontWeight: 600, margin: '2px 0 8px' }}>{summary.headline}</p>
+        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7 }}>
+          {summary.bullets.map((b, i) => <li key={i}>{b}</li>)}
+        </ul>
+      </div>
+
+      {story && (
+        <div className="story-steps section-gap">
+          {[
+            { n: 1, t: 'Where we are', b: summary.headline },
+            ...summary.bullets.map((b, i) => ({ n: i + 2, t: ['The biggest return', 'What is at risk', 'The cost headwind', 'What we can fund'][i] || 'Then', b })),
+            { n: summary.bullets.length + 2, t: 'The decisions in front of you', b: decisions.length ? `${decisions.length} decisions are queued below — ${decisions.filter((d) => d.kind === 'approval').length} need your sign-off. Start at the top: value is ranked highest-first.` : 'Nothing needs a decision right now. The portfolio is clear.' },
+          ].map((s) => (
+            <div key={s.n} className="story-step">
+              <div className="story-num">{s.n}</div>
+              <div><b>{s.t}</b><p style={{ margin: '3px 0 0', fontSize: 13.5 }}>{s.b}</p></div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="tiles">
         <Tile tone="green" label="Value created (YTD)" value={money(ct.valueCreated)} sub="FP&A-validated" />
@@ -80,6 +114,49 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
           <div className="card-h"><h3>Inflation exposure by group</h3><span className="spacer" /><span className="badge b-navy">{money(infl.total)}</span></div>
           <HBars data={infl.byGroup.slice(0, 7).map((g) => ({ label: g.name, value: g.exposure, color: 'var(--navy)' }))} />
           <p className="tiny muted section-gap">Budget pressure that cost avoidance must offset (addressable spend × category inflation).</p>
+        </div>
+      </div>
+
+      <div className="grid cols-2 section-gap">
+        <div className="card pad">
+          <div className="card-h"><h3>What changed</h3><span className="spacer" /><span className="tiny muted">latest activity</span></div>
+          {changes.length === 0 ? <div className="muted">No recent activity.</div> : (
+            <div className="feed">
+              {changes.map((c, i) => (
+                <div key={i} className="feed-row">
+                  <span className="feed-dot" />
+                  <div style={{ flex: 1 }}>
+                    <span style={{ fontSize: 13 }}><b>{c.actor}</b> <span className="badge b-grey" style={{ textTransform: 'capitalize' }}>{c.action}</span> {c.detail}</span>
+                  </div>
+                  <span className="tiny muted">{dateLabel(c.ts)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="card pad">
+          <div className="card-h"><h3>Savings sustainment</h3><span className="spacer" /><span className={`badge ${sustain.avg >= 0.9 ? 'b-green' : sustain.avg >= 0.7 ? 'b-amber' : 'b-red'}`}>{pct(sustain.avg)} of plan</span></div>
+          <p className="tiny muted" style={{ marginTop: -4 }}>Realized-vs-expected for live, sustained and retired initiatives — does delivered value hold?</p>
+          {sustain.items.length === 0 ? <div className="muted">No realizing initiatives yet.</div> : (
+            <div className="table-wrap">
+              <table className="tbl">
+                <thead><tr><th>Initiative</th><th>Band</th><th className="num">Realized</th><th className="num">Expected</th><th className="num">vs plan</th></tr></thead>
+                <tbody>
+                  {sustain.items.slice(0, 7).map((s) => (
+                    <tr key={s.id} style={{ cursor: 'pointer' }} onClick={() => openDrawer(s.id)}>
+                      <td><button className="link" style={{ background: 'none', cursor: 'pointer', textAlign: 'left' }}>{s.title}</button></td>
+                      <td><span className={`badge ${s.band === 'strong' ? 'b-green' : s.band === 'watch' ? 'b-amber' : 'b-red'}`} style={{ textTransform: 'capitalize' }}>{s.band}</span></td>
+                      <td className="num mono">{money(s.realized)}</td>
+                      <td className="num mono muted">{money(s.expected)}</td>
+                      <td className="num mono" style={{ color: s.score >= 0.9 ? 'var(--green)' : s.score >= 0.7 ? 'var(--amber)' : 'var(--red)' }}>{pct(s.score)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          {sustain.eroding.length > 0 && <p className="tiny section-gap" style={{ color: 'var(--red)' }}>⚑ {sustain.eroding.length} initiative{sustain.eroding.length > 1 ? 's are' : ' is'} eroding (below 70% of expected) — open a recovery.</p>}
         </div>
       </div>
     </>

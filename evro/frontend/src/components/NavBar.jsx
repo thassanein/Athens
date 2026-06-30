@@ -1,7 +1,7 @@
 import {
   IconExec, IconPortfolio, IconForecast, IconOpportunity, IconSpend, IconLeaderboard,
   IconReport, IconLeaf, IconBook, IconPlus, IconTeam, IconFolder, IconCockpit, IconMap,
-  IconOptimize, IconScenarios, IconGraph, IconAI, IconHierarchy,
+  IconOptimize, IconScenarios, IconGraph, IconAI, IconHierarchy, IconBolt,
 } from './Icons.jsx'
 
 const ALL = ['exec', 'admin', 'fpna', 'leader', 'owner', 'procurement']
@@ -33,6 +33,7 @@ export const NAV = [
   ] },
   { group: 'Engage', items: [
     ['leaderboard', 'Leaderboard', IconLeaderboard, ALL],
+    ['recognition', 'Recognition', IconBolt, ALL],
     ['sustainability', 'Sustainability', IconLeaf, ALL],
   ] },
   { group: 'Reference', items: [

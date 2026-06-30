@@ -759,3 +759,108 @@ export function decisionsRequired(db, user) {
     out.push({ kind: 'risk', id: i.id, title: i.title, value: rav(i), detail: 'At-risk in realization — review countermeasure', action: 'open' })
   return out.sort((a, b) => b.value - a.value)
 }
+
+// ===========================================================================
+// Phase 2.5 — experience layer: AI copilot, decision narrative, recognition,
+// sustainment scoring. (AI is rules-based/deterministic — labeled in the UI.)
+// ===========================================================================
+const _m = (n) => (n == null ? '—' : (n < 0 ? '-' : '') + '$' + (Math.abs(n) >= 1e6 ? (Math.abs(n) / 1e6).toFixed(2) + 'M' : Math.round(Math.abs(n) / 1e3) + 'K'))
+
+// ---- AI-generated executive summary (decision narrative) -------------------
+export function execSummary(db) {
+  const ct = controlTower(db)
+  const dec = decisionsRequired(db, { role: 'admin' })
+  const top = rankInitiatives(db, 'return')[0]
+  const leak = leakageBreakdown(db)
+  return {
+    headline: `${_m(ct.valueCreated)} realized · ${_m(ct.raPipeline)} risk-adjusted pipeline · ${dec.length} decisions pending`,
+    bullets: [
+      top && `Largest return is "${top.title}" at ${_m(top.rav)} risk-adjusted value.`,
+      `${_m(ct.valueAtRisk)} of value is at risk, including ${_m(ct.leakage)} leaking versus plan${leak.items[0] ? ` (biggest: ${leak.items[0].title})` : ''}.`,
+      `Inflation exposure is ${_m(ct.inflationExposure)} — cost avoidance has to offset it.`,
+      `${_m(ct.optimizableValue)} of value is fundable within the ${_m(ct.capitalBudget)} capital budget.`,
+    ].filter(Boolean),
+  }
+}
+
+// ---- "What changed?" — recent activity from the audit log ------------------
+export function whatChanged(db, limit = 8) {
+  return (db.audit_log || []).slice(0, limit).map((e) => ({
+    ts: e.ts, actor: personName(db, e.actor_id), action: e.action, entity: e.entity, detail: e.detail,
+  }))
+}
+
+// ---- proactive copilot insight cards ---------------------------------------
+export function copilotInsights(db, user) {
+  const cards = []
+  const sum = execSummary(db)
+  cards.push({ kind: 'summary', title: 'Executive summary', body: sum.headline })
+  const mine = decisionsRequired(db, user).filter((d) => d.kind === 'approval')
+  if (mine.length) cards.push({ kind: 'approval', title: `${mine.length} approval${mine.length > 1 ? 's' : ''} await you`, body: `Top: "${mine[0].title}" (${_m(mine[0].value)}).`, target: mine[0].id })
+  const leak = leakageBreakdown(db)
+  if (leak.items[0]) cards.push({ kind: 'leakage', title: 'Largest value leakage', body: `"${leak.items[0].title}" — ${_m(leak.items[0].total)} vs plan. Open a recovery.`, target: leak.items[0].id })
+  const mined = mineOpportunities(db).filter((m) => !m.alreadyCovered)[0]
+  if (mined) cards.push({ kind: 'opportunity', title: 'Suggested opportunity', body: `${mined.group}: ${mined.lever}, est. ${_m(mined.estValue)} (${mined.signals.join(', ')}).` })
+  const eroding = db.initiatives.map((i) => ({ i, s: sustainmentScore(i, db) })).filter((x) => x.s && x.s.erosion)[0]
+  if (eroding) cards.push({ kind: 'sustainment', title: 'Savings erosion alert', body: `"${eroding.i.title}" is realizing below plan (${Math.round(eroding.s.score * 100)}% of expected).`, target: eroding.i.id })
+  return cards
+}
+
+// ---- Ask EVRO — rules-based question answering -----------------------------
+export function answerQuery(db, user, q) {
+  const t = (q || '').toLowerCase()
+  const has = (...k) => k.some((x) => t.includes(x))
+  if (has('summary', 'how are we', 'overview', 'headline')) { const s = execSummary(db); return { title: 'Executive summary', body: s.headline, bullets: s.bullets } }
+  if (has('forecast', 'scenario', 'landing')) { const sc = scenarioTotals(db), mc = monteCarlo(db); return { title: 'Forecast', body: `Committed ${_m(sc.committed)} · Expected ${_m(sc.expected)} (headline) · Upside ${_m(sc.upside)}. Monte-Carlo P10–P90: ${_m(mc.p10)}–${_m(mc.p90)}.` } }
+  if (has('leak', 'erosion')) { const l = leakageBreakdown(db); return { title: 'Value leakage', body: `${_m(l.total)} total — ${_m(l.timing)} timing, ${_m(l.contract)} implemented-vs-negotiated. ${l.items.length} initiatives leaking.`, bullets: l.items.slice(0, 4).map((x) => `${x.title} — ${_m(x.total)}`) } }
+  if (has('approv', 'sign off', 'pending')) { const d = decisionsRequired(db, user).filter((x) => x.kind === 'approval'); return { title: 'Approvals awaiting you', body: d.length ? `${d.length} pending.` : 'Nothing awaiting your sign-off.', bullets: d.slice(0, 5).map((x) => `${x.title} — ${_m(x.value)}`) } }
+  if (has('opportun', 'mine', 'mining', 'sourcing idea')) { const m = mineOpportunities(db); return { title: 'Opportunities', body: `${m.length} mined signals.`, bullets: m.slice(0, 5).map((x) => `${x.group}: ${x.lever} — ${_m(x.estValue)}`) } }
+  if (has('risk', 'at risk')) { const r = enterpriseRollup(db).topRisks; return { title: 'Top risks', body: `${r.length} open risks on the watch list.`, bullets: r.slice(0, 5).map((x) => `${x.title} — score ${x.score}`) } }
+  if (has('optimi', 'capital', 'budget', 'allocat')) { const o = optimize(db, db.meta.capitalBudget); return { title: 'Capital allocation', body: `Within ${_m(o.budget)}: fund ${o.count} initiatives for ${_m(o.value)} risk-adjusted value (${_m(o.spend)} deployed).` } }
+  if (has('champion', 'leader', 'who', 'top perform', 'recognition')) { const lb = leaderboard(db).total[0]; return { title: 'Top performer', body: lb ? `${lb.name} leads the organization board with ${_m(lb.totalFY)} total FY.` : 'No standings yet.' } }
+  return { title: 'Ask EVRO', body: 'Try: "summary", "forecast", "leakage", "approvals", "opportunities", "risks", "capital", or "who is the top champion?"' }
+}
+
+// ---- recognition / gamification --------------------------------------------
+export const POINT_LEVELS = [{ name: 'Platinum', min: 10000 }, { name: 'Gold', min: 5000 }, { name: 'Silver', min: 2000 }, { name: 'Bronze', min: 0 }]
+export const levelFor = (points) => POINT_LEVELS.find((l) => points >= l.min)?.name || 'Bronze'
+export function streakFor(db, userId) {
+  const fy = String(db.meta.fiscalYear)
+  const months = new Set()
+  for (const i of db.initiatives) {
+    if (!(i.contributions || []).some((c) => c.user_id === userId)) continue
+    for (const a of i.actuals || []) if (a.validated && a.period.startsWith(fy)) months.add(a.period.slice(0, 7))
+  }
+  const { nowMonth, fyMonths } = frame(db)
+  let streak = 0
+  for (let k = fyMonths.length - 1; k >= 0; k--) {
+    const mk = fyMonths[k].slice(0, 7)
+    if (mk > nowMonth) continue
+    if (months.has(mk)) streak++; else break
+  }
+  return streak
+}
+export function recognition(db) {
+  const lb = leaderboard(db)
+  const all = [...lb.org.total, ...lb.procurement.total]
+    .map((p) => ({ ...p, level: levelFor(p.points), streak: streakFor(db, p.id), millionClub: p.totalFY >= 1_000_000 }))
+    .sort((a, b) => b.points - a.points)
+  const byLevel = {}
+  for (const l of POINT_LEVELS) byLevel[l.name] = all.filter((p) => p.level === l.name).length
+  return { people: all, millionClub: all.filter((p) => p.millionClub), byLevel, org: lb.org, procurement: lb.procurement }
+}
+
+// ---- sustainment scoring + erosion (30/90/180/365 realization tracking) ----
+export function sustainmentScore(i, db) {
+  if (!['realization', 'sustainment', 'retired'].includes(i.stage)) return null
+  const expected = expectedToDate(i, db)
+  const realized = realizedYTD(i, db)
+  const score = expected ? Math.min(1.2, realized / expected) : 1
+  return { score, band: score >= 0.9 ? 'strong' : score >= 0.7 ? 'watch' : 'eroding', erosion: score < 0.7, expected, realized }
+}
+export function sustainmentBook(db) {
+  const items = db.initiatives.filter((i) => ['realization', 'sustainment', 'retired'].includes(i.stage))
+    .map((i) => ({ id: i.id, title: i.title, stage: i.stage, ...sustainmentScore(i, db) }))
+    .sort((a, b) => a.score - b.score)
+  return { items, eroding: items.filter((x) => x.erosion), avg: items.length ? items.reduce((a, x) => a + x.score, 0) / items.length : 1 }
+}

@@ -12,11 +12,14 @@ export default function CommandPalette({ open, onClose, screens, db, navigate, o
   useEffect(() => { if (open) { setQ(''); setSel(0); setTimeout(() => inputRef.current?.focus(), 30) } }, [open])
 
   const entries = useMemo(() => {
+    const allow = new Set(screens.map((s) => s.key))
     const screenEntries = screens.map((s) => ({ type: 'screen', key: s.key, label: s.label, hint: 'Go to screen' }))
-    const initEntries = db.initiatives
-      .filter((i) => i.stage !== 'proposed' || true)
-      .map((i) => ({ type: 'initiative', id: i.id, label: i.title, hint: `${i.stage} · ${money(rav(i))}` }))
-    return [...screenEntries, ...initEntries]
+    const initEntries = db.initiatives.map((i) => ({ type: 'initiative', id: i.id, label: i.title, hint: `${i.stage} · ${money(rav(i))}` }))
+    const peopleEntries = db.people.map((p) => ({ type: 'person', label: p.name, hint: p.fn, to: allow.has('recognition') ? 'recognition' : (allow.has('leaderboard') ? 'leaderboard' : null) }))
+    const oppEntries = allow.has('opportunities')
+      ? (db.opportunities || []).map((o) => ({ type: 'opportunity', label: o.title, hint: 'Opportunity', to: 'opportunities' }))
+      : []
+    return [...screenEntries, ...initEntries, ...peopleEntries, ...oppEntries]
   }, [screens, db])
 
   const results = useMemo(() => {

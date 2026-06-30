@@ -5,7 +5,8 @@ import { scopedView } from './lib/engine.js'
 import NavBar, { allowedKeys, navScreens } from './components/NavBar.jsx'
 import Drawer from './components/Drawer.jsx'
 import CommandPalette from './components/CommandPalette.jsx'
-import { IconMenu, IconSearch } from './components/Icons.jsx'
+import Copilot from './components/Copilot.jsx'
+import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
 
 import Cockpit from './pages/Cockpit.jsx'
 import Exec from './pages/Exec.jsx'
@@ -22,14 +23,15 @@ import Mining from './pages/Mining.jsx'
 import Opportunities from './pages/Opportunities.jsx'
 import Spend from './pages/Spend.jsx'
 import Leaderboard from './pages/Leaderboard.jsx'
+import Recognition from './pages/Recognition.jsx'
 import Reporting from './pages/Reporting.jsx'
 import Sustainability from './pages/Sustainability.jsx'
 import Methodology from './pages/Methodology.jsx'
 import Intake from './pages/Intake.jsx'
 import Initiative from './pages/Initiative.jsx'
 
-const PAGES = { cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, scenarios: Scenarios, optimize: Optimize, dependencies: Dependencies, valuemap: ValueMap, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
-const TITLES = { cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', scenarios: 'Forecast playground', optimize: 'Capital allocation', dependencies: 'Dependency network', valuemap: 'Value map', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
+const PAGES = { cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, scenarios: Scenarios, optimize: Optimize, dependencies: Dependencies, valuemap: ValueMap, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
+const TITLES = { cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', scenarios: 'Forecast playground', optimize: 'Capital allocation', dependencies: 'Dependency network', valuemap: 'Value map', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
 
 const HOME = { exec: 'cockpit', admin: 'cockpit', fpna: 'cockpit', leader: 'department', owner: 'mywork', procurement: 'mywork' }
 const ALWAYS_OK = ['initiative', 'intake']
@@ -54,6 +56,7 @@ export default function App() {
   const [selId, setSelId] = useState(null)
   const [drawerId, setDrawerId] = useState(null)
   const [palette, setPalette] = useState(false)
+  const [copilot, setCopilot] = useState(false)
   const [drawer, setDrawer] = useState(false)
   const [toast, setToast] = useState(null)
   const [userId, setUserId] = useState(null)
@@ -74,7 +77,7 @@ export default function App() {
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPalette((p) => !p) }
-      else if (e.key === 'Escape') { setPalette(false) }
+      else if (e.key === 'Escape') { setPalette(false); setCopilot(false) }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -127,6 +130,7 @@ export default function App() {
           <button className="hamburger" onClick={() => setDrawer((d) => !d)} aria-label="Menu"><IconMenu /></button>
           <div className="page-title">{TITLES[page]}</div>
           <div className="spacer" />
+          <button className="copilot-btn hide-sm" onClick={() => setCopilot(true)} title="Ask EVRO (AI copilot)"><IconAI /> Ask EVRO</button>
           <button className="cmdk" onClick={() => setPalette(true)} title="Command palette (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
           <PersonaSwitch db={db} userId={userId} setUserId={setUserId} />
           <DataBadge source={source} />
@@ -138,6 +142,7 @@ export default function App() {
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />
       <CommandPalette open={palette} onClose={() => setPalette(false)} screens={navScreens(user.role)} db={db} navigate={navigate} openDrawer={openDrawer} />
+      <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} />
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>
   )
