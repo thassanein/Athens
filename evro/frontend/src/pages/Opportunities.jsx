@@ -1,11 +1,20 @@
 import { useState } from 'react'
-import { sizedOpportunities, opportunityValue, groupName, personName } from '../lib/engine.js'
+import { sizedOpportunities, opportunityValue, groupName, personName, CAN_SEE_OPPORTUNITIES } from '../lib/engine.js'
 import { money, pct } from '../lib/format.js'
 import { Tile, PriorityBadge } from '../components/ui.jsx'
 
-export default function Opportunities({ db, caps, user, dispatch, navigate, flash }) {
+export default function Opportunities({ db, caps, user, dispatch, navigate, flash, home = 'exec' }) {
   const [filter, setFilter] = useState('all')
   const [showCfg, setShowCfg] = useState(false)
+  if (!CAN_SEE_OPPORTUNITIES.has(user.role)) {
+    return (
+      <div className="card pad" style={{ maxWidth: 520 }}>
+        <h3>Restricted</h3>
+        <p className="muted">The Opportunity board is available to executives, the EVRO lead and FP&amp;A. Switch persona to view advertised opportunities.</p>
+        <button className="btn primary" onClick={() => navigate(home)}>Back</button>
+      </div>
+    )
+  }
   const opps = sizedOpportunities(db).sort((a, b) => b.attractiveness - a.attractiveness)
   const val = opportunityValue(db)
   const list = filter === 'all' ? opps : opps.filter((o) => o.status === filter)

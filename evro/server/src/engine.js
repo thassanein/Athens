@@ -40,6 +40,40 @@ export const METHODOLOGY = {
   ],
 }
 
+// ---- persona scope / RBAC visibility --------------------------------------
+// What slice of the portfolio a role may SEE:
+//   enterprise — whole portfolio (exec, EVRO lead, FP&A)
+//   department — only their function's initiatives (function leader)
+//   own        — only initiatives they own or contribute to (initiative owner)
+export const ROLE_SCOPE = { exec: 'enterprise', admin: 'enterprise', fpna: 'enterprise', leader: 'department', owner: 'own' }
+// The Opportunity board is limited to these roles.
+export const CAN_SEE_OPPORTUNITIES = new Set(['exec', 'admin', 'fpna'])
+export const CAN_SEE_REPORTING = new Set(['exec', 'admin', 'fpna'])
+export const scopeOf = (user) => ROLE_SCOPE[user?.role] || 'own'
+
+export function ownsInitiative(user, i) {
+  return i.owner_id === user?.id || (i.contributions || []).some((c) => c.user_id === user?.id)
+}
+// A function leader may oversee several departments (user.oversees); falls back
+// to their own function.
+export const overseenDepts = (user) => user?.oversees || [user?.fn]
+export function canSeeInitiative(user, i) {
+  const s = scopeOf(user)
+  if (s === 'enterprise') return true
+  if (s === 'department') return !!i.department && overseenDepts(user).includes(i.department)
+  return ownsInitiative(user, i)
+}
+export function visibleInitiatives(db, user) {
+  if (scopeOf(user) === 'enterprise') return db.initiatives
+  return db.initiatives.filter((i) => canSeeInitiative(user, i))
+}
+// A db view filtered to the user's scope, reusable by the existing rollups.
+// Returns the same object for enterprise roles (keeps the engine's WeakMap memo).
+export function scopedView(db, user) {
+  if (scopeOf(user) === 'enterprise') return db
+  return { ...db, initiatives: visibleInitiatives(db, user) }
+}
+
 // ---- small helpers ---------------------------------------------------------
 const sum = (arr, f = (x) => x) => arr.reduce((a, x) => a + f(x), 0)
 const monthKey = (period) => (period || '').slice(0, 7)
