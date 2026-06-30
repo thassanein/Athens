@@ -126,7 +126,9 @@ negotiated_value, contributions[ {user_id, credit_pct} ], workstreams[],
 benefit_lines[ {pnl_line, recurrence, annual_amount} ], actuals[ {period, realized_amount, validated} ],
 risks[ {category, likelihood, impact, score, status, countermeasure} ],
 validations[ {type, decision, actor_id, decided_at, note} ],
-request (approval workflow state | null), comments[ {id, by, at, text} ]
+request (approval workflow state | null),
+comments[ {id, by, at, text, mentions[]} ], tasks[ {id, text, assignee_id, status, created_by, at} ],
+attachments[ {id, name, kind, url, by, at} ]
 ```
 
 ### 3.2 Lifecycle & confidence
@@ -214,8 +216,8 @@ Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows.
 | Screen | File | Roles | Purpose |
 |---|---|---|---|
 | Value Map | `ValueMap.jsx` | + leader | Value-vs-effort matrix. |
-| Scenarios | `Scenarios.jsx` | exec/admin/fpna | Forecast playground + Monte-Carlo + sensitivity. |
-| Capital Allocation | `Optimize.jsx` | exec/admin/fpna | Knapsack optimization within capital budget. |
+| Scenarios | `Scenarios.jsx` | exec/admin/fpna | Forecast simulator: four what-if levers (acceleration/execution/slip/new wins) → live value bridge + Monte-Carlo + sensitivity. |
+| Capital Allocation | `Optimize.jsx` | exec/admin/fpna | Interactive drag-and-drop allocation board on the knapsack optimizer: Funded/Available columns, live budget meter, auto-optimize. |
 | Dependencies | `Dependencies.jsx` | + leader | Dependency DAG + critical path. |
 | AI Mining | `Mining.jsx` | exec/admin/fpna | Rules-based opportunity mining from spend signals. |
 | Opportunities | `Opportunities.jsx` | exec/admin/fpna | Sized, claimable opportunity board (illustrative bands). |
@@ -271,7 +273,8 @@ labeled "AI · rules-based" in the UI. No language model is involved.
 
 Mutations (`mutations.js`): `createInitiative`, `requestGate`, `approveRequest`,
 `rejectRequest`, `validateBaseline`, `validateActual`, `addActual`, `addRisk`,
-`claimOpportunity`, `setSavingsPct`, `claimMined`, `recoverLeakage`, `addComment`.
+`claimOpportunity`, `setSavingsPct`, `claimMined`, `recoverLeakage`, `addComment`,
+`addTask`, `toggleTask`, `addAttachment`.
 
 ---
 
