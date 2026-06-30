@@ -562,10 +562,11 @@ export default function SiteRecord({
         left: '50%',
         transform: 'translateX(-50%)',
         width: '100%',
-        maxWidth: 'var(--app-w)',
+        maxWidth: 'var(--overlay-w)',
         background: 'var(--bg)',
         zIndex: 80,
         overflowY: 'auto',
+        boxShadow: '0 0 80px rgba(8, 14, 24, 0.55)',
       }}
     >
       {/* header */}

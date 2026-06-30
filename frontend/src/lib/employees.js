@@ -39,14 +39,16 @@ function hash(str) {
 }
 
 // Compliance owner assigned to a facility. An explicit OWNER_OVERRIDES entry
-// wins; otherwise it's deterministic (stable per name).
+// wins; otherwise it's deterministic (stable per name). Trainees are excluded
+// from auto-assignment — new hires observe first, they don't own findings yet.
+const OWNER_POOL = EMPLOYEES.filter((e) => !e.trainee)
 export function ownerFor(name) {
   const override = OWNER_OVERRIDES[name]
   if (override) {
     const emp = EMPLOYEES.find((e) => e.name === override)
     if (emp) return emp
   }
-  return EMPLOYEES[hash(`owner:${name}`) % EMPLOYEES.length]
+  return OWNER_POOL[hash(`owner:${name}`) % OWNER_POOL.length]
 }
 
 export function makeUser(emp, role) {

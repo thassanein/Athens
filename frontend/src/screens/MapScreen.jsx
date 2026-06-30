@@ -120,7 +120,7 @@ export default function MapScreen({ data, user, onOpenSite, onNav, onBack }) {
   const fmtInsp = (d) => (d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—')
 
   return (
-    <div className="screen">
+    <div className="screen home">
       <div className="header">
         <BackButton onClick={onBack} label="Switch profile" />
         <div className="row spread" style={{ alignItems: 'flex-start' }}>
@@ -143,7 +143,7 @@ export default function MapScreen({ data, user, onOpenSite, onNav, onBack }) {
         </div>
 
         {/* executive summary */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 14 }}>
+        <div className="kpi-grid">
           <Kpi value={roll.total} label="Facilities" active={tier === 'all' && type === 'all'} onClick={() => { setTier('all'); setType('all') }} />
           <Kpi value={roll.tiers.compliant} label="Compliant" accent="#7BE0A3" active={tier === 'compliant'} onClick={() => setTier(tier === 'compliant' ? 'all' : 'compliant')} />
           <Kpi value={roll.tiers.risk} label="At risk" accent="#F1C66B" active={tier === 'risk'} onClick={() => setTier(tier === 'risk' ? 'all' : 'risk')} />
@@ -154,8 +154,8 @@ export default function MapScreen({ data, user, onOpenSite, onNav, onBack }) {
       </div>
 
       {/* Regional map panel */}
-      <div className="pad">
-        <div className="card" style={{ height: 200, padding: 0, overflow: 'hidden', position: 'relative' }}>
+      <div className="pad home-hero">
+        <div className="card" style={{ aspectRatio: `${W} / ${H}`, padding: 0, overflow: 'hidden', position: 'relative' }}>
           <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
             <defs>
               <linearGradient id="terr" x1="0" y1="0" x2="0" y2="1">
@@ -235,9 +235,9 @@ export default function MapScreen({ data, user, onOpenSite, onNav, onBack }) {
             </button>
           )}
         </div>
-        <div className="stack">
+        <div className="facility-grid">
           {rows.length === 0 && (
-            <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No facilities match these filters.</div></div>
+            <div className="card" style={{ padding: 22, textAlign: 'center', gridColumn: '1 / -1' }}><div className="muted">No facilities match these filters.</div></div>
           )}
           {rows.map((r) => {
             const t = r.tier
