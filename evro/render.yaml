@@ -1,0 +1,33 @@
+# Render blueprint for the Athens EVRO PoC — provisions a managed PostgreSQL +
+# a single web service that builds the frontend and runs the Express server
+# (which serves the SPA and /api from one origin).
+#
+# Deploy: point a Render Blueprint at this file (move/symlink to repo root if you
+# deploy EVRO on its own, since Render reads render.yaml from the repo root).
+# The app runs in OPEN/PUBLIC mode (no sign-in) so other apps and AI tools can
+# reach the API and the machine-readable surfaces (/api/portfolio, /llms.txt).
+
+databases:
+  - name: evro-db
+    plan: free # 1 GB. NOTE: free Postgres expires after ~30 days.
+    databaseName: evro
+    user: evro
+
+services:
+  - type: web
+    name: athens-evro
+    runtime: node
+    plan: free # free web services sleep when idle (~30s cold start).
+    region: oregon
+    healthCheckPath: /api/health
+    # --include=dev forces Vite (a devDependency) to install even though
+    # NODE_ENV=production is set (npm would otherwise skip it).
+    buildCommand: cd evro/frontend && npm ci --include=dev && npm run build && cd ../server && npm ci --omit=dev
+    startCommand: cd evro/server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: evro-db
+          property: connectionString
