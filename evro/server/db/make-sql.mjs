@@ -28,9 +28,10 @@ const KEY = { savings_pct_config: 'group_id' } // others key on id
 function inserts() {
   const out = []
   const tableFor = {
-    krs: seed.krs, people: seed.people, sourcing_groups: seed.sourcing_groups,
-    spend_categories: seed.spend_categories, savings_pct_config: seed.savings_pct_config,
-    opportunities: seed.opportunities, initiatives: seed.initiatives, badges: seed.badges,
+    krs: seed.krs, people: seed.people, portfolios: seed.portfolios, programs: seed.programs,
+    sourcing_groups: seed.sourcing_groups, spend_categories: seed.spend_categories,
+    savings_pct_config: seed.savings_pct_config, opportunities: seed.opportunities,
+    initiatives: seed.initiatives, dependencies: seed.dependencies, badges: seed.badges,
     points_ledger: seed.points_ledger,
   }
   for (const t of TABLES) {

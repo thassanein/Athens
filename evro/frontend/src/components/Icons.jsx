@@ -18,5 +18,15 @@ export const IconFolder = () => <S><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2
 export const IconPlus = () => <S><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></S>
 export const IconMenu = () => <S><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></S>
 export const IconBack = () => <S><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></S>
+export const IconCockpit = () => <S><path d="M12 2a10 10 0 1 0 10 10" /><path d="M12 12l5-3" /><circle cx="12" cy="12" r="1.6" /><path d="M12 2v3M22 12h-3" /></S>
+export const IconMap = () => <S><circle cx="7" cy="17" r="2.4" /><circle cx="16" cy="8" r="2.4" /><circle cx="17" cy="17" r="1.6" /><circle cx="9" cy="8" r="1.6" /></S>
+export const IconOptimize = () => <S><line x1="4" y1="7" x2="20" y2="7" /><circle cx="9" cy="7" r="2" /><line x1="4" y1="17" x2="20" y2="17" /><circle cx="15" cy="17" r="2" /></S>
+export const IconScenarios = () => <S><polyline points="3 16 8 11 12 14 21 5" /><path d="M3 21h18" /><circle cx="8" cy="11" r="1" /></S>
+export const IconGraph = () => <S><circle cx="5" cy="6" r="2" /><circle cx="19" cy="6" r="2" /><circle cx="12" cy="18" r="2" /><line x1="7" y1="6" x2="17" y2="6" /><line x1="6" y1="8" x2="11" y2="16" /><line x1="18" y1="8" x2="13" y2="16" /></S>
+export const IconAI = () => <S><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z" /><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" /></S>
+export const IconHierarchy = () => <S><rect x="9" y="2" width="6" height="5" rx="1" /><rect x="3" y="17" width="6" height="5" rx="1" /><rect x="15" y="17" width="6" height="5" rx="1" /><path d="M12 7v5M6 17v-3h12v3" /></S>
+export const IconSearch = () => <S size={16}><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></S>
+export const IconClose = () => <S size={18}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></S>
+export const IconBolt = () => <S size={16}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></S>
 export const IconCheck = () => <S size={16}><polyline points="20 6 9 17 4 12" /></S>
 export const IconAlert = () => <S size={16}><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></S>

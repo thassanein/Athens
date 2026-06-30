@@ -215,7 +215,10 @@ const krs = [
 // ---------------------------------------------------------------------------
 // 5) Initiatives (~40) across both pillars and all four stages
 // ---------------------------------------------------------------------------
-const STAGE_CONFIDENCE = { proposed: 0, idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, closed: 1.0 }
+// Extended value lifecycle (PRD §5): idea → feasibility → capability → launch →
+// realization → sustainment → retired (+ proposed pre-pipeline).
+const STAGE_CONFIDENCE = { proposed: 0, idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, realization: 1.0, sustainment: 1.0, retired: 0 }
+const FORECAST_PROFILES = ['linear', 'ramp', 'scurve', 'seasonal']
 const RISK_CATS = ['execution', 'financial', 'data', 'adoption', 'external']
 // Levers carry a benefit_type (reduction | savings | avoidance) and the McKinsey
 // approach they embody. Cost Reduction = active elimination of existing cost
@@ -256,8 +259,10 @@ const STAGE_PLAN = [
   ...Array(11).fill('idea'),
   ...Array(10).fill('feasibility'),
   ...Array(8).fill('capability'),
-  ...Array(9).fill('launch'),
-  ...Array(2).fill('closed'),
+  ...Array(6).fill('launch'),
+  ...Array(4).fill('realization'),
+  ...Array(2).fill('sustainment'),
+  ...Array(1).fill('retired'),
 ]
 
 function isoDaysAgo(days) {
@@ -303,7 +308,8 @@ for (const stage of STAGE_PLAN) {
   // reviewer can trace gross value to its inputs:
   //   savings/reduction:  Original (run-rate) − New (lower) = benefit
   //   avoidance:          Projected (future) − Actual (post-intervention) = benefit
-  const validatedStage = ['feasibility', 'capability', 'launch', 'closed'].includes(stage)
+  const REALIZING = ['launch', 'realization', 'sustainment', 'retired'] // benefit being/already booked
+  const validatedStage = ['feasibility', 'capability', ...REALIZING].includes(stage)
   const isAvoid = pillar === 'avoidance'
   const reference = isAvoid ? round(slice + gross) : round(slice) // projected vs original
   const comparison = reference - gross // actual vs new lower
@@ -326,7 +332,7 @@ for (const stage of STAGE_PLAN) {
   // value; the engine compares it to the implemented run-rate from actuals.
   const contractBased = benefit_type !== 'savings'
   const negotiated_value =
-    contractBased && ['capability', 'launch', 'closed'].includes(stage) ? gross : null
+    contractBased && ['capability', ...REALIZING].includes(stage) ? gross : null
 
   // benefit lines (1–2) summing to gross
   const lineCount = rand() < 0.4 ? 2 : 1
@@ -360,20 +366,21 @@ for (const stage of STAGE_PLAN) {
     })
   }
 
-  // realization factor: reduce recognized value on at-risk Launch items (+flag)
-  const atRiskLaunch = stage === 'launch' && worst >= 15
-  const realization_factor = atRiskLaunch ? 0.85 : 1.0
+  // realization factor: reduce recognized value on at-risk realizing items (+flag)
+  const atRisk = ['launch', 'realization'].includes(stage) && worst >= 15
+  const realization_factor = atRisk ? 0.85 : 1.0
   const status_rag = worst >= 15 ? 'red' : worst >= 8 ? 'amber' : 'green'
 
-  // monthly actuals — only for launch & closed. Validated except the most recent
+  // monthly actuals — for realizing stages. Validated except the most recent
   // month for some (pending FP&A) to keep Realized ⊂ pipeline honest.
   const actuals = []
-  if (stage === 'launch' || stage === 'closed') {
+  if (REALIZING.includes(stage)) {
     const monthly = gross / 12
-    const realizedMonths = stage === 'closed' ? YTD_MONTHS : YTD_MONTHS.slice(randInt(0, 2)) // some ramped in later
+    const fullValidated = ['sustainment', 'retired'].includes(stage)
+    const realizedMonths = fullValidated ? YTD_MONTHS : YTD_MONTHS.slice(randInt(0, 2)) // some ramped in later
     realizedMonths.forEach((period, idx) => {
       const isLatest = idx === realizedMonths.length - 1
-      const validated = stage === 'closed' ? true : !(isLatest && initSeq % 3 === 0)
+      const validated = fullValidated ? true : !(isLatest && initSeq % 3 === 0)
       actuals.push({
         period,
         realized_amount: round(monthly * realization_factor * (0.85 + rand() * 0.3)),
@@ -418,6 +425,8 @@ for (const stage of STAGE_PLAN) {
     vendor: null,
     gross_annual_value: gross,
     negotiated_value,
+    implementation_cost: round(gross * (0.18 + rand() * 0.5)), // one-time investment (payback/NPV)
+    profile: FORECAST_PROFILES[initSeq % FORECAST_PROFILES.length], // time-phasing shape
     effort_score: effort,
     realization_factor,
     start_date,
@@ -445,6 +454,7 @@ function proposed(id, { title, ownerId, groupId, catId, pillar, benefitType, app
     group_id: groupId, department: people.find((p) => p.id === ownerId)?.fn, owner_id: ownerId,
     contributions: [{ user_id: ownerId, credit_pct: 100 }], request: null,
     spend_category_id: catId, vendor: null, gross_annual_value: gross, negotiated_value: null,
+    implementation_cost: round(gross * 0.3), profile: 'ramp',
     effort_score: effort, realization_factor: 1,
     start_date: isoDaysAgo(requestedAgo), target_close: isoMonthsAhead(randInt(8, 18)),
     kr_link: pick(krs).id, status_rag: 'green', opportunity_id: null,
@@ -551,6 +561,62 @@ const audit_log = [
 ]
 
 // ---------------------------------------------------------------------------
+// 10) v2 — enterprise hierarchy (Portfolio > Program > Initiative > Workstream
+//     > Task), dependency graph, and inflation exposure.
+// ---------------------------------------------------------------------------
+const portfolios = [
+  { id: 'pf-asset', name: 'Fleet & Asset Productivity', owner_id: 'u-brooks' },
+  { id: 'pf-network', name: 'Operations & Network', owner_id: 'u-brooks' },
+  { id: 'pf-sourcing', name: 'Indirect & Sourcing', owner_id: 'u-chen' },
+  { id: 'pf-corporate', name: 'People, Risk & Corporate', owner_id: 'u-schwartz' },
+]
+const programs = [
+  { id: 'pg-fleet', portfolio_id: 'pf-asset', name: 'Fleet & Maintenance', owner_id: 'u-rivera' },
+  { id: 'pg-ops', portfolio_id: 'pf-network', name: 'Post-Collection & Logistics', owner_id: 'u-patel' },
+  { id: 'pg-facilities', portfolio_id: 'pf-network', name: 'Facilities & Utilities', owner_id: 'u-gomez' },
+  { id: 'pg-sourcing', portfolio_id: 'pf-sourcing', name: 'Indirect Sourcing & IT', owner_id: 'u-anand' },
+  { id: 'pg-benefits', portfolio_id: 'pf-corporate', name: 'Benefits & Insurance', owner_id: 'u-chen' },
+]
+const GROUP_PROGRAM = {
+  'g-fleet': 'pg-fleet', 'g-maint': 'pg-fleet', 'g-rental': 'pg-fleet', 'g-fuel': 'pg-fleet',
+  'g-disposal': 'pg-ops', 'g-labor': 'pg-ops', 'g-containers': 'pg-ops',
+  'g-facilities': 'pg-facilities', 'g-utilities': 'pg-facilities',
+  'g-prof': 'pg-sourcing', 'g-supplies': 'pg-sourcing', 'g-indirect': 'pg-sourcing', 'g-itt': 'pg-sourcing',
+  'g-benefits': 'pg-benefits',
+}
+for (const i of initiatives) i.program_id = GROUP_PROGRAM[i.group_id] || 'pg-sourcing'
+
+// Workstreams + tasks on realizing initiatives (lightweight)
+const WS_TITLES = ['Data & baseline', 'Sourcing / negotiation', 'Implementation', 'Tracking & validation']
+let wsSeq = 0
+for (const i of initiatives.filter((x) => ['launch', 'realization', 'sustainment'].includes(x.stage))) {
+  const n = 2 + (wsSeq % 2)
+  i.workstreams = Array.from({ length: n }, (_, k) => {
+    const status = i.stage === 'sustainment' ? 'done' : k === 0 ? 'done' : k === 1 ? 'in_progress' : 'planned'
+    const title = WS_TITLES[k % WS_TITLES.length]
+    return { id: `ws-${++wsSeq}`, title, status, owner_id: i.owner_id,
+      tasks: Array.from({ length: 2 + (k % 2) }, (_, t) => ({ id: `tk-${wsSeq}-${t}`, title: `${title} — task ${t + 1}`, status })) }
+  })
+}
+for (const i of initiatives) if (!i.workstreams) i.workstreams = []
+
+// Dependency graph — a DAG (edges only from earlier to later initiative index).
+const order = Object.fromEntries(initiatives.map((i, idx) => [i.id, idx]))
+const dependencies = []
+let depSeq = 0
+const addDep = (a, b, type) => { if (order[a] != null && order[b] != null && order[a] < order[b]) dependencies.push({ id: `dep-${++depSeq}`, from: a, to: b, type }) }
+const byProg = {}
+for (const i of initiatives) (byProg[i.program_id] ||= []).push(i)
+for (const list of Object.values(byProg)) {
+  const sorted = list.filter((i) => i.stage !== 'proposed').sort((a, b) => order[a.id] - order[b.id])
+  for (let k = 0; k + 1 < sorted.length && k < 4; k++) addDep(sorted[k].id, sorted[k + 1].id, depSeq % 2 ? 'enables' : 'blocks')
+}
+const realizing = initiatives.filter((i) => ['launch', 'realization'].includes(i.stage)).sort((a, b) => order[a.id] - order[b.id])
+for (let k = 0; k < 5 && k + 1 < realizing.length; k++) addDep(realizing[k].id, realizing[realizing.length - 1 - k].id, 'enables')
+
+const INFLATION = { 'g-fuel': 0.07, 'g-benefits': 0.09, 'g-disposal': 0.05, 'g-labor': 0.045, 'g-maint': 0.04, 'g-facilities': 0.035, 'g-containers': 0.03, 'g-fleet': 0.03, 'g-utilities': 0.04, 'g-itt': 0.03, 'g-prof': 0.03, 'g-supplies': 0.025, 'g-rental': 0.03, 'g-indirect': 0.03 }
+
+// ---------------------------------------------------------------------------
 const seed = {
   meta: {
     now: NOW,
@@ -559,15 +625,21 @@ const seed = {
     addressableTotal,
     addressableHeadline: 437_400_000,
     nonAddressableTotal: NON_ADDRESSABLE.reduce((a, n) => a + n.spend, 0),
+    discountRate: 0.10, // NPV
+    npvHorizonYears: 3,
+    capitalBudget: 6_000_000, // illustrative implementation-capital envelope for the optimizer
     note: 'Demo data — seeded from the real 2025 Athens AP-register sourcing groups. People and dollar figures on initiatives are illustrative placeholders. Return-maximization model: no savings/avoidance targets anywhere.',
   },
   krs,
   people,
-  sourcing_groups: GROUPS.map((g) => ({ id: g.id, name: g.name, spend: g.spend, cats: g.cats })),
+  portfolios,
+  programs,
+  sourcing_groups: GROUPS.map((g) => ({ id: g.id, name: g.name, spend: g.spend, cats: g.cats, inflation: INFLATION[g.id] || 0.03 })),
   spend_categories,
   savings_pct_config,
   opportunities,
   initiatives,
+  dependencies,
   badges,
   points_ledger,
   audit_log,
