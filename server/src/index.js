@@ -79,7 +79,10 @@ function shapeAudit(r) {
 function shapePermitRow(r) {
   return {
     id: r.id, site: r.site, name: r.name, agency: r.agency, number: r.number,
-    status: r.status, expires: fmtDate(r.expires), cycle: r.cycle, area: r.area, doc: r.doc,
+    // doc is gated like redactDocLinks: the PATCH /api/permits/:id response goes
+    // straight from the DB without passing through loadPortfolio's redaction.
+    status: r.status, expires: fmtDate(r.expires), cycle: r.cycle, area: r.area,
+    doc: EXPOSE_DOC_LINKS ? r.doc : null,
   };
 }
 
