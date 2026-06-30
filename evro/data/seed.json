@@ -127,7 +127,12 @@
       "initials": "TB",
       "fn": "Operations",
       "role": "leader",
-      "title": "VP Operations"
+      "title": "VP Operations",
+      "oversees": [
+        "Fleet",
+        "MRF Ops",
+        "Logistics"
+      ]
     },
     {
       "id": "u-underwood",

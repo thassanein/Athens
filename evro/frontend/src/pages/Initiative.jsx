@@ -2,15 +2,24 @@ import { useState } from 'react'
 import {
   rav, roi, realizedYTD, recurringRatio, forecastRemainderFY, pendingValue,
   implementedRunRate, valueLeakage, gateCheck, STAGES, STAGE_LABEL, STAGE_CONFIDENCE,
-  MATERIALITY, BENEFIT_LABEL, personName, categoryName, groupName,
+  MATERIALITY, BENEFIT_LABEL, personName, categoryName, groupName, canSeeInitiative,
 } from '../lib/engine.js'
 import { money, pct, monthLabel, dateLabel } from '../lib/format.js'
 import { StagePip, PillarBadge, RagBadge, Avatar } from '../components/ui.jsx'
 import { IconBack } from '../components/Icons.jsx'
 
-export default function Initiative({ db, id, caps, user, dispatch, navigate, flash }) {
+export default function Initiative({ db, id, caps, user, dispatch, navigate, flash, home = 'exec' }) {
   const i = db.initiatives.find((x) => x.id === id)
-  if (!i) return <button className="btn" onClick={() => navigate('portfolio')}><IconBack /> Back to portfolio</button>
+  if (!i) return <button className="btn" onClick={() => navigate(home)}><IconBack /> Back</button>
+  if (!canSeeInitiative(user, i)) {
+    return (
+      <div className="card pad" style={{ maxWidth: 520 }}>
+        <h3>No access</h3>
+        <p className="muted">This initiative isn't in your scope. Initiative owners see only their own initiatives; function leaders see their department's.</p>
+        <button className="btn primary" onClick={() => navigate(home)}><IconBack /> Back</button>
+      </div>
+    )
+  }
 
   const gate = gateCheck(i)
   const realized = realizedYTD(i, db)
@@ -27,7 +36,7 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
 
   return (
     <>
-      <button className="btn no-print" onClick={() => navigate('portfolio')}><IconBack /> Portfolio</button>
+      <button className="btn no-print" onClick={() => navigate(home)}><IconBack /> Back</button>
 
       <div className="card pad section-gap">
         <div className="card-h" style={{ alignItems: 'flex-start', flexWrap: 'wrap', rowGap: 8 }}>

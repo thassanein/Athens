@@ -30,7 +30,7 @@ INSERT INTO evro_people (id, data) VALUES ('u-okafor', '{"id":"u-okafor","name":
 INSERT INTO evro_people (id, data) VALUES ('u-chen', '{"id":"u-chen","name":"Marcus Chen","initials":"MC","fn":"Supply Chain","role":"owner","title":"Procurement Lead"}'::jsonb);
 INSERT INTO evro_people (id, data) VALUES ('u-patel', '{"id":"u-patel","name":"Dev Patel","initials":"DP","fn":"Logistics","role":"owner","title":"Logistics & Route Manager"}'::jsonb);
 INSERT INTO evro_people (id, data) VALUES ('u-gomez', '{"id":"u-gomez","name":"Ana Gomez","initials":"AG","fn":"Facilities","role":"owner","title":"Facilities Manager"}'::jsonb);
-INSERT INTO evro_people (id, data) VALUES ('u-brooks', '{"id":"u-brooks","name":"Tasha Brooks","initials":"TB","fn":"Operations","role":"leader","title":"VP Operations"}'::jsonb);
+INSERT INTO evro_people (id, data) VALUES ('u-brooks', '{"id":"u-brooks","name":"Tasha Brooks","initials":"TB","fn":"Operations","role":"leader","title":"VP Operations","oversees":["Fleet","MRF Ops","Logistics"]}'::jsonb);
 INSERT INTO evro_people (id, data) VALUES ('u-underwood', '{"id":"u-underwood","name":"Henry Underwood","initials":"HU","fn":"IT","role":"owner","title":"IT Director"}'::jsonb);
 INSERT INTO evro_sourcing_groups (id, data) VALUES ('g-fleet', '{"id":"g-fleet","name":"Fleet Capital","spend":106600000,"cats":12}'::jsonb);
 INSERT INTO evro_sourcing_groups (id, data) VALUES ('g-facilities', '{"id":"g-facilities","name":"Facilities","spend":58600000,"cats":9}'::jsonb);
@@ -243,5 +243,5 @@ INSERT INTO evro_points_ledger (id, data) VALUES ('p-3', '{"id":"p-3","user_id":
 INSERT INTO evro_audit_log (id, data, ts) VALUES ('al-1', '{"id":"al-1","ts":"2026-03-02","actor_id":"u-schwartz","action":"seed","entity":"portfolio","detail":"Initial portfolio seeded from 2025 AP register."}'::jsonb, '2026-03-02');
 INSERT INTO evro_audit_log (id, data, ts) VALUES ('al-2', '{"id":"al-2","ts":"2026-05-16","actor_id":"u-nguyen","action":"validate","entity":"i-30","detail":"Baseline approved."}'::jsonb, '2026-05-16');
 INSERT INTO evro_meta (key, value) VALUES ('meta', '{"now":"2026-06-30","fiscalYear":2026,"fyMonths":["2026-01-01","2026-02-01","2026-03-01","2026-04-01","2026-05-01","2026-06-01","2026-07-01","2026-08-01","2026-09-01","2026-10-01","2026-11-01","2026-12-01"],"addressableTotal":435100000,"addressableHeadline":437400000,"nonAddressableTotal":256400000,"note":"Demo data — seeded from the real 2025 Athens AP-register sourcing groups. People and dollar figures on initiatives are illustrative placeholders. Return-maximization model: no savings/avoidance targets anywhere."}') ON CONFLICT (key) DO UPDATE SET value = excluded.value;
-INSERT INTO evro_meta (key, value) VALUES ('seed_hash', '138186f2f60d74d6b454a2822c091990960377f17b603278971b3bf5744cf42c') ON CONFLICT (key) DO UPDATE SET value = excluded.value;
+INSERT INTO evro_meta (key, value) VALUES ('seed_hash', 'aa4544286b9650f3dec21802f8900d1f9d945b3a9057a5c337aab6e13eb1b0ca') ON CONFLICT (key) DO UPDATE SET value = excluded.value;
 COMMIT;

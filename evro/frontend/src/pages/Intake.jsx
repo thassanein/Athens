@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { money } from '../lib/format.js'
 
-export default function Intake({ db, user, caps, dispatch, navigate, flash }) {
+export default function Intake({ db, user, caps, dispatch, navigate, flash, home = 'exec' }) {
   const owners = db.people.filter((p) => ['owner', 'leader', 'admin'].includes(p.role))
   const [f, setF] = useState({
     title: '', description: '', pillar: 'savings', benefit_type: 'reduction', approach: 'Cleansheet / should-cost',
@@ -84,7 +84,7 @@ export default function Intake({ db, user, caps, dispatch, navigate, flash }) {
 
         <div className="btn-row section-gap">
           <button className="btn primary" disabled={!valid} onClick={submit}>Submit to pipeline</button>
-          <button className="btn" onClick={() => navigate('portfolio')}>Cancel</button>
+          <button className="btn" onClick={() => navigate(home)}>Cancel</button>
         </div>
       </div>
     </>

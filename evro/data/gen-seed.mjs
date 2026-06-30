@@ -179,7 +179,7 @@ const people = [
   { id: 'u-chen', name: 'Marcus Chen', initials: 'MC', fn: 'Supply Chain', role: 'owner', title: 'Procurement Lead' },
   { id: 'u-patel', name: 'Dev Patel', initials: 'DP', fn: 'Logistics', role: 'owner', title: 'Logistics & Route Manager' },
   { id: 'u-gomez', name: 'Ana Gomez', initials: 'AG', fn: 'Facilities', role: 'owner', title: 'Facilities Manager' },
-  { id: 'u-brooks', name: 'Tasha Brooks', initials: 'TB', fn: 'Operations', role: 'leader', title: 'VP Operations' },
+  { id: 'u-brooks', name: 'Tasha Brooks', initials: 'TB', fn: 'Operations', role: 'leader', title: 'VP Operations', oversees: ['Fleet', 'MRF Ops', 'Logistics'] },
   { id: 'u-underwood', name: 'Henry Underwood', initials: 'HU', fn: 'IT', role: 'owner', title: 'IT Director' },
 ]
 const owners = people.filter((p) => p.role === 'owner')
