@@ -329,6 +329,18 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .alloc-meta { display: flex; align-items: center; gap: 10px; font-size: 12px; }
 @media (max-width: 720px) { .alloc-meta .muted { display: none; } }
 
+/* ---- scenario simulator -------------------------------------------------- */
+.sim-levers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; margin-top: 6px; }
+@media (max-width: 760px) { .sim-levers { grid-template-columns: 1fr; } }
+.sim-lever { min-width: 0; }
+.bridge { display: flex; flex-direction: column; gap: 7px; }
+.bridge-row { display: grid; grid-template-columns: 150px 1fr 110px; align-items: center; gap: 10px; }
+.bridge-lbl { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bridge-track { position: relative; height: 16px; background: var(--bg); border: 1px solid var(--line-2); border-radius: 6px; }
+.bridge-track > i { position: absolute; top: 0; bottom: 0; border-radius: 5px; min-width: 2px; }
+.bridge-val { font-size: 12.5px; text-align: right; }
+@media (max-width: 560px) { .bridge-row { grid-template-columns: 96px 1fr 84px; } }
+
 @media print {
   .sidebar, .topbar, .no-print { display: none !important; }
   .content { max-width: none; padding: 0; }
