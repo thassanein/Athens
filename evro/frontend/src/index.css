@@ -319,6 +319,15 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
 /* accessibility: a clear keyboard focus ring (keyboard nav only) */
 :focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; border-radius: 5px; }
 
+/* ---- Enhancements: Executive Briefing 2.0 marquee blocks ----------------- */
+.brief-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 6px; }
+.brief-block { text-align: left; border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px; background: var(--panel-2);
+  transition: border-color 0.14s ease, transform 0.14s ease; }
+.brief-block:hover { border-color: var(--navy); transform: translateY(-1px); }
+.brief-block-val { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; margin: 3px 0; }
+.brief-block-sub { line-height: 1.35; }
+@media (max-width: 460px) { .brief-blocks { grid-template-columns: 1fr; } }
+
 /* ---- persistent AI intelligence bar -------------------------------------- */
 .intel-bar { position: sticky; top: var(--topbar-h); z-index: 25; display: flex; align-items: center; gap: 10px;
   padding: 8px 18px; background: var(--panel-2); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }

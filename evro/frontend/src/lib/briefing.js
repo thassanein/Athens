@@ -3,12 +3,14 @@
 // briefing. Deterministic/rules-based; does NOT touch the engine or any logic.
 import {
   decisionsRequired, copilotInsights, whatChanged, execSummary, visibleInitiatives,
-  mineOpportunities, realizedYTD, rav,
+  mineOpportunities, realizedYTD, rav, enterpriseRollup, controlTower, rankInitiatives,
+  leakageBreakdown, scopedView,
 } from './engine.js'
 import { money } from './format.js'
 
 const ROLE_TITLE = { exec: 'Executive', admin: 'EVRO Lead', fpna: 'FP&A', leader: 'Function leader', owner: 'Initiative owner', procurement: 'Procurement' }
 const first = (name) => (name || '').split(' ')[0]
+const enterpriseRole = (user) => ['exec', 'admin', 'fpna'].includes(user.role)
 
 // One-line role-aware pulse for the always-on intelligence bar.
 export function intelSummary(db, user) {
@@ -76,6 +78,50 @@ export function morningBriefing(db, user) {
     headline,
     rec,
     sections,
+    decisions: dec.length,
+  }
+}
+
+// Executive Briefing 2.0 — an auto-generated, structured deterministic briefing:
+// value realized, largest driver, biggest risk, leakage (the marquee blocks),
+// plus actionable approvals, opportunities and recommended actions. Scopes to
+// the user exactly as the app does. View-only; the caller wires one-click actions.
+export function executiveBriefing(db, user) {
+  const enterprise = enterpriseRole(user)
+  const sdb = enterprise ? db : scopedView(db, user)
+  const roll = enterpriseRollup(sdb)
+  const ct = controlTower(sdb)
+  const dec = decisionsRequired(sdb, user)
+  const ranked = rankInitiatives(sdb, 'return')
+  const leak = leakageBreakdown(sdb)
+  const insights = copilotInsights(sdb, user).filter((c) => c.kind !== 'summary')
+  const opps = enterprise ? mineOpportunities(sdb).filter((o) => !o.alreadyCovered).slice(0, 3) : []
+  const approvals = dec.filter((d) => d.kind === 'approval')
+  const driver = ranked[0]
+  const topRisk = (roll.topRisks || [])[0]
+
+  const scopedRealized = enterprise ? roll.realizedYTD : visibleInitiatives(db, user).reduce((s, i) => s + realizedYTD(i, db), 0)
+
+  const blocks = [
+    { key: 'realized', icon: '💰', title: 'Value realized', tone: 'green', value: money(roll.realizedYTD),
+      sub: `${money(roll.raPipeline)} risk-adjusted pipeline · ${money(roll.forecastRemainderFY)} forecast for the rest of FY` },
+    { key: 'driver', icon: '🚀', title: 'Largest value driver', tone: 'green', value: driver ? money(driver.rav) : '—',
+      sub: driver ? `"${driver.title}"` : 'no active initiatives', id: driver?.id },
+    { key: 'risk', icon: '⚠️', title: 'Biggest risk', tone: 'red', value: money(ct.valueAtRisk),
+      sub: topRisk ? `"${topRisk.title}" — ${topRisk.countermeasure || 'no countermeasure yet'} (score ${topRisk.score})` : 'nothing at risk', id: topRisk?.initiative },
+    { key: 'leakage', icon: '💧', title: 'Value leakage', tone: 'amber', value: money(leak.total),
+      sub: leak.items[0] ? `biggest: "${leak.items[0].title}" at ${money(leak.items[0].total)} vs plan` : 'no leakage', id: leak.items[0]?.id },
+  ]
+
+  return {
+    greeting: `Good morning, ${first(user.name)}`,
+    roleTitle: ROLE_TITLE[user.role] || 'EVRO',
+    headline: enterprise ? execSummary(db).headline
+      : `${money(scopedRealized)} realized in your view · ${approvals.length} awaiting you · ${dec.length} decision${dec.length === 1 ? '' : 's'}`,
+    blocks,
+    approvals: approvals.slice(0, 6).map((d) => ({ id: d.id, title: d.title, value: d.value, detail: d.detail, roles: d.roles || [] })),
+    opportunities: opps.map((o) => ({ label: `${o.group} — ${o.lever}`, value: o.estValue, hint: o.signals.slice(0, 2).join(', ') })),
+    actions: insights.slice(0, 4).map((c) => ({ title: c.title, body: c.body, id: c.target, kind: c.kind })),
     decisions: dec.length,
   }
 }

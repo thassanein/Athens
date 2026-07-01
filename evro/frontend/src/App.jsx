@@ -165,7 +165,7 @@ export default function App() {
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />
       <CommandPalette open={palette} onClose={() => setPalette(false)} screens={navScreens(user.role)} db={db} navigate={navigate} openDrawer={openDrawer} />
       <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} navigate={navigate} />
-      <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} />
+      <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} dispatch={dispatch} flash={flash} navigate={navigate} />
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>
   )
