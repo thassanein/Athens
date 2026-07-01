@@ -89,12 +89,33 @@ function shapePermitRow(r) {
 // ---------------------------------------------------------------------------
 // Routes — /api is protected (writes are auditor-only). /api/health is public.
 // ---------------------------------------------------------------------------
-app.get('/api/health', async (_req, res) => {
+app.get('/api/health', async (req, res) => {
+  const body = { ok: true, auth: authMode };
+  // TEMP DIAGNOSTIC — GET /api/health?diag=passcode. Helps debug a rejected
+  // passcode WITHOUT ever revealing the codes: reports whether passcode mode is
+  // on, whether each code is set, its length, and whether it has stray
+  // surrounding whitespace or quotes (the usual causes of a mismatch). Computed
+  // independently of the DB so it works even if the DB is momentarily down.
+  // Remove this block once sign-in is confirmed working.
+  if (req.query.diag === 'passcode') {
+    const diag = (v) =>
+      v == null || v === ''
+        ? { set: false }
+        : { set: true, length: v.length, hasSurroundingWhitespace: v !== v.trim(), hasQuotes: /^["']|["']$/.test(v) };
+    body.passcodeMode = authMode === 'passcode';
+    body.auditor = diag(process.env.AUDITOR_PASSCODE);
+    body.viewer = diag(process.env.VIEWER_PASSCODE);
+    // Expected lengths for the Option A codes (Athens-Audit-4951 / Athens-View-3545).
+    body.expected = { auditorLength: 17, viewerLength: 16 };
+  }
   try {
     await pool.query('SELECT 1');
-    res.json({ ok: true, db: true, auth: authMode });
+    body.db = true;
+    res.json(body);
   } catch (err) {
-    res.status(503).json({ ok: true, db: false, error: err.message });
+    body.db = false;
+    body.error = err.message;
+    res.status(503).json(body);
   }
 });
 
