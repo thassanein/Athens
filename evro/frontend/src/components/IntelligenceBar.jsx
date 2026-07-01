@@ -31,7 +31,7 @@ export default function IntelligenceBar({ db, user, onBriefing, onCopilot, openD
       <span className="spacer" />
       {s.top && <button className="btn sm hide-sm" onClick={() => openDrawer(s.top.id)}>Top: {s.top.title.length > 26 ? s.top.title.slice(0, 25) + '…' : s.top.title}</button>}
       <button className="btn sm primary" onClick={onBriefing}>▸ My briefing</button>
-      <button className="btn sm hide-sm" onClick={onCopilot}>Ask EVRO</button>
+      <button className="btn sm hide-sm" onClick={onCopilot}>Companion</button>
       <button className="iconbtn" onClick={onToggle} aria-label="Collapse intelligence bar" title="Collapse"><IconClose /></button>
     </div>
   )

@@ -10,6 +10,7 @@ import IntelligenceBar from './components/IntelligenceBar.jsx'
 import Briefing from './components/Briefing.jsx'
 import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
 
+import Morning from './pages/Morning.jsx'
 import Cockpit from './pages/Cockpit.jsx'
 import Exec from './pages/Exec.jsx'
 import MyWork from './pages/MyWork.jsx'
@@ -35,10 +36,10 @@ import Methodology from './pages/Methodology.jsx'
 import Intake from './pages/Intake.jsx'
 import Initiative from './pages/Initiative.jsx'
 
-const PAGES = { cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
-const TITLES = { cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
+const PAGES = { morning: Morning, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
+const TITLES = { morning: 'Morning operating screen', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
 
-const HOME = { exec: 'cockpit', admin: 'cockpit', fpna: 'cockpit', leader: 'department', owner: 'mywork', procurement: 'mywork' }
+const HOME = { exec: 'morning', admin: 'morning', fpna: 'morning', leader: 'morning', owner: 'morning', procurement: 'morning' }
 const ALWAYS_OK = ['initiative', 'intake']
 const SCOPED_PAGES = new Set(['portfolio', 'forecast', 'sustainability', 'sustainment', 'realization'])
 const ROLE_LABEL = { admin: 'EVRO Lead', fpna: 'FP&A', leader: 'Function leader', owner: 'Initiative owner', procurement: 'Procurement', exec: 'Executive' }
@@ -129,7 +130,7 @@ export default function App() {
 
   const Page = PAGES[page] || Cockpit
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
-  const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, home: HOME[user.role] || 'cockpit' }
+  const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, onCompanion: () => setCopilot(true), home: HOME[user.role] || 'morning' }
 
   return (
     <div className="layout">
@@ -143,7 +144,7 @@ export default function App() {
           <button className="hamburger" onClick={() => setDrawer((d) => !d)} aria-label="Menu"><IconMenu /></button>
           <div className="page-title">{TITLES[page]}</div>
           <div className="spacer" />
-          <button className="copilot-btn hide-sm" onClick={() => setCopilot(true)} title="Ask EVRO (AI copilot)"><IconAI /> Ask EVRO</button>
+          <button className="copilot-btn hide-sm" onClick={() => setCopilot(true)} title="EVRO Companion (executive intelligence)"><IconAI /> Companion</button>
           <button className="cmdk" onClick={() => setPalette(true)} title="Command palette (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
           <button className="theme-btn" onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} aria-label="Toggle theme">{theme === 'dark' ? '☀' : '☾'}</button>
           <PersonaSwitch db={db} userId={userId} setUserId={setUserId} />
@@ -158,7 +159,7 @@ export default function App() {
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />
       <CommandPalette open={palette} onClose={() => setPalette(false)} screens={navScreens(user.role)} db={db} navigate={navigate} openDrawer={openDrawer} />
-      <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} />
+      <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} navigate={navigate} />
       <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} />
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>

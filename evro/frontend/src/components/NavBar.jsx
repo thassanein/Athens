@@ -11,6 +11,7 @@ const ENTL = ['exec', 'admin', 'fpna', 'leader'] // enterprise + leader
 // [key, label, Icon, roles]
 export const NAV = [
   { group: 'Decisions', items: [
+    ['morning', 'Today', IconBolt, ALL],
     ['cockpit', 'Decision Cockpit', IconCockpit, ENT],
     ['department', 'My Department', IconTeam, ['leader']],
     ['mywork', 'My Initiatives', IconFolder, ['owner', 'procurement']],

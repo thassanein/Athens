@@ -215,6 +215,27 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
   .movement-banner .btn { align-self: stretch; text-align: center; }
 }
 
+/* ---- Phase 4A: morning operating screen + executive companion ------------ */
+.morning-hero { display: flex; align-items: flex-start; gap: 16px; padding: 22px 24px; border-radius: 16px; color: #fff;
+  background: linear-gradient(120deg, #16202e 0%, #1a2c44 55%, #7a1420 145%); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.morning-greet { font-size: 26px; margin: 4px 0 14px; color: #fff; letter-spacing: -0.4px; }
+.morning-metric { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.morning-big { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -1px; color: #fff; line-height: 1; }
+.morning-actions { display: flex; flex-direction: column; gap: 8px; flex: none; }
+.op-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: none; cursor: pointer; width: 100%;
+  transition: background 0.14s ease, border-color 0.14s ease, transform 0.14s ease; }
+.op-row:hover { background: var(--line-2); border-color: var(--navy); transform: translateX(2px); }
+.tile.opp .t-accent { background: var(--opp); }
+.tile.opp .t-value { color: var(--opp); }
+.companion-brief { background: linear-gradient(120deg, var(--tint-navy), transparent); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.companion-metric { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin: 2px 0; }
+.companion-seg { margin-top: 10px; flex-wrap: wrap; }
+@media (max-width: 560px) {
+  .morning-hero { flex-direction: column; }
+  .morning-actions { flex-direction: row; width: 100%; }
+  .morning-actions .btn { flex: 1; }
+}
+
 /* ---- persistent AI intelligence bar -------------------------------------- */
 .intel-bar { position: sticky; top: var(--topbar-h); z-index: 25; display: flex; align-items: center; gap: 10px;
   padding: 8px 18px; background: var(--panel-2); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }
