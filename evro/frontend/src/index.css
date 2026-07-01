@@ -236,6 +236,47 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
   .morning-actions .btn { flex: 1; }
 }
 
+/* ---- Phase 4A: brand mark + landing experience --------------------------- */
+.brand .mark { display: flex; align-items: center; gap: 11px; }
+.landing { position: fixed; inset: 0; z-index: 100; overflow: auto; color: #fff;
+  background: radial-gradient(1100px 560px at 72% -12%, rgba(229, 36, 59, 0.20), transparent 60%), linear-gradient(160deg, #0E0E11, #14161c 60%, #0b0d11); }
+.landing-inner { max-width: 1080px; margin: 0 auto; padding: 32px 32px 40px; min-height: 100%; display: flex; flex-direction: column; }
+.landing-top { display: flex; align-items: center; justify-content: space-between; }
+.landing-hero { padding: 7vh 0 34px; }
+.landing-hero > * { animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.landing-hero > *:nth-child(2) { animation-delay: 0.06s; }
+.landing-hero > *:nth-child(3) { animation-delay: 0.12s; }
+.landing-hero > *:nth-child(4) { animation-delay: 0.18s; }
+.landing-hero > *:nth-child(5) { animation-delay: 0.24s; }
+.landing-eyebrow { font-size: 12px; letter-spacing: 2px; font-weight: 800; color: var(--red); }
+.landing-h1 { font-size: clamp(38px, 7vw, 72px); line-height: 1.02; letter-spacing: -1.5px; margin: 14px 0 16px; color: #fff; }
+.landing-lede { font-size: 18px; color: #aeb9c7; max-width: 640px; line-height: 1.55; }
+.landing-vum { display: flex; align-items: center; gap: 18px; margin: 32px 0; padding: 20px 22px; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; background: rgba(255, 255, 255, 0.03); flex-wrap: wrap; }
+.landing-vum-big { font-size: clamp(40px, 7vw, 62px); font-weight: 800; letter-spacing: -1.5px; color: var(--green); line-height: 1; }
+.landing-vum-label { text-transform: uppercase; letter-spacing: 0.6px; font-size: 12px; font-weight: 800; color: #cfd8e3; }
+.landing-vum-sub { font-size: 13px; color: #8b97a8; margin-top: 3px; }
+.landing-cta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.btn.lg { padding: 13px 22px; font-size: 15px; border-radius: 12px; }
+.landing-stat { font-size: 13px; color: #aeb9c7; }
+.landing-stat b { color: #fff; }
+.landing-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 18px; }
+.landing-pillar { border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 18px; background: rgba(255, 255, 255, 0.02); }
+.landing-pill-bar { width: 34px; height: 4px; border-radius: 3px; margin-bottom: 12px; }
+.landing-pillar h3 { color: #fff; font-size: 17px; margin-bottom: 6px; }
+.landing-pillar p { font-size: 13px; color: #9aa7b6; line-height: 1.5; }
+.landing-journey { margin-top: 24px; padding: 18px 20px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; background: rgba(255, 255, 255, 0.02); }
+.landing-journey-head { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #aeb9c7; }
+.landing-journey-flow { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+.landing-stage { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #e7edf4; font-weight: 700; }
+.landing-stage-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.06); }
+.landing-stage-arrow { color: #55617a; margin: 0 6px; }
+.landing-foot { margin-top: auto; padding-top: 24px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12px; color: #6b7480; }
+@media (max-width: 720px) {
+  .landing-pillars { grid-template-columns: 1fr; }
+  .landing-hero { padding-top: 4vh; }
+  .landing-foot { flex-direction: column; gap: 4px; }
+}
+
 /* ---- persistent AI intelligence bar -------------------------------------- */
 .intel-bar { position: sticky; top: var(--topbar-h); z-index: 25; display: flex; align-items: center; gap: 10px;
   padding: 8px 18px; background: var(--panel-2); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }

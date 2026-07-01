@@ -8,6 +8,7 @@ import CommandPalette from './components/CommandPalette.jsx'
 import Copilot from './components/Copilot.jsx'
 import IntelligenceBar from './components/IntelligenceBar.jsx'
 import Briefing from './components/Briefing.jsx'
+import Landing from './components/Landing.jsx'
 import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
 
 import Morning from './pages/Morning.jsx'
@@ -69,6 +70,8 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [userId, setUserId] = useState(null)
   const [theme, setTheme] = useState(() => (typeof localStorage !== 'undefined' && localStorage.getItem('evro.theme')) || 'dark')
+  const [entered, setEntered] = useState(() => { try { return sessionStorage.getItem('evro.entered') === '1' } catch { return false } })
+  const enter = useCallback(() => { setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ } }, [])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -127,6 +130,7 @@ export default function App() {
   }, [user])
 
   if (!db || !user) return <div style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }} className="muted">Loading EVRO…</div>
+  if (!entered) return <Landing db={db} onEnter={enter} />
 
   const Page = PAGES[page] || Cockpit
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
@@ -135,7 +139,7 @@ export default function App() {
   return (
     <div className="layout">
       <aside className={`sidebar ${drawer ? 'open' : ''}`}>
-        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={ROLE_LABEL[user.role] || 'EVRO'} />
+        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={ROLE_LABEL[user.role] || 'EVRO'} onBrand={() => setEntered(false)} />
       </aside>
       <div className={`scrim ${drawer ? 'show' : ''}`} onClick={() => setDrawer(false)} />
 

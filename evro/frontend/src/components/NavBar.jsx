@@ -3,6 +3,7 @@ import {
   IconReport, IconLeaf, IconBook, IconPlus, IconTeam, IconFolder, IconCockpit, IconMap,
   IconOptimize, IconScenarios, IconGraph, IconAI, IconHierarchy, IconBolt,
 } from './Icons.jsx'
+import { BrandMark } from './Brand.jsx'
 
 const ALL = ['exec', 'admin', 'fpna', 'leader', 'owner', 'procurement']
 const ENT = ['exec', 'admin', 'fpna']           // enterprise
@@ -48,17 +49,17 @@ export const NAV = [
 export const allowedKeys = (role) => NAV.flatMap((s) => s.items).filter(([, , , roles]) => roles.includes(role)).map(([k]) => k)
 export const navScreens = (role) => NAV.flatMap((s) => s.items).filter(([, , , roles]) => roles.includes(role)).map(([key, label]) => ({ key, label }))
 
-export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel }) {
+export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel, onBrand }) {
   return (
     <>
       <div className="brand">
-        <div className="mark">
-          <div className="logo">EV</div>
+        <button className="mark" onClick={onBrand} title="EVRO landing" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+          <BrandMark size={38} />
           <div>
             <div className="name">Athens EVRO</div>
             <div className="sub">Value Realization OS</div>
           </div>
-        </div>
+        </button>
       </div>
       <nav className="nav">
         {showNew && <button className="new-btn" onClick={onNew}><IconPlus /> New initiative</button>}
