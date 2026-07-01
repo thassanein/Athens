@@ -58,7 +58,9 @@
       "initials": "CT",
       "fn": "Executive",
       "role": "exec",
-      "title": "CEO / CFO — Sponsor"
+      "title": "CEO / CFO — Sponsor",
+      "region": "Enterprise",
+      "yard": "Corporate HQ"
     },
     {
       "id": "u-nguyen",
@@ -66,7 +68,9 @@
       "initials": "RN",
       "fn": "FP&A",
       "role": "fpna",
-      "title": "FP&A Validation Lead"
+      "title": "FP&A Validation Lead",
+      "region": "Enterprise",
+      "yard": "Corporate HQ"
     },
     {
       "id": "u-schwartz",
@@ -74,7 +78,9 @@
       "initials": "LS",
       "fn": "OpEx",
       "role": "admin",
-      "title": "EVRO Lead — Operational Excellence"
+      "title": "EVRO Lead — Operational Excellence",
+      "region": "Enterprise",
+      "yard": "Corporate HQ"
     },
     {
       "id": "u-train",
@@ -82,7 +88,9 @@
       "initials": "KT",
       "fn": "OpEx",
       "role": "admin",
-      "title": "EVRO Analyst"
+      "title": "EVRO Analyst",
+      "region": "Enterprise",
+      "yard": "Corporate HQ"
     },
     {
       "id": "u-rivera",
@@ -90,7 +98,9 @@
       "initials": "JR",
       "fn": "Fleet",
       "role": "owner",
-      "title": "Fleet & Maintenance Lead"
+      "title": "Fleet & Maintenance Lead",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard"
     },
     {
       "id": "u-okafor",
@@ -98,7 +108,9 @@
       "initials": "SO",
       "fn": "MRF Ops",
       "role": "owner",
-      "title": "MRF Operations Manager"
+      "title": "MRF Operations Manager",
+      "region": "LA Metro",
+      "yard": "Vernon Transfer Yard"
     },
     {
       "id": "u-chen",
@@ -107,7 +119,9 @@
       "fn": "Procurement",
       "role": "procurement",
       "procurement": true,
-      "title": "Procurement Lead — Supply Chain"
+      "title": "Procurement Lead — Supply Chain",
+      "region": "Enterprise",
+      "yard": "Corporate HQ"
     },
     {
       "id": "u-anand",
@@ -116,7 +130,9 @@
       "fn": "Procurement",
       "role": "procurement",
       "procurement": true,
-      "title": "Senior Sourcing Manager"
+      "title": "Senior Sourcing Manager",
+      "region": "Enterprise",
+      "yard": "Corporate HQ"
     },
     {
       "id": "u-patel",
@@ -124,7 +140,9 @@
       "initials": "DP",
       "fn": "Logistics",
       "role": "owner",
-      "title": "Logistics & Route Manager"
+      "title": "Logistics & Route Manager",
+      "region": "Inland Empire",
+      "yard": "Fontana Ops Yard"
     },
     {
       "id": "u-gomez",
@@ -132,7 +150,9 @@
       "initials": "AG",
       "fn": "Facilities",
       "role": "owner",
-      "title": "Facilities Manager"
+      "title": "Facilities Manager",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard"
     },
     {
       "id": "u-brooks",
@@ -145,7 +165,9 @@
         "Fleet",
         "MRF Ops",
         "Logistics"
-      ]
+      ],
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard"
     },
     {
       "id": "u-underwood",
@@ -153,7 +175,9 @@
       "initials": "HU",
       "fn": "IT",
       "role": "owner",
-      "title": "IT Director"
+      "title": "IT Director",
+      "region": "Central Coast",
+      "yard": "Oxnard Yard"
     }
   ],
   "portfolios": [
@@ -1811,6 +1835,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -1888,6 +1915,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-benefits",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
@@ -1982,6 +2012,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -2056,6 +2089,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -2125,6 +2161,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -2211,6 +2250,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -2305,6 +2347,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-disposal",
+      "business_unit": "Collection & Post-Collection",
+      "region": "Inland Empire",
+      "yard": "Fontana Ops Yard",
       "department": "Logistics",
       "owner_id": "u-patel",
       "contributions": [
@@ -2394,6 +2439,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -2471,6 +2519,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -2565,6 +2616,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -2646,6 +2700,9 @@
       "stage": "idea",
       "confidence": 0.25,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -2719,6 +2776,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-labor",
+      "business_unit": "Collection & Post-Collection",
+      "region": "Inland Empire",
+      "yard": "Fontana Ops Yard",
       "department": "Logistics",
       "owner_id": "u-patel",
       "contributions": [
@@ -2812,6 +2872,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -2901,6 +2964,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-rental",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -2983,6 +3049,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-benefits",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
@@ -3060,6 +3129,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-benefits",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
@@ -3137,6 +3209,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-benefits",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
@@ -3214,6 +3289,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-containers",
+      "business_unit": "Collection & Post-Collection",
+      "region": "LA Metro",
+      "yard": "Vernon Transfer Yard",
       "department": "MRF Ops",
       "owner_id": "u-okafor",
       "contributions": [
@@ -3291,6 +3369,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-benefits",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
@@ -3384,6 +3465,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -3461,6 +3545,9 @@
       "stage": "feasibility",
       "confidence": 0.5,
       "group_id": "g-rental",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -3554,6 +3641,9 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-disposal",
+      "business_unit": "Collection & Post-Collection",
+      "region": "Inland Empire",
+      "yard": "Fontana Ops Yard",
       "department": "Logistics",
       "owner_id": "u-patel",
       "contributions": [
@@ -3658,6 +3748,9 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-prof",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
@@ -3750,6 +3843,9 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -3839,6 +3935,9 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-benefits",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [
@@ -3923,6 +4022,9 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-rental",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -4028,6 +4130,9 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -4112,6 +4217,9 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-labor",
+      "business_unit": "Collection & Post-Collection",
+      "region": "Inland Empire",
+      "yard": "Fontana Ops Yard",
       "department": "Logistics",
       "owner_id": "u-patel",
       "contributions": [
@@ -4213,6 +4321,9 @@
       "stage": "capability",
       "confidence": 0.75,
       "group_id": "g-indirect",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-anand",
       "contributions": [
@@ -4297,6 +4408,9 @@
       "stage": "launch",
       "confidence": 1,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -4534,6 +4648,9 @@
       "stage": "launch",
       "confidence": 1,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -4783,6 +4900,9 @@
       "stage": "launch",
       "confidence": 1,
       "group_id": "g-containers",
+      "business_unit": "Collection & Post-Collection",
+      "region": "LA Metro",
+      "yard": "Vernon Transfer Yard",
       "department": "MRF Ops",
       "owner_id": "u-okafor",
       "contributions": [
@@ -5032,6 +5152,9 @@
       "stage": "launch",
       "confidence": 1,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -5260,6 +5383,9 @@
       "stage": "launch",
       "confidence": 1,
       "group_id": "g-fuel",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -5505,6 +5631,9 @@
       "stage": "launch",
       "confidence": 1,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -5750,6 +5879,9 @@
       "stage": "realization",
       "confidence": 1,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -5967,6 +6099,9 @@
       "stage": "realization",
       "confidence": 1,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -6190,6 +6325,9 @@
       "stage": "realization",
       "confidence": 1,
       "group_id": "g-labor",
+      "business_unit": "Collection & Post-Collection",
+      "region": "Inland Empire",
+      "yard": "Fontana Ops Yard",
       "department": "Logistics",
       "owner_id": "u-patel",
       "contributions": [
@@ -6437,6 +6575,9 @@
       "stage": "realization",
       "confidence": 1,
       "group_id": "g-containers",
+      "business_unit": "Collection & Post-Collection",
+      "region": "LA Metro",
+      "yard": "Vernon Transfer Yard",
       "department": "MRF Ops",
       "owner_id": "u-okafor",
       "contributions": [
@@ -6647,6 +6788,9 @@
       "stage": "sustainment",
       "confidence": 1,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -6894,6 +7038,9 @@
       "stage": "sustainment",
       "confidence": 1,
       "group_id": "g-disposal",
+      "business_unit": "Collection & Post-Collection",
+      "region": "Inland Empire",
+      "yard": "Fontana Ops Yard",
       "department": "Logistics",
       "owner_id": "u-patel",
       "contributions": [
@@ -7128,6 +7275,9 @@
       "stage": "retired",
       "confidence": 0,
       "group_id": "g-facilities",
+      "business_unit": "Facilities & Operations",
+      "region": "Orange County",
+      "yard": "Anaheim Hauling Yard",
       "department": "Facilities",
       "owner_id": "u-gomez",
       "contributions": [
@@ -7294,6 +7444,9 @@
       "stage": "proposed",
       "confidence": 0,
       "group_id": "g-fleet",
+      "business_unit": "Fleet & Maintenance",
+      "region": "San Gabriel Valley",
+      "yard": "City of Industry Yard",
       "department": "Fleet",
       "owner_id": "u-rivera",
       "contributions": [
@@ -7360,6 +7513,9 @@
       "stage": "proposed",
       "confidence": 0,
       "group_id": "g-benefits",
+      "business_unit": "Corporate & Shared Services",
+      "region": "Enterprise",
+      "yard": "Corporate HQ",
       "department": "Procurement",
       "owner_id": "u-chen",
       "contributions": [

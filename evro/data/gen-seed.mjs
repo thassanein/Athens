@@ -183,6 +183,31 @@ const people = [
   { id: 'u-brooks', name: 'Tasha Brooks', initials: 'TB', fn: 'Operations', role: 'leader', title: 'VP Operations', oversees: ['Fleet', 'MRF Ops', 'Logistics'] },
   { id: 'u-underwood', name: 'Henry Underwood', initials: 'HU', fn: 'IT', role: 'owner', title: 'IT Director' },
 ]
+
+// Geographic tags (region + home yard) per person — illustrative, SoCal waste
+// operations. Enterprise roles sit at Corporate HQ. Data only; no engine change.
+const PEOPLE_GEO = {
+  'u-torres': ['Enterprise', 'Corporate HQ'], 'u-nguyen': ['Enterprise', 'Corporate HQ'],
+  'u-schwartz': ['Enterprise', 'Corporate HQ'], 'u-train': ['Enterprise', 'Corporate HQ'],
+  'u-chen': ['Enterprise', 'Corporate HQ'], 'u-anand': ['Enterprise', 'Corporate HQ'],
+  'u-rivera': ['San Gabriel Valley', 'City of Industry Yard'],
+  'u-brooks': ['San Gabriel Valley', 'City of Industry Yard'],
+  'u-okafor': ['LA Metro', 'Vernon Transfer Yard'],
+  'u-patel': ['Inland Empire', 'Fontana Ops Yard'],
+  'u-gomez': ['Orange County', 'Anaheim Hauling Yard'],
+  'u-underwood': ['Central Coast', 'Oxnard Yard'],
+}
+for (const p of people) { const g = PEOPLE_GEO[p.id] || ['Enterprise', 'Corporate HQ']; p.region = g[0]; p.yard = g[1] }
+
+// Sourcing group → business unit (illustrative operating structure).
+const BU_BY_GROUP = {
+  'g-fleet': 'Fleet & Maintenance', 'g-maint': 'Fleet & Maintenance', 'g-fuel': 'Fleet & Maintenance', 'g-rental': 'Fleet & Maintenance',
+  'g-disposal': 'Collection & Post-Collection', 'g-containers': 'Collection & Post-Collection', 'g-labor': 'Collection & Post-Collection',
+  'g-facilities': 'Facilities & Operations', 'g-utilities': 'Facilities & Operations', 'g-supplies': 'Facilities & Operations',
+  'g-benefits': 'Corporate & Shared Services', 'g-indirect': 'Corporate & Shared Services', 'g-itt': 'Corporate & Shared Services', 'g-prof': 'Corporate & Shared Services',
+}
+const geoFor = (ownerId) => { const p = people.find((x) => x.id === ownerId); return { region: p?.region || 'Enterprise', yard: p?.yard || 'Corporate HQ' } }
+
 const owners = people.filter((p) => p.role === 'owner')
 // People who can own / contribute to initiatives (org owners + procurement).
 const assignables = people.filter((p) => p.role === 'owner' || p.role === 'procurement')
@@ -417,6 +442,9 @@ for (const stage of STAGE_PLAN) {
     stage,
     confidence,
     group_id: g.id,
+    business_unit: BU_BY_GROUP[g.id] || 'Corporate & Shared Services',
+    region: geoFor(ownerId).region,
+    yard: geoFor(ownerId).yard,
     department: people.find((p) => p.id === ownerId)?.fn,
     owner_id: ownerId,
     contributions,
@@ -454,7 +482,9 @@ function proposed(id, { title, ownerId, groupId, catId, pillar, benefitType, app
     description: `${approach} initiative proposed for ${cat?.name} (${GROUPS.find((g) => g.id === groupId)?.name}). Awaiting line manager + FP&A approval before entering the pipeline.`,
     pillar, benefit_type: benefitType, approach,
     stage: 'proposed', confidence: 0,
-    group_id: groupId, department: people.find((p) => p.id === ownerId)?.fn, owner_id: ownerId,
+    group_id: groupId, business_unit: BU_BY_GROUP[groupId] || 'Corporate & Shared Services',
+    region: geoFor(ownerId).region, yard: geoFor(ownerId).yard,
+    department: people.find((p) => p.id === ownerId)?.fn, owner_id: ownerId,
     contributions: [{ user_id: ownerId, credit_pct: 100 }], request: null, comments: [], tasks: [], attachments: [],
     spend_category_id: catId, vendor: null, gross_annual_value: gross, negotiated_value: null,
     implementation_cost: round(gross * 0.3), profile: 'ramp',
