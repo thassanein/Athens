@@ -37,6 +37,7 @@ function coverSlide(pptx, b) {
   s.addText(b.title, { x: 0.5, y: 3.4, w: 12.3, h: 1.0, fontSize: 40, bold: true, color: HEX.ink, fontFace: FONT })
   s.addText(b.cap, { x: 0.5, y: 4.5, w: 12.3, h: 0.5, fontSize: 16, color: HEX.soft, fontFace: FONT })
   if (b.sub) s.addText(b.sub, { x: 0.5, y: 5.15, w: 12.3, h: 0.5, fontSize: 15, italic: true, color: toneHex(b.tone), fontFace: FONT })
+  return s
 }
 
 function closingSlide(pptx, b) {
@@ -45,6 +46,17 @@ function closingSlide(pptx, b) {
   s.addText(b.title, { x: 0.5, y: 2.95, w: 12.3, h: 0.9, align: 'center', fontSize: 34, bold: true, color: HEX.ink, fontFace: FONT })
   if (b.cap) s.addText(b.cap, { x: 0.5, y: 3.9, w: 12.3, h: 0.5, align: 'center', fontSize: 16, color: HEX.amber, fontFace: FONT })
   if (b.sub) s.addText(b.sub, { x: 1.5, y: 4.55, w: 10.3, h: 1.4, align: 'center', fontSize: 14, color: HEX.soft, fontFace: FONT, lineSpacingMultiple: 1.25 })
+  return s
+}
+
+// Chapter / act divider — a full-bleed section slide announcing the next act.
+function dividerSlide(pptx, chapter, act) {
+  const s = pptx.addSlide({ masterName: 'EVRO' })
+  s.background = { color: HEX.alt }
+  s.addText(`ACT ${act}`, { x: 0.9, y: 3.0, w: 11.5, h: 0.5, fontSize: 15, bold: true, color: HEX.red, charSpacing: 3, fontFace: FONT })
+  s.addText(chapter, { x: 0.9, y: 3.45, w: 11.5, h: 1.1, fontSize: 44, bold: true, color: HEX.ink, fontFace: FONT })
+  s.addShape(pptx.ShapeType.line, { x: 0.95, y: 4.7, w: 3.2, h: 0, line: { color: HEX.red, width: 2.5 } })
+  return s
 }
 
 function addTable(pptx, s, t) {
@@ -88,6 +100,7 @@ function beatSlide(pptx, b) {
       { x: 0.5, y: ly, w: bulletW, h: 2.4, fontSize: hasTable ? 12 : 14, color: HEX.ink, fontFace: FONT, lineSpacingMultiple: 1.25, valign: 'top' })
   }
   if (hasTable) addTable(pptx, s, b.table)
+  return s
 }
 
 // Build + download a .pptx board packet for the given audience/period. Returns
@@ -114,10 +127,19 @@ export async function exportBoardPacket(db, opts = {}) {
     ],
   })
 
+  // Render cover, then chapter-dividered beats, then close — with a speaker
+  // note on every slide (the operating-review arc from Story Mode 2.0).
+  let lastChapter = null
+  let act = 0
   for (const b of beats) {
-    if (b.type === 'cover') coverSlide(pptx, b)
-    else if (b.type === 'closing') closingSlide(pptx, b)
-    else beatSlide(pptx, b)
+    let slide
+    if (b.type === 'cover') { slide = coverSlide(pptx, b); lastChapter = b.chapter }
+    else if (b.type === 'closing') slide = closingSlide(pptx, b)
+    else {
+      if (b.chapter && b.chapter !== lastChapter) { act += 1; dividerSlide(pptx, b.chapter, act); lastChapter = b.chapter }
+      slide = beatSlide(pptx, b)
+    }
+    if (slide && b.note) { try { slide.addNotes(b.note) } catch { /* notes optional */ } }
   }
 
   const fileName = `EVRO_Board_Packet_${audience}_${period}_FY${db.meta.fiscalYear}.pptx`

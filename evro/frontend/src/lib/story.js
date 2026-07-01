@@ -193,5 +193,45 @@ export function storyBeats(db, opts = {}) {
   if (period === 'ytd' && !mid.includes(sustainment)) mid = [...mid, sustainment]
   if (period === 'outlook' && !mid.includes(scenarios)) mid = [scenarios, ...mid]
 
-  return [cover, position, summary, ...mid, closing]
+  const beats = [cover, position, summary, ...mid, closing]
+
+  // Story Mode 2.0 — operating-review arc: a chapter + a presenter note (the
+  // "what to say" narration) on every beat. Both drive the on-screen chapter
+  // rail / notes strip and the .pptx section dividers + speaker notes.
+  const CHAPTER = {
+    cover: 'Opening', position: 'The position', summary: 'The position',
+    returns: 'Where value concentrates', risk: 'What is at risk', cost: 'What is at risk',
+    scenarios: 'The outlook', sustainment: 'Does value hold', recognition: 'The people',
+    fund: 'What we fund', decisions: 'The decisions', closing: 'Close',
+  }
+  const NOTE = {
+    cover: `This is the ${audLabel(audience)} operating review for FY${fy}, ${perLabel(period)}. It runs top to bottom — where we are, where the value is, what's at risk, what we fund, and the decisions in front of you.`,
+    position: `Open on the number: ${money(roll.bridgeTotal)} of total FY value, ${money(roll.realizedYTD)} already realized. Anchor the room on return — there is no savings target.`,
+    summary: `The one-paragraph read: ${sum.headline}. Everything after this is the detail behind it.`,
+    returns: `Value concentrates. "${top?.title || 'the top initiative'}" alone is ${money(top?.rav || 0)} risk-adjusted — walk the top six and where they sit in the lifecycle.`,
+    risk: `${money(ct.valueAtRisk)} could slip, ${money(ct.leakage)} of it leaking versus plan. Name a recovery owner on each line.`,
+    cost: `Inflation is a ${money(ct.inflationExposure)} headwind — cost avoidance has to offset it before it reaches the P&L.`,
+    fund: `${money(ct.optimizableValue)} is fundable inside the ${money(ct.capitalBudget)} capital envelope. This is the allocation ask.`,
+    scenarios: `Frame the band — committed ${money(scen.committed)}, expected ${money(scen.expected)}, upside ${money(scen.upside)}. Commit the room to the expected case.`,
+    sustainment: `Delivered value is holding at ${pct(sustain.avg)} of plan${sustain.eroding.length ? `, but ${sustain.eroding.length} initiative${sustain.eroding.length > 1 ? 's are' : ' is'} eroding — call the recovery` : ''}.`,
+    recognition: `Close the loop with the people: ${rec.millionClub.length} in the $1M club. Recognition is the adoption engine.`,
+    decisions: `The ask: ${dec.length} decision${dec.length === 1 ? '' : 's'}, ${approvals} awaiting sign-off, ranked by value at stake. Work top-down.`,
+    closing: 'Land the principle — return is the only target, and value counts only once FP&A validates it. Then open the floor.',
+  }
+  for (const b of beats) {
+    b.chapter = CHAPTER[b.id] || 'Overview'
+    if (!b.note) b.note = NOTE[b.id] || b.sub || b.cap || ''
+  }
+  return beats
+}
+
+// Chapters in order, each with the beats it spans — drives the chapter rail.
+export function storyChapters(beats) {
+  const out = []
+  beats.forEach((b, i) => {
+    const last = out[out.length - 1]
+    if (last && last.name === b.chapter) last.end = i
+    else out.push({ name: b.chapter, start: i, end: i })
+  })
+  return out
 }

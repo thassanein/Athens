@@ -441,6 +441,18 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .story-slide { animation: rise 0.34s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .story-seg button { transition: background 0.14s ease, color 0.14s ease; }
 
+/* story mode 2.0 — cinematic chrome: progress rail, chapter chip, notes, present */
+.story { overflow: hidden; transition: background 0.5s ease; }
+.story-progress { margin: -5vh -7vw 14px; height: 3px; background: rgba(255, 255, 255, 0.09); }
+.story-progress > i { display: block; height: 100%; background: var(--red); transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+.story-chip { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: #fff; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.16); padding: 3px 10px; border-radius: 999px; margin-bottom: 12px; }
+.story-notes { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 10px; padding: 12px 16px; border-radius: 12px; background: rgba(0, 0, 0, 0.28); border: 1px solid rgba(255, 255, 255, 0.12); }
+.story-notes p { margin: 0; font-size: 15px; color: #dfe6ef; line-height: 1.5; }
+.story-dots { display: flex; gap: 7px; flex-wrap: wrap; max-width: 38vw; }
+.story-nav { flex-wrap: wrap; }
+.story.presenting .story-top { opacity: 0.5; }
+.story.presenting .story-slide h1 { font-size: 40px; }
+
 /* ======================================================================== */
 /* Wave 4 — motion & polish. Entrance reveals, chart draw-ins, count-up      */
 /* micro-interactions. All wrapped by the prefers-reduced-motion guard below. */
