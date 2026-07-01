@@ -99,6 +99,25 @@ these. Each shipped as its own tested commit; no new engines were added.
 | E5 | Real LLM copilot | ⏳ (by design) | Copilot is intentionally deterministic/rules-based for verifiability. |
 | E6 | SharePoint write / Outlook calendar | ⏳ | Inherited M365 limitation (read-only app registration). |
 
+## F. Phase 3A — Experience Transformation Directive
+
+Experience-layer only; the directive's "Do NOT Change" list held at every step
+(verify: `V-3A-nologic`). Each row shipped as its own commit.
+
+| Req | Requirement | Implementation | Verify | Status |
+|---|---|---|---|---|
+| F1 | Transform experience, preserve all logic/engines/schema/API/RBAC | presentation-only diffs `4563915…3dad1ad` | V-3A-nologic | ✅ |
+| F2 | World-class dark design system (Palantir/Bloomberg/Linear) | dark tokens + Archivo/Space Mono, `index.css` | V-3A-theme | ✅ |
+| F3 | Executive Control Tower (narrative, decisions, AI recs, opportunity feed) | `Cockpit.jsx` | V-3A-ct | ✅ |
+| F4 | Initiative Workspace (lifecycle/financial/health-radar/collab three-pane) | `Initiative.jsx` + `Radar` | V-3A-radar | ✅ |
+| F5 | Forecast Playground (sliders, Monte-Carlo, confidence cone, comparison, AI) | `Scenarios.jsx` | V-3A-cone | ✅ |
+| F6 | Capital Allocation (drag-to-fund, frontier, buckets, tradeoff) | `Optimize.jsx` | V-3A-frontier | ✅ |
+| F7 | Sustainment Command Center (30/90/180/365, erosion, recovery, confidence) | `Sustainment.jsx` (net-new) | V-3A-sustain | ✅ |
+| F8 | Executive Story Mode (full-screen presenter) | `StoryMode.jsx` | V-3A-story | ✅ |
+| F9 | Collaboration (comments/mentions/tasks/decisions/attachments/activity) | shipped in sprint S1 | V-CO-thread | ✅ |
+| F10 | AI as interface (what changed / approve / fund / leaking / at risk) | copilot + control-tower + story | V-3A-ct, V-CP-qa | ✅ |
+| F11 | Max two clicks · Dashboard = application | ⌘K + drawer + cockpit | V-XC-search | ✅ |
+
 ---
 
 ## Coverage summary
@@ -110,9 +129,10 @@ these. Each shipped as its own tested commit; no new engines were added.
 | C · v2 Enhancement Blueprint | 14 | 14 | 0 | 0 |
 | D · Phase 2.5 Experience Layer | 14 | 14 | 0 | 0 |
 | E · Fast-follows | 6 | 3 | 0 | 3 |
-| **Total** | **58** | **55** | **0** | **3** |
+| F · Phase 3A Transformation | 11 | 11 | 0 | 0 |
+| **Total** | **69** | **66** | **0** | **3** |
 
-All **S1 guardrails** and **core (S2)** requirements are Done, and the post-v3
-experience-hardening sprint closed the workspace, collaboration, capital-allocation,
-simulation and mobile gaps. The three remaining items (native xlsx export, a real
-LLM copilot, M365 write-back) are deliberate deferrals, each noted above.
+All **S1 guardrails** and **core (S2)** requirements are Done. The Phase 3A
+experience transformation is fully delivered with no business-logic changes. The
+three remaining items (native xlsx export, a real LLM copilot, M365 write-back)
+are deliberate deferrals, each noted above.

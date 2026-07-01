@@ -36,11 +36,19 @@ These are invariants. The verification framework tests each one explicitly.
 | G6 | **Procurement is ranked on a separate board** so the rest of the org can compete (change-management intent). | `leaderboard()` returns `{org, procurement}`; `recognition()` mirrors it |
 | G7 | **Seeded from the real 2025 AP register** ($437.4M addressable headline, 14 sourcing groups, 121 categories). Dollar/person figures on initiatives are illustrative placeholders. | `data/gen-seed.mjs`; meta `addressableHeadline` / `note` |
 
-### 1.2 Brand
+### 1.2 Brand & theme (Phase 3A)
 
-Red `#D5172A` (accent/opportunity), navy `#1A428A` (risk-adjusted forecast/info),
-green `#1A5632` (realized/validated), dark `#1A2736` (chrome/text), amber `#B7791F`
-(watch/pending). Typeface: Helvetica Neue. Tokens in `frontend/src/index.css`.
+The default experience is a **dark cockpit** (Bloomberg/Palantir/Linear language):
+canvas `#0E0E11`, layered panels `#16161A`/`#1E1E24`, hairline borders. A semantic
+colour system carries meaning — **realized** green `#3FC97F`, **forecast** blue
+`#4F8DF2`, **risk** amber `#F2B23E`, **opportunity** purple `#A874F5`, **alert**
+red `#E5243B` — each with soft/line variants. Type: **Archivo** (sans) + **Space
+Mono** (all numerals). A full **light theme** (the original Helvetica-Neue palette:
+red `#D5172A`, navy `#1A428A`, green `#1A5632`) is preserved under
+`html[data-theme="light"]` and toggled from the topbar (☀/☾), persisted to
+localStorage. The whole app themes through CSS custom properties in
+`frontend/src/index.css`; `--dark` is the raised inverted surface and `--ink` the
+primary text.
 
 ---
 
@@ -192,14 +200,14 @@ them at once.
 
 ---
 
-## 6. Screens (21)
+## 6. Screens (22)
 
 Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows.
 
 ### Decisions
 | Screen | File | Roles | Purpose |
 |---|---|---|---|
-| Decision Cockpit | `Cockpit.jsx` | exec/admin/fpna | The home for enterprise roles. Control-tower tiles, **Executive briefing** (AI narrative), **Story mode**, decisions queue with one-click approve, value-vs-risk scatter, portfolio rollup, inflation exposure, **What changed** feed, **Savings sustainment** board. |
+| Decision Cockpit | `Cockpit.jsx` | exec/admin/fpna | Executive **Control Tower**: **Executive briefing** (AI narrative) + full-screen **Story mode**, control-tower tiles, decisions queue with one-click approve, **AI recommendations** strip + **Opportunity feed** (Phase 3A), value-vs-risk scatter, portfolio rollup, inflation exposure, **What changed** feed, **Savings sustainment** board. |
 | My Department | `Department.jsx` | leader | Leader's overseen departments rollup. |
 | My Initiatives | `MyWork.jsx` | owner/procurement | The owner/procurement home — their initiatives only. |
 
@@ -216,8 +224,9 @@ Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows.
 | Screen | File | Roles | Purpose |
 |---|---|---|---|
 | Value Map | `ValueMap.jsx` | + leader | Value-vs-effort matrix. |
-| Scenarios | `Scenarios.jsx` | exec/admin/fpna | Forecast simulator: four what-if levers (acceleration/execution/slip/new wins) → live value bridge + Monte-Carlo + sensitivity. |
-| Capital Allocation | `Optimize.jsx` | exec/admin/fpna | Interactive drag-and-drop allocation board on the knapsack optimizer: Funded/Available columns, live budget meter, auto-optimize. |
+| Scenarios | `Scenarios.jsx` | exec/admin/fpna | Forecast **Playground**: four what-if levers → live value bridge, **confidence cone** (widening P10–P90 over the FY), Downside/Plan/Stretch **scenario comparison**, rules-based **AI interpretation**, Monte-Carlo + sensitivity. |
+| Capital Allocation | `Optimize.jsx` | exec/admin/fpna | Interactive drag-and-drop board on the knapsack optimizer: Funded/Available columns, live budget meter, auto-optimize, **efficient frontier** curve + **funding buckets** (Phase 3A). |
+| Sustainment | `Sustainment.jsx` | exec/admin/fpna/leader (scoped) | **Sustainment Command Center** (Phase 3A, net-new): 30/90/180/365 trailing windows, sustainment book (band/trend/confidence), erosion-watch cards with plan-vs-actual curves + rules-based recovery actions → one-click recovery task. |
 | Dependencies | `Dependencies.jsx` | + leader | Dependency DAG + critical path. |
 | AI Mining | `Mining.jsx` | exec/admin/fpna | Rules-based opportunity mining from spend signals. |
 | Opportunities | `Opportunities.jsx` | exec/admin/fpna | Sized, claimable opportunity board (illustrative bands). |
@@ -235,7 +244,7 @@ Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows.
 |---|---|---|
 | Methodology | `Methodology.jsx` | The value methodology + guardrail explanations. |
 | New initiative | `Intake.jsx` | Intake form → proposed initiative + approval request. |
-| Initiative | `Initiative.jsx` | Full initiative detail (value, baseline, capital case, stage-gate, approvals, actuals, risks, **Collaboration**). Also rendered embedded in the Drawer. |
+| Initiative | `Initiative.jsx` | Three-pane workspace (Timeline \| Financials \| Collaboration) + persistent KPI strip. Financials opens with a **health radar** + **benefits waterfall** (Phase 3A), then value, baseline, capital case, benefit lines, contributors. Collaboration = discussion/mentions/tasks/attachments + decision log. Also rendered embedded in the Drawer. |
 
 ---
 
@@ -254,6 +263,31 @@ labeled "AI · rules-based" in the UI. No language model is involved.
 - **Collaboration** (`Initiative.jsx`): discussion thread (`addComment`) + decision
   log (validations + approvals). Seeded with comments on 12 realizing initiatives.
 - **Enterprise search** (`CommandPalette.jsx`, ⌘K): screens + initiatives + people + opportunities.
+
+---
+
+## 7A. Phase 3A experience transformation
+
+Transformed the **experience layer only** to a world-class dark cockpit —
+**no engine, calculation, schema, API, RBAC, or workflow was changed**. Every
+addition reads existing engine outputs; all "AI" stays deterministic/rules-based.
+
+- **Design system** — dark cockpit default + light toggle (§1.2); Archivo + Space
+  Mono; semantic colour language applied through CSS custom properties.
+- **Executive Control Tower** (`Cockpit.jsx`) — AI-recommendations strip
+  (`copilotInsights`) + opportunity feed (`mineOpportunities`).
+- **Initiative Workspace** (`Initiative.jsx`) — `Radar` health chart (5 factors) +
+  benefits waterfall (gross → confidence → realization → RAV).
+- **Forecast Playground** (`Scenarios.jsx`) — confidence cone (`forecastCurve` +
+  `monteCarlo` sigma), Downside/Plan/Stretch comparison, AI interpretation.
+- **Capital Allocation** (`Optimize.jsx`) — efficient frontier + funding buckets.
+- **Sustainment Command Center** (`Sustainment.jsx`, net-new) — 30/90/180/365
+  windows, erosion curves, confidence, recovery actions.
+- **Executive Story Mode** (`StoryMode.jsx`) — full-screen, keyboard-navigable
+  presenter over `execSummary`/`controlTower`.
+
+New view-only chart components in `Charts.jsx`: `Radar`; plus inline confidence
+cone, efficient frontier, and erosion curves. No new engine functions.
 
 ---
 

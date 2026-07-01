@@ -174,6 +174,25 @@ copilot kinds `summary,approval,leakage,opportunity,sustainment`; critical-path 
 
 ---
 
+## 9A. Phase 3A experience transformation (S2/S3)
+
+The overriding Phase 3A invariant (**S1**): the experience changed, the substance
+did not. `V-3A-nologic` below is the guardrail — a FAIL invalidates the transform.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-3A-nologic** (S1) | No engine/schema/API/RBAC/workflow change across Phase 3A. | `git diff 4563915~1..3dad1ad -- evro/frontend/src/lib/engine.js evro/server evro/data` shows no functional logic change (only inline colour tokens); `evro_*` schema and `/api` routes unchanged. | Presentation-only diff. |
+| **V-3A-theme** | Dark is default; light is one toggle away; choice persists. | Load app → `documentElement[data-theme]` = "dark"; click ☀/☾ → "light"; reload → persisted. Print forces light. | Default dark, toggle + persistence work. |
+| **V-3A-ct** | Control Tower shows AI recommendations + opportunity feed. | Cockpit → ≥1 `.reco-row` (from `copilotInsights`) + opportunity-feed rows (`mineOpportunities`, uncovered). | Both render, drill to targets. |
+| **V-3A-radar** | Initiative health radar + benefits waterfall. | Open an initiative → Financials pane → radar (5 axes) + benefits bridge reconciling to RAV. | Both render; bridge = RAV. |
+| **V-3A-cone** | Forecast confidence cone + scenario comparison + AI read. | Scenarios → cone band widens over future months; Downside/Plan/Stretch cards; AI interpretation updates with levers. | All present, reconcile to bridge. |
+| **V-3A-frontier** | Capital efficient frontier + funding buckets. | Capital Allocation → concave frontier curve with envelope + funded markers; buckets by group. | Both render; funded dot on curve. |
+| **V-3A-sustain** | Sustainment Command Center. | Nav → Sustainment → 30/90/180/365 windows recompute; book with band/trend/confidence; erosion cards with plan-vs-actual curves + recovery actions; Recover logs a task. | Window switch changes scores; recovery task persists. |
+| **V-3A-story** | Full-screen Executive Story Mode. | Cockpit → "▶ Story mode" → full-screen presenter; →/←/Esc navigation; 6 slides. | Opens, navigates, Esc exits. |
+| **V-3A-noerr** | All screens render dark with no page errors. | Playwright sweep of all 22 screens (Google-Fonts fetch offline is benign). | 17+ screens, 0 real errors. |
+
+---
+
 ## 10. Pass/fail summary template
 
 | Section | Checks | Pass | Fail | N/A |
@@ -186,6 +205,7 @@ copilot kinds `summary,approval,leakage,opportunity,sustainment`; critical-path 
 | Recognition & collaboration | 7 | | | |
 | Cross-cutting | 7 | | | |
 | Determinism | 3 | | | |
-| **Total** | **53** | | | |
+| Phase 3A experience | 9 | | | |
+| **Total** | **62** | | | |
 
 A release is **verified** when every **S1** check passes and no **S2** check fails.
