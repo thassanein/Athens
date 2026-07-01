@@ -90,6 +90,7 @@ function shapePermitRow(r) {
 // Routes — /api is protected (writes are auditor-only). /api/health is public.
 // ---------------------------------------------------------------------------
 app.get('/api/health', async (req, res) => {
+  res.set('Cache-Control', 'no-store'); // always fresh — the diag must reflect reality
   const body = { ok: true, auth: authMode };
   // TEMP DIAGNOSTIC — GET /api/health?diag=passcode. Helps debug a rejected
   // passcode WITHOUT ever revealing the codes: reports whether passcode mode is

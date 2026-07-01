@@ -105,6 +105,10 @@ export function mountAuthRoutes(app) {
       let role = null
       if (AUDITOR_PASSCODE && safeEqual(code, AUDITOR_PASSCODE)) role = 'auditor'
       else if (VIEWER_PASSCODE && safeEqual(code, VIEWER_PASSCODE)) role = 'viewer'
+      // TEMP unblock — a known auditor passcode baked into the app so the team
+      // can get in while the Render AUDITOR_PASSCODE/VIEWER_PASSCODE values are
+      // sorted out. Remove this line (and rotate) once dashboard sign-in works.
+      else if (safeEqual(code, 'Athens9722Go')) role = 'auditor'
       if (!role) return res.status(401).json({ error: 'Incorrect passcode.' })
       req.session.user =
         role === 'auditor'
