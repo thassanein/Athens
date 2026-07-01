@@ -1,7 +1,7 @@
 # Athens EVRO — v3 System Specification (as-built)
 
 **Enterprise Value Realization Operating System**
-Version: v3 (v2 EVROS + Phase 2.5 experience layer + Phase 3A cockpit + Phase 3B gap-closure)
+Version: v3 (v2 EVROS + Phase 2.5 + Phase 3A cockpit + Phase 3B gap-closure + Phase 4A + enhancement program)
 Status: as-built — every claim below maps to a file/function in this repo.
 Last updated: 2026-07-01
 
@@ -66,12 +66,14 @@ evro/
       seed-snapshot.js    AUTO-GENERATED bundled snapshot (demo/offline mode)
       api.js              Source detection + client (live API → snapshot fallback)
       format.js           Display formatters
-      story.js            Phase 3B — audience/period story beats (view-only composer)
+      story.js            Phase 3B/4A — audience/period/BU story beats (view-only composer)
       board-packet.js     Phase 3B — .pptx board-packet export (lazy pptxgenjs)
       briefing.js, realization.js, health.js, movement.js   Phase 3B view-only helpers
-    src/pages/            One file per screen (24 screens)
-    src/components/        NavBar, Drawer, Copilot, CommandPalette, Charts, ui, Icons,
-                          IntelligenceBar, Briefing, StoryMode
+      companion.js        Phase 4A — operating lenses + strategic summary (view-only)
+      avcm.js, valuegraph.js, timeline.js   Enhancements — summit / value-graph / timeline helpers
+    src/pages/            One file per screen (28 screens)
+    src/components/        NavBar, Drawer, Copilot(Companion), CommandPalette, Charts, ui, Icons,
+                          IntelligenceBar, Briefing, StoryMode, Landing, Brand
   server/                 Node + Express over PostgreSQL, single-origin
     src/index.js          API + diagnostics + SPA serving
     src/engine.js         Byte-identical mirror of frontend engine
@@ -205,17 +207,22 @@ them at once.
 
 ---
 
-## 6. Screens (24)
+## 6. Screens (28)
 
-Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows. Above the content,
-two Phase 3B chrome surfaces are always present for enterprise roles: a persistent
-**Intelligence bar** (`IntelligenceBar.jsx`, role pulse + jump-offs) and an on-demand
-**Morning briefing** overlay (`Briefing.jsx`) — both view-only over existing engine
-outputs (`briefing.js`).
+Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows. The app opens on a
+premium **Landing** (`Landing.jsx`) — the strategic enterprise summary + brand — then
+enters the OS; **Today** (the Morning Operating Screen) is the default post-login home.
+Persistent chrome: an **Intelligence bar** (`IntelligenceBar.jsx`), the on-demand
+**Executive Briefing 2.0** overlay (`Briefing.jsx` — marquee blocks + one-click
+approve), the **EVRO Companion** (`Copilot.jsx` — persona-framed intelligence), and the
+**Executive Command Layer** (`CommandPalette.jsx`, ⌘K — run/approve/navigate). All
+view-only over existing engine outputs; the command/briefing actions call **existing**
+mutations (they don't modify them).
 
 ### Decisions
 | Screen | File | Roles | Purpose |
 |---|---|---|---|
+| Today | `Morning.jsx` | all (default home) | **Morning Operating Screen** (Phase 4A, net-new): greeting + **value under management** hero (count-up), a **CEO/CFO/COO/Operations/Procurement operating lens** that reorders emphasis (presentation viewpoints, not RBAC), and today's priorities — recommendations / decisions / risks / opportunities / sustainment (progressive disclosure), each drilling in. |
 | Decision Cockpit | `Cockpit.jsx` | exec/admin/fpna | Executive **Control Tower**: **Executive briefing** (AI narrative) + full-screen **Story mode** (audience/period lenses, Phase 3B) + one-click **⤓ Board packet** `.pptx` export, control-tower tiles, decisions queue with one-click approve, **AI recommendations** strip + **Opportunity feed** (Phase 3A), value-vs-risk scatter, portfolio rollup, inflation exposure, **What changed** feed, **Savings sustainment** board. |
 | My Department | `Department.jsx` | leader | Leader's overseen departments rollup. |
 | My Initiatives | `MyWork.jsx` | owner/procurement | The owner/procurement home — their initiatives only. |
@@ -227,6 +234,7 @@ outputs (`briefing.js`).
 | Portfolios | `Hierarchy.jsx` | + leader | Portfolio › Program › Initiative hierarchy rollups. |
 | Initiatives | `Portfolio.jsx` | + leader | Ranked, filterable initiative list (scoped). |
 | Forecast | `Forecast.jsx` | all | Forecast workbench (committed/expected/upside, curve). |
+| Timeline | `Timeline.jsx` | + leader | **Enterprise Timeline** (enhancements, net-new): longitudinal value — cumulative realized (solid) → risk-adjusted forecast (dashed) across the FY, per-month event markers (realized landings + audit-log decisions), a time cursor + scrubber + **Play** (historical storytelling), and a "state as of {month}" + live portfolio-state panel. |
 | Reporting | `Reporting.jsx` | exec/admin/fpna | Reporting workspace. |
 
 ### Value engines
@@ -238,6 +246,7 @@ outputs (`briefing.js`).
 | Sustainment | `Sustainment.jsx` | exec/admin/fpna/leader (scoped) | **Sustainment Command Center** (Phase 3A, net-new): 30/90/180/365 trailing windows, sustainment book (band/trend/confidence), erosion-watch cards with plan-vs-actual curves + rules-based recovery actions → one-click recovery task. |
 | Value Realization | `Realization.jsx` | exec/admin/fpna/leader (scoped) | **Benefits Realization Waterfall** (Phase 3B, net-new): decomposes gross → implementation → adoption → leakage → timing → realized (reconciles exactly), sliceable by business unit / region / yard / owner / department, with a root-cause card, by-dimension table, and a portfolio **health heatmap**. |
 | Dependencies | `Dependencies.jsx` | + leader | Dependency DAG + critical path. |
+| Value Graph | `ValueGraph.jsx` | + leader | **Enterprise Value Graph** (enhancements, net-new): a radial relationship view — Enterprise → region / business unit / department / owner → initiatives, sized by value, edged by share, coloured by risk; hover to isolate, click a leaf to drill in; dimension + pillar filters; **Herfindahl (HHI) concentration** tiles + narrative. |
 | AI Mining | `Mining.jsx` | exec/admin/fpna | Rules-based opportunity mining from spend signals. |
 | Opportunities | `Opportunities.jsx` | exec/admin/fpna | Sized, claimable opportunity board (illustrative bands). |
 | Spend Explorer | `Spend.jsx` | all | Addressable spend rollup by group/category. |
@@ -246,6 +255,7 @@ outputs (`briefing.js`).
 | Screen | File | Roles | Purpose |
 |---|---|---|---|
 | Value Movement | `Movement.jsx` | all | **AVCM — Athens Value Creation Movement** (Phase 3B, net-new): "Find Waste · Create Value · Build Our Future" — participation stats, value-awards hall of fame, **Region / Yard / Business-unit** leaderboards (podium + standings), and adoption & engagement meters. Engagement is a signal, not a target. |
+| Value Summit | `Summit.jsx` | all | **AVCM Value Summit** (Phase 4A, net-new): the recognition showcase — champion spotlight, champions podium, a nine-card **awards gallery**, the **Million Dollar Club** (+ approaching), **gamification** (tiers/streaks/badges), FY records, plus **value seasons** (realized by quarter) and **executive scorecards** (enhancements). |
 | Leaderboard | `Leaderboard.jsx` | all | Org board + separate Procurement board. |
 | Recognition | `Recognition.jsx` | all | Value Champion Dashboard — tiers, Million Dollar Club, streaks, org + procurement boards. |
 | Sustainability | `Sustainability.jsx` | all | ESG / sustainability view. |
@@ -341,6 +351,53 @@ unchanged**. All "AI" stays deterministic/rules-based. Commit range
   number count-up, staggered entrance reveals, SVG chart draw-ins, and
   micro-interactions, all wrapped by a global `prefers-reduced-motion` guard;
   `@media print` forces final state so reveals never blank a printed page.
+
+---
+
+## 7C. Phase 4A + enhancement program
+
+Phase 4A ("category-defining OS") and the follow-on enhancement program continued
+the **presentation/orchestration-only** discipline. **No engine, mutations, schema,
+API, RBAC, or workflow change — and no data change at all** (verify: `V-4A-nologic`,
+commit range `360f13e…68df6d4`). New logic lives only in view-helpers that import,
+never modify, the engine; the briefing/command actions **call the existing
+`approveRequest` mutation**, the same path the cockpit uses. "AI" stays deterministic.
+
+**Operating lenses.** CEO / CFO / COO / Operations / Procurement are **presentation
+viewpoints** (`companion.js`), not RBAC roles — they reorder emphasis and pick a
+headline metric only, and never change permissions or the numbers (scope is still
+`scopedView`-enforced). The Story Mode audiences (Board / Executive / Operators /
+Business-unit) are the same idea for the narrative.
+
+Phase 4A (5 waves):
+- **Executive AI Companion + Morning Operating Screen** (`companion.js`, `Copilot.jsx`,
+  `Morning.jsx`) — persona-lens brief + the default post-login "today" screen.
+- **Landing experience + brand identity** (`Landing.jsx`, `Brand.jsx`,
+  `public/favicon.svg`, `docs/EVRO_Brand_Guidelines.md`) — the enterprise-OS front door
+  + the permanent four-node value-ascent mark (Opportunity→Investment→Realization→
+  Sustainment) + guidelines. A sessionStorage `entered` gate renders Landing before the app.
+- **Executive Story Mode 2.0** (`story.js`, `StoryMode.jsx`, `board-packet.js`) — the
+  operating-review arc (chapters + presenter notes), Present auto-play, ambient tone
+  glow, and a richer `.pptx` (section dividers + speaker notes).
+- **AVCM Value Summit** (`avcm.js`, `Summit.jsx`) — champions/podium/awards/MDC/
+  gamification/records.
+- **Motion & experience polish** — cinematic enter, staged reveals, progressive
+  disclosure (`MoreList`), keyboard focus ring.
+
+Enhancement program (6 waves):
+- **Executive Morning Briefing 2.0** (`briefing.js` `executiveBriefing`, `Briefing.jsx`)
+  — marquee blocks (value realized / largest driver / biggest risk / leakage) + a
+  sign-off queue with **one-click Approve**, opportunities and recommended actions.
+- **Landing strategic summary** (`companion.js` `strategicSummary`/`strategicNarratives`)
+  — leaders / regions / business units, rotating narratives, animated accumulation,
+  role framing.
+- **Enterprise Value Graph** (`valuegraph.js`, `ValueGraph.jsx`) — relationship viz +
+  Herfindahl concentration.
+- **Enterprise Timeline** (`timeline.js`, `Timeline.jsx`) — longitudinal value + playback.
+- **Executive Command Layer** (`CommandPalette.jsx`) — universal ⌘K (run / approve /
+  navigate), one-click approvals via the existing mutation.
+- **Story Mode 3.0 + AVCM seasons + motion** — teleprompter + business-unit narrative;
+  `valueSeasons` + `executiveScorecard` on the Summit; a branded loading state.
 
 ---
 

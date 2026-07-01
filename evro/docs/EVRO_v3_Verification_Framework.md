@@ -214,6 +214,28 @@ covered by `V-3B-geoseed`.
 
 ---
 
+## 9C. Phase 4A + enhancement program (S2/S3)
+
+Same overriding invariant. `V-4A-nologic` is the guardrail (S1). Phase 4A + the
+enhancements are the cleanest presentation-only span yet — **not even a data change**.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-4A-nologic** (S1) | No engine/mutations/schema/API/RBAC/workflow/**data** change across Phase 4A + enhancements. | `git diff 360f13e~1..68df6d4 -- evro/frontend/src/lib/engine.js evro/frontend/src/lib/mutations.js evro/server evro/data evro/frontend/src/lib/seed-snapshot.js` is empty; engine/mutations client↔server parity holds. New logic is view-helpers that import (never modify) the engine; briefing/palette actions call the existing `approveRequest`. | Empty diff on all protected paths + data; parity intact. |
+| **V-4A-lens** | Operating lenses are presentation-only, not RBAC. | `companion.js` `OPERATING_MODES` = CEO/CFO/COO/ops/procurement; `companionBrief(db,user,mode)` changes the headline metric + section order but scopes via `scopedView`; switching a lens never changes `visibleInitiatives`. | Lens changes emphasis, not permissions or numbers. |
+| **V-4A-morning** | Morning Operating Screen is the default post-login home. | After entering, page title = "Morning operating screen"; greeting + value-under-management hero + lens selector; CEO vs CFO changes the headline metric; drill-throughs open the drawer/screen. | Default home; lens reframes; 0 errors. |
+| **V-4A-companion** | The Companion replaces "Ask EVRO" with persona-framed intelligence + Q&A. | Topbar/intel-bar say "Companion"; panel shows greeting + metric + lens + proactive sections; `answerQuery` still answers (deterministic). | Renders for all roles; Q&A intact. |
+| **V-4A-briefing2** | Executive Briefing 2.0 — marquee blocks + one-click approve. | `executiveBriefing(db,user)` returns 4 blocks (realized/driver/risk/leakage) + approvals/opportunities/actions; the briefing's Approve fires `approveRequest` and toasts; stacks to 1 column ≤460px. | Blocks render; approve executes; mobile stacks. |
+| **V-4A-landing** | Landing = strategic enterprise summary + brand, gated before the app. | Landing shows the mark, value under management (count-up), rotating narrative, and 7 strategic stats (realized/forecast/opportunity/initiatives/leaders/regions/BUs); "Enter" → Morning; brand-click reopens. `favicon.svg` resolves. | Renders; enter flow works; role-framed eyebrow. |
+| **V-4A-story3** | Story Mode 3.0 — 4 audiences, teleprompter, cinematic, richer packet. | `AUDIENCES` includes Business unit; Teleprompter (T) renders the note large; `.pptx` export has chapter dividers + speaker notes (notesSlides ≥ beats). | 4 audiences; teleprompter renders; deck has dividers + notes. |
+| **V-4A-summit** | AVCM Value Summit — awards, MDC, gamification, seasons, scorecards. | `awardsGallery` ≥ 9; `millionClub` members + approaching; `gamificationStats.byLevel`; `valueSeasons` = 4 quarters; `executiveScorecard` = top champions; Summit renders all; records show values. | All sections render with real people/values. |
+| **V-4A-valuegraph** | Enterprise Value Graph — relationship viz + concentration. | `buildValueGraph(db,{dimension,pillar})` groups + HHI/top-share; graph renders hubs + leaves + weighted edges; dimension switch re-groups; leaf click opens the drawer; concentration narrative reads. | Hubs+leaves render; HHI computed; drill-through works. |
+| **V-4A-timeline** | Enterprise Timeline — longitudinal value + playback. | `buildTimeline(db)` → cumulative realized→forecast + per-month events + state; 12-month axis; Play advances the cursor and the as-of panel follows; scrub/month-click jump. | Realized→forecast line; playback advances; as-of updates. |
+| **V-4A-command** | Executive Command Layer — universal ⌘K. | Palette groups Command/Approve/Navigate; one-click Approve fires `approveRequest` + toast; "optimize capital" navigates; "toggle theme" flips; palette closes after run. | Grouped commands; approvals + nav + theme run. |
+| **V-4A-motion** | Enter transition, staged reveals, progressive disclosure, focus ring; reduced-motion honored. | Landing `leaving` → app; `.award-card/.podium-card/.record-card` stagger; `MoreList` "Show all"; `:focus-visible` navy ring on Tab; under `reducedMotion:'reduce'` enter is instant and content opacity is 1. | Transitions play; disclosure toggles; focus ring; reduced-motion instant. |
+
+---
+
 ## 10. Pass/fail summary template
 
 | Section | Checks | Pass | Fail | N/A |
@@ -228,7 +250,9 @@ covered by `V-3B-geoseed`.
 | Determinism | 3 | | | |
 | Phase 3A experience | 9 | | | |
 | Phase 3B experience | 9 | | | |
-| **Total** | **71** | | | |
+| Phase 4A + enhancements | 12 | | | |
+| **Total** | **83** | | | |
 
 A release is **verified** when every **S1** check passes and no **S2** check fails.
-The Phase 3B guardrail `V-3B-nologic` (S1) must pass alongside `V-3A-nologic`.
+The three experience guardrails — `V-3A-nologic`, `V-3B-nologic`, `V-4A-nologic` (all
+S1) — must all pass: the experience grew, the substance never changed.

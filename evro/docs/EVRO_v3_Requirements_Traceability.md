@@ -136,6 +136,40 @@ Commit range `bc698d4…43a8538`. Each row shipped as its own tested commit.
 | G7 | Story Mode audience/period lenses + native `.pptx` board packet | `story.js`, `board-packet.js` (lazy pptxgenjs), `StoryMode.jsx`, Cockpit | V-3B-story, V-3B-packet | ✅ |
 | G8 | Motion & polish (count-up, reveals, chart draw-ins, reduced-motion, mobile) | `ui.jsx` `AnimatedValue`, `Charts.jsx`, `index.css` | V-3B-motion | ✅ |
 
+## H. Phase 4A — Final Experience & Adoption Directive
+
+Experience-only; the directive's "Do NOT Change" list held (verify `V-4A-nologic`).
+No data change at all. Commit range `360f13e…9e28e3c`.
+
+| Req | Requirement | Implementation | Verify | Status |
+|---|---|---|---|---|
+| H1 | Executive AI Companion (replace Ask EVRO; personas; proactive) | `Copilot.jsx`, `companion.js` (CEO/CFO/COO/ops/procurement lenses) | V-4A-companion, V-4A-lens | ✅ |
+| H2 | Executive Morning Operating Screen (default post-login) | `Morning.jsx` | V-4A-morning | ✅ |
+| H3 | Landing experience (enterprise value under management; Find/Realize/Sustain) | `Landing.jsx` | V-4A-landing | ✅ |
+| H4 | Brand identity (permanent logo/icon; guidelines) | `Brand.jsx`, `favicon.svg`, `EVRO_Brand_Guidelines.md` | V-4A-landing | ✅ |
+| H5 | Executive Story Mode 2.0 (board/exec/operator narratives; cinematic; PowerPoint) | `story.js`, `StoryMode.jsx`, `board-packet.js` | V-4A-story3, V-3B-packet | ✅ |
+| H6 | AVCM Expansion — Value Summit (awards/recognition/gamification) | `avcm.js`, `Summit.jsx` | V-4A-summit | ✅ |
+| H7 | Motion & experience polish (accessibility, reduced-motion) | `ui.jsx` `MoreList`, `Landing.jsx`, `index.css` | V-4A-motion | ✅ |
+
+## I. Enhancement Recommendations
+
+Presentation/orchestration/experience only (verify `V-4A-nologic`). Commit range
+`250c384…68df6d4`. Priorities from the source doc in parentheses.
+
+| Req | Requirement | Implementation | Verify | Status |
+|---|---|---|---|---|
+| I1 | Executive Morning Briefing 2.0 (deterministic; one-click actions) — Highest | `briefing.js` `executiveBriefing`, `Briefing.jsx` | V-4A-briefing2 | ✅ |
+| I2 | Landing strategic summary (leaders/regions/BUs; rotating narratives; role-based) — High | `companion.js` `strategicSummary`/`strategicNarratives`, `Landing.jsx` | V-4A-landing | ✅ |
+| I3 | Enterprise Value Graph (relationships; filtering; concentration/clusters) — High | `valuegraph.js`, `ValueGraph.jsx` | V-4A-valuegraph | ✅ |
+| I4 | Enterprise Timeline (longitudinal; playback; storytelling) — High | `timeline.js`, `Timeline.jsx` | V-4A-timeline | ✅ |
+| I5 | Executive Command Layer (approvals/optimization/reporting/navigation) — High | `CommandPalette.jsx` | V-4A-command | ✅ |
+| I6 | Executive Story Mode 3.0 (teleprompter; BU narrative; cinematic) — Medium | `story.js` (bu audience), `StoryMode.jsx` (teleprompter) | V-4A-story3 | ✅ |
+| I7 | AVCM Expansion (value seasons; awards; scorecards) — Medium | `avcm.js` `valueSeasons`/`executiveScorecard`, `Summit.jsx` | V-4A-summit | ✅ |
+| I8 | Motion & experience polish (progressive disclosure; loading states) — Medium | `index.css`, `App.jsx` branded loader, `MoreList` | V-4A-motion | ✅ |
+
+The doc's **Phase 5 preview** (digital twin, predictive simulation, autonomous
+opportunity ID) is out of scope for this program — future work.
+
 ---
 
 ## Coverage summary
@@ -149,12 +183,16 @@ Commit range `bc698d4…43a8538`. Each row shipped as its own tested commit.
 | E · Fast-follows | 6 | 3 | 1 | 2 |
 | F · Phase 3A Transformation | 11 | 11 | 0 | 0 |
 | G · Phase 3B Gap-Closure | 8 | 8 | 0 | 0 |
-| **Total** | **77** | **74** | **1** | **2** |
+| H · Phase 4A Directive | 7 | 7 | 0 | 0 |
+| I · Enhancement Recommendations | 8 | 8 | 0 | 0 |
+| **Total** | **92** | **89** | **1** | **2** |
 
-All **S1 guardrails** and **core (S2)** requirements are Done. The Phase 3A **and**
-Phase 3B experience programs are fully delivered with no business-logic changes —
-the only Phase 3B data change is illustrative seed geo/org tags in JSONB (no schema
-change; `V-3B-geoseed`). Export is now **Partial** (native `.pptx` board packet
-ships; `.xlsx` still deferred). The two remaining deferrals — a real LLM copilot
-(deterministic by design) and M365 write-back (inherited read-only registration) —
-are noted above.
+All **S1 guardrails** and **core (S2)** requirements are Done. Four experience
+programs — Phase 3A, Phase 3B, Phase 4A, and the enhancement recommendations — are
+fully delivered with **no business-logic changes**. Phase 4A + the enhancements add
+no data change at all; the only data change in the whole v3 line is Phase 3B's
+illustrative seed geo/org tags in JSONB (no schema change; `V-3B-geoseed`). Export is
+**Partial** (native `.pptx` board packet ships; `.xlsx` still deferred). The two
+remaining deferrals — a real LLM copilot (deterministic by design) and M365 write-back
+(inherited read-only registration) — are noted above. The source docs' **Phase 5
+preview** (digital twin, predictive simulation) is future work, out of scope here.
