@@ -4,6 +4,7 @@ import { money, pct, dateLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { Scatter, HBars } from '../components/Charts.jsx'
 import { IconAI } from '../components/Icons.jsx'
+import StoryMode from '../components/StoryMode.jsx'
 
 const KIND = { approval: 'b-amber', leakage: 'b-red', opportunity: 'b-green', sustainment: 'b-red' }
 
@@ -39,7 +40,7 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
           <h3 style={{ display: 'flex', alignItems: 'center', gap: 7 }}><span className="copilot-logo" style={{ width: 24, height: 24 }}><IconAI /></span> Executive briefing</h3>
           <span className="spacer" />
           <span className="badge b-grey">AI · rules-based</span>
-          <button className={`btn sm ${story ? 'go' : ''}`} onClick={() => setStory((s) => !s)}>{story ? 'Exit story' : 'Story mode'}</button>
+          <button className="btn sm accent" onClick={() => setStory(true)}>▶ Story mode</button>
         </div>
         <p style={{ fontSize: 15, fontWeight: 600, margin: '2px 0 8px' }}>{summary.headline}</p>
         <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, lineHeight: 1.7 }}>
@@ -47,20 +48,7 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
         </ul>
       </div>
 
-      {story && (
-        <div className="story-steps section-gap">
-          {[
-            { n: 1, t: 'Where we are', b: summary.headline },
-            ...summary.bullets.map((b, i) => ({ n: i + 2, t: ['The biggest return', 'What is at risk', 'The cost headwind', 'What we can fund'][i] || 'Then', b })),
-            { n: summary.bullets.length + 2, t: 'The decisions in front of you', b: decisions.length ? `${decisions.length} decisions are queued below — ${decisions.filter((d) => d.kind === 'approval').length} need your sign-off. Start at the top: value is ranked highest-first.` : 'Nothing needs a decision right now. The portfolio is clear.' },
-          ].map((s) => (
-            <div key={s.n} className="story-step">
-              <div className="story-num">{s.n}</div>
-              <div><b>{s.t}</b><p style={{ margin: '3px 0 0', fontSize: 13.5 }}>{s.b}</p></div>
-            </div>
-          ))}
-        </div>
-      )}
+      {story && <StoryMode db={db} user={user} onClose={() => setStory(false)} />}
 
       <div className="tiles">
         <Tile tone="green" label="Value created (YTD)" value={money(ct.valueCreated)} sub="FP&A-validated" />
