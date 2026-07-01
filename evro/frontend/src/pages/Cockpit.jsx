@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { controlTower, decisionsRequired, portfolioRollup, valueMatrix, inflationExposure, execSummary, whatChanged, sustainmentBook, ROLE_APPROVE_LABEL } from '../lib/engine.js'
+import { controlTower, decisionsRequired, portfolioRollup, valueMatrix, inflationExposure, execSummary, whatChanged, sustainmentBook, copilotInsights, mineOpportunities, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money, pct, dateLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { Scatter, HBars } from '../components/Charts.jsx'
 import { IconAI } from '../components/Icons.jsx'
+
+const KIND = { approval: 'b-amber', leakage: 'b-red', opportunity: 'b-green', sustainment: 'b-red' }
 
 // "The dashboard IS the application." Decisions, not lists.
 export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flash }) {
@@ -15,6 +17,8 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
   const summary = execSummary(db)
   const changes = whatChanged(db)
   const sustain = sustainmentBook(db)
+  const recos = copilotInsights(db, user).filter((c) => c.kind !== 'summary')
+  const opps = mineOpportunities(db).filter((o) => !o.alreadyCovered).slice(0, 5)
   const [story, setStory] = useState(false)
   const RAGC = { red: 'var(--red)', amber: 'var(--amber)', green: 'var(--green)' }
   const points = matrix.map((m) => ({ id: m.id, label: m.title, x: m.risk, y: m.value, value: m.value, color: RAGC[m.rag] }))
@@ -92,6 +96,41 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
           <div className="card-h"><h3>Value vs risk</h3><span className="spacer" /><span className="tiny muted">bubble = risk-adjusted value · click to drill</span></div>
           <Scatter points={points} xLabel="Risk (worst open risk score)" yLabel="Risk-adjusted value" xMax={25} onPick={(p) => openDrawer(p.id)} />
           <p className="tiny muted">Top-left = high value, low risk (do first). Top-right = high value, high risk (de-risk).</p>
+        </div>
+      </div>
+
+      {/* AI-as-interface: recommendations + opportunity feed (control tower) */}
+      <div className="grid cols-2 section-gap">
+        <div className="card pad">
+          <div className="card-h"><h3 style={{ display: 'flex', alignItems: 'center', gap: 7 }}><span className="copilot-logo" style={{ width: 22, height: 22 }}><IconAI /></span> AI recommendations</h3><span className="spacer" /><span className="badge b-grey">rules-based</span></div>
+          {recos.length === 0 ? <div className="muted">Nothing to recommend — the portfolio is clear.</div> : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {recos.map((c, i) => (
+                <button key={i} className="reco-row" onClick={() => (c.target ? openDrawer(c.target) : navigate('mining'))}>
+                  <span className={`badge ${KIND[c.kind] || 'b-grey'}`} style={{ textTransform: 'capitalize' }}>{c.kind}</span>
+                  <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}><b style={{ fontSize: 13 }}>{c.title}</b><div className="tiny muted">{c.body}</div></div>
+                  <span style={{ color: 'var(--navy)' }}>→</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="card pad">
+          <div className="card-h"><h3>Opportunity feed</h3><span className="spacer" /><button className="btn sm" onClick={() => navigate('mining')}>AI mining →</button></div>
+          <p className="tiny muted" style={{ marginTop: -4 }}>Uncovered categories with sourcing signals — illustrative sizing.</p>
+          {opps.length === 0 ? <div className="muted">No new signals right now.</div> : (
+            <div className="feed">
+              {opps.map((o) => (
+                <button key={o.id} className="feed-row" style={{ width: '100%', background: 'none', cursor: 'pointer', textAlign: 'left' }} onClick={() => navigate('mining')}>
+                  <span className="feed-dot" style={{ background: 'var(--opp)', marginTop: 6 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}><b style={{ fontSize: 13 }}>{o.group}</b> <span className="tiny muted">{o.lever}</span>
+                    <div className="chip-row" style={{ marginTop: 3 }}>{o.signals.slice(0, 3).map((s) => <span key={s} className="badge b-grey">{s}</span>)}</div>
+                  </div>
+                  <span className="mono small" style={{ fontWeight: 700, color: 'var(--opp)' }}>{money(o.estValue)}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
