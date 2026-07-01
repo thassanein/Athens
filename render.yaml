@@ -32,9 +32,14 @@ services:
           property: connectionString
       - key: SESSION_SECRET
         generateValue: true # Render generates a long random secret
-      # OPEN / PUBLIC mode (no sign-in): the app shows an Auditor/Viewer chooser
-      # and the API is publicly accessible so other apps and AI tools can reach
-      # it. To lock it down later, set Microsoft Entra (ENTRA_*) or shared
-      # passcodes (AUDITOR_PASSCODE / VIEWER_PASSCODE) in the service's
-      # Environment tab — see DEPLOY.md. IMPORTANT: if any of those were set
-      # previously, delete them in the Render dashboard so the service stays open.
+      # LOCKED-DOWN mode (shared passcodes): the app requires a passcode to enter
+      # and the API is NOT public — cross-origin apps / AI tools are blocked
+      # (wildcard CORS is only sent in open mode). Set the two secret values in
+      # the service's Environment tab (they are sync:false, so not stored in the
+      # repo). Setting either one flips the server out of open/public mode.
+      #   AUDITOR_PASSCODE → full edit access · VIEWER_PASSCODE → read-only
+      # To reopen the app publicly, delete both vars in the Render dashboard.
+      - key: AUDITOR_PASSCODE
+        sync: false
+      - key: VIEWER_PASSCODE
+        sync: false

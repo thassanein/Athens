@@ -6,6 +6,7 @@ import {
   postFinding,
   patchPermit,
   fetchMe,
+  submitPasscode,
   authLogoutUrl,
 } from './lib/api.js'
 import { alertCount } from './lib/derive.js'
@@ -30,6 +31,18 @@ const USERS = {
   viewer: { name: 'Sam Okafor', role: 'viewer', title: 'Site Viewer · Read-only', initials: 'SO' },
 }
 
+// Map a server session user (passcode / SSO mode) into the app's user shape.
+// The role comes from the server (which passcode was entered), not client choice.
+function serverUser(u = {}) {
+  const role = u.role === 'auditor' ? 'auditor' : 'viewer'
+  return {
+    name: u.name || (role === 'auditor' ? 'Field Auditor' : 'Site Viewer'),
+    role,
+    title: role === 'auditor' ? 'Field Auditor · EHS' : 'Read-only',
+    initials: u.initials || (role === 'auditor' ? 'FA' : 'SV'),
+  }
+}
+
 export default function App() {
   // ---- global state (see README "State management") ----
   const [screen, setScreen] = useState('login') // login|map|tasks|alerts|profile
@@ -46,17 +59,14 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [waking, setWaking] = useState(false) // server cold-starting (free tier)
 
-  // Bootstrap: load the portfolio in the background and ALWAYS land on the
-  // Auditor/Viewer chooser. This is an open-access app — the role is a
-  // deliberate client-side choice, so we never auto-enter (even if the server
-  // reports a session). The chooser is mandatory; each role carries its own
-  // access (auditor = edit, viewer = read-only).
+  // Bootstrap: figure out the auth situation, then load the portfolio.
+  //  - open/public  → land on the Auditor/Viewer chooser (role is a client choice)
+  //  - passcode/SSO → require sign-in; if a valid session already exists, enter
   useEffect(() => {
     let alive = true
     ;(async () => {
       // Probe the server, retrying through a free-tier cold start (~30-60s) so a
-      // sleeping service wakes before we read its data. We only use this to pick
-      // live vs snapshot data — never to skip the chooser.
+      // sleeping service wakes before we read its data.
       const deadline = Date.now() + 75000
       let me = await fetchMe()
       while (alive && me.state === 'demo' && me.timedOut && Date.now() < deadline) {
@@ -68,16 +78,41 @@ export default function App() {
       setWaking(false)
       if (!alive) return
 
-      setAuthMode('demo')
+      // Locked (passcode/SSO) → show the matching sign-in. Open/no-server → chooser.
+      if (me.state === 'login') setAuthMode(me.mode || 'passcode')
+      else if (me.state === 'authed') setAuthMode(me.user?.mode || 'passcode')
+      else setAuthMode('demo')
+
       const portfolio = await loadPortfolio()
       if (!alive) return
       setData(portfolio.data)
       setSource(portfolio.source)
       setLoading(false)
+
+      // Already signed in (valid session within its lifetime) → skip the login
+      // screen and enter with the server-assigned role.
+      if (me.state === 'authed' && me.user) {
+        setUser(serverUser(me.user))
+        setScreen('map')
+      }
     })()
     return () => {
       alive = false
     }
+  }, [])
+
+  // Passcode sign-in (locked mode). Validates against the server, then loads the
+  // live portfolio with the resulting session. Returns false on a bad passcode.
+  const enterPasscode = useCallback(async (code) => {
+    const ok = await submitPasscode(code)
+    if (!ok) return false
+    const me = await fetchMe()
+    setUser(me.user ? serverUser(me.user) : USERS.viewer)
+    const portfolio = await loadPortfolio()
+    setData(portfolio.data)
+    setSource(portfolio.source)
+    setScreen('map')
+    return true
   }, [])
 
   const flash = useCallback((msg) => setToast(msg), [])
@@ -234,10 +269,9 @@ export default function App() {
         <Login
           source={source}
           mode={authMode}
+          onPasscode={enterPasscode}
           onEnter={(u) => {
-            // The user explicitly picked a profile (Auditor or Viewer); each
-            // carries its own access (auditor = edit, viewer = read-only) and
-            // identity. This is the only way into the app — no auto-enter.
+            // Open mode only: the user picked a profile (Auditor or Viewer).
             setUser(u && typeof u === 'object' ? u : USERS[u] || USERS.auditor)
             setScreen('map')
           }}

@@ -22,20 +22,29 @@ compliance gaps, due dates, owners, and audit readiness.
 
 ---
 
-## 2. Access model (IMPORTANT — currently OPEN)
+## 2. Access model (IMPORTANT — LOCKED DOWN via passcode)
 
-The app is intentionally **public, no credentials**, so other apps and AI tools can
-reach it.
+The app is **locked to the team via shared passcodes** — it is no longer public.
+The frontend shows a **passcode prompt** (not the old open Auditor/Viewer chooser),
+and the API rejects anyone without a valid session.
 
-- **Two roles, no passwords:** the login is just **Auditor** (full edit) and **Viewer**
-  (read-only). Role is chosen client-side; it's cosmetic gating in open mode.
-- **Server auth modes** (`server/src/auth.js`): `open` (no auth env → default, public),
-  `passcode` (`AUDITOR_PASSCODE`/`VIEWER_PASSCODE`), `sso` (Microsoft Entra). Setting
-  Entra or passcodes locks it down; with none set it's open **even in production**.
-- **CORS:** in open mode, `/api`, `/auth`, `/overview`, `/llms.txt` send
-  `Access-Control-Allow-Origin: *` so cross-origin tools can read/write.
-- ⚠️ **For the live site to stay open**, no `AUDITOR_PASSCODE` / `VIEWER_PASSCODE` /
-  `ENTRA_*` may be set in the Render dashboard. The blueprint no longer defines them.
+- **Passcode sign-in:** entering `AUDITOR_PASSCODE` → full edit; `VIEWER_PASSCODE` →
+  read-only. The **role is decided server-side** by which passcode was entered (not a
+  client choice). Session is an httpOnly cookie (8h). Login UI: `Login.jsx` (passcode
+  form when `mode==='passcode'`; the two-button chooser only shows in open mode).
+- **Server auth modes** (`server/src/auth.js`): `open` (no auth env → public),
+  `passcode` (`AUDITOR_PASSCODE`/`VIEWER_PASSCODE`) ← **current**, `sso` (Microsoft
+  Entra). Setting either passcode flips it out of open mode. `requireAuth` returns 401
+  without a session; `requireAuditor` returns 403 for viewers on writes.
+- **CORS:** the wildcard `Access-Control-Allow-Origin: *` is sent **only in open mode**,
+  so in the locked (passcode) state cross-origin apps / AI tools are blocked. The app
+  itself is same-origin, so it's unaffected.
+- ⚠️ **To keep it locked**, `AUDITOR_PASSCODE` and `VIEWER_PASSCODE` must be set in the
+  Render dashboard (the blueprint declares them `sync: false`, so the *values* live only
+  in Render, not the repo). Deleting both reopens the app publicly.
+- **Doc links** to the SharePoint document store are also stripped everywhere (see the
+  security lockdown: `EXPOSE_DOC_LINKS` in `server/src/index.js` + `frontend/src/lib/api.js`,
+  and the strip in `frontend/scripts/gen-snapshot.mjs`).
 
 ---
 
