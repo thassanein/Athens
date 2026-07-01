@@ -4,8 +4,9 @@ import {
   implementedRunRate, valueLeakage, STAGES, GATE_STAGES, STAGE_LABEL, STAGE_CONFIDENCE,
   MATERIALITY, BENEFIT_LABEL, personName, categoryName, groupName, canSeeInitiative,
   approvalState, canApproveRoles, canRequestAdvance, nextStage, ROLE_APPROVE_LABEL,
-  npv, paybackMonths, netAnnual, PROFILE_LABEL, worstRisk, expectedToDate,
+  npv, paybackMonths, netAnnual, PROFILE_LABEL,
 } from '../lib/engine.js'
+import { initiativeHealth, HEALTH_DIMS } from '../lib/health.js'
 import { money, pct, monthLabel, dateLabel } from '../lib/format.js'
 import { StagePip, PillarBadge, RagBadge, Avatar } from '../components/ui.jsx'
 import { Radar } from '../components/Charts.jsx'
@@ -40,18 +41,11 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
   const [pane, setPane] = useState('financials')
   const openTaskCount = (i.tasks || []).filter((t) => t.status === 'open').length
 
-  // Health radar (5 factors, each 0..1) + benefits waterfall (gross → RAV).
+  // 6-dimension health radar (current + forecast overlay) + benefits waterfall.
   const conf = STAGE_CONFIDENCE[i.stage]
-  const rfac = i.realization_factor ?? 1
-  const exp = expectedToDate(i, db)
-  const delivery = ['launch', 'realization', 'sustainment', 'retired'].includes(i.stage) ? (exp ? Math.min(1, realized / exp) : 1) : conf
-  const radarAxes = [
-    { label: 'Confidence', value: conf },
-    { label: 'Realization', value: rfac },
-    { label: 'Delivery', value: delivery },
-    { label: 'Risk-free', value: 1 - Math.min(1, (worstRisk(i) || 0) / 25) },
-    { label: 'Recurring', value: recur },
-  ]
+  const health = initiativeHealth(i, db)
+  const radarAxes = HEALTH_DIMS.map((k) => ({ label: k, value: health.current[k] }))
+  const radarOverlay = HEALTH_DIMS.map((k) => health.forecast[k])
   const gross = i.gross_annual_value
   const benefitSteps = [
     { label: 'Gross annual', value: gross, kind: 'base' },
@@ -107,9 +101,9 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
       {/* health radar + benefits waterfall */}
       <div className="grid cols-2 section-gap">
         <div className="card pad">
-          <div className="card-h"><h3>Initiative health</h3><span className="spacer" /><span className="tiny muted">5-factor radar</span></div>
-          <Radar axes={radarAxes} />
-          <p className="tiny muted section-gap">Confidence, realization, delivery-vs-plan, risk-free and recurring share — a fast read on initiative quality.</p>
+          <div className="card-h"><h3>Initiative health</h3><span className="spacer" /><span className={`badge ${health.overall >= 0.75 ? 'b-green' : health.overall >= 0.5 ? 'b-amber' : 'b-red'}`}>{pct(health.overall)} overall</span></div>
+          <Radar axes={radarAxes} overlay={radarOverlay} />
+          <p className="tiny muted section-gap">Six execution dimensions — financial, implementation, technology, adoption, governance, sustainment. Solid = today; dashed = forecast as it matures. Derived from stage, realization, risk, validation and delivery signals.</p>
         </div>
         <div className="card pad">
           <div className="card-h"><h3>Benefits waterfall</h3><span className="spacer" /><span className="tiny muted">gross → risk-adjusted</span></div>

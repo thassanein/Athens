@@ -229,22 +229,25 @@ export function Graph({ nodes, edges, highlight = [], onPick, height = 360 }) {
 }
 
 // ---- Funnel (pipeline by stage) -------------------------------------------
-// ---- Health radar (spider) — axes: [{ label, value 0..1 }] ----------------
-export function Radar({ axes, size = 210, color = 'var(--navy)' }) {
+// ---- Health radar (spider) — axes: [{ label, value 0..1 }] -----------------
+// Optional `overlay` (array of 0..1, same order) draws a dashed forecast ring.
+export function Radar({ axes, overlay, size = 210, color = 'var(--navy)' }) {
   const cx = size / 2, cy = size / 2, r = size / 2 - 34
   const n = axes.length
+  const cl = (v) => Math.max(0.02, Math.min(1, v))
   const pt = (i, val) => {
     const a = -Math.PI / 2 + (i * 2 * Math.PI) / n
     return [cx + Math.cos(a) * r * val, cy + Math.sin(a) * r * val]
   }
   const poly = (val) => axes.map((_, i) => pt(i, val).join(',')).join(' ')
-  const shape = axes.map((ax, i) => pt(i, Math.max(0.02, Math.min(1, ax.value))).join(',')).join(' ')
+  const shape = axes.map((ax, i) => pt(i, cl(ax.value)).join(',')).join(' ')
   return (
     <svg width="100%" viewBox={`-22 -6 ${size + 44} ${size + 12}`} style={{ maxWidth: size + 44, display: 'block', margin: '0 auto' }}>
       {[0.25, 0.5, 0.75, 1].map((rr, k) => <polygon key={k} points={poly(rr)} fill="none" stroke="var(--line)" strokeWidth="1" />)}
       {axes.map((_, i) => { const [x, y] = pt(i, 1); return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--line)" strokeWidth="1" /> })}
+      {overlay && <polygon points={axes.map((_, i) => pt(i, cl(overlay[i])).join(',')).join(' ')} fill="none" stroke="var(--grey)" strokeWidth="1.5" strokeDasharray="4 3" />}
       <polygon points={shape} fill={color} fillOpacity="0.24" stroke={color} strokeWidth="2" />
-      {axes.map((ax, i) => { const [x, y] = pt(i, 1); return <circle key={i} cx={pt(i, Math.max(0.02, Math.min(1, ax.value)))[0]} cy={pt(i, Math.max(0.02, Math.min(1, ax.value)))[1]} r="2.6" fill={color} /> })}
+      {axes.map((ax, i) => { const [x, y] = pt(i, cl(ax.value)); return <circle key={i} cx={x} cy={y} r="2.6" fill={color} /> })}
       {axes.map((ax, i) => {
         const [x, y] = pt(i, 1.2)
         return <text key={i} x={x} y={y} textAnchor="middle" dominantBaseline="middle" fontSize="9.5" fontWeight="700" fill="var(--grey)">{ax.label}</text>

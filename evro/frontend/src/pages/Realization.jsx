@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { realizationWaterfall, REAL_DIMS } from '../lib/realization.js'
+import { portfolioHealth, HEALTH_DIMS } from '../lib/health.js'
 import { money, pct } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { IconAI } from '../components/Icons.jsx'
+
+const DIM_ABBR = { Financial: 'Fin', Implementation: 'Impl', Technology: 'Tech', Adoption: 'Adopt', Governance: 'Gov', Sustainment: 'Sust' }
 
 // Benefits Realization Waterfall — "where did the value go?" Gross → losses →
 // realized, drillable by business unit / region / yard / owner / department.
@@ -68,7 +71,35 @@ export default function Realization({ db, openDrawer }) {
         </div>
         <p className="tiny muted section-gap">Losses are derived from stage confidence, realization factor, implemented-vs-negotiated leakage and timing — labeled illustrative where not directly measured. Only FP&amp;A-validated value counts as realized.</p>
       </div>
+
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>Portfolio execution health</h3><span className="spacer" /><span className="tiny muted">6-dimension heatmap · worst first · click to drill</span></div>
+        <HealthHeatmap rows={portfolioHealth(db).slice(0, 14)} onPick={openDrawer} />
+        <p className="tiny muted section-gap">Derived execution-health signals (illustrative): green ≥ 75% · amber 50–75% · red &lt; 50%. Financial, implementation, technology, adoption, governance, sustainment.</p>
+      </div>
     </>
+  )
+}
+
+function HealthHeatmap({ rows, onPick }) {
+  const band = (v) => (v >= 0.75 ? 'green' : v >= 0.5 ? 'amber' : 'red')
+  return (
+    <div className="table-wrap">
+      <table className="tbl heatmap">
+        <thead>
+          <tr><th>Initiative</th>{HEALTH_DIMS.map((d) => <th key={d} className="num" title={d}>{DIM_ABBR[d]}</th>)}<th className="num">Overall</th></tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.id} className="clickable" onClick={() => onPick(r.id)}>
+              <td><b>{r.title.length > 34 ? r.title.slice(0, 33) + '…' : r.title}</b></td>
+              {HEALTH_DIMS.map((d) => { const c = band(r.current[d]); return <td key={d} className="num" style={{ background: `var(--tint-${c})`, color: `var(--${c})`, fontWeight: 700 }}>{Math.round(r.current[d] * 100)}</td> })}
+              <td className="num mono"><b style={{ color: `var(--${band(r.overall)})` }}>{Math.round(r.overall * 100)}%</b></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
