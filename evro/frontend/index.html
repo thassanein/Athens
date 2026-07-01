@@ -8,6 +8,12 @@
       // Set the saved theme before paint to avoid a flash (dark is the default).
       try { document.documentElement.setAttribute('data-theme', localStorage.getItem('evro.theme') || 'dark') } catch (e) {}
     </script>
+    <!-- Fonts loaded non-blocking: a stylesheet <link> never withholds index.css
+         (unlike a CSS @import), so the app paints styled even if fonts are slow. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" /></noscript>
     <meta
       name="description"
       content="Athens EVRO — Enterprise Value Realization Office. Tracks cost-savings and cost-avoidance return across the $437.4M addressable spend base. Return-maximization model: ranks initiatives and opportunities by risk-adjusted value and ROI (no savings target)."

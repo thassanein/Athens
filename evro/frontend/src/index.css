@@ -4,8 +4,10 @@
    Semantic colour language: realized=green · forecast=blue · risk=amber ·
    opportunity=purple · alert=red. Type: Archivo (sans) + Space Mono (numerals).
    `--dark` = inverted/raised surface (dark chip); `--ink` = primary text.
+   Fonts (Archivo + Space Mono) are loaded via a non-blocking <link> in
+   index.html — never a render-blocking CSS @import, which would withhold the
+   whole stylesheet (and paint the app unstyled/white) while fonts fetch.
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
 
 /* ---- DARK (default) ------------------------------------------------------ */
 :root {
