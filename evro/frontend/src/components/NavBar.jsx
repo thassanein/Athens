@@ -22,6 +22,7 @@ export const NAV = [
     ['hierarchy', 'Portfolios', IconHierarchy, ENTL],
     ['portfolio', 'Initiatives', IconPortfolio, ENTL],
     ['forecast', 'Forecast', IconForecast, ALL],
+    ['timeline', 'Timeline', IconForecast, ENTL],
     ['reporting', 'Reporting', IconReport, ENT],
   ] },
   { group: 'Value engines', items: [
