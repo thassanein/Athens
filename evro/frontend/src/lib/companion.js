@@ -9,8 +9,9 @@
 // enforced by the engine (`scopedView`) exactly as before.
 import {
   enterpriseRollup, controlTower, decisionsRequired, copilotInsights, mineOpportunities,
-  sustainmentBook, scopedView,
+  sustainmentBook, scopedView, recognition,
 } from './engine.js'
+import { geoLeaderboard } from './movement.js'
 import { money, pct } from './format.js'
 
 export const OPERATING_MODES = [
@@ -39,6 +40,38 @@ export function valueUnderManagement(db) {
     initiatives: r.counts.active,
     capturePct: r.capturePct,
   }
+}
+
+// Strategic enterprise summary — the landing "state of the enterprise": value
+// under management plus who and where it's being created (leaders / regions /
+// business units). View-only.
+export function strategicSummary(db) {
+  const vum = valueUnderManagement(db)
+  const rec = recognition(db)
+  const regions = geoLeaderboard(db, 'region')
+  const bus = geoLeaderboard(db, 'business_unit')
+  return {
+    ...vum,
+    leaders: rec.people.filter((p) => p.totalFY > 0).length,
+    topLeader: rec.people[0] || null,
+    millionClub: rec.millionClub.length,
+    regions: regions.length,
+    topRegion: regions[0] || null,
+    businessUnits: bus.length,
+    topBU: bus[0] || null,
+  }
+}
+
+// Rotating strategic narratives — deterministic one-liners for the landing.
+export function strategicNarratives(db) {
+  const s = strategicSummary(db)
+  const out = []
+  if (s.topLeader) out.push(`${s.topLeader.name} leads the value board at ${money(s.topLeader.totalFY)} total FY.`)
+  if (s.topRegion) out.push(`${s.topRegion.name} is the top region at ${money(s.topRegion.totalFY)} total FY.`)
+  if (s.topBU) out.push(`${s.topBU.name} leads all business units at ${money(s.topBU.totalFY)}.`)
+  out.push(`${money(s.opportunity)} identified and not yet in plan — the next wave of return.`)
+  out.push(`${money(s.realized)} realized and FP&A-validated across ${s.initiatives} active initiatives.`)
+  return out
 }
 
 // How each operating lens reframes the same intelligence.

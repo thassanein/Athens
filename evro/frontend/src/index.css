@@ -255,6 +255,15 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
 .landing-vum-big { font-size: clamp(40px, 7vw, 62px); font-weight: 800; letter-spacing: -1.5px; color: var(--green); line-height: 1; }
 .landing-vum-label { text-transform: uppercase; letter-spacing: 0.6px; font-size: 12px; font-weight: 800; color: #cfd8e3; }
 .landing-vum-sub { font-size: 13px; color: #8b97a8; margin-top: 3px; }
+.landing-narrative { display: flex; align-items: center; gap: 10px; margin-top: 22px; flex-wrap: wrap; min-height: 24px; }
+.landing-narrative-text { color: #cfd8e3; font-size: 15px; animation: fade-in 0.5s ease; }
+.landing-summary { margin: 24px 0 6px; }
+.landing-summary .landing-vum { margin: 0 0 12px; }
+.landing-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.landing-stat-card { border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 12px 14px; background: rgba(255, 255, 255, 0.02); }
+.landing-stat-label { text-transform: uppercase; letter-spacing: 0.4px; font-weight: 700; color: #8b97a8; }
+.landing-stat-val { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin: 4px 0 2px; }
+.landing-stat-sub { color: #8b97a8; }
 .landing-cta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .btn.lg { padding: 13px 22px; font-size: 15px; border-radius: 12px; }
 .landing-stat { font-size: 13px; color: #aeb9c7; }

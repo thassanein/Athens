@@ -131,7 +131,7 @@ export default function App() {
   }, [user])
 
   if (!db || !user) return <div style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }} className="muted">Loading EVRO…</div>
-  if (!entered) return <Landing db={db} onEnter={enter} />
+  if (!entered) return <Landing db={db} user={user} onEnter={enter} />
 
   const Page = PAGES[page] || Cockpit
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
