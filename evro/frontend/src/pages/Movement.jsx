@@ -23,7 +23,7 @@ export default function Movement({ db, openDrawer, navigate }) {
           <div className="tiny" style={{ opacity: 0.9 }}>{s.participants} of {s.totalPeople} people creating value across {s.activeInitiatives} initiatives</div>
         </div>
         <span className="spacer" />
-        <button className="btn sm" onClick={() => navigate('recognition')} style={{ background: 'rgba(255,255,255,0.16)', color: '#fff', borderColor: 'transparent' }}>Value Champions →</button>
+        <button className="btn sm" onClick={() => navigate('summit')} style={{ background: 'rgba(255,255,255,0.16)', color: '#fff', borderColor: 'transparent' }}>Value Summit →</button>
       </div>
 
       <div className="tiles section-gap">

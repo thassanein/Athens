@@ -277,6 +277,20 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
   .landing-foot { flex-direction: column; gap: 4px; }
 }
 
+/* ---- Phase 4A: AVCM Value Summit ----------------------------------------- */
+.summit-banner { display: flex; align-items: center; gap: 14px; padding: 20px 22px; border-radius: 16px; color: #fff;
+  background: linear-gradient(120deg, #7a1420, var(--red) 52%, #b8860b 150%); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.champion-card { border-left: 3px solid var(--amber); }
+.champion-avatar .avatar { width: 54px; height: 54px; font-size: 19px; }
+.podium-card { border-top: 3px solid var(--grey); border-radius: 11px; padding: 12px 10px; text-align: center; background: var(--panel-2); }
+.record-card { display: block; width: 100%; font: inherit; color: inherit; text-align: left; border: 1px solid var(--line); border-radius: 11px; padding: 12px 14px; background: var(--panel-2); cursor: pointer;
+  transition: border-color 0.14s ease, transform 0.14s ease; }
+.record-card:hover { border-color: var(--navy); transform: translateY(-1px); }
+@media (max-width: 560px) {
+  .summit-banner { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .summit-banner .spacer { display: none; }
+}
+
 /* ---- persistent AI intelligence bar -------------------------------------- */
 .intel-bar { position: sticky; top: var(--topbar-h); z-index: 25; display: flex; align-items: center; gap: 10px;
   padding: 8px 18px; background: var(--panel-2); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }

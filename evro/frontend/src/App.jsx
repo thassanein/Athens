@@ -29,6 +29,7 @@ import Opportunities from './pages/Opportunities.jsx'
 import Spend from './pages/Spend.jsx'
 import Leaderboard from './pages/Leaderboard.jsx'
 import Movement from './pages/Movement.jsx'
+import Summit from './pages/Summit.jsx'
 import Sustainment from './pages/Sustainment.jsx'
 import Recognition from './pages/Recognition.jsx'
 import Reporting from './pages/Reporting.jsx'
@@ -37,8 +38,8 @@ import Methodology from './pages/Methodology.jsx'
 import Intake from './pages/Intake.jsx'
 import Initiative from './pages/Initiative.jsx'
 
-const PAGES = { morning: Morning, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
-const TITLES = { morning: 'Morning operating screen', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
+const PAGES = { morning: Morning, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, summit: Summit, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
+const TITLES = { morning: 'Morning operating screen', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', summit: 'AVCM Value Summit', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
 
 const HOME = { exec: 'morning', admin: 'morning', fpna: 'morning', leader: 'morning', owner: 'morning', procurement: 'morning' }
 const ALWAYS_OK = ['initiative', 'intake']

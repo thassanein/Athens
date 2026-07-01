@@ -37,6 +37,7 @@ export const NAV = [
   ] },
   { group: 'Engage', items: [
     ['movement', 'Value Movement', IconTeam, ALL],
+    ['summit', 'Value Summit', IconLeaderboard, ALL],
     ['leaderboard', 'Leaderboard', IconLeaderboard, ALL],
     ['recognition', 'Recognition', IconBolt, ALL],
     ['sustainability', 'Sustainability', IconLeaf, ALL],
