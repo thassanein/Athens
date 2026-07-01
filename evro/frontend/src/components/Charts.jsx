@@ -229,6 +229,30 @@ export function Graph({ nodes, edges, highlight = [], onPick, height = 360 }) {
 }
 
 // ---- Funnel (pipeline by stage) -------------------------------------------
+// ---- Health radar (spider) — axes: [{ label, value 0..1 }] ----------------
+export function Radar({ axes, size = 210, color = 'var(--navy)' }) {
+  const cx = size / 2, cy = size / 2, r = size / 2 - 34
+  const n = axes.length
+  const pt = (i, val) => {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / n
+    return [cx + Math.cos(a) * r * val, cy + Math.sin(a) * r * val]
+  }
+  const poly = (val) => axes.map((_, i) => pt(i, val).join(',')).join(' ')
+  const shape = axes.map((ax, i) => pt(i, Math.max(0.02, Math.min(1, ax.value))).join(',')).join(' ')
+  return (
+    <svg width="100%" viewBox={`-22 -6 ${size + 44} ${size + 12}`} style={{ maxWidth: size + 44, display: 'block', margin: '0 auto' }}>
+      {[0.25, 0.5, 0.75, 1].map((rr, k) => <polygon key={k} points={poly(rr)} fill="none" stroke="var(--line)" strokeWidth="1" />)}
+      {axes.map((_, i) => { const [x, y] = pt(i, 1); return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--line)" strokeWidth="1" /> })}
+      <polygon points={shape} fill={color} fillOpacity="0.24" stroke={color} strokeWidth="2" />
+      {axes.map((ax, i) => { const [x, y] = pt(i, 1); return <circle key={i} cx={pt(i, Math.max(0.02, Math.min(1, ax.value)))[0]} cy={pt(i, Math.max(0.02, Math.min(1, ax.value)))[1]} r="2.6" fill={color} /> })}
+      {axes.map((ax, i) => {
+        const [x, y] = pt(i, 1.2)
+        return <text key={i} x={x} y={y} textAnchor="middle" dominantBaseline="middle" fontSize="9.5" fontWeight="700" fill="var(--grey)">{ax.label}</text>
+      })}
+    </svg>
+  )
+}
+
 export function Funnel({ stages, fmt = money }) {
   const max = Math.max(1, ...stages.map((s) => s.count))
   const COLORS = ['#9aa7b6', '#5b7aa6', '#2f5793', 'var(--navy)']

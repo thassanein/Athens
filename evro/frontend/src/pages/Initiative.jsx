@@ -4,10 +4,11 @@ import {
   implementedRunRate, valueLeakage, STAGES, GATE_STAGES, STAGE_LABEL, STAGE_CONFIDENCE,
   MATERIALITY, BENEFIT_LABEL, personName, categoryName, groupName, canSeeInitiative,
   approvalState, canApproveRoles, canRequestAdvance, nextStage, ROLE_APPROVE_LABEL,
-  npv, paybackMonths, netAnnual, PROFILE_LABEL,
+  npv, paybackMonths, netAnnual, PROFILE_LABEL, worstRisk, expectedToDate,
 } from '../lib/engine.js'
 import { money, pct, monthLabel, dateLabel } from '../lib/format.js'
 import { StagePip, PillarBadge, RagBadge, Avatar } from '../components/ui.jsx'
+import { Radar } from '../components/Charts.jsx'
 import { IconBack } from '../components/Icons.jsx'
 
 export default function Initiative({ db, id, caps, user, dispatch, navigate, flash, home = 'exec', embedded = false }) {
@@ -38,6 +39,26 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
 
   const [pane, setPane] = useState('financials')
   const openTaskCount = (i.tasks || []).filter((t) => t.status === 'open').length
+
+  // Health radar (5 factors, each 0..1) + benefits waterfall (gross → RAV).
+  const conf = STAGE_CONFIDENCE[i.stage]
+  const rfac = i.realization_factor ?? 1
+  const exp = expectedToDate(i, db)
+  const delivery = ['launch', 'realization', 'sustainment', 'retired'].includes(i.stage) ? (exp ? Math.min(1, realized / exp) : 1) : conf
+  const radarAxes = [
+    { label: 'Confidence', value: conf },
+    { label: 'Realization', value: rfac },
+    { label: 'Delivery', value: delivery },
+    { label: 'Risk-free', value: 1 - Math.min(1, (worstRisk(i) || 0) / 25) },
+    { label: 'Recurring', value: recur },
+  ]
+  const gross = i.gross_annual_value
+  const benefitSteps = [
+    { label: 'Gross annual', value: gross, kind: 'base' },
+    { label: 'Stage confidence', delta: gross * conf - gross },
+    { label: 'Realization', delta: rav(i) - gross * conf },
+    { label: 'Risk-adjusted value', value: rav(i), kind: 'total' },
+  ]
 
   return (
     <>
@@ -83,6 +104,20 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
       </div>
 
       {pane === 'financials' && <>
+      {/* health radar + benefits waterfall */}
+      <div className="grid cols-2 section-gap">
+        <div className="card pad">
+          <div className="card-h"><h3>Initiative health</h3><span className="spacer" /><span className="tiny muted">5-factor radar</span></div>
+          <Radar axes={radarAxes} />
+          <p className="tiny muted section-gap">Confidence, realization, delivery-vs-plan, risk-free and recurring share — a fast read on initiative quality.</p>
+        </div>
+        <div className="card pad">
+          <div className="card-h"><h3>Benefits waterfall</h3><span className="spacer" /><span className="tiny muted">gross → risk-adjusted</span></div>
+          <BenefitBridge steps={benefitSteps} />
+          <p className="tiny muted section-gap">How gross annual value is haircut by stage confidence and realization to reach risk-adjusted value (RAV).</p>
+        </div>
+      </div>
+
       {/* value + baseline */}
       <div className="grid cols-2 section-gap">
         <div className="card pad">
@@ -218,6 +253,41 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
 
       {pane === 'collaboration' && <Collaboration i={i} db={db} caps={caps} user={user} dispatch={dispatch} flash={flash} />}
     </>
+  )
+}
+
+// Benefits waterfall — horizontal bridge from gross to risk-adjusted value.
+function BenefitBridge({ steps }) {
+  const max = Math.max(...steps.map((s) => (s.kind ? s.value : 0)), 1)
+  let running = 0
+  return (
+    <div className="bridge">
+      {steps.map((s, k) => {
+        if (s.kind) {
+          running = s.value
+          const w = (s.value / max) * 100
+          return (
+            <div key={k} className="bridge-row">
+              <span className="bridge-lbl"><b>{s.label}</b></span>
+              <div className="bridge-track"><i style={{ left: 0, width: `${w}%`, background: s.kind === 'total' ? 'var(--green)' : 'var(--navy)' }} /></div>
+              <span className="bridge-val mono"><b>{money(s.value)}</b></span>
+            </div>
+          )
+        }
+        const start = running
+        running += s.delta
+        const up = s.delta >= 0
+        const left = (Math.min(start, running) / max) * 100
+        const w = (Math.abs(s.delta) / max) * 100
+        return (
+          <div key={k} className="bridge-row">
+            <span className="bridge-lbl muted">{s.label}</span>
+            <div className="bridge-track"><i style={{ left: `${left}%`, width: `${Math.max(w, 0.4)}%`, background: up ? 'var(--green)' : 'var(--red)' }} /></div>
+            <span className="bridge-val mono" style={{ color: up ? 'var(--green)' : 'var(--red)' }}>{s.delta === 0 ? '—' : `${up ? '+' : ''}${money(s.delta)}`}</span>
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
