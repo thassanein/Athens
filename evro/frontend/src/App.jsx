@@ -9,6 +9,7 @@ import Copilot from './components/Copilot.jsx'
 import IntelligenceBar from './components/IntelligenceBar.jsx'
 import Briefing from './components/Briefing.jsx'
 import Landing from './components/Landing.jsx'
+import { BrandMark } from './components/Brand.jsx'
 import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
 
 import Morning from './pages/Morning.jsx'
@@ -132,7 +133,12 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
-  if (!db || !user) return <div style={{ display: 'grid', placeItems: 'center', minHeight: '100vh' }} className="muted">Loading EVRO…</div>
+  if (!db || !user) return (
+    <div className="app-loading">
+      <div className="app-loading-mark"><BrandMark size={64} /></div>
+      <div className="tiny muted">Loading the operating system…</div>
+    </div>
+  )
   if (!entered) return <Landing db={db} user={user} onEnter={enter} />
 
   const Page = PAGES[page] || Cockpit

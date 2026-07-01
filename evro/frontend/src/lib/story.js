@@ -7,6 +7,7 @@ import {
   controlTower, execSummary, enterpriseRollup, rankInitiatives, decisionsRequired,
   scenarioTotals, sustainmentBook, recognition, inflationExposure, STAGE_LABEL,
 } from './engine.js'
+import { geoLeaderboard } from './movement.js'
 import { money, pct, dateLabel } from './format.js'
 
 // Who the deck is framed for — reorders and reframes the middle of the story.
@@ -14,6 +15,7 @@ export const AUDIENCES = [
   { key: 'board', label: 'Board', blurb: 'Directors · value, risk & decisions' },
   { key: 'exec', label: 'Executive', blurb: 'Ops depth · leakage, capital, forecast' },
   { key: 'operators', label: 'Operators', blurb: 'Teams · momentum & recognition' },
+  { key: 'bu', label: 'Business unit', blurb: 'By business unit · value & risk' },
 ]
 
 // Which slice of the fiscal year the hero beat leads with.
@@ -167,6 +169,17 @@ export function storyBeats(db, opts = {}) {
     }
   })()
 
+  const buBoard = geoLeaderboard(db, 'business_unit')
+  const businessUnit = {
+    id: 'bu', tone: 'navy', lbl: 'By business unit', title: 'Where value sits by business unit',
+    big: money(buBoard[0]?.totalFY || 0), cap: buBoard[0] ? `top unit · ${buBoard[0].name}` : 'no active units',
+    sub: `Value under management split across ${buBoard.length} business unit${buBoard.length === 1 ? '' : 's'} — lead with where it concentrates.`,
+    table: {
+      cols: ['Business unit', 'Initiatives', 'Realized', 'Total FY'], align: ['l', 'r', 'r', 'r'],
+      rows: buBoard.slice(0, 6).map((b) => [b.name, String(b.count), money(b.realized), money(b.totalFY)]),
+    },
+  }
+
   const decisions = {
     id: 'decisions', tone: 'amber', lbl: 'The decisions in front of you', title: 'What needs a decision',
     big: String(dec.length), cap: `${approvals} awaiting sign-off · ranked highest-value first`,
@@ -187,6 +200,7 @@ export function storyBeats(db, opts = {}) {
   let mid
   if (audience === 'exec') mid = [decisions, risk, fund, scenarios, sustainment, cost, returns]
   else if (audience === 'operators') mid = [returns, recognitionBeat, sustainment]
+  else if (audience === 'bu') mid = [businessUnit, returns, risk, fund, decisions]
   else mid = [returns, risk, cost, fund, decisions] // board (default)
 
   // Period nudges: guarantee the period's signature beat is present.
@@ -202,7 +216,7 @@ export function storyBeats(db, opts = {}) {
     cover: 'Opening', position: 'The position', summary: 'The position',
     returns: 'Where value concentrates', risk: 'What is at risk', cost: 'What is at risk',
     scenarios: 'The outlook', sustainment: 'Does value hold', recognition: 'The people',
-    fund: 'What we fund', decisions: 'The decisions', closing: 'Close',
+    fund: 'What we fund', decisions: 'The decisions', bu: 'By business unit', closing: 'Close',
   }
   const NOTE = {
     cover: `This is the ${audLabel(audience)} operating review for FY${fy}, ${perLabel(period)}. It runs top to bottom — where we are, where the value is, what's at risk, what we fund, and the decisions in front of you.`,
@@ -215,6 +229,7 @@ export function storyBeats(db, opts = {}) {
     scenarios: `Frame the band — committed ${money(scen.committed)}, expected ${money(scen.expected)}, upside ${money(scen.upside)}. Commit the room to the expected case.`,
     sustainment: `Delivered value is holding at ${pct(sustain.avg)} of plan${sustain.eroding.length ? `, but ${sustain.eroding.length} initiative${sustain.eroding.length > 1 ? 's are' : ' is'} eroding — call the recovery` : ''}.`,
     recognition: `Close the loop with the people: ${rec.millionClub.length} in the $1M club. Recognition is the adoption engine.`,
+    bu: `Break it down by business unit — ${buBoard[0]?.name || 'the top unit'} leads at ${money(buBoard[0]?.totalFY || 0)}. Name an owner per unit.`,
     decisions: `The ask: ${dec.length} decision${dec.length === 1 ? '' : 's'}, ${approvals} awaiting sign-off, ranked by value at stake. Work top-down.`,
     closing: 'Land the principle — return is the only target, and value counts only once FP&A validates it. Then open the floor.',
   }

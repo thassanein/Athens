@@ -2,7 +2,7 @@
 // and the Value Summit. View-only orchestration over existing engine outputs
 // (recognition / leaderboard / points / streaks) and the movement helpers.
 // Deterministic / rules-based; does NOT touch the engine or any logic.
-import { recognition, POINT_LEVELS, rankInitiatives } from './engine.js'
+import { recognition, POINT_LEVELS, rankInitiatives, personName } from './engine.js'
 import { movementStats, valueAwards, geoLeaderboard } from './movement.js'
 
 const LEVELS_ASC = [...POINT_LEVELS].sort((a, b) => a.min - b.min) // Bronze → Platinum
@@ -79,6 +79,38 @@ export function summitHighlights(db) {
     topRegion: geoLeaderboard(db, 'region')[0] || null,
     topBU: geoLeaderboard(db, 'business_unit')[0] || null,
   }
+}
+
+// Value seasons — realized value by fiscal quarter, with the season's leader.
+export function valueSeasons(db) {
+  const fy = String(db.meta.fiscalYear)
+  const Q = [
+    { name: 'Q1', label: 'Jan–Mar', months: ['01', '02', '03'] },
+    { name: 'Q2', label: 'Apr–Jun', months: ['04', '05', '06'] },
+    { name: 'Q3', label: 'Jul–Sep', months: ['07', '08', '09'] },
+    { name: 'Q4', label: 'Oct–Dec', months: ['10', '11', '12'] },
+  ]
+  return Q.map((q) => {
+    let realized = 0
+    const byPerson = {}
+    for (const i of db.initiatives) for (const a of i.actuals || []) {
+      const mm = (a.period || '').slice(5, 7)
+      if (a.validated && (a.period || '').startsWith(fy) && q.months.includes(mm)) {
+        realized += a.realized_amount || 0
+        for (const c of i.contributions || []) byPerson[c.user_id] = (byPerson[c.user_id] || 0) + (a.realized_amount || 0) * (c.credit_pct / 100)
+      }
+    }
+    const top = Object.entries(byPerson).sort((a, b) => b[1] - a[1])[0]
+    return { name: q.name, label: q.label, realized, leader: top ? personName(db, top[0]) : null, leaderValue: top ? top[1] : 0 }
+  })
+}
+
+// Executive scorecard — the top champions' at-a-glance cards.
+export function executiveScorecard(db, n = 6) {
+  return recognition(db).people.slice(0, n).map((p) => ({
+    id: p.id, name: p.name, fn: p.fn, level: p.level, points: p.points, streak: p.streak,
+    realized: p.realized, totalFY: p.totalFY, badges: (p.badges || []).length, millionClub: p.millionClub,
+  }))
 }
 
 export const LEVEL_TONE = { Platinum: 'b-navy', Gold: 'b-amber', Silver: 'b-grey', Bronze: 'b-red' }

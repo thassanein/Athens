@@ -1,4 +1,4 @@
-import { championList, millionClub, awardsGallery, gamificationStats, summitHighlights, LEVEL_TONE, MEDAL } from '../lib/avcm.js'
+import { championList, millionClub, awardsGallery, gamificationStats, summitHighlights, valueSeasons, executiveScorecard, LEVEL_TONE, MEDAL } from '../lib/avcm.js'
 import { money, pct, num } from '../lib/format.js'
 import { Tile, Avatar } from '../components/ui.jsx'
 
@@ -11,6 +11,9 @@ export default function Summit({ db, openDrawer, navigate }) {
   const mdc = millionClub(db)
   const awards = awardsGallery(db)
   const g = gamificationStats(db)
+  const seasons = valueSeasons(db)
+  const scorecard = executiveScorecard(db)
+  const maxSeason = Math.max(1, ...seasons.map((s) => s.realized))
   const podium = champs.slice(0, 3)
   const LEVEL_ORDER = ['Platinum', 'Gold', 'Silver', 'Bronze']
   const maxLevel = Math.max(1, ...LEVEL_ORDER.map((l) => g.byLevel[l] || 0))
@@ -87,6 +90,44 @@ export default function Summit({ db, openDrawer, navigate }) {
               </div>
               {a.value != null && <div className="mono" style={{ fontWeight: 800, color: 'var(--green)' }}>{money(a.value)}</div>}
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* value seasons */}
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>Value seasons</h3><span className="spacer" /><span className="tiny muted">FY{h.fiscalYear} · realized by quarter</span></div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
+          {seasons.map((q) => (
+            <div key={q.name} className="season-card">
+              <div className="card-h"><b>{q.name}</b><span className="spacer" /><span className="tiny muted">{q.label}</span></div>
+              <div className="mono" style={{ fontWeight: 800, fontSize: 18, color: 'var(--green)', marginTop: 4 }}>{money(q.realized)}</div>
+              <div className="meter" style={{ marginTop: 8 }}><i style={{ width: `${(q.realized / maxSeason) * 100}%`, background: 'var(--green)' }} /></div>
+              <div className="tiny muted" style={{ marginTop: 6 }}>{q.leader ? `🏅 ${q.leader}` : 'no standings yet'}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* executive scorecard */}
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>Executive scorecard</h3><span className="spacer" /><span className="tiny muted">top champions at a glance</span></div>
+        <div className="grid cols-3">
+          {scorecard.map((p) => (
+            <button key={p.id} className="scorecard-card" onClick={() => navigate('leaderboard')}>
+              <div className="card-h"><b style={{ fontSize: 14 }}>{p.name}</b><span className="spacer" /><span className={`badge ${LEVEL_TONE[p.level] || 'b-grey'}`}>{p.level}</span></div>
+              <div className="tiny muted">{p.fn}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
+                <div><div className="tiny label">Total FY</div><div className="mono" style={{ fontWeight: 800, color: 'var(--green)' }}>{money(p.totalFY)}</div></div>
+                <div><div className="tiny label">Points</div><div className="mono" style={{ fontWeight: 800 }}>{num(p.points)}</div></div>
+                <div><div className="tiny label">Realized</div><div className="mono">{money(p.realized)}</div></div>
+                <div><div className="tiny label">Streak</div><div className="mono">{p.streak} mo</div></div>
+              </div>
+              <div className="chip-row" style={{ marginTop: 10 }}>
+                <span className="badge b-grey">{p.badges} badge{p.badges === 1 ? '' : 's'}</span>
+                {p.millionClub && <span className="badge b-opp">💎 $1M club</span>}
+              </div>
+            </button>
           ))}
         </div>
       </div>

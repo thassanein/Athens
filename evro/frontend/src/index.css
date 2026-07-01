@@ -341,6 +341,15 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
 .palette-cat { padding: 9px 14px 3px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--grey-2); font-weight: 800; }
 .palette-cat:first-child { padding-top: 4px; }
 
+/* ---- Enhancements: AVCM seasons + scorecard + branded loading ------------ */
+.season-card { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--panel-2); }
+.scorecard-card { display: block; width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--panel-2); cursor: pointer;
+  transition: border-color 0.14s ease, transform 0.14s ease; }
+.scorecard-card:hover { border-color: var(--navy); transform: translateY(-2px); }
+.app-loading { position: fixed; inset: 0; display: grid; place-items: center; align-content: center; gap: 14px; background: var(--bg); }
+.app-loading-mark { animation: pulse-mark 1.4s ease-in-out infinite; }
+@keyframes pulse-mark { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1); } }
+
 /* ---- persistent AI intelligence bar -------------------------------------- */
 .intel-bar { position: sticky; top: var(--topbar-h); z-index: 25; display: flex; align-items: center; gap: 10px;
   padding: 8px 18px; background: var(--panel-2); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }
@@ -502,7 +511,8 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .story-tbl tr:last-child td { border-bottom: none; }
 .story-dot { width: 9px; height: 9px; padding: 0; border-radius: 50%; border: none; cursor: pointer; transition: background 0.15s ease, transform 0.15s ease; }
 .story-dot:hover { transform: scale(1.35); }
-.story-slide { animation: rise 0.34s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.story-slide { animation: story-cinema 0.44s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes story-cinema { from { opacity: 0; transform: translateX(38px) scale(0.99); } to { opacity: 1; transform: none; } }
 .story-seg button { transition: background 0.14s ease, color 0.14s ease; }
 
 /* story mode 2.0 — cinematic chrome: progress rail, chapter chip, notes, present */
@@ -516,6 +526,14 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .story-nav { flex-wrap: wrap; }
 .story.presenting .story-top { opacity: 0.5; }
 .story.presenting .story-slide h1 { font-size: 40px; }
+
+/* story mode 3.0 — teleprompter */
+.story-teleprompter { max-width: 1100px; width: 100%; text-align: center; animation: story-cinema 0.44s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.story-teleprompter .story-chip { display: inline-block; }
+.tp-title { font-size: clamp(26px, 3.6vw, 44px) !important; color: #fff; margin: 10px 0 22px; }
+.tp-note { font-size: clamp(24px, 3.6vw, 46px); line-height: 1.4; color: #eef3f9; font-weight: 600; max-width: 1000px; margin: 0 auto; }
+.tp-big { display: block; font-size: clamp(40px, 7vw, 84px); font-weight: 800; letter-spacing: -1px; margin-top: 26px; }
+.tp-big-cap { display: block; font-size: 15px; font-weight: 500; color: #aeb9c7; letter-spacing: 0; margin-top: 4px; }
 
 /* ======================================================================== */
 /* Wave 4 — motion & polish. Entrance reveals, chart draw-ins, count-up      */

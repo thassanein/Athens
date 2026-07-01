@@ -21,6 +21,7 @@ export default function StoryMode({ db, user, onClose }) {
   const [busy, setBusy] = useState(false)
   const [playing, setPlaying] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
+  const [teleprompter, setTeleprompter] = useState(false)
   const slides = useMemo(() => storyBeats(db, { audience, period, user }), [db, audience, period, user])
   const chapters = useMemo(() => storyChapters(slides), [slides])
   useEffect(() => { setK(0) }, [audience, period])
@@ -45,6 +46,7 @@ export default function StoryMode({ db, user, onClose }) {
       else if (e.key === 'Escape') onClose()
       else if (!onCtl && (e.key === 'n' || e.key === 'N')) setShowNotes((s) => !s)
       else if (!onCtl && (e.key === 'p' || e.key === 'P')) setPlaying((p) => !p)
+      else if (!onCtl && (e.key === 't' || e.key === 'T')) setTeleprompter((v) => !v)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -68,7 +70,7 @@ export default function StoryMode({ db, user, onClose }) {
       <div className="story-progress"><i style={{ width: `${((clamp + 1) / slides.length) * 100}%` }} /></div>
 
       <div className="story-top">
-        <span className="badge b-red">Story mode 2.0</span>
+        <span className="badge b-red">Story mode 3.0</span>
         <span className="story-sub hide-sm">{s.chapter} · Act {act + 1} of {chapters.length}</span>
         <span style={{ flex: 1 }} />
         <div className="story-seg" role="group" aria-label="Audience">
@@ -81,25 +83,36 @@ export default function StoryMode({ db, user, onClose }) {
         <button className="iconbtn" onClick={onClose} aria-label="Exit story mode" style={{ color: '#fff' }}><IconClose /></button>
       </div>
 
-      <div className="story-body">
-        <div key={clamp} className={`story-slide ${s.table ? 'has-table' : ''}`}>
-          <div className="story-chip">{s.chapter}</div>
-          <div className="story-kicker">{s.lbl}</div>
-          <h1>{s.title}</h1>
-          {s.big != null && <div className="big" style={{ color, marginTop: 6 }}><AnimatedValue value={s.big} /></div>}
-          {s.cap && <div className="lead story-cap">{s.cap}</div>}
-          {s.sub && <p className="lead story-narr">{s.sub}</p>}
-          {s.bullets?.length > 0 && <ul className="story-bullets">{s.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>}
-          {s.table && (
-            <div className="story-tablewrap">
-              <table className="tbl story-tbl">
-                <thead><tr>{s.table.cols.map((c, i) => <th key={i} className={al(i)}>{c}</th>)}</tr></thead>
-                <tbody>{s.table.rows.map((r, ri) => <tr key={ri}>{r.map((cell, ci) => <td key={ci} className={al(ci) ? 'num mono' : ''}>{cell}</td>)}</tr>)}</tbody>
-              </table>
-            </div>
-          )}
+      {teleprompter ? (
+        <div className="story-body">
+          <div key={clamp} className="story-teleprompter">
+            <div className="story-chip">{s.chapter} · {clamp + 1} / {slides.length}</div>
+            <h1 className="tp-title">{s.title}</h1>
+            <p className="tp-note">{s.note}</p>
+            {s.big != null && <div className="tp-big mono" style={{ color }}>{s.big}<span className="tp-big-cap">{s.cap}</span></div>}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="story-body">
+          <div key={clamp} className={`story-slide ${s.table ? 'has-table' : ''}`}>
+            <div className="story-chip">{s.chapter}</div>
+            <div className="story-kicker">{s.lbl}</div>
+            <h1>{s.title}</h1>
+            {s.big != null && <div className="big" style={{ color, marginTop: 6 }}><AnimatedValue value={s.big} /></div>}
+            {s.cap && <div className="lead story-cap">{s.cap}</div>}
+            {s.sub && <p className="lead story-narr">{s.sub}</p>}
+            {s.bullets?.length > 0 && <ul className="story-bullets">{s.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>}
+            {s.table && (
+              <div className="story-tablewrap">
+                <table className="tbl story-tbl">
+                  <thead><tr>{s.table.cols.map((c, i) => <th key={i} className={al(i)}>{c}</th>)}</tr></thead>
+                  <tbody>{s.table.rows.map((r, ri) => <tr key={ri}>{r.map((cell, ci) => <td key={ci} className={al(ci) ? 'num mono' : ''}>{cell}</td>)}</tr>)}</tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {showNotes && (
         <div className="story-notes">
@@ -111,6 +124,7 @@ export default function StoryMode({ db, user, onClose }) {
       <div className="story-nav">
         <button className="btn sm" onClick={() => setPlaying((p) => !p)} title="Present (P)">{playing ? '⏸ Pause' : '▶ Present'}</button>
         <button className={`btn sm ${showNotes ? 'accent' : ''}`} onClick={() => setShowNotes((v) => !v)} title="Presenter notes (N)">Notes</button>
+        <button className={`btn sm ${teleprompter ? 'accent' : ''}`} onClick={() => setTeleprompter((v) => !v)} title="Teleprompter (T)">Teleprompter</button>
         <button className="btn" onClick={prev} disabled={clamp === 0}>← Back</button>
         <div className="story-dots">
           {slides.map((_, i) => <button key={i} onClick={() => setK(i)} aria-label={`Slide ${i + 1}`} className="story-dot" style={{ background: i === clamp ? 'var(--red)' : 'rgba(255,255,255,0.28)' }} />)}
