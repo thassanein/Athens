@@ -1,0 +1,35 @@
+# Render blueprint for the Athens EVRO PoC — a single web service that builds
+# the frontend and runs the Express server (which serves the SPA and /api from
+# one origin).
+#
+# DATABASE: EVRO shares the existing facilities PostgreSQL (`athens-db`) rather
+# than provisioning its own — Render's free tier allows only one free database.
+# All EVRO tables are prefixed `evro_` (see server/db/migrate.js) so they never
+# collide with the facilities tables in the same instance.
+#
+# After the service is created, set DATABASE_URL in the Render dashboard to
+# athens-db's INTERNAL Database URL (Dashboard → athens-db → Connections →
+# Internal Database URL), then redeploy. On boot, migrate.js creates the evro_*
+# tables and seeds them. Until DATABASE_URL is set, the app serves the SPA in
+# demo mode (bundled snapshot) and /api/health still returns 200.
+#
+# Render reads render.yaml from the repo root, so move/symlink this file to the
+# repo root if you deploy EVRO on its own blueprint.
+
+services:
+  - type: web
+    name: athens-evro
+    runtime: node
+    plan: free # free web services sleep when idle (~30s cold start).
+    region: oregon
+    healthCheckPath: /api/health
+    # --include=dev forces Vite (a devDependency) to install even though
+    # NODE_ENV=production is set (npm would otherwise skip it).
+    buildCommand: cd evro/frontend && npm ci --include=dev && npm run build && cd ../server && npm ci --omit=dev
+    startCommand: cd evro/server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set this to athens-db's INTERNAL Database URL in the Render dashboard.
+      - key: DATABASE_URL
+        sync: false

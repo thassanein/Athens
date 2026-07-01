@@ -72,13 +72,90 @@ export function portfolioStats(data) {
   let openFindings = 0
   let toVerify = 0
   let due30 = 0
+  let complianceGaps = 0
+  let sitesWithGaps = 0
   for (const name of Object.keys(data)) {
     const s = siteStats(data[name])
     openFindings += s.open
     toVerify += s.verify
     due30 += s.due30
+    const m = data[name].compliance?.missing || 0
+    complianceGaps += m
+    if (m > 0) sitesWithGaps += 1
   }
-  return { openFindings, toVerify, due30 }
+  return { openFindings, toVerify, due30, complianceGaps, sitesWithGaps }
+}
+
+// ---- Risk tiering (command-center) -----------------------------------------
+// A facility's compliance posture, with an explicit label (never colour alone):
+//  - Non-compliant: a real gap — missing required item, a failing finding, or
+//    an overdue open action.
+//  - At risk: needs attention soon — a permit to verify, open work, a renewal
+//    or lease/permit expiring within 90 days.
+//  - Compliant: none of the above.
+export function riskTier(site) {
+  const checklist = site.checklist || []
+  const permits = site.permits || []
+  const leases = site.leases || []
+  const missing = site.compliance?.missing || 0
+  const failing = checklist.some((c) => c.status === 'fail')
+  const overdueFinding = checklist.some((c) => isOpenWork(c) && c.due && daysUntil(c.due) < 0)
+  if (missing > 0 || failing || overdueFinding) return { key: 'noncompliant', label: 'Non-compliant', tone: 'fail' }
+  const verify = permits.some((p) => p.status === 'verify')
+  const openWork = checklist.some(isOpenWork)
+  const renew = permits.some((p) => p.status === 'renew')
+  const soon = [...permits, ...leases].some((x) => {
+    const d = daysUntil(x.expires)
+    return d >= 0 && d <= 90
+  })
+  if (verify || openWork || renew || soon) return { key: 'risk', label: 'At risk', tone: 'open' }
+  return { key: 'compliant', label: 'Compliant', tone: 'pass' }
+}
+
+// The soonest upcoming permit/lease expiry (today or later), or null.
+export function nextDue(site) {
+  let best = null
+  for (const x of [...(site.permits || []), ...(site.leases || [])]) {
+    const d = daysUntil(x.expires)
+    if (d !== Infinity && d >= 0 && (!best || d < best.days)) best = { days: d, date: x.expires, name: x.name }
+  }
+  return best
+}
+
+// Count of items that read as overdue/unconfirmed at a site: permits awaiting
+// verification + open findings past their due date.
+export function overdueCount(site) {
+  const verify = (site.permits || []).filter((p) => p.status === 'verify').length
+  const od = (site.checklist || []).filter((c) => isOpenWork(c) && c.due && daysUntil(c.due) < 0).length
+  return verify + od
+}
+
+// Portfolio-wide rollup for the executive dashboard.
+export function portfolioRollup(data) {
+  const names = Object.keys(data)
+  const tiers = { compliant: 0, risk: 0, noncompliant: 0 }
+  let overdue = 0
+  let upcoming = 0
+  const sites = names.map((name) => {
+    const site = data[name]
+    const tier = riskTier(site)
+    tiers[tier.key] += 1
+    overdue += overdueCount(site)
+    const nd = nextDue(site)
+    if (nd && nd.days <= 90) upcoming += 1
+    return {
+      name,
+      tier,
+      nextDue: nd,
+      openIssues: siteStats(site).open + (site.permits || []).filter((p) => p.status === 'verify').length,
+      gaps: site.compliance?.missing || 0,
+    }
+  })
+  const highRisk = sites
+    .filter((s) => s.tier.key === 'noncompliant')
+    .sort((a, b) => b.gaps - a.gaps || b.openIssues - a.openIssues)
+    .slice(0, 6)
+  return { total: names.length, tiers, overdue, upcoming, highRisk, sites }
 }
 
 // Flat list of open findings across all sites, each tagged with its site.

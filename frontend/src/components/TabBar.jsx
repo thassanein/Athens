@@ -19,7 +19,7 @@ export default function TabBar({ screen, setScreen, onCapture, alertBadge }) {
 
   return (
     <nav className="tabbar">
-      <Tab id="map" label="Map" icon={<IconMap />} />
+      <Tab id="map" label="Home" icon={<IconMap />} />
       <Tab id="tasks" label="Tasks" icon={<IconTasks />} />
       <button className="tab" onClick={onCapture} aria-label="Capture finding">
         <span className="fab">

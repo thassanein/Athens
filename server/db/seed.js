@@ -38,8 +38,8 @@ async function main() {
 
     for (const [name, site] of Object.entries(data)) {
       await client.query(
-        `INSERT INTO sites (name, type, swis, addr, city, lat, lng, anchor)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+        `INSERT INTO sites (name, type, swis, addr, city, lat, lng, anchor, folder, site_map, documents, compliance)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
         [
           name,
           site.type ?? null,
@@ -49,14 +49,18 @@ async function main() {
           site.lat ?? null,
           site.lng ?? null,
           site.anchor ?? false,
+          site.folder ?? null,
+          site.siteMap ?? null,
+          JSON.stringify(site.documents ?? []),
+          site.compliance ? JSON.stringify(site.compliance) : null,
         ]
       );
       counts.sites++;
 
       for (const p of site.permits ?? []) {
         await client.query(
-          `INSERT INTO permits (id, site, name, agency, number, status, expires, cycle, area)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+          `INSERT INTO permits (id, site, name, agency, number, status, expires, cycle, area, doc)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
           [
             p.id,
             name,
@@ -67,6 +71,7 @@ async function main() {
             p.expires ?? null,
             p.cycle ?? null,
             p.area ?? null,
+            p.doc ?? null,
           ]
         );
         counts.permits++;

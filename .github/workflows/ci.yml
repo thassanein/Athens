@@ -84,19 +84,65 @@ jobs:
           node -e '
             const j = require("/tmp/sites.json");
             const names = Object.keys(j);
-            if (names.length !== 5) throw new Error("expected 5 sites, got " + names.length);
-            const ao = j["American Organics"];
-            if (!ao || !ao.anchor) throw new Error("anchor site American Organics missing");
-            for (const k of ["permits","leases","checklist"]) {
-              if (!Array.isArray(ao[k])) throw new Error("American Organics."+k+" not an array");
+            if (names.length < 30) throw new Error("expected the full portfolio (>=30 sites), got " + names.length);
+            if (!names.some((n) => j[n].anchor)) throw new Error("no anchor site found");
+            const sv = j["SVMRF"];
+            if (!sv) throw new Error("expected site SVMRF in portfolio");
+            for (const k of ["permits","leases","checklist","documents"]) {
+              if (!Array.isArray(sv[k])) throw new Error("SVMRF."+k+" not an array");
             }
-            // dates come back as YYYY-MM-DD strings
-            const due = ao.checklist[0].due;
-            if (due && !/^\d{4}-\d{2}-\d{2}$/.test(due)) throw new Error("bad date format: " + due);
-            console.log("OK:", names.length, "sites,", ao.permits.length, "AO permits");
+            // SECURITY: external document-store (SharePoint) links must NOT be
+            // exposed. /api/sites is stripped of folder / siteMap / per-permit doc /
+            // per-document url; document names are still listed.
+            if (sv.folder) throw new Error("SVMRF folder link leaked");
+            if (sv.siteMap) throw new Error("SVMRF siteMap link leaked");
+            if (sv.permits.some((p) => p.doc)) throw new Error("SVMRF permit doc link leaked");
+            if (sv.documents.some((d) => d.url)) throw new Error("SVMRF document url leaked");
+            if (!sv.compliance || typeof sv.compliance.missing !== "number" || !Array.isArray(sv.compliance.categories)) throw new Error("SVMRF missing compliance data");
+            // permit expiry dates come back as YYYY-MM-DD strings (or null)
+            for (const n of names) for (const p of j[n].permits) {
+              if (p.expires && !/^\d{4}-\d{2}-\d{2}$/.test(p.expires)) throw new Error("bad date: " + n + " " + p.expires);
+            }
+            const permits = Object.values(j).reduce((a, s) => a + s.permits.length, 0);
+            console.log("OK:", names.length, "sites,", permits, "permits");
           '
           # exercise a write: create a field finding
           curl -sf -X POST localhost:4000/api/findings \
             -H "Content-Type: application/json" \
-            -d "{\"site\":\"American Organics\",\"dept\":\"ENV\",\"area\":\"Fuel/CNG\",\"note\":\"CI smoke test finding\"}" \
+            -d "{\"site\":\"SVMRF\",\"dept\":\"ENV\",\"area\":\"Stormwater\",\"note\":\"CI smoke test finding\"}" \
             | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.status!==\"open\"||j.source!==\"field\")throw new Error(\"unexpected finding: \"+d);console.log(\"created\",j.id)})"
+          # audits: create -> save responses + complete -> read back
+          AID=$(curl -sf -X POST localhost:4000/api/audits -H "Content-Type: application/json" \
+            -d "{\"site\":\"SVMRF\",\"template\":\"mrf\"}" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(!j.id)throw new Error(\"no audit id: \"+d);console.log(j.id)})")
+          curl -sf -X PATCH "localhost:4000/api/audits/$AID" -H "Content-Type: application/json" \
+            -d "{\"responses\":{\"mrf-0-0\":{\"val\":\"no\",\"note\":\"ci\"}},\"status\":\"complete\"}" >/dev/null
+          curl -sf "localhost:4000/api/audits/$AID" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const a=JSON.parse(d);if(a.status!==\"complete\")throw new Error(\"audit not complete\");if(a.responses[\"mrf-0-0\"].val!==\"no\")throw new Error(\"audit response not saved\");console.log(\"audit OK\",a.id)})"
+          # diagnostics surfaces for AI tools / crawlers (server-rendered, no JS)
+          curl -sf localhost:4000/api/portfolio \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.total<30)throw new Error(\"portfolio total too low: \"+j.total);if(!j.tiers||typeof j.tiers.noncompliant!==\"number\")throw new Error(\"missing tiers\");if(!Array.isArray(j.sites)||!j.sites[0].status)throw new Error(\"missing per-site summary\");console.log(\"portfolio OK\",j.total)})"
+          curl -sf localhost:4000/overview | grep -q '<h1>Athens Facility Compliance' || (echo '::error::/overview did not server-render' && exit 1)
+          curl -sf localhost:4000/llms.txt | grep -q '/api/portfolio' || (echo '::error::/llms.txt missing endpoints' && exit 1)
+          # per-facility detail (JSON + server-rendered HTML)
+          curl -sf "localhost:4000/api/facility/SVMRF" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.name!==\"SVMRF\"||!Array.isArray(j.permitsList))throw new Error(\"bad facility detail: \"+d);console.log(\"facility OK\",j.permitsList.length,\"permits\")})"
+          curl -sf "localhost:4000/overview/SVMRF" | grep -q '<h1>SVMRF' || (echo '::error::/overview/:name did not server-render' && exit 1)
+          curl -s -o /dev/null -w '%{http_code}' "localhost:4000/api/facility/DoesNotExist" | grep -q '404' || (echo '::error::unknown facility should 404' && exit 1)
+          echo "diagnostics surfaces OK"
+          # audit hygiene: review flags a wrong-form audit, and delete removes it
+          BAD=$(curl -sf -X POST localhost:4000/api/audits -H "Content-Type: application/json" -d "{\"site\":\"SVMRF\",\"template\":\"landfill\"}" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>console.log(JSON.parse(d).id))")
+          curl -sf localhost:4000/api/audits/review \
+            | BAD=$BAD node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(!j.mismatched.some(a=>a.id===process.env.BAD))throw new Error(\"review did not flag the mismatched audit\");console.log(\"review OK\",j.mismatchedCount,\"mismatched\")})"
+          curl -sf -X DELETE "localhost:4000/api/audits/$BAD" >/dev/null
+          curl -s -o /dev/null -w '%{http_code}' "localhost:4000/api/audits/$BAD" | grep -q '404' || (echo '::error::deleted audit should 404' && exit 1)
+          echo "audit delete + review OK"
+          # bulk cleanup removes wrong-form audits and leaves matching ones
+          curl -sf -X POST localhost:4000/api/audits -H "Content-Type: application/json" -d "{\"site\":\"SVMRF\",\"template\":\"ts\"}" >/dev/null   # MRF site, wrong form
+          GOOD=$(curl -sf -X POST localhost:4000/api/audits -H "Content-Type: application/json" -d "{\"site\":\"SVMRF\",\"template\":\"mrf\"}" \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>console.log(JSON.parse(d).id))")
+          curl -sf -X POST localhost:4000/api/audits/cleanup \
+            | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.deletedCount<1)throw new Error(\"cleanup deleted nothing\");console.log(\"cleanup removed\",j.deletedCount)})"
+          curl -sf "localhost:4000/api/audits/$GOOD" >/dev/null || (echo '::error::cleanup deleted a matching audit' && exit 1)
+          curl -sf localhost:4000/api/audits/review | node -e "let d=\"\";process.stdin.on(\"data\",c=>d+=c).on(\"end\",()=>{const j=JSON.parse(d);if(j.mismatchedCount!==0)throw new Error(\"mismatched remain after cleanup: \"+j.mismatchedCount);console.log(\"cleanup OK\")})"

@@ -23,8 +23,8 @@ self.addEventListener('fetch', (e) => {
   const { request } = e
   if (request.method !== 'GET') return
   const url = new URL(request.url)
-  // Never touch the API or cross-origin requests (fonts, etc.).
-  if (url.origin !== self.location.origin || url.pathname.includes('/api/')) return
+  // Never touch the API, auth, or cross-origin requests (fonts, etc.).
+  if (url.origin !== self.location.origin || url.pathname.includes('/api/') || url.pathname.includes('/auth/')) return
 
   // Network-first: serve fresh content, fall back to cache only when offline.
   e.respondWith(

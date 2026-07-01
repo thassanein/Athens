@@ -35,9 +35,46 @@
   --shadow-card: 0 1px 3px rgba(15, 28, 46, 0.06);
   --shadow-pop: 0 8px 30px rgba(15, 28, 46, 0.18);
 
-  /* Layout */
+  /* Layout — responsive widths (see breakpoints at the bottom of this file).
+     Phone defaults below; tablets/laptops/desktops widen via media queries.
+       --screen-w : a normal single-column screen (Tasks, Alerts, Profile, login)
+       --shell-max: the wide home command center (multi-column dashboard)
+       --overlay-w: the full-height site-record overlay
+       --sheet-w  : bottom sheets (capture, report)
+       --tabbar-w : the bottom navigation bar */
   --app-w: 440px;
+  --screen-w: 440px;
+  --shell-max: 440px;
+  --overlay-w: 440px;
+  --sheet-w: 440px;
+  --tabbar-w: 440px;
   --tabbar-h: 64px;
+}
+
+/* ------ Responsive breakpoints: tablet → laptop → desktop ------------------ */
+@media (min-width: 640px) {
+  :root {
+    --screen-w: 600px;
+    --shell-max: 940px;
+    --overlay-w: 760px;
+    --sheet-w: 640px;
+    --tabbar-w: 480px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --screen-w: 680px;
+    --shell-max: 1040px;
+    --overlay-w: 860px;
+    --sheet-w: 680px;
+  }
+}
+@media (min-width: 1440px) {
+  :root {
+    --screen-w: 720px;
+    --shell-max: 1140px;
+    --overlay-w: 920px;
+  }
 }
 
 * {
@@ -53,7 +90,7 @@ body {
 
 body {
   font-family: var(--font);
-  background: #0c1320; /* letterbox around the phone frame on desktop */
+  background: #0e1726; /* soft slate letterbox around the app frame on desktop */
   color: var(--navy);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -80,17 +117,24 @@ textarea {
   color: var(--navy);
 }
 
-/* The phone frame: a fixed ~440px portrait column centered on desktop,
-   full-bleed on an actual phone. */
+/* The app frame: full-bleed on a phone, a centered "app card" on larger
+   screens. Width adapts to the active screen — a normal column for most
+   screens, wider for the home command center (which lays out a multi-column
+   dashboard). See :root width vars + breakpoints above. */
 .app-shell {
   position: relative;
   width: 100%;
-  max-width: var(--app-w);
+  max-width: var(--screen-w);
   min-height: 100vh;
   margin: 0 auto;
   background: var(--bg);
   overflow: hidden;
   box-shadow: 0 0 60px rgba(0, 0, 0, 0.4);
+}
+/* Home command center gets the wide frame. :has() lets the shell react to the
+   screen rendered inside it (supported in all current browsers). */
+.app-shell:has(.home) {
+  max-width: var(--shell-max);
 }
 
 /* Scrolling content area sits above the bottom tab bar */
@@ -273,7 +317,7 @@ textarea {
   transform: translateX(-50%);
   bottom: 0;
   width: 100%;
-  max-width: var(--app-w);
+  max-width: var(--tabbar-w);
   height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: #fff;
@@ -342,7 +386,7 @@ textarea {
   left: 50%;
   bottom: 0;
   width: 100%;
-  max-width: var(--app-w);
+  max-width: var(--sheet-w);
   background: var(--bg);
   border-radius: var(--r-sheet) var(--r-sheet) 0 0;
   z-index: 51;
@@ -517,3 +561,62 @@ textarea {
 }
 
 /* tab content fade handled with transform; avoid opacity-from-0 keyframes */
+
+/* ==========================================================================
+   Responsive home command center
+   Phone: single column (as designed). Wider screens reflow the dashboard so
+   the extra room is used instead of wasted.
+   ========================================================================== */
+
+/* Executive KPI tiles: 3-across on phones, 6-across once there's room. */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+@media (min-width: 760px) {
+  .kpi-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* Facility cards: one column on phones, a responsive gallery on larger
+   screens (2 then 3 columns). */
+.facility-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 680px) {
+  .facility-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1040px) {
+  .facility-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+/* facility cards stretch to fill their grid cell evenly */
+.facility-grid > .card {
+  height: 100%;
+}
+
+/* The regional map is a fixed-aspect overview — keep it centered at a size
+   that fills its card (rather than stretching the card wider than the map and
+   leaving blank side panels). */
+@media (min-width: 760px) {
+  .home-hero {
+    max-width: 660px;
+    margin-inline: auto;
+  }
+}
+
+/* On larger screens the bottom nav becomes a centered floating bar. */
+@media (min-width: 640px) {
+  .tabbar {
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -2px 20px rgba(15, 28, 46, 0.12);
+  }
+}

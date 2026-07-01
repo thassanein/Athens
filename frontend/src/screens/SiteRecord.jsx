@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import {
   siteStats,
   daysUntil,
@@ -15,36 +15,97 @@ import {
   IconCamera,
   IconLeaf,
   IconDoc,
+  IconPin,
+  IconCheck,
 } from '../components/Icons.jsx'
+import { listAudits, getAudit, deleteAudit } from '../lib/api.js'
+import { AUDIT_TEMPLATES, templateItemCount, TYPE_TEMPLATE } from '../lib/audit-templates.js'
+import { demoAuditFor } from '../lib/demo-audits.js'
+import { zoneForSection } from '../lib/audit-zones.js'
+import { ownerFor } from '../lib/employees.js'
+import FacilityMap from './FacilityMap.jsx'
+import ReportOverlay from '../components/ReportOverlay.jsx'
 
-// Scaled site-plan zone layout (viewBox 360×300). Each of the eight areas is a
-// rectangle in a plausible yard layout; pins drop onto a zone's centroid.
-const ZONES = {
-  'Compost/Working': { x: 24, y: 30, w: 150, h: 92, label: 'Compost / Working' },
-  'Ponds/Stormwater': { x: 196, y: 30, w: 140, h: 72, label: 'Ponds / Stormwater' },
-  'HazMat Storage': { x: 24, y: 138, w: 84, h: 86, label: 'HazMat' },
-  Processing: { x: 122, y: 138, w: 116, h: 86, label: 'Processing' },
-  'Maint. Shop': { x: 252, y: 120, w: 84, h: 60, label: 'Maint. Shop' },
-  'Fuel/CNG': { x: 252, y: 196, w: 84, h: 72, label: 'Fuel / CNG' },
-  Admin: { x: 24, y: 240, w: 96, h: 40, label: 'Admin' },
-  'Scale/Entrance': { x: 134, y: 240, w: 104, h: 40, label: 'Scale / Entrance' },
-}
-// Pin anchor: horizontally centered, biased toward the lower part of the zone
-// so pins clear the top-left zone label (esp. in short zones like Scale/Admin).
-const centroid = (area) => {
-  const z = ZONES[area]
-  if (!z) return { x: 180, y: 150 }
-  const y = z.h <= 50 ? z.y + z.h - 13 : z.y + z.h * 0.58
-  return { x: z.x + z.w / 2, y }
+const TPL_NAME = { hauling: 'Hauling Division', mrf: 'MRF Master Form', facility: 'Facility Review', ts: 'Transfer Station', organics: 'American Organics / Compost', landfill: 'Landfill' }
+const fmtWhen = (iso) => {
+  if (!iso) return '—'
+  try {
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  } catch {
+    return '—'
+  }
 }
 
-const RAG_HEX = { active: '#1A5632', renew: '#B7791F', verify: '#D5172A' }
-const FIND_HEX = { pass: '#1A5632', fail: '#D5172A', open: '#B7791F', na: '#939598' }
+// Deficiencies (the "No" answers) of a fetched audit detail, with their area,
+// site-plan zone, note and any photo evidence.
+function auditDeficiencies(audit) {
+  if (!audit) return []
+  const tpl = AUDIT_TEMPLATES[audit.template]
+  if (!tpl) return []
+  const out = []
+  tpl.sections.forEach((s) =>
+    s.items.forEach((it) => {
+      const r = audit.responses?.[it.id]
+      if (r && r.val === 'no')
+        out.push({ id: it.id, section: s.title, zone: zoneForSection(s.title), ref: it.ref, text: it.text, note: r.note || '', photo: r.photo || null })
+    })
+  )
+  return out
+}
 
-const STYLES = {
-  plan: { bg: '#F4F6F9', zone: '#E7ECF2', zoneStroke: '#D2DAE4', text: '#46566B', line: '#D2DAE4' },
-  blueprint: { bg: '#13233B', zone: 'rgba(120,190,255,.08)', zoneStroke: '#3E72A8', text: '#9FD0FF', line: '#2E5A86' },
-  terrain: { bg: '#EAE5DA', zone: '#DCE3D4', zoneStroke: '#C3CDB6', text: '#5A5340', line: '#C7CEB8' },
+const esc = (s) =>
+  String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+
+// Build a standalone, print-ready HTML report. Returns the HTML string; the
+// caller shows it in-app (ReportOverlay) so there's always a Back option.
+function buildReport(name, site, latestAudit, userName) {
+  const now = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' })
+  const c = site.compliance
+  const findings = site.checklist || []
+  const defs = auditDeficiencies(latestAudit)
+  const permitsAttn = (site.permits || []).filter((p) => p.status !== 'active')
+
+  const compBlock = c
+    ? `<div class="kpi ${c.missing ? 'bad' : 'ok'}"><b>${c.missing ? `${c.missing} compliance gap${c.missing > 1 ? 's' : ''}` : 'Compliant'}</b> · ${c.present} of ${c.present + c.missing} required items present${c.note ? ` · <i>${esc(c.note)}</i>` : ''}</div>
+       <p>${c.categories.map((x) => `<span class="chip ${x.status === 'missing' ? 'bad' : 'ok'}">${x.status === 'missing' ? '✗' : '✓'} ${esc(x.key)}</span>`).join(' ')}</p>`
+    : '<p class="muted">No compliance requirements on file.</p>'
+
+  const auditBlock = latestAudit
+    ? `<p><b>${esc(TPL_NAME[latestAudit.template] || latestAudit.template)}</b> · ${esc(latestAudit.status)} · ${fmtWhen(latestAudit.updated)} · by ${esc(latestAudit.auditor || '—')}</p>
+       ${defs.length ? `<table><thead><tr><th>Area</th><th>Deficiency</th><th>Note</th></tr></thead><tbody>${defs.map((d) => `<tr><td>${esc(d.section)}</td><td>${esc((d.ref ? d.ref + '. ' : '') + d.text)}</td><td>${esc(d.note)}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No deficiencies recorded.</p>'}`
+    : '<p class="muted">No completed audit on file.</p>'
+
+  const findingsBlock = findings.length
+    ? `<table><thead><tr><th>Area</th><th>Finding</th><th>Status</th><th>Owner</th><th>Due</th></tr></thead><tbody>${findings
+        .map((f) => `<tr><td>${esc(f.area)}</td><td>${esc(f.title)}${f.note ? `<br><span class="muted">${esc(f.note)}</span>` : ''}</td><td>${esc(f.status)}</td><td>${esc(f.owner || 'Unassigned')}</td><td>${esc(fmtDate(f.due))}</td></tr>`)
+        .join('')}</tbody></table>`
+    : '<p class="muted">No findings logged.</p>'
+
+  const permitsBlock = permitsAttn.length
+    ? `<table><thead><tr><th>Permit</th><th>Agency</th><th>Number</th><th>Status</th><th>Expires</th></tr></thead><tbody>${permitsAttn
+        .map((p) => `<tr><td>${esc(p.name)}</td><td>${esc(p.agency)}</td><td>${esc(p.number)}</td><td>${esc(p.status)}</td><td>${esc(fmtDate(p.expires))}</td></tr>`)
+        .join('')}</tbody></table>`
+    : '<p class="muted">All permits active.</p>'
+
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Report — ${esc(name)}</title>
+  <style>
+    body{font:14px/1.45 -apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#1A2736;margin:32px;max-width:900px}
+    h1{font-size:22px;margin:0 0 2px} h2{font-size:15px;border-bottom:2px solid #1A2736;padding-bottom:4px;margin:26px 0 10px}
+    .sub{color:#667;margin-bottom:4px}.muted{color:#889}
+    table{border-collapse:collapse;width:100%;font-size:12.5px} th,td{border:1px solid #d7dde5;padding:6px 8px;text-align:left;vertical-align:top}
+    th{background:#f2f5f8} .kpi{padding:10px 12px;border-radius:8px;margin:6px 0} .kpi.bad{background:#fdecee;border:1px solid #f3b8bf} .kpi.ok{background:#eaf6ee;border:1px solid #b6e2c5}
+    .chip{display:inline-block;border:1px solid #d7dde5;border-radius:20px;padding:2px 9px;margin:2px;font-size:12px} .chip.bad{color:#D5172A;border-color:#f3b8bf} .chip.ok{color:#1A5632;border-color:#b6e2c5}
+  </style></head><body>
+  <h1>Facility Compliance Report</h1>
+  <div class="sub"><b>${esc(name)}</b> · ${esc(site.type)} · ${esc(site.city)}${site.swis ? ` · SWIS ${esc(site.swis)}` : ''}</div>
+  <div class="muted">Generated ${esc(now)}${userName ? ` · by ${esc(userName)}` : ''}</div>
+  <h2>Compliance</h2>${compBlock}
+  <h2>Latest audit</h2>${auditBlock}
+  <h2>Findings (${findings.length})</h2>${findingsBlock}
+  <h2>Permits needing attention</h2>${permitsBlock}
+  </body></html>`
+
+  return html
 }
 
 // ----------------------------------------------------------------------------
@@ -199,95 +260,7 @@ function FindingCard({ c, defaultOpen, canEdit, onChange }) {
 }
 
 // ----------------------------------------------------------------------------
-function SitePlan({ site, styleKey, selected, onSelect }) {
-  const S = STYLES[styleKey]
-  const W = 360,
-    H = 300
-  const permits = site.permits || []
-  const findings = (site.checklist || []).filter(isOpenWork)
-
-  // group pins per zone to fan them out
-  const byZonePermit = {}
-  permits.forEach((p) => ((byZonePermit[p.area] ||= []).push(p)))
-  const byZoneFind = {}
-  findings.forEach((f) => ((byZoneFind[f.area] ||= []).push(f)))
-
-  const fan = (center, i, n) => {
-    if (n <= 1) return center
-    const spread = Math.min(18, 8 + n * 2)
-    return { x: center.x + (i - (n - 1) / 2) * spread, y: center.y }
-  }
-
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="100%">
-      <rect width={W} height={H} fill={S.bg} />
-      {styleKey === 'blueprint' &&
-        Array.from({ length: 19 }).map((_, i) => (
-          <g key={i} stroke="rgba(120,190,255,.10)" strokeWidth="1">
-            <line x1={i * 20} y1="0" x2={i * 20} y2={H} />
-            <line x1="0" y1={i * 16} x2={W} y2={i * 16} />
-          </g>
-        ))}
-      {/* zones */}
-      {Object.entries(ZONES).map(([area, z]) => {
-        const isSel = selected === area
-        return (
-          <g key={area} onClick={() => onSelect(isSel ? null : area)} style={{ cursor: 'pointer' }}>
-            <rect
-              x={z.x}
-              y={z.y}
-              width={z.w}
-              height={z.h}
-              rx="8"
-              fill={isSel ? 'rgba(213,23,42,.10)' : S.zone}
-              stroke={isSel ? 'var(--red)' : S.zoneStroke}
-              strokeWidth={isSel ? 2 : 1.25}
-            />
-            <text x={z.x + 8} y={z.y + 16} fontSize="9.5" fontWeight="700" fill={S.text}>
-              {z.label}
-            </text>
-          </g>
-        )
-      })}
-      {/* permit pins (round, RAG) */}
-      {Object.entries(byZonePermit).flatMap(([area, list]) =>
-        list.map((p, i) => {
-          const c = fan(centroid(area), i, list.length)
-          return (
-            <g key={p.id} onClick={() => onSelect(area)} style={{ cursor: 'pointer' }}>
-              <circle cx={c.x} cy={c.y - 6} r="7" fill="#fff" stroke={RAG_HEX[p.status]} strokeWidth="2.5" />
-              <circle cx={c.x} cy={c.y - 6} r="3" fill={RAG_HEX[p.status]} />
-            </g>
-          )
-        })
-      )}
-      {/* finding pins (rounded square) */}
-      {Object.entries(byZoneFind).flatMap(([area, list]) =>
-        list.map((f, i) => {
-          const c = fan(centroid(area), i, list.length)
-          return (
-            <rect
-              key={f.id}
-              x={c.x - 5}
-              y={c.y + 6}
-              width="10"
-              height="10"
-              rx="3"
-              fill={FIND_HEX[f.status]}
-              stroke="#fff"
-              strokeWidth="1.5"
-              onClick={() => onSelect(area)}
-              style={{ cursor: 'pointer' }}
-            />
-          )
-        })
-      )}
-    </svg>
-  )
-}
-
-// ----------------------------------------------------------------------------
-function RenewalTimeline({ site }) {
+function RenewalTimeline({ site, onOpenItem }) {
   const items = []
   for (const p of site.permits || []) {
     const d = daysUntil(p.expires)
@@ -315,14 +288,15 @@ function RenewalTimeline({ site }) {
         {upcoming.map((it) => {
           const pct = Math.max(2, Math.min(98, (Math.max(it.d, 0) / 90) * 100))
           return (
-            <div
+            <button
               key={it.id}
               title={`${it.name} · ${fmtShort(it.expires)}`}
-              style={{ position: 'absolute', left: `${pct}%`, top: 6, transform: 'translateX(-50%)', textAlign: 'center' }}
+              onClick={() => onOpenItem?.(it)}
+              style={{ position: 'absolute', left: `${pct}%`, top: 6, transform: 'translateX(-50%)', textAlign: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               <div className={`dot dot-${it.status === 'renew' ? 'local' : 'pg'}`} style={{ width: 12, height: 12, border: '2px solid #fff', boxShadow: '0 0 0 1px var(--card-border)' }} />
               <div style={{ fontSize: 9, fontWeight: 700, marginTop: 3, color: 'var(--amber)' }}>{it.d}d</div>
-            </div>
+            </button>
           )
         })}
         {upcoming.length === 0 && (
@@ -335,12 +309,17 @@ function RenewalTimeline({ site }) {
         <div style={{ borderTop: '1px solid var(--card-border)', marginTop: 8, paddingTop: 8 }}>
           <span className="label s-fail">Overdue / unconfirmed</span>
           {overdue.map((it) => (
-            <div key={it.id} className="row spread" style={{ marginTop: 6 }}>
+            <button
+              key={it.id}
+              onClick={() => onOpenItem?.(it)}
+              className="row spread"
+              style={{ marginTop: 6, width: '100%', background: 'none', border: 'none', padding: '3px 0', cursor: 'pointer', textAlign: 'left', alignItems: 'center' }}
+            >
               <span style={{ fontSize: 12.5, fontWeight: 600 }}>{it.name}</span>
-              <span className="pill bg-fail s-fail" style={{ fontSize: 10 }}>
-                Verify
+              <span className="pill bg-fail s-fail" style={{ fontSize: 10, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                Verify <IconChevron size={12} />
               </span>
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -351,21 +330,33 @@ function RenewalTimeline({ site }) {
 // ----------------------------------------------------------------------------
 const TABS = [
   { id: 'findings', label: 'Findings' },
+  { id: 'compliance', label: 'Compliance' },
   { id: 'permits', label: 'Permits' },
+  { id: 'documents', label: 'Docs' },
+  { id: 'audits', label: 'Audits' },
+  { id: 'reports', label: 'Report' },
   { id: 'leases', label: 'Leases' },
   { id: 'facility', label: 'Facility' },
   { id: 'env', label: 'ENV' },
 ]
 
 // Tappable read-only card for permits & leases (no field entry per the brief —
-// taps just expand a detail panel).
-function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows }) {
-  const [open, setOpen] = useState(false)
+// taps just expand a detail panel). When `docUrl` is set, the expanded panel
+// shows a "View document" link that opens the source file/folder in SharePoint.
+function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows, docUrl, defaultOpen, highlight, onVerify, innerRef }) {
+  const [open, setOpen] = useState(!!defaultOpen)
+  useEffect(() => {
+    if (defaultOpen) setOpen(true)
+  }, [defaultOpen])
   return (
-    <button
+    <div
+      ref={innerRef}
       className={`card lrow bd-${toneKey}`}
+      role="button"
+      tabIndex={0}
       onClick={() => setOpen((o) => !o)}
-      style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
+      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setOpen((o) => !o))}
+      style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer', boxShadow: highlight ? '0 0 0 2px var(--navy)' : undefined }}
     >
       <div className="row spread">
         <span className="label" style={{ color: 'var(--grey)' }}>{area}</span>
@@ -381,10 +372,33 @@ function ReadOnlyCard({ toneKey, area, label, title, subtitle, rows }) {
               <span style={{ fontSize: 12.5, fontWeight: 600, textAlign: 'right' }}>{r.v}</span>
             </div>
           ))}
+          <div className="row gap" style={{ marginTop: 10, gap: 8, flexWrap: 'wrap' }}>
+            {docUrl && (
+              <a
+                href={docUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="pill"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--navy)', color: '#fff', textDecoration: 'none' }}
+              >
+                <IconDoc size={14} /> View document
+              </a>
+            )}
+            {onVerify && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onVerify() }}
+                className="pill"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--green,#2E9E5B)', color: '#fff', border: 'none', cursor: 'pointer' }}
+              >
+                <IconCheck size={14} /> Mark verified
+              </button>
+            )}
+          </div>
         </div>
       )}
       <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>{open ? 'Tap to collapse' : 'Tap for details'}</div>
-    </button>
+    </div>
   )
 }
 
@@ -394,20 +408,125 @@ export default function SiteRecord({
   initialTab,
   focusId,
   canEdit = false,
+  source,
   onClose,
   onUpdateFinding,
+  onUpdatePermit,
   onCapture,
+  onStartAudit,
+  onLogDeficiencies,
+  auditOpen = false,
+  userName,
   flash,
 }) {
   const [tab, setTab] = useState(initialTab || 'findings')
-  const [mapStyle, setMapStyle] = useState('plan')
-  const [zone, setZone] = useState(null)
+  const [audits, setAudits] = useState(null) // null = loading, [] = none (live)
+  const [reportAudit, setReportAudit] = useState(null) // latest completed audit detail (for the report)
+  const [resultAudit, setResultAudit] = useState(null) // an audit detail to show inline ("results")
+  const [resultLoading, setResultLoading] = useState(false)
+  const [auditsReload, setAuditsReload] = useState(0) // bump to refetch the audit list
+  const [reportHtml, setReportHtml] = useState(null) // in-app report overlay
+  const [focusItem, setFocusItem] = useState(null) // a permit/lease id to expand + highlight
   const focusRef = useRef(null)
+  const tabsRef = useRef(null)
+  const permitRef = useRef(null)
+  const didMountRef = useRef(false)
+
+  // Bring the tab strip (and the content under it) into view on tab change.
+  const scrollToTabs = () => tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  // Open a permit/lease from the map zone panel or the renewal timeline:
+  // jump to its tab, expand + highlight it, and scroll it into view.
+  const openItem = (it) => {
+    setTab(it.kind === 'lease' ? 'leases' : 'permits')
+    setFocusItem(it.id)
+    scrollToTabs()
+    setTimeout(() => permitRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 260)
+  }
+  const verifyPermit = (id) => {
+    onUpdatePermit?.(name, id, 'active')
+    setFocusItem(null)
+  }
+  const removeAudit = async (a) => {
+    if (!a?.id) return
+    if (typeof window !== 'undefined' && !window.confirm(`Delete this audit (${TPL_NAME[a.template] || a.template})? This cannot be undone.`)) return
+    try {
+      await deleteAudit(a.id)
+      flash('Audit deleted')
+    } catch {
+      flash('Could not delete audit')
+    }
+    setResultAudit(null)
+    setAuditsReload((n) => n + 1)
+  }
+
+  const isLive = source === 'postgres'
+  // In demo mode (no backend) synthesize one completed audit so last-audit
+  // results and the printable report are populated; live mode uses the DB.
+  const demoAudit = useMemo(() => (isLive ? null : demoAuditFor(name, site)), [isLive, name, site])
+  const effectiveAudits = isLive ? audits : demoAudit ? [demoAudit] : []
+  const latestComplete = (effectiveAudits || []).find((a) => a.status === 'complete') || (effectiveAudits || [])[0] || null
+  const latestDetail = isLive ? reportAudit : demoAudit
+
+  // Open an audit's full results inline (read-only). Demo audits carry their
+  // responses; live audits are fetched on demand.
+  const openResult = (a) => {
+    if (!a) return
+    scrollToTabs()
+    if (a.responses) {
+      setResultAudit(a)
+      return
+    }
+    setResultLoading(true)
+    setResultAudit({ ...a }) // show header immediately
+    getAudit(a.id)
+      .then((d) => setResultAudit(d))
+      .catch(() => {})
+      .finally(() => setResultLoading(false))
+  }
 
   // scroll to top on open
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  // Load this site's saved audits when the Audits tab is opened (live mode).
+  useEffect(() => {
+    if ((tab !== 'audits' && tab !== 'reports') || source !== 'postgres' || auditOpen) return
+    let alive = true
+    setAudits(null)
+    listAudits({ site: name })
+      .then((r) => alive && setAudits(Array.isArray(r) ? r : []))
+      .catch(() => alive && setAudits([]))
+    return () => {
+      alive = false
+    }
+  }, [tab, source, name, auditOpen, auditsReload])
+
+  // For the report: pull the latest completed audit's full detail (deficiencies).
+  useEffect(() => {
+    if (tab !== 'reports' || source !== 'postgres') {
+      setReportAudit(null)
+      return
+    }
+    let alive = true
+    listAudits({ site: name, status: 'complete' })
+      .then((list) => (list && list[0] ? getAudit(list[0].id) : null))
+      .then((detail) => alive && setReportAudit(detail))
+      .catch(() => alive && setReportAudit(null))
+    return () => {
+      alive = false
+    }
+  }, [tab, source, name])
+
+  // Close the inline results view when navigating away from the Audits tab,
+  // and scroll the content into view on every tab switch (but not first mount).
+  useEffect(() => {
+    if (tab !== 'audits') setResultAudit(null)
+    if (tab !== 'permits' && tab !== 'leases') setFocusItem(null)
+    if (didMountRef.current) scrollToTabs()
+    else didMountRef.current = true
+  }, [tab])
 
   const s = siteStats(site)
   const checklist = site.checklist || []
@@ -423,12 +542,6 @@ export default function SiteRecord({
   const findings = checklist.filter(isOpenWork)
   const facility = checklist.filter((c) => c.dept === 'Facility')
   const env = checklist.filter((c) => c.dept === 'ENV')
-  const zoneItems = zone
-    ? {
-        permits: (site.permits || []).filter((p) => p.area === zone),
-        findings: checklist.filter((c) => c.area === zone && isOpenWork(c)),
-      }
-    : null
 
   // per-area permit rollup
   const areaRollup = {}
@@ -449,14 +562,15 @@ export default function SiteRecord({
         left: '50%',
         transform: 'translateX(-50%)',
         width: '100%',
-        maxWidth: 'var(--app-w)',
+        maxWidth: 'var(--overlay-w)',
         background: 'var(--bg)',
         zIndex: 80,
         overflowY: 'auto',
+        boxShadow: '0 0 80px rgba(8, 14, 24, 0.55)',
       }}
     >
       {/* header */}
-      <div className="header" style={{ position: 'sticky', top: 0, zIndex: 5 }}>
+      <div className="header" style={{ zIndex: 5 }}>
         <div className="row spread">
           <button onClick={onClose} aria-label="Back" style={{ color: '#fff', marginLeft: -6 }}>
             <IconBack />
@@ -472,7 +586,7 @@ export default function SiteRecord({
             >
               {canEdit ? 'Auditor · editing' : 'View only'}
             </span>
-            <button onClick={() => flash('Audit packet exported (PDF)')} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: '#fff' }}>
+            <button onClick={() => setReportHtml(buildReport(name, site, latestDetail, userName))} className="pill" style={{ background: 'rgba(255,255,255,.12)', color: '#fff', cursor: 'pointer' }}>
               <IconExport size={15} />
               Site packet
             </button>
@@ -487,91 +601,67 @@ export default function SiteRecord({
           )}
         </div>
         <div style={{ color: '#9FB0C4', fontSize: 12.5, marginTop: 3 }}>
-          {site.type} · {site.city} · SWIS {site.swis}
+          {site.type} · {site.city}{site.swis ? ` · SWIS ${site.swis}` : ''}
         </div>
+        {canEdit && onStartAudit && (
+          <button
+            onClick={onStartAudit}
+            className="pill"
+            style={{ marginTop: 12, width: '100%', padding: '12px', background: '#fff', color: 'var(--navy)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}
+          >
+            <IconCheck size={16} /> Start audit
+          </button>
+        )}
         <div className="row gap" style={{ marginTop: 12 }}>
           <span className="pill bg-fail s-fail">{s.open} open</span>
           {s.verify > 0 && <span className="pill bg-fail s-fail">{s.verify} verify</span>}
           {s.renew > 0 && <span className="pill bg-open s-open">{s.renew} renewing</span>}
         </div>
-      </div>
-
-      {/* map-led site plan */}
-      <div className="pad">
-        <div className="card" style={{ padding: 0, overflow: 'hidden', position: 'relative' }}>
-          <div style={{ aspectRatio: '360 / 300' }}>
-            <SitePlan site={site} styleKey={mapStyle} selected={zone} onSelect={setZone} />
-          </div>
-          {/* mapStyle selector */}
-          <div style={{ position: 'absolute', top: 10, right: 10, display: 'flex', gap: 5 }}>
-            {['plan', 'blueprint', 'terrain'].map((m) => (
-              <button
-                key={m}
-                onClick={() => setMapStyle(m)}
+        {(site.siteMap || site.folder) && (
+          <div className="row gap" style={{ marginTop: 10, flexWrap: 'wrap' }}>
+            {site.siteMap && (
+              <a
+                href={site.siteMap}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="pill"
-                style={{
-                  fontSize: 10,
-                  textTransform: 'capitalize',
-                  background: mapStyle === m ? 'var(--navy)' : 'rgba(255,255,255,.92)',
-                  color: mapStyle === m ? '#fff' : 'var(--navy)',
-                  boxShadow: 'var(--shadow-card)',
-                }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,.14)', color: '#fff', textDecoration: 'none' }}
               >
-                {m}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* selected-zone obligations panel */}
-        {zoneItems && (
-          <div className="card" style={{ marginTop: 12, padding: '12px 14px' }}>
-            <div className="row spread" style={{ marginBottom: 8 }}>
-              <span className="h2" style={{ fontSize: 15 }}>
-                {ZONES[zone]?.label || zone}
-              </span>
-              <button className="label" onClick={() => onCapture(zone)} style={{ color: 'var(--blue)' }}>
-                + Log here
-              </button>
-            </div>
-            {zoneItems.permits.length === 0 && zoneItems.findings.length === 0 && (
-              <div className="muted" style={{ fontSize: 12.5 }}>
-                No obligations or open findings in this zone.
-              </div>
+                <IconPin size={14} /> Site map
+              </a>
             )}
-            {zoneItems.permits.map((p) => (
-              <div key={p.id} className="row spread" style={{ padding: '5px 0' }}>
-                <span style={{ fontSize: 12.5 }}>
-                  <span className={`dot dot-${p.status === 'active' ? 'pg' : 'local'}`} style={{ marginRight: 7 }} />
-                  {p.name}
-                </span>
-                <span className={`s-${tone(p.status)}`} style={{ fontSize: 11.5, fontWeight: 700 }}>
-                  {PERMIT_LABEL[p.status]}
-                </span>
-              </div>
-            ))}
-            {zoneItems.findings.map((f) => (
-              <div key={f.id} className="row spread" style={{ padding: '5px 0' }}>
-                <span style={{ fontSize: 12.5 }}>
-                  <span className={`dot`} style={{ background: FIND_HEX[f.status], marginRight: 7 }} />
-                  {f.title}
-                </span>
-                <span className={`s-${tone(f.status)}`} style={{ fontSize: 11.5, fontWeight: 700 }}>
-                  {FINDING_LABEL[f.status]}
-                </span>
-              </div>
-            ))}
+            {site.folder && (
+              <a
+                href={site.folder}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pill"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,.14)', color: '#fff', textDecoration: 'none' }}
+              >
+                <IconDoc size={14} /> Documents
+              </a>
+            )}
           </div>
         )}
+      </div>
+
+      {/* live, data-driven facility plan (zones = real cert/permit areas) */}
+      <div className="pad">
+        <FacilityMap
+          site={{ ...site, name }}
+          type={site.type}
+          onCapture={onCapture}
+          onOpenPermit={(id) => openItem({ id, kind: 'permit' })}
+        />
 
         {/* renewal timeline */}
         <div style={{ marginTop: 12 }}>
-          <RenewalTimeline site={site} />
+          <RenewalTimeline site={site} onOpenItem={openItem} />
         </div>
       </div>
 
-      {/* tabs */}
-      <div className="pad" style={{ background: 'var(--bg)', zIndex: 4, paddingTop: 14 }}>
+      {/* tabs (sticky so content is always reachable as you scroll) */}
+      <div ref={tabsRef} className="pad" style={{ background: 'var(--bg)', position: 'sticky', top: 0, zIndex: 6, paddingTop: 14, paddingBottom: 6, boxShadow: '0 6px 10px -8px rgba(0,0,0,.25)' }}>
         <div className="chips">
           {TABS.map((t) => (
             <button key={t.id} className={`chip ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
@@ -618,11 +708,16 @@ export default function SiteRecord({
             {(site.permits || []).map((p) => (
               <ReadOnlyCard
                 key={p.id}
+                innerRef={p.id === focusItem ? permitRef : null}
+                defaultOpen={p.id === focusItem}
+                highlight={p.id === focusItem}
                 toneKey={tone(p.status)}
                 area={p.area}
                 label={PERMIT_LABEL[p.status]}
                 title={p.name}
                 subtitle={`${p.agency} · ${p.number}`}
+                docUrl={p.doc}
+                onVerify={canEdit && p.status === 'verify' ? () => verifyPermit(p.id) : null}
                 rows={[
                   { k: 'Agency', v: p.agency },
                   { k: 'Number', v: p.number },
@@ -637,6 +732,46 @@ export default function SiteRecord({
           </div>
         )}
 
+        {tab === 'reports' && (
+          <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <button
+              onClick={() => setReportHtml(buildReport(name, site, latestDetail, userName))}
+              className="pill"
+              style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}
+            >
+              <IconExport size={16} /> Open / print full report
+            </button>
+            <div className="muted" style={{ fontSize: 12, marginTop: -4 }}>
+              Compiles compliance, the latest audit, all findings, and permit status into a printable report (Save as PDF from the print dialog).
+            </div>
+
+            {site.compliance && (
+              <div className={`card ${site.compliance.missing ? 'bd-fail' : 'bd-pass'}`} style={{ padding: '12px 14px' }}>
+                <div className="label" style={{ color: 'var(--grey)' }}>Compliance</div>
+                <div style={{ fontSize: 14.5, fontWeight: 700, marginTop: 3 }}>
+                  {site.compliance.missing ? `${site.compliance.missing} gap${site.compliance.missing > 1 ? 's' : ''}` : 'Compliant'} · {site.compliance.present} of {site.compliance.present + site.compliance.missing} present
+                </div>
+              </div>
+            )}
+
+            <div className="card" style={{ padding: '12px 14px' }}>
+              <div className="label" style={{ color: 'var(--grey)' }}>Latest audit</div>
+              {latestDetail ? (
+                <div style={{ fontSize: 13.5, marginTop: 3 }}>
+                  {TPL_NAME[latestDetail.template] || latestDetail.template} · {fmtWhen(latestDetail.updated)} · {auditDeficiencies(latestDetail).length} deficienc{auditDeficiencies(latestDetail).length === 1 ? 'y' : 'ies'}
+                </div>
+              ) : (
+                <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>No completed audit yet.</div>
+              )}
+            </div>
+
+            <div className="card" style={{ padding: '12px 14px' }}>
+              <div className="label" style={{ color: 'var(--grey)' }}>Contents</div>
+              <div style={{ fontSize: 13.5, marginTop: 3 }}>{(site.checklist || []).length} finding{(site.checklist || []).length === 1 ? '' : 's'} · {(site.permits || []).filter((p) => p.status !== 'active').length} permit{(site.permits || []).filter((p) => p.status !== 'active').length === 1 ? '' : 's'} needing attention</div>
+            </div>
+          </div>
+        )}
+
         {tab === 'leases' && (
           <div className="stack">
             {(site.leases || []).length === 0 && (
@@ -645,6 +780,9 @@ export default function SiteRecord({
             {(site.leases || []).map((l) => (
               <ReadOnlyCard
                 key={l.id}
+                innerRef={l.id === focusItem ? permitRef : null}
+                defaultOpen={l.id === focusItem}
+                highlight={l.id === focusItem}
                 toneKey={tone(l.status)}
                 area={l.area}
                 label={PERMIT_LABEL[l.status]}
@@ -656,6 +794,214 @@ export default function SiteRecord({
                 ]}
               />
             ))}
+          </div>
+        )}
+
+        {tab === 'documents' && (
+          <div className="stack">
+            <div className="muted" style={{ fontSize: 12, padding: '2px 2px 4px' }}>
+              Document links are disabled for now (security). Names are shown for reference.
+            </div>
+            {(site.documents || []).map((d, i) => (
+              <div
+                key={d.name || i}
+                className="card lrow"
+                style={{ padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 10 }}
+              >
+                <IconDoc size={16} />
+                <span style={{ fontSize: 14.5, fontWeight: 600 }}>{d.name}</span>
+              </div>
+            ))}
+            {(site.documents || []).length === 0 && (
+              <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No documents on file.</div></div>
+            )}
+          </div>
+        )}
+
+        {tab === 'compliance' && (
+          <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {!site.compliance ? (
+              <div className="card" style={{ padding: 22, textAlign: 'center' }}><div className="muted">No compliance requirements on file for this site.</div></div>
+            ) : (
+              <>
+                {(() => {
+                  const c = site.compliance
+                  const gaps = c.missing || 0
+                  const ok = gaps === 0
+                  return (
+                    <div className={`card ${ok ? 'bd-pass' : 'bd-fail'}`} style={{ padding: '14px 16px' }}>
+                      <div className="row spread" style={{ alignItems: 'center' }}>
+                        <div>
+                          <div className="stat-num" style={{ color: ok ? 'var(--green,#2E9E5B)' : 'var(--red)', fontSize: 30 }}>{ok ? 'Compliant' : `${gaps} gap${gaps > 1 ? 's' : ''}`}</div>
+                          <div className="muted" style={{ fontSize: 12.5, marginTop: 2 }}>{c.present} of {c.present + c.missing} required items present</div>
+                        </div>
+                        <span className={`pill ${ok ? 'bg-pass s-pass' : 'bg-fail s-fail'}`} style={{ fontSize: 12, fontWeight: 700 }}>{ok ? 'PASS' : 'ACTION'}</span>
+                      </div>
+                      {c.note && <div className="muted" style={{ fontSize: 12.5, marginTop: 8, fontStyle: 'italic' }}>“{c.note}”</div>}
+                    </div>
+                  )
+                })()}
+                <div>
+                  <div className="label" style={{ marginBottom: 6 }}>Core requirement areas</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 8 }}>
+                    {[...site.compliance.categories]
+                      .sort((a, b) => (a.status === b.status ? 0 : a.status === 'missing' ? -1 : 1))
+                      .map((cat) => {
+                        const miss = cat.status === 'missing'
+                        return (
+                          <div key={cat.key} className={`card ${miss ? 'bd-fail' : 'bd-pass'}`} style={{ padding: '9px 11px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span style={{ fontWeight: 800, color: miss ? 'var(--red)' : 'var(--green,#2E9E5B)' }}>{miss ? '✗' : '✓'}</span>
+                            <span style={{ fontSize: 12.5, fontWeight: 600 }}>{cat.key}</span>
+                          </div>
+                        )
+                      })}
+                  </div>
+                </div>
+                {/* Open actions: pending findings, who is tasked, on schedule / behind */}
+                <div>
+                  <div className="label" style={{ marginBottom: 6 }}>Open actions</div>
+                  {(() => {
+                    const open = (site.checklist || []).filter(isOpenWork)
+                    if (open.length === 0) return <div className="card" style={{ padding: 16, textAlign: 'center' }}><div className="muted">No open actions.</div></div>
+                    return open
+                      .slice()
+                      .sort((a, b) => daysUntil(a.due) - daysUntil(b.due))
+                      .map((f) => {
+                        const behind = f.due && daysUntil(f.due) < 0
+                        return (
+                          <div key={f.id} className="card" style={{ padding: '10px 13px', marginBottom: 8 }}>
+                            <div className="row spread">
+                              <span style={{ fontSize: 13.5, fontWeight: 600 }}>{f.title}</span>
+                              <span className={`pill ${behind ? 'bg-fail s-fail' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>{behind ? 'Behind' : 'On schedule'}</span>
+                            </div>
+                            <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>
+                              {f.owner || 'Unassigned'}{f.due ? ` · due ${fmtDate(f.due)}` : ' · no due date'} · {f.area}
+                            </div>
+                          </div>
+                        )
+                      })
+                  })()}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {tab === 'audits' && resultAudit && (
+          <AuditResults
+            key={resultAudit.id}
+            audit={resultAudit}
+            loading={resultLoading}
+            canEdit={canEdit}
+            ownerName={ownerFor(name).name}
+            onBack={() => setResultAudit(null)}
+            onResume={onStartAudit && resultAudit.status !== 'complete' ? () => onStartAudit({ openId: resultAudit.id, template: resultAudit.template }) : null}
+            onDelete={canEdit && isLive ? () => removeAudit(resultAudit) : null}
+            onLog={
+              onLogDeficiencies
+                ? (defs) => {
+                    onLogDeficiencies(name, defs)
+                    flash(`Logged ${defs.length} finding${defs.length > 1 ? 's' : ''} · assigned to ${ownerFor(name).name}`)
+                  }
+                : null
+            }
+          />
+        )}
+
+        {tab === 'audits' && !resultAudit && (
+          <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {latestComplete && (
+              <button
+                onClick={() => openResult(latestComplete)}
+                className={`card ${latestComplete.deficiencies > 0 ? 'bd-fail' : 'bd-pass'}`}
+                style={{ padding: '12px 14px', width: '100%', textAlign: 'left', display: 'block', cursor: 'pointer' }}
+              >
+                <div className="row spread">
+                  <span className="label" style={{ color: 'var(--grey)' }}>Last audit result</span>
+                  <span className="label" style={{ color: 'var(--blue)' }}>{latestComplete.deficiencies > 0 ? 'Take action →' : 'View results →'}</span>
+                </div>
+                <div className="row spread" style={{ marginTop: 4 }}>
+                  <span style={{ fontSize: 14.5, fontWeight: 700 }}>{TPL_NAME[latestComplete.template] || latestComplete.template}</span>
+                  <span className={`pill ${latestComplete.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
+                    {latestComplete.status === 'complete' ? 'Complete' : 'In progress'}
+                  </span>
+                </div>
+                <div className="muted" style={{ fontSize: 12, marginTop: 3 }}>{fmtWhen(latestComplete.updated)} · {latestComplete.auditor || '—'}</div>
+                <div className="row gap" style={{ marginTop: 7, gap: 6 }}>
+                  <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>{latestComplete.answered ?? 0}/{templateItemCount(latestComplete.template)} answered</span>
+                  <span className={`pill ${latestComplete.deficiencies > 0 ? 'bg-fail s-fail' : 'bg-pass s-pass'}`} style={{ fontSize: 10 }}>
+                    {latestComplete.deficiencies > 0 ? `${latestComplete.deficiencies} need action` : 'No deficiencies'}
+                  </span>
+                </div>
+              </button>
+            )}
+            {canEdit && onStartAudit && (
+              <button
+                onClick={() => onStartAudit()}
+                className="pill"
+                style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}
+              >
+                <IconCheck size={16} /> Start new audit
+              </button>
+            )}
+            {!isLive && (
+              <div className="muted" style={{ fontSize: 12.5, padding: '4px 2px' }}>
+                Showing a demo audit. In the live app every saved audit appears here.
+              </div>
+            )}
+            {isLive && audits === null && (
+              <div className="muted" style={{ fontSize: 13, padding: '8px 2px' }}>Loading audits…</div>
+            )}
+            {isLive && audits && audits.length === 0 && (
+              <div className="card" style={{ padding: 20, textAlign: 'center' }}><div className="muted">No audits yet for this site.</div></div>
+            )}
+            {isLive &&
+              (audits || []).map((a) => {
+                const total = templateItemCount(a.template)
+                const mismatch = TYPE_TEMPLATE[site.type] && a.template && TYPE_TEMPLATE[site.type] !== a.template
+                return (
+                  <div key={a.id} className="card lrow" style={{ padding: '12px 14px' }}>
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => (a.status === 'complete' ? openResult(a) : onStartAudit && onStartAudit({ openId: a.id, template: a.template }))}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <div className="row spread">
+                        <span style={{ fontSize: 14.5, fontWeight: 600 }}>{TPL_NAME[a.template] || a.template || 'Audit'}</span>
+                        <span className={`pill ${a.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
+                          {a.status === 'complete' ? 'Complete' : 'In progress'}
+                        </span>
+                      </div>
+                      <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
+                        {fmtWhen(a.updated)} · {a.auditor || '—'}
+                      </div>
+                      <div className="row gap" style={{ marginTop: 7, gap: 6, flexWrap: 'wrap' }}>
+                        <span className="pill" style={{ fontSize: 10, background: 'rgba(0,0,0,.05)', color: 'var(--navy)' }}>
+                          {a.answered ?? 0}/{total} answered
+                        </span>
+                        {a.deficiencies > 0 && (
+                          <span className="pill bg-fail s-fail" style={{ fontSize: 10 }}>
+                            {a.deficiencies} deficienc{a.deficiencies > 1 ? 'ies' : 'y'}
+                          </span>
+                        )}
+                        {mismatch && (
+                          <span className="pill bg-open s-open" style={{ fontSize: 10 }} title={`This form doesn't match a ${site.type}`}>
+                            Wrong form for {site.type}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {canEdit && (
+                      <div style={{ borderTop: '1px solid var(--card-border)', marginTop: 8, paddingTop: 8, textAlign: 'right' }}>
+                        <button onClick={() => removeAudit(a)} className="label" style={{ color: 'var(--red)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                          Delete audit
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
           </div>
         )}
 
@@ -672,6 +1018,118 @@ export default function SiteRecord({
           />
         )}
       </div>
+
+      {reportHtml && (
+        <ReportOverlay html={reportHtml} title={`Report — ${name}`} onClose={() => setReportHtml(null)} />
+      )}
+    </div>
+  )
+}
+
+// Read-only results for a single audit: counts + the list of deficiencies.
+function AuditResults({ audit, loading, canEdit, ownerName, onBack, onResume, onDelete, onLog }) {
+  const [logged, setLogged] = useState(false)
+  const total = templateItemCount(audit.template)
+  const responses = audit.responses || {}
+  const counts = { yes: 0, no: 0, na: 0 }
+  for (const r of Object.values(responses)) if (r && r.val) counts[r.val]++
+  const answered = counts.yes + counts.no + counts.na
+  const defs = auditDeficiencies(audit)
+  // group deficiencies by site-plan zone
+  const byZone = {}
+  defs.forEach((d) => (byZone[d.zone] ||= []).push(d))
+  const withPhotos = defs.filter((d) => d.photo).length
+
+  return (
+    <div className="stack" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div className="row spread" style={{ alignItems: 'center' }}>
+        <button onClick={onBack} className="label" style={{ color: 'var(--blue)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}>
+          ← Back to audits
+        </button>
+        {onDelete && (
+          <button onClick={onDelete} className="label" style={{ color: 'var(--red)', background: 'none', border: 'none', cursor: 'pointer' }}>
+            Delete audit
+          </button>
+        )}
+      </div>
+      <div className="card" style={{ padding: '12px 14px' }}>
+        <div className="row spread">
+          <span style={{ fontSize: 15.5, fontWeight: 700 }}>{TPL_NAME[audit.template] || audit.template}</span>
+          <span className={`pill ${audit.status === 'complete' ? 'bg-pass s-pass' : 'bg-open s-open'}`} style={{ fontSize: 10 }}>
+            {audit.status === 'complete' ? 'Complete' : 'In progress'}
+          </span>
+        </div>
+        <div className="muted" style={{ fontSize: 12.5, marginTop: 3 }}>{fmtWhen(audit.updated)} · {audit.auditor || '—'}</div>
+      </div>
+
+      {loading ? (
+        <div className="muted" style={{ fontSize: 13, padding: '4px 2px' }}>Loading results…</div>
+      ) : (
+        <>
+          <div className="row gap">
+            {[['Yes', counts.yes, 'pass'], ['No', counts.no, 'fail'], ['N/A', counts.na, 'open'], ['Left', Math.max(0, total - answered), '']].map(([l, n, t]) => (
+              <div key={l} className="card" style={{ flex: 1, padding: '12px 8px', textAlign: 'center' }}>
+                <div className="stat-num" style={{ color: t === 'fail' ? 'var(--red)' : t === 'pass' ? 'var(--green,#2E9E5B)' : t === 'open' ? 'var(--amber)' : 'var(--navy)' }}>{n}</div>
+                <div className="label" style={{ marginTop: 3 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* action headline — turn deficiencies into tracked, assigned findings */}
+          {defs.length === 0 ? (
+            <div className="card bd-pass" style={{ padding: 18, textAlign: 'center' }}>
+              <div style={{ fontWeight: 700, color: 'var(--green,#2E9E5B)' }}>No deficiencies — site is clear</div>
+            </div>
+          ) : (
+            <div className="card bd-fail" style={{ padding: '12px 14px' }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--red)' }}>
+                {defs.length} deficienc{defs.length === 1 ? 'y' : 'ies'} need action
+              </div>
+              <div className="muted" style={{ fontSize: 12.5, marginTop: 3 }}>
+                Across {Object.keys(byZone).length} area{Object.keys(byZone).length === 1 ? '' : 's'}
+                {withPhotos ? ` · ${withPhotos} with photo evidence` : ''}. Log them to assign an owner and a due date.
+              </div>
+              {canEdit && onLog && (
+                <button
+                  onClick={() => { onLog(defs); setLogged(true) }}
+                  disabled={logged}
+                  className="pill"
+                  style={{ marginTop: 10, width: '100%', padding: '12px', background: logged ? '#cdd5df' : 'var(--red)', color: '#fff', fontWeight: 700, cursor: logged ? 'default' : 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                >
+                  <IconCheck size={16} /> {logged ? `Logged · assigned to ${ownerName}` : `Log ${defs.length} as tracked findings → ${ownerName}`}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* deficiencies grouped by zone, with note + photo */}
+          {Object.entries(byZone).map(([zone, items]) => (
+            <div key={zone}>
+              <div className="label" style={{ margin: '2px 0 6px' }}>{zone} ({items.length})</div>
+              {items.map((d, i) => (
+                <div key={i} className="card bd-fail" style={{ padding: '11px 14px', marginBottom: 8 }}>
+                  <div className="label" style={{ color: 'var(--grey)' }}>{d.section}</div>
+                  <div style={{ fontSize: 13.5, marginTop: 3, fontWeight: 600 }}>{d.ref ? `${d.ref}. ` : ''}{d.text}</div>
+                  {d.note && <div className="muted" style={{ fontSize: 12.5, marginTop: 4 }}>“{d.note}”</div>}
+                  {d.photo && (
+                    <img src={d.photo} alt="evidence" style={{ width: '100%', maxHeight: 180, objectFit: 'cover', borderRadius: 8, marginTop: 8, display: 'block' }} />
+                  )}
+                  <div className="row spread" style={{ marginTop: 8, alignItems: 'center' }}>
+                    <span className="muted" style={{ fontSize: 11.5 }}>Suggested owner · {ownerName}</span>
+                    <span className="pill bg-fail s-fail" style={{ fontSize: 10 }}>Action required</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+
+          {onResume && canEdit && (
+            <button onClick={onResume} className="pill" style={{ padding: '12px', background: 'var(--navy)', color: '#fff', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <IconCheck size={16} /> Resume audit
+            </button>
+          )}
+        </>
+      )}
     </div>
   )
 }

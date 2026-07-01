@@ -1,0 +1,45 @@
+# Render blueprint — provisions a managed PostgreSQL + a single web service that
+# builds the frontend and runs the Express server (which serves the app + API).
+#
+# Deploy: Render dashboard → New → Blueprint → connect this repo. Render reads
+# this file and creates both resources. Then set the Microsoft Entra values
+# (marked sync:false below) in the service's Environment tab. See DEPLOY.md.
+
+databases:
+  - name: athens-db
+    plan: free # 1 GB. NOTE: free Postgres expires after ~30 days — upgrade to a paid plan for production.
+    databaseName: athens_compliance
+    user: athens
+
+services:
+  - type: web
+    name: athens-compliance
+    runtime: node
+    plan: free # free web services sleep when idle (~30s cold start). Upgrade to keep warm.
+    region: oregon
+    branch: claude/new-session-x35f9w # repo's current default branch
+    healthCheckPath: /api/health
+    # --include=dev forces Vite (a devDependency) to install even though
+    # NODE_ENV=production is set on the service (npm would otherwise skip it).
+    buildCommand: cd frontend && npm ci --include=dev && npm run build && cd ../server && npm ci --omit=dev
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: athens-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true # Render generates a long random secret
+      # LOCKED-DOWN mode (shared passcodes): the app requires a passcode to enter
+      # and the API is NOT public — cross-origin apps / AI tools are blocked
+      # (wildcard CORS is only sent in open mode). Set the two secret values in
+      # the service's Environment tab (they are sync:false, so not stored in the
+      # repo). Setting either one flips the server out of open/public mode.
+      #   AUDITOR_PASSCODE → full edit access · VIEWER_PASSCODE → read-only
+      # To reopen the app publicly, delete both vars in the Render dashboard.
+      - key: AUDITOR_PASSCODE
+        sync: false
+      - key: VIEWER_PASSCODE
+        sync: false

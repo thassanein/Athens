@@ -1,5 +1,6 @@
 import { allOpenFindings, resolveProgress, fmtShort, daysUntil, FINDING_LABEL } from '../lib/derive.js'
 import { IconChevron } from '../components/Icons.jsx'
+import BackButton from '../components/BackButton.jsx'
 
 const FILTERS = [
   { id: 'all', label: 'All open' },
@@ -17,7 +18,7 @@ function dueTag(c) {
   return { text: `Due ${fmtShort(c.due)}`, cls: 's-open' }
 }
 
-export default function Tasks({ data, filter, setFilter, onOpenFinding }) {
+export default function Tasks({ data, filter, setFilter, onOpenFinding, onBack }) {
   const all = allOpenFindings(data)
   const prog = resolveProgress(data)
 
@@ -31,6 +32,7 @@ export default function Tasks({ data, filter, setFilter, onOpenFinding }) {
   return (
     <div className="screen">
       <div className="header">
+        <BackButton onClick={onBack} label="Home" />
         <div className="row spread">
           <div>
             <div className="title">{all.length} open findings</div>
