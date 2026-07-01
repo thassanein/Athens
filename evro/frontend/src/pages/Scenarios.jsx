@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { scenarioTotals, monteCarlo, sensitivity, isActive, confidence } from '../lib/engine.js'
-import { money } from '../lib/format.js'
+import { scenarioTotals, monteCarlo, sensitivity, isActive, confidence, forecastCurve } from '../lib/engine.js'
+import { money, monthLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { HBars } from '../components/Charts.jsx'
 
@@ -54,6 +54,32 @@ export default function Scenarios({ db }) {
   const pos = (v) => `${Math.max(0, Math.min(100, ((v - lo) / span) * 100))}%`
   const dirty = lv.accel || lv.exec || lv.slip || lv.wins
 
+  // Confidence cone — cumulative FY trajectory with a band that widens across
+  // future (unrealized) months, scaled by the Monte-Carlo standard deviation.
+  const curve = forecastCurve(db)
+  const futureCount = curve.filter((c) => !c.past).length || 1
+  let cum = 0, seenF = 0
+  const cone = curve.map((c) => {
+    cum += c.past ? c.actual : c.expected
+    let half = 0
+    if (!c.past) { seenF += 1; half = 1.2816 * mc.sd * (seenF / futureCount) }
+    return { month: c.month, mid: cum, lo: Math.max(0, cum - half), hi: cum + half, past: c.past }
+  })
+
+  // Scenario comparison — three presets driven through the same recompute.
+  const presets = [
+    { key: 'Downside', tone: 'red', lv: { accel: 0, exec: -10, slip: 25, wins: 0 } },
+    { key: 'Plan of record', tone: 'navy', lv: ZERO },
+    { key: 'Stretch', tone: 'green', lv: { accel: 40, exec: 10, slip: 0, wins: 800_000 } },
+  ].map((p) => ({ ...p, landing: R(p.lv) }))
+
+  // Rules-based interpretation of the current simulation.
+  const dContribs = [['acceleration', s1 - base], ['execution', s2 - s1], ['timing slip', s3 - s2], ['new wins', landing - s3]].filter((d) => Math.round(d[1]) !== 0)
+  const topD = dContribs.slice().sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))[0]
+  const interp = dirty
+    ? `At these levers the FY landing is ${money(landing)} — ${landing >= base ? '+' : ''}${money(landing - base)} versus the ${money(base)} plan of record.${topD ? ` The biggest single swing is ${topD[0]} (${topD[1] >= 0 ? '+' : ''}${money(topD[1])}).` : ''}${lv.slip ? ` Timing slip is trimming ${money(s3 - s2)} — the main downside if implementation slips.` : ' No timing slip is modeled.'}`
+    : `You're at plan of record: ${money(base)} expected FY landing, inside a Monte-Carlo P10–P90 of ${money(mc.p10)}–${money(mc.p90)}. Move a lever to simulate upside or downside.`
+
   return (
     <>
       <p className="page-intro">Forecast simulator — flex the levers below and watch the fiscal-year landing move through a live value bridge. Headline is Expected (risk-adjusted); the Monte-Carlo band is a deterministic analytic approximation.</p>
@@ -87,6 +113,35 @@ export default function Scenarios({ db }) {
         <Bridge steps={bridge} />
       </div>
 
+      {/* confidence cone */}
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>Confidence cone (FY)</h3><span className="spacer" /><span className="tiny muted">cumulative landing · band widens with uncertainty</span></div>
+        <ConfidenceCone series={cone} />
+        <p className="tiny muted section-gap">Solid line is the cumulative expected landing; the shaded cone is the P10–P90 band, widening across future months where more value sits in early, uncertain stages. The dashed line marks today.</p>
+      </div>
+
+      {/* scenario comparison + AI interpretation */}
+      <div className="grid cols-2 section-gap">
+        <div className="card pad">
+          <div className="card-h"><h3>Scenario comparison</h3><span className="spacer" /><span className="tiny muted">three preset paths</span></div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {presets.map((p) => (
+              <div key={p.key} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 11px', border: '1px solid var(--line)', borderRadius: 9 }}>
+                <span className={`badge b-${p.tone}`}>{p.key}</span>
+                <div style={{ flex: 1 }} className="tiny muted">{p.key === 'Plan of record' ? 'as-is levers' : p.key === 'Downside' ? 'slower + weaker + slip' : 'accelerated + strong + new wins'}</div>
+                <span className="mono" style={{ fontWeight: 800, color: `var(--${p.tone})` }}>{money(p.landing)}</span>
+                <span className="tiny muted" style={{ width: 74, textAlign: 'right' }}>{p.landing - base >= 0 ? '+' : ''}{money(p.landing - base)}</span>
+              </div>
+            ))}
+          </div>
+          <p className="tiny muted section-gap">Downside → Plan → Stretch, each recomputed through the same deterministic model.</p>
+        </div>
+        <div className="card pad" style={{ borderLeft: '3px solid var(--navy)' }}>
+          <div className="card-h"><h3>AI interpretation</h3><span className="spacer" /><span className="badge b-grey">rules-based</span></div>
+          <p style={{ fontSize: 13.5, lineHeight: 1.7, margin: 0 }}>{interp}</p>
+        </div>
+      </div>
+
       <div className="grid cols-2 section-gap">
         <div className="card pad">
           <div className="card-h"><h3>Monte-Carlo range (FY)</h3></div>
@@ -105,6 +160,28 @@ export default function Scenarios({ db }) {
         </div>
       </div>
     </>
+  )
+}
+
+// Confidence cone — cumulative FY landing (line) inside a widening P10–P90 band.
+function ConfidenceCone({ series, height = 220 }) {
+  const W = 680, H = height, padL = 10, padR = 10, padT = 14, padB = 26
+  const maxY = Math.max(1, ...series.map((s) => s.hi)) * 1.08
+  const n = series.length
+  const x = (i) => padL + (i / Math.max(1, n - 1)) * (W - padL - padR)
+  const y = (v) => padT + (1 - v / maxY) * (H - padT - padB)
+  const band = [...series.map((s, i) => `${x(i)},${y(s.hi)}`), ...series.slice().reverse().map((s, i) => `${x(n - 1 - i)},${y(s.lo)}`)].join(' ')
+  const mid = series.map((s, i) => `${x(i)},${y(s.mid)}`).join(' ')
+  const nowIdx = series.findIndex((s) => !s.past)
+  return (
+    <div className="table-wrap">
+      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ minWidth: 520 }} preserveAspectRatio="xMidYMid meet">
+        <polygon points={band} fill="var(--tint-navy)" stroke="none" />
+        <polyline points={mid} fill="none" stroke="var(--navy)" strokeWidth="2.2" />
+        {nowIdx > 0 && <line x1={x(nowIdx - 1)} x2={x(nowIdx - 1)} y1={padT} y2={H - padB} stroke="var(--grey-2)" strokeWidth="1" strokeDasharray="3 3" />}
+        {series.map((s, i) => (i % 2 === 0 ? <text key={i} x={x(i)} y={H - 8} textAnchor="middle" fontSize="9.5" fill="var(--grey)">{monthLabel(s.month)}</text> : null))}
+      </svg>
+    </div>
   )
 }
 
