@@ -5,6 +5,7 @@ import { Tile } from '../components/ui.jsx'
 import { Scatter, HBars } from '../components/Charts.jsx'
 import { IconAI } from '../components/Icons.jsx'
 import StoryMode from '../components/StoryMode.jsx'
+import { exportBoardPacket } from '../lib/board-packet.js'
 
 const KIND = { approval: 'b-amber', leakage: 'b-red', opportunity: 'b-green', sustainment: 'b-red' }
 
@@ -21,7 +22,15 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
   const recos = copilotInsights(db, user).filter((c) => c.kind !== 'summary')
   const opps = mineOpportunities(db).filter((o) => !o.alreadyCovered).slice(0, 5)
   const [story, setStory] = useState(false)
+  const [pkg, setPkg] = useState(false)
   const RAGC = { red: 'var(--red)', amber: 'var(--amber)', green: 'var(--green)' }
+
+  const exportPacket = async () => {
+    setPkg(true)
+    try { const fn = await exportBoardPacket(db, { audience: 'board', period: 'fy', user }); flash(`Board packet exported — ${fn}`) }
+    catch (e) { flash('Export failed — ' + (e?.message || 'unknown error')) }
+    finally { setPkg(false) }
+  }
   const points = matrix.map((m) => ({ id: m.id, label: m.title, x: m.risk, y: m.value, value: m.value, color: RAGC[m.rag] }))
 
   const act = async (d) => {
@@ -40,6 +49,7 @@ export default function Cockpit({ db, user, dispatch, navigate, openDrawer, flas
           <h3 style={{ display: 'flex', alignItems: 'center', gap: 7 }}><span className="copilot-logo" style={{ width: 24, height: 24 }}><IconAI /></span> Executive briefing</h3>
           <span className="spacer" />
           <span className="badge b-grey">AI · rules-based</span>
+          <button className="btn sm" onClick={exportPacket} disabled={pkg} title="Export the FY board packet as PowerPoint (.pptx)">{pkg ? 'Building…' : '⤓ Board packet'}</button>
           <button className="btn sm accent" onClick={() => setStory(true)}>▶ Story mode</button>
         </div>
         <p style={{ fontSize: 15, fontWeight: 600, margin: '2px 0 8px' }}>{summary.headline}</p>

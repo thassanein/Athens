@@ -351,6 +351,26 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .story .scard .val { font-size: 30px; font-weight: 800; margin-top: 6px; }
 .story-nav { margin-top: auto; display: flex; align-items: center; gap: 12px; }
 
+/* ---- story mode: audience/period controls + slide body ------------------- */
+.story-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.story-sub { font-size: 13px; color: #aeb9c7; }
+.story-seg { display: inline-flex; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 999px; padding: 2px; }
+.story-seg button { border: none; background: none; color: #aeb9c7; font-size: 12px; font-weight: 700; padding: 5px 11px; border-radius: 999px; cursor: pointer; }
+.story-seg button.active { background: var(--red); color: #fff; }
+.story-body { flex: 1; display: grid; place-items: center; overflow: auto; padding: 8px 0; }
+.story-slide { max-width: 1060px; width: 100%; }
+.story-slide.has-table .big { font-size: clamp(30px, 4.6vw, 52px); }
+.story-kicker { font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; color: #8b97a8; font-weight: 700; }
+.story-cap { margin-top: 4px; font-size: 15px !important; }
+.story-narr { margin-top: 18px; font-size: 18px !important; max-width: 920px; }
+.story-bullets { margin: 14px 0 0; padding-left: 20px; color: #c8d2df; font-size: 15px; line-height: 1.85; max-width: 920px; }
+.story-tablewrap { margin-top: 18px; max-height: 42vh; overflow: auto; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; }
+.story-tbl { width: 100%; }
+.story-tbl th { color: #8b97a8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; position: sticky; top: 0; background: #16202e; border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+.story-tbl td { color: #e7edf4; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+.story-tbl tr:last-child td { border-bottom: none; }
+.story-dot { width: 9px; height: 9px; padding: 0; border-radius: 50%; border: none; cursor: pointer; }
+
 /* ---- inline narrative story steps (cockpit briefing) --------------------- */
 .story-steps { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
 .story-step { display: flex; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line-2); background: linear-gradient(90deg, rgba(26,66,138,0.035), transparent 40%); }
