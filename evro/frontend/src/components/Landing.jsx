@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { valueUnderManagement } from '../lib/companion.js'
 import { money, num } from '../lib/format.js'
 import { BrandMark, BrandLockup, JOURNEY } from './Brand.jsx'
@@ -14,12 +15,19 @@ const PILLARS = [
 
 export default function Landing({ db, onEnter }) {
   const vum = valueUnderManagement(db)
+  const [leaving, setLeaving] = useState(false)
+  const go = () => {
+    if (leaving) return
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { onEnter(); return }
+    setLeaving(true)
+    setTimeout(onEnter, 360)
+  }
   return (
-    <div className="landing">
+    <div className={`landing ${leaving ? 'leaving' : ''}`}>
       <div className="landing-inner">
         <header className="landing-top">
           <BrandLockup size={40} sub="Enterprise Value Realization OS" />
-          <button className="btn accent landing-enter-sm" onClick={onEnter}>Enter →</button>
+          <button className="btn accent landing-enter-sm" onClick={go}>Enter →</button>
         </header>
 
         <section className="landing-hero">
@@ -36,7 +44,7 @@ export default function Landing({ db, onEnter }) {
           </div>
 
           <div className="landing-cta">
-            <button className="btn accent lg" onClick={onEnter}>Enter the operating system →</button>
+            <button className="btn accent lg" onClick={go}>Enter the operating system →</button>
             <span className="landing-stat"><b className="mono">{num(vum.initiatives)}</b> active initiatives</span>
             <span className="landing-stat"><b className="mono">{money(vum.pipeline)}</b> risk-adjusted pipeline</span>
           </div>

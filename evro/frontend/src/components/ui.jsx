@@ -102,3 +102,20 @@ export function Bar({ value, max, color = 'var(--navy)', height = 9 }) {
     </div>
   )
 }
+
+// Progressive disclosure — render the first `limit` items, reveal the rest on
+// demand. Keeps dense lists calm without hiding anything.
+export function MoreList({ items, limit = 4, children }) {
+  const [open, setOpen] = useState(false)
+  const shown = open ? items : items.slice(0, limit)
+  return (
+    <>
+      {shown.map((it, i) => children(it, i))}
+      {items.length > limit && (
+        <button className="btn sm more-btn" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+          {open ? 'Show less' : `Show all ${items.length}`}
+        </button>
+      )}
+    </>
+  )
+}

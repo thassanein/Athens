@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { companionBrief, OPERATING_MODES, defaultModeFor } from '../lib/companion.js'
 import { money, dateLabel } from '../lib/format.js'
-import { Tile } from '../components/ui.jsx'
+import { Tile, MoreList } from '../components/ui.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Executive Morning Operating Screen — the default post-login experience.
@@ -58,16 +58,18 @@ export default function Morning({ db, user, navigate, openDrawer, onCompanion })
               <span className={`badge ${sec.badge}`}>{sec.items.length}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {sec.items.map((it, i) => (
-                <button key={i} className="op-row" onClick={() => (it.id ? openDrawer(it.id) : navigate(sec.nav))}>
-                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
-                    <b style={{ fontSize: 13 }}>{it.label}</b>
-                    {it.hint && <div className="tiny muted" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.hint}</div>}
-                  </div>
-                  {it.value != null && <span className="mono small" style={{ fontWeight: 700 }}>{money(it.value)}</span>}
-                  <span style={{ color: 'var(--navy)' }}>→</span>
-                </button>
-              ))}
+              <MoreList items={sec.items} limit={4}>
+                {(it, i) => (
+                  <button key={i} className="op-row" onClick={() => (it.id ? openDrawer(it.id) : navigate(sec.nav))}>
+                    <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                      <b style={{ fontSize: 13 }}>{it.label}</b>
+                      {it.hint && <div className="tiny muted" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{it.hint}</div>}
+                    </div>
+                    {it.value != null && <span className="mono small" style={{ fontWeight: 700 }}>{money(it.value)}</span>}
+                    <span style={{ color: 'var(--navy)' }}>→</span>
+                  </button>
+                )}
+              </MoreList>
             </div>
             <button className="btn sm section-gap" onClick={() => navigate(sec.nav)}>Open {sec.nav === 'cockpit' ? 'cockpit' : sec.nav} →</button>
           </div>
