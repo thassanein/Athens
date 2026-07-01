@@ -1,9 +1,9 @@
 # Athens EVRO — v3 System Specification (as-built)
 
 **Enterprise Value Realization Operating System**
-Version: v3 (v2 EVROS + Phase 2.5 experience layer)
+Version: v3 (v2 EVROS + Phase 2.5 experience layer + Phase 3A cockpit + Phase 3B gap-closure)
 Status: as-built — every claim below maps to a file/function in this repo.
-Last updated: 2026-06-30
+Last updated: 2026-07-01
 
 > This is the **source of truth** for what EVRO *is*. The companion documents
 > verify that it does what it should:
@@ -66,8 +66,12 @@ evro/
       seed-snapshot.js    AUTO-GENERATED bundled snapshot (demo/offline mode)
       api.js              Source detection + client (live API → snapshot fallback)
       format.js           Display formatters
-    src/pages/            One file per screen (21 screens)
-    src/components/        NavBar, Drawer, Copilot, CommandPalette, Charts, ui, Icons
+      story.js            Phase 3B — audience/period story beats (view-only composer)
+      board-packet.js     Phase 3B — .pptx board-packet export (lazy pptxgenjs)
+      briefing.js, realization.js, health.js, movement.js   Phase 3B view-only helpers
+    src/pages/            One file per screen (24 screens)
+    src/components/        NavBar, Drawer, Copilot, CommandPalette, Charts, ui, Icons,
+                          IntelligenceBar, Briefing, StoryMode
   server/                 Node + Express over PostgreSQL, single-origin
     src/index.js          API + diagnostics + SPA serving
     src/engine.js         Byte-identical mirror of frontend engine
@@ -108,7 +112,7 @@ Any failure/timeout → `loadLocal()` (snapshot or localStorage) → "Demo" badg
 |---|---|---|
 | `meta` | — | FY frame, addressable totals, discount rate, NPV horizon, capital budget, guardrail note |
 | `krs` | 5 | Key results initiatives can link to |
-| `people` | 12 | Roster with `role`, `fn` (function), `procurement` flag, `oversees` |
+| `people` | 12 | Roster with `role`, `fn` (function), `procurement` flag, `oversees`, `region`/`yard` (Phase 3B geo tags) |
 | `portfolios` | 4 | Top of the hierarchy (`pf-asset`, `pf-network`, `pf-sourcing`, `pf-corporate`) |
 | `programs` | 5 | Portfolio → Program grouping |
 | `sourcing_groups` | 14 | Real AP-register groups with spend, category count, P&L line, inflation |
@@ -126,6 +130,7 @@ Any failure/timeout → `loadLocal()` (snapshot or localStorage) → "Demo" badg
 ```
 id, title, description, owner_id, group_id, spend_category_id, program_id,
 pillar ('savings'|'avoidance'), benefit_type ('reduction'|'savings'|'avoidance'),
+region, yard, business_unit (illustrative geo/org tags — Phase 3B seed prep, JSONB, no schema change),
 stage, status_rag, approach, gross_annual_value, realization_factor, effort_score,
 profile ('linear'|'ramp'|'scurve'|'seasonal'), implementation_cost,
 start_date, target_close, kr_link, opportunity_id,
@@ -200,14 +205,18 @@ them at once.
 
 ---
 
-## 6. Screens (22)
+## 6. Screens (24)
 
-Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows.
+Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows. Above the content,
+two Phase 3B chrome surfaces are always present for enterprise roles: a persistent
+**Intelligence bar** (`IntelligenceBar.jsx`, role pulse + jump-offs) and an on-demand
+**Morning briefing** overlay (`Briefing.jsx`) — both view-only over existing engine
+outputs (`briefing.js`).
 
 ### Decisions
 | Screen | File | Roles | Purpose |
 |---|---|---|---|
-| Decision Cockpit | `Cockpit.jsx` | exec/admin/fpna | Executive **Control Tower**: **Executive briefing** (AI narrative) + full-screen **Story mode**, control-tower tiles, decisions queue with one-click approve, **AI recommendations** strip + **Opportunity feed** (Phase 3A), value-vs-risk scatter, portfolio rollup, inflation exposure, **What changed** feed, **Savings sustainment** board. |
+| Decision Cockpit | `Cockpit.jsx` | exec/admin/fpna | Executive **Control Tower**: **Executive briefing** (AI narrative) + full-screen **Story mode** (audience/period lenses, Phase 3B) + one-click **⤓ Board packet** `.pptx` export, control-tower tiles, decisions queue with one-click approve, **AI recommendations** strip + **Opportunity feed** (Phase 3A), value-vs-risk scatter, portfolio rollup, inflation exposure, **What changed** feed, **Savings sustainment** board. |
 | My Department | `Department.jsx` | leader | Leader's overseen departments rollup. |
 | My Initiatives | `MyWork.jsx` | owner/procurement | The owner/procurement home — their initiatives only. |
 
@@ -227,6 +236,7 @@ Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows.
 | Scenarios | `Scenarios.jsx` | exec/admin/fpna | Forecast **Playground**: four what-if levers → live value bridge, **confidence cone** (widening P10–P90 over the FY), Downside/Plan/Stretch **scenario comparison**, rules-based **AI interpretation**, Monte-Carlo + sensitivity. |
 | Capital Allocation | `Optimize.jsx` | exec/admin/fpna | Interactive drag-and-drop board on the knapsack optimizer: Funded/Available columns, live budget meter, auto-optimize, **efficient frontier** curve + **funding buckets** (Phase 3A). |
 | Sustainment | `Sustainment.jsx` | exec/admin/fpna/leader (scoped) | **Sustainment Command Center** (Phase 3A, net-new): 30/90/180/365 trailing windows, sustainment book (band/trend/confidence), erosion-watch cards with plan-vs-actual curves + rules-based recovery actions → one-click recovery task. |
+| Value Realization | `Realization.jsx` | exec/admin/fpna/leader (scoped) | **Benefits Realization Waterfall** (Phase 3B, net-new): decomposes gross → implementation → adoption → leakage → timing → realized (reconciles exactly), sliceable by business unit / region / yard / owner / department, with a root-cause card, by-dimension table, and a portfolio **health heatmap**. |
 | Dependencies | `Dependencies.jsx` | + leader | Dependency DAG + critical path. |
 | AI Mining | `Mining.jsx` | exec/admin/fpna | Rules-based opportunity mining from spend signals. |
 | Opportunities | `Opportunities.jsx` | exec/admin/fpna | Sized, claimable opportunity board (illustrative bands). |
@@ -235,6 +245,7 @@ Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows.
 ### Engage
 | Screen | File | Roles | Purpose |
 |---|---|---|---|
+| Value Movement | `Movement.jsx` | all | **AVCM — Athens Value Creation Movement** (Phase 3B, net-new): "Find Waste · Create Value · Build Our Future" — participation stats, value-awards hall of fame, **Region / Yard / Business-unit** leaderboards (podium + standings), and adoption & engagement meters. Engagement is a signal, not a target. |
 | Leaderboard | `Leaderboard.jsx` | all | Org board + separate Procurement board. |
 | Recognition | `Recognition.jsx` | all | Value Champion Dashboard — tiers, Million Dollar Club, streaks, org + procurement boards. |
 | Sustainability | `Sustainability.jsx` | all | ESG / sustainability view. |
@@ -244,7 +255,7 @@ Grouped as in `NavBar.jsx`. "Scope" = whose data the screen shows.
 |---|---|---|
 | Methodology | `Methodology.jsx` | The value methodology + guardrail explanations. |
 | New initiative | `Intake.jsx` | Intake form → proposed initiative + approval request. |
-| Initiative | `Initiative.jsx` | Three-pane workspace (Timeline \| Financials \| Collaboration) + persistent KPI strip. Financials opens with a **health radar** + **benefits waterfall** (Phase 3A), then value, baseline, capital case, benefit lines, contributors. Collaboration = discussion/mentions/tasks/attachments + decision log. Also rendered embedded in the Drawer. |
+| Initiative | `Initiative.jsx` | Three-pane workspace (Timeline \| Financials \| Collaboration) + persistent KPI strip. Financials opens with a **6-dimension health radar** (Phase 3B — Financial/Implementation/Technology/Adoption/Governance/Sustainment, with a dashed forecast overlay) + **benefits waterfall**, then value, baseline, capital case, benefit lines, contributors. Collaboration = discussion/mentions/tasks/attachments + decision log. Also rendered embedded in the Drawer. |
 
 ---
 
@@ -288,6 +299,48 @@ addition reads existing engine outputs; all "AI" stays deterministic/rules-based
 
 New view-only chart components in `Charts.jsx`: `Radar`; plus inline confidence
 cone, efficient frontier, and erosion curves. No new engine functions.
+
+---
+
+## 7B. Phase 3B experience — gap-closure program
+
+Phase 3B continued the **presentation-only** discipline: every wave composes
+existing engine exports through new `frontend/src/lib/` view-helpers (which never
+modify `engine.js`) and new components. **No engine, mutations, API, RBAC, or
+approval-workflow change.** The one data change is a set of *illustrative* geo/org
+tags in the seed (below); it rides in the JSONB `data` column — **schema is
+unchanged**. All "AI" stays deterministic/rules-based. Commit range
+`bc698d4…43a8538`.
+
+- **Seed geo/org tags (data only).** `region`, `yard`, `business_unit` added to
+  every initiative and `region`/`yard` to people, deterministically derived in
+  `gen-seed.mjs`. Regenerated `seed.json` / `seed-snapshot.js` / `seed.sql`;
+  `schema.sql`, `engine.js`, `mutations.js`, and `server/src` untouched (they ride
+  JSONB). These enable the movement/realization slices and are labeled illustrative.
+- **AI-as-interface** (`IntelligenceBar.jsx`, `Briefing.jsx`, `briefing.js`) — a
+  persistent intelligence bar (role pulse + jump-offs) and an on-demand, role-specific
+  **morning briefing**, both composing `execSummary`/`decisionsRequired`/`whatChanged`
+  /`copilotInsights`/opportunities.
+- **Benefits Realization Waterfall** (`Realization.jsx`, `realization.js`) —
+  gross → implementation → adoption → leakage → timing → realized, reconciling
+  exactly; sliceable by BU/region/yard/owner/department; + portfolio health heatmap.
+- **6-dimension Health Radar** (`health.js`, `Initiative.jsx`) — Financial /
+  Implementation / Technology / Adoption / Governance / Sustainment, current vs a
+  dashed forecast overlay, derived from confidence/roi/risk/sustainment/delivery
+  proxies; plus `portfolioHealth` for the heatmap.
+- **AVCM Value Movement hub** (`Movement.jsx`, `movement.js`) — geo/org
+  leaderboards, value awards, and adoption/engagement analytics off the seed tags.
+- **Story Mode expansion + PowerPoint board packet** (`story.js`,
+  `board-packet.js`, `StoryMode.jsx`) — the presenter gained **audience** (Board /
+  Executive / Operators) and **period** (Full FY / YTD / Remaining FY) lenses that
+  reshape the deck (7–11 beats), on-slide data tables, and a native **`.pptx`
+  board-packet export** (pptxgenjs, loaded via dynamic `import()` so it is a lazy
+  chunk). The presenter and the exported deck render the **same beats** — one source
+  of truth.
+- **Motion & polish** (`ui.jsx` `AnimatedValue`, `Charts.jsx`, `index.css`) —
+  number count-up, staggered entrance reveals, SVG chart draw-ins, and
+  micro-interactions, all wrapped by a global `prefers-reduced-motion` guard;
+  `@media print` forces final state so reveals never blank a printed page.
 
 ---
 

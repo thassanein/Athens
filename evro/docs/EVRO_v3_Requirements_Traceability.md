@@ -1,6 +1,6 @@
 # Athens EVRO — v3 Requirements Traceability Matrix
 
-Version: v3 · Last updated: 2026-06-30
+Version: v3 · Last updated: 2026-07-01
 Companion to `EVRO_v3_System_Specification.md` and `EVRO_v3_Verification_Framework.md`.
 
 > **Purpose.** Maps every requirement from the source documents — the original
@@ -95,7 +95,7 @@ these. Each shipped as its own tested commit; no new engines were added.
 | E1 | Drag-and-drop capital allocation | ✅ (sprint S3) | Interactive Funded/Available board on `optimize()` — drag + +/− + live budget meter + auto-optimize. |
 | E2 | Mobile polish (dense tables) | ✅ (sprint S5) | Sticky first column, tighter cells, scroll-shadow, topbar fit; 0 horizontal overflow verified at 390px. |
 | E3 | Impact simulation ("what if I move $X") | ✅ (sprint S4) | Four-lever forecast simulator + telescoping value bridge on `scenarioTotals`/`sensitivity`/`monteCarlo`. |
-| E4 | True `.xlsx` export | ⏳ | Print/PDF export available; native xlsx not built. |
+| E4 | True `.xlsx` export | 🟡 | Native **`.pptx`** board-packet export now ships (Phase 3B, G7); print/PDF also available; native `.xlsx` still not built. |
 | E5 | Real LLM copilot | ⏳ (by design) | Copilot is intentionally deterministic/rules-based for verifiability. |
 | E6 | SharePoint write / Outlook calendar | ⏳ | Inherited M365 limitation (read-only app registration). |
 
@@ -118,6 +118,24 @@ Experience-layer only; the directive's "Do NOT Change" list held at every step
 | F10 | AI as interface (what changed / approve / fund / leaking / at risk) | copilot + control-tower + story | V-3A-ct, V-CP-qa | ✅ |
 | F11 | Max two clicks · Dashboard = application | ⌘K + drawer + cockpit | V-XC-search | ✅ |
 
+## G. Phase 3B — Gap-Closure Program
+
+Continued the experience-only discipline (verify: `V-3B-nologic`). New logic lives
+only in view-helpers that import — never modify — the engine. The single data change
+is illustrative seed geo/org tags riding JSONB with no schema change (`V-3B-geoseed`).
+Commit range `bc698d4…43a8538`. Each row shipped as its own tested commit.
+
+| Req | Requirement | Implementation | Verify | Status |
+|---|---|---|---|---|
+| G1 | Experience grows, substance unchanged (no engine/mutations/schema/API/RBAC/workflow change) | view-helpers only; `git diff bc698d4~1..43a8538` on engine/mutations/server/schema is clean | V-3B-nologic | ✅ |
+| G2 | Illustrative geo/org tags for slicing (region/yard/business-unit), no schema change | `gen-seed.mjs` derives tags into JSONB; `seed.json`/`-snapshot`/`seed.sql` regenerated | V-3B-geoseed | ✅ |
+| G3 | AI-as-interface: persistent intelligence bar + role morning briefings | `IntelligenceBar.jsx`, `Briefing.jsx`, `briefing.js` | V-3B-intel | ✅ |
+| G4 | Benefits Realization Waterfall (decompose + slice + heatmap) | `Realization.jsx`, `realization.js`, `health.js` heatmap | V-3B-realization | ✅ |
+| G5 | 6-dimension initiative Health Radar (current vs forecast) | `health.js`, `Initiative.jsx` + `Radar` overlay | V-3B-health | ✅ |
+| G6 | AVCM Value Movement hub (geo/org leaderboards, awards, engagement) | `Movement.jsx`, `movement.js` | V-3B-movement | ✅ |
+| G7 | Story Mode audience/period lenses + native `.pptx` board packet | `story.js`, `board-packet.js` (lazy pptxgenjs), `StoryMode.jsx`, Cockpit | V-3B-story, V-3B-packet | ✅ |
+| G8 | Motion & polish (count-up, reveals, chart draw-ins, reduced-motion, mobile) | `ui.jsx` `AnimatedValue`, `Charts.jsx`, `index.css` | V-3B-motion | ✅ |
+
 ---
 
 ## Coverage summary
@@ -128,11 +146,15 @@ Experience-layer only; the directive's "Do NOT Change" list held at every step
 | B · EVRO Master PRD | 14 | 14 | 0 | 0 |
 | C · v2 Enhancement Blueprint | 14 | 14 | 0 | 0 |
 | D · Phase 2.5 Experience Layer | 14 | 14 | 0 | 0 |
-| E · Fast-follows | 6 | 3 | 0 | 3 |
+| E · Fast-follows | 6 | 3 | 1 | 2 |
 | F · Phase 3A Transformation | 11 | 11 | 0 | 0 |
-| **Total** | **69** | **66** | **0** | **3** |
+| G · Phase 3B Gap-Closure | 8 | 8 | 0 | 0 |
+| **Total** | **77** | **74** | **1** | **2** |
 
-All **S1 guardrails** and **core (S2)** requirements are Done. The Phase 3A
-experience transformation is fully delivered with no business-logic changes. The
-three remaining items (native xlsx export, a real LLM copilot, M365 write-back)
-are deliberate deferrals, each noted above.
+All **S1 guardrails** and **core (S2)** requirements are Done. The Phase 3A **and**
+Phase 3B experience programs are fully delivered with no business-logic changes —
+the only Phase 3B data change is illustrative seed geo/org tags in JSONB (no schema
+change; `V-3B-geoseed`). Export is now **Partial** (native `.pptx` board packet
+ships; `.xlsx` still deferred). The two remaining deferrals — a real LLM copilot
+(deterministic by design) and M365 write-back (inherited read-only registration) —
+are noted above.

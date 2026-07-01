@@ -193,6 +193,27 @@ did not. `V-3A-nologic` below is the guardrail — a FAIL invalidates the transf
 
 ---
 
+## 9B. Phase 3B experience — gap-closure program (S2/S3)
+
+Same overriding invariant as Phase 3A: the experience grew, the substance did not.
+`V-3B-nologic` is the guardrail (S1). The one deliberate exception is a data-only
+seed change (illustrative geo/org tags) that rides JSONB with **no schema change** —
+covered by `V-3B-geoseed`.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-3B-nologic** (S1) | No engine/mutations/schema/API/RBAC/workflow change across Phase 3B. | `git diff bc698d4~1..43a8538 -- evro/frontend/src/lib/engine.js evro/frontend/src/lib/mutations.js evro/server evro/server/db/schema.sql` shows no functional change (the only `data/` diff is the seed geo tags — see `V-3B-geoseed`). New logic lives only in view-helpers that import, never modify, the engine. | Presentation-only; engine/mutations/schema/server byte-stable. |
+| **V-3B-geoseed** | Seed carries illustrative `region`/`yard`/`business_unit` tags without a schema change. | Every initiative has the three tags; people have `region`/`yard`; `git show 0c9eede --stat` touches `gen-seed.mjs`/`seed.json`/`seed-snapshot.js`/`seed.sql` but **not** `schema.sql`/`engine.js`/`mutations.js`/`server/src`. Tags are deterministic (mulberry32) and labeled illustrative. | Tags present; schema untouched; regen is byte-stable (V-DET-seed). |
+| **V-3B-intel** | Persistent intelligence bar + role-specific morning briefing. | `intelSummary(db,user)` / `morningBriefing(db,user)` (`briefing.js`) return role-correct content for all 6 roles; `.intel-bar` renders; open briefing → overlay with sections; Esc closes. | Renders for every role; no `.includes`-on-Set type errors. |
+| **V-3B-realization** | Benefits Realization Waterfall reconciles and slices. | `realizationWaterfall(db,{dimension})` steps sum to realized (residual = timing plug); Realization screen shows the staircase + by-dimension table; changing dimension (BU/region/yard/owner) re-slices. | Reconciles exactly; dimension switch re-computes. |
+| **V-3B-health** | 6-dimension initiative health radar + portfolio heatmap. | `HEALTH_DIMS.length===6`; `initiativeHealth(i,db)` → `{current, forecast, overall}`; Initiative Financials radar shows 6 axes + dashed forecast overlay; `portfolioHealth(db)` drives the Realization heatmap. | 6 dims; overlay renders; heatmap cells colour by band. |
+| **V-3B-movement** | AVCM hub — geo/org leaderboards, awards, engagement. | `geoLeaderboard(db,'region'/'yard'/'business_unit')` rank by total FY; `movementStats`, `valueAwards`, `engagement` finite; Movement screen shows banner, awards, podium+standings, meters; 0 page errors. | Boards non-empty; awards resolve to real people/initiatives; engagement framed as a signal (no target). |
+| **V-3B-story** | Story Mode gained audience + period lenses. | `storyBeats(db,{audience,period})` for Board/Executive/Operators × Full-FY/YTD/Remaining-FY returns 7–11 beats, reshaping order; presenter shows audience/period segmented controls, on-slide data tables; →/←/Space/Esc still work. | Beat count/order change with lens; keyboard nav intact. |
+| **V-3B-packet** | PowerPoint board-packet export produces valid OOXML. | Click ⤓ .pptx (Story Mode) or ⤓ Board packet (Cockpit) → a `.pptx` downloads; unzip → `[Content_Types].xml` + `ppt/presentation.xml` + one `ppt/slides/slideN.xml` per beat, all well-formed; content matches the on-screen beats. | Valid multi-slide OOXML; opens in PowerPoint/Keynote/Slides; pptxgenjs is a lazy chunk (not in the main bundle). |
+| **V-3B-motion** | Motion is tasteful, count-up works, reduced-motion honored. | `AnimatedValue` counts a formatted string 0→target (Story hero samples multiple frames); chart-reveal classes present (`.scatter-pt`,`.wf-bar`,`.bridge-track>i`,`.radar-shape`,`.line-draw/-fade`); under `reducedMotion:'reduce'` values render final and content opacity is 1; movement banner stacks ≤560px; 0 page errors. | Count-up + reveals animate; reduced-motion neutralizes; mobile banner stacks. |
+
+---
+
 ## 10. Pass/fail summary template
 
 | Section | Checks | Pass | Fail | N/A |
@@ -206,6 +227,8 @@ did not. `V-3A-nologic` below is the guardrail — a FAIL invalidates the transf
 | Cross-cutting | 7 | | | |
 | Determinism | 3 | | | |
 | Phase 3A experience | 9 | | | |
-| **Total** | **62** | | | |
+| Phase 3B experience | 9 | | | |
+| **Total** | **71** | | | |
 
 A release is **verified** when every **S1** check passes and no **S2** check fails.
+The Phase 3B guardrail `V-3B-nologic` (S1) must pass alongside `V-3A-nologic`.
