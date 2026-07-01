@@ -23,6 +23,7 @@ import Mining from './pages/Mining.jsx'
 import Opportunities from './pages/Opportunities.jsx'
 import Spend from './pages/Spend.jsx'
 import Leaderboard from './pages/Leaderboard.jsx'
+import Sustainment from './pages/Sustainment.jsx'
 import Recognition from './pages/Recognition.jsx'
 import Reporting from './pages/Reporting.jsx'
 import Sustainability from './pages/Sustainability.jsx'
@@ -30,12 +31,12 @@ import Methodology from './pages/Methodology.jsx'
 import Intake from './pages/Intake.jsx'
 import Initiative from './pages/Initiative.jsx'
 
-const PAGES = { cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, scenarios: Scenarios, optimize: Optimize, dependencies: Dependencies, valuemap: ValueMap, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
-const TITLES = { cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', scenarios: 'Forecast simulator', optimize: 'Capital allocation', dependencies: 'Dependency network', valuemap: 'Value map', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
+const PAGES = { cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, scenarios: Scenarios, optimize: Optimize, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
+const TITLES = { cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', scenarios: 'Forecast simulator', optimize: 'Capital allocation', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
 
 const HOME = { exec: 'cockpit', admin: 'cockpit', fpna: 'cockpit', leader: 'department', owner: 'mywork', procurement: 'mywork' }
 const ALWAYS_OK = ['initiative', 'intake']
-const SCOPED_PAGES = new Set(['portfolio', 'forecast', 'sustainability'])
+const SCOPED_PAGES = new Set(['portfolio', 'forecast', 'sustainability', 'sustainment'])
 const ROLE_LABEL = { admin: 'EVRO Lead', fpna: 'FP&A', leader: 'Function leader', owner: 'Initiative owner', procurement: 'Procurement', exec: 'Executive' }
 
 function capsFor(role) {
