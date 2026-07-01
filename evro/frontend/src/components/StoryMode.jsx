@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { storyBeats, AUDIENCES, PERIODS } from '../lib/story.js'
 import { exportBoardPacket } from '../lib/board-packet.js'
+import { AnimatedValue } from './ui.jsx'
 import { IconClose } from './Icons.jsx'
 
 // Executive Story Mode — a full-screen, keyboard-navigable presenter that walks
@@ -59,10 +60,10 @@ export default function StoryMode({ db, user, onClose }) {
       </div>
 
       <div className="story-body">
-        <div className={`story-slide ${s.table ? 'has-table' : ''}`}>
+        <div key={clamp} className={`story-slide ${s.table ? 'has-table' : ''}`}>
           <div className="story-kicker">{s.lbl}</div>
           <h1>{s.title}</h1>
-          {s.big != null && <div className="big" style={{ color, marginTop: 6 }}>{s.big}</div>}
+          {s.big != null && <div className="big" style={{ color, marginTop: 6 }}><AnimatedValue value={s.big} /></div>}
           {s.cap && <div className="lead story-cap">{s.cap}</div>}
           {s.sub && <p className="lead story-narr">{s.sub}</p>}
           {s.bullets?.length > 0 && <ul className="story-bullets">{s.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>}

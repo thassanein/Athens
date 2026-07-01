@@ -34,7 +34,7 @@ export function Donut({ data, size = 150, thickness = 22, center }) {
           const frac = Math.max(0, d.value) / total
           const dash = frac * C
           const el = (
-            <circle key={i} cx={cx} cy={cx} r={r} fill="none" stroke={d.color} strokeWidth={thickness}
+            <circle key={i} className="donut-seg" style={{ animationDelay: `${i * 80}ms` }} cx={cx} cy={cx} r={r} fill="none" stroke={d.color} strokeWidth={thickness}
               strokeDasharray={`${dash} ${C - dash}`} strokeDashoffset={-offset}
               transform={`rotate(-90 ${cx} ${cx})`} />
           )
@@ -93,9 +93,9 @@ export function LineChart({ xLabels, series, height = 240, yFmt = (v) => money(v
         ))}
         {series.map((s) => (
           <g key={s.key}>
-            <path d={pathFor(s.points)} fill="none" stroke={s.color} strokeWidth="2.5"
+            <path className={s.dashed ? 'line-fade' : 'line-draw'} pathLength={1} d={pathFor(s.points)} fill="none" stroke={s.color} strokeWidth="2.5"
               strokeDasharray={s.dashed ? '5 4' : 'none'} strokeLinejoin="round" strokeLinecap="round" />
-            {s.points.map((v, i) => (v == null ? null : <circle key={i} cx={x(i)} cy={y(v)} r="2.6" fill={s.color} />))}
+            {s.points.map((v, i) => (v == null ? null : <circle key={i} className="line-dot" cx={x(i)} cy={y(v)} r="2.6" fill={s.color} />))}
           </g>
         ))}
       </svg>
@@ -136,7 +136,7 @@ export function Waterfall({ steps, total, height = 230 }) {
               {i > 0 && (
                 <line x1={10 + (i - 1) * colW + colW * 0.18 + bw} x2={cx} y1={y(b.start)} y2={y(b.start)} stroke="var(--grey-2)" strokeWidth="1" strokeDasharray="3 3" />
               )}
-              <rect x={cx} y={top} width={bw} height={Math.max(2, h)} rx="3" fill={colorOf(b, i)} />
+              <rect className="wf-bar" style={{ animationDelay: `${i * 80}ms` }} x={cx} y={top} width={bw} height={Math.max(2, h)} rx="3" fill={colorOf(b, i)} />
               <text x={cx + bw / 2} y={top - 5} textAnchor="middle" fontSize="11" fontWeight="700" fill="var(--ink)">{money(b.value)}</text>
               <text x={cx + bw / 2} y={H - padB + 16} textAnchor="middle" fontSize="10.5" fill="var(--grey)">
                 {b.label.length > 18 ? b.label.slice(0, 17) + '…' : b.label}
@@ -168,7 +168,7 @@ export function Scatter({ points, xLabel, yLabel, xMax, yMax, xTicks = ['Low', '
         <rect x={padL} y={padT} width={W - padL - padR} height={H - padT - padB} fill="none" stroke="var(--line)" />
         {points.map((p, i) => (
           <g key={p.id || i} style={{ cursor: onPick ? 'pointer' : 'default' }} onClick={() => onPick && onPick(p)}>
-            <circle cx={X(p.x)} cy={Y(p.y)} r={r(p.value)} fill={p.color || 'var(--navy)'} fillOpacity="0.55" stroke={p.color || 'var(--navy)'} />
+            <circle className="scatter-pt" style={{ animationDelay: `${i * 35}ms` }} cx={X(p.x)} cy={Y(p.y)} r={r(p.value)} fill={p.color || 'var(--navy)'} fillOpacity="0.55" stroke={p.color || 'var(--navy)'} />
             <title>{p.label} · {money(p.value)}</title>
           </g>
         ))}
@@ -246,7 +246,7 @@ export function Radar({ axes, overlay, size = 210, color = 'var(--navy)' }) {
       {[0.25, 0.5, 0.75, 1].map((rr, k) => <polygon key={k} points={poly(rr)} fill="none" stroke="var(--line)" strokeWidth="1" />)}
       {axes.map((_, i) => { const [x, y] = pt(i, 1); return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="var(--line)" strokeWidth="1" /> })}
       {overlay && <polygon points={axes.map((_, i) => pt(i, cl(overlay[i])).join(',')).join(' ')} fill="none" stroke="var(--grey)" strokeWidth="1.5" strokeDasharray="4 3" />}
-      <polygon points={shape} fill={color} fillOpacity="0.24" stroke={color} strokeWidth="2" />
+      <polygon className="radar-shape" points={shape} fill={color} fillOpacity="0.24" stroke={color} strokeWidth="2" />
       {axes.map((ax, i) => { const [x, y] = pt(i, cl(ax.value)); return <circle key={i} cx={x} cy={y} r="2.6" fill={color} /> })}
       {axes.map((ax, i) => {
         const [x, y] = pt(i, 1.2)
@@ -265,7 +265,7 @@ export function Funnel({ stages, fmt = money }) {
         <div key={s.stage} style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: 10, alignItems: 'center' }}>
           <div className="small" style={{ fontWeight: 700, textTransform: 'capitalize' }}>{s.stage}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ flex: `0 0 ${20 + (s.count / max) * 80}%`, background: COLORS[i] || 'var(--navy)', color: '#fff', borderRadius: 7, padding: '7px 11px', display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+            <div className="funnel-bar" style={{ animationDelay: `${i * 70}ms`, flex: `0 0 ${20 + (s.count / max) * 80}%`, background: COLORS[i] || 'var(--navy)', color: '#fff', borderRadius: 7, padding: '7px 11px', display: 'flex', justifyContent: 'space-between', gap: 8 }}>
               <b>{s.count}</b>
               <span className="mono" style={{ opacity: 0.92 }}>{fmt(s.value)}</span>
             </div>

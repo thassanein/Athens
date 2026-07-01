@@ -145,10 +145,10 @@ function ErosionCurve({ i, db, height = 120 }) {
   const n = pts.length
   const x = (idx) => padL + (idx / Math.max(1, n - 1)) * (W - padL - padR)
   const y = (v) => padT + (1 - v / maxY) * (H - padT - padB)
-  const path = (key, color) => <polyline points={pts.map((p, idx) => `${x(idx)},${y(p[key])}`).join(' ')} fill="none" stroke={color} strokeWidth="2" />
+  const path = (key, color) => <polyline className="line-fade" points={pts.map((p, idx) => `${x(idx)},${y(p[key])}`).join(' ')} fill="none" stroke={color} strokeWidth="2" />
   return (
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" style={{ display: 'block' }}>
-      <polygon points={`${pts.map((p, idx) => `${x(idx)},${y(p.exp)}`).join(' ')} ${pts.map((p, idx) => `${x(n - 1 - idx)},${y(pts[n - 1 - idx].act)}`).join(' ')}`} fill="var(--tint-red)" stroke="none" />
+      <polygon className="line-fade" points={`${pts.map((p, idx) => `${x(idx)},${y(p.exp)}`).join(' ')} ${pts.map((p, idx) => `${x(n - 1 - idx)},${y(pts[n - 1 - idx].act)}`).join(' ')}`} fill="var(--tint-red)" stroke="none" />
       {path('exp', 'var(--grey-2)')}
       {path('act', 'var(--red)')}
       <text x={padL} y={H - 6} fontSize="9" fill="var(--grey)">{monthLabel(pts[0]?.mk)}</text>

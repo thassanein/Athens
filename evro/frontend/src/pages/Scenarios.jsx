@@ -176,8 +176,8 @@ function ConfidenceCone({ series, height = 220 }) {
   return (
     <div className="table-wrap">
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ minWidth: 520 }} preserveAspectRatio="xMidYMid meet">
-        <polygon points={band} fill="var(--tint-navy)" stroke="none" />
-        <polyline points={mid} fill="none" stroke="var(--navy)" strokeWidth="2.2" />
+        <polygon className="line-fade" points={band} fill="var(--tint-navy)" stroke="none" />
+        <polyline className="line-fade" points={mid} fill="none" stroke="var(--navy)" strokeWidth="2.2" />
         {nowIdx > 0 && <line x1={x(nowIdx - 1)} x2={x(nowIdx - 1)} y1={padT} y2={H - padB} stroke="var(--grey-2)" strokeWidth="1" strokeDasharray="3 3" />}
         {series.map((s, i) => (i % 2 === 0 ? <text key={i} x={x(i)} y={H - 8} textAnchor="middle" fontSize="9.5" fill="var(--grey)">{monthLabel(s.month)}</text> : null))}
       </svg>

@@ -152,7 +152,7 @@ export default function App() {
         <IntelligenceBar db={db} user={user} collapsed={intelHidden} onToggle={() => setIntelHidden((h) => !h)}
           onBriefing={() => setBriefing(true)} onCopilot={() => setCopilot(true)} openDrawer={openDrawer} />
         <main className="content">
-          <Page {...ctx} db={pageDb} id={selId} />
+          <Page key={`${page}:${selId || ''}`} {...ctx} db={pageDb} id={selId} />
         </main>
       </div>
 
