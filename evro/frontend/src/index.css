@@ -201,6 +201,29 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
 .reco-row { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 9px; background: none; cursor: pointer; text-align: left; }
 .reco-row:hover { background: var(--line-2); border-color: var(--line2, var(--line)); }
 
+/* ---- persistent AI intelligence bar -------------------------------------- */
+.intel-bar { position: sticky; top: var(--topbar-h); z-index: 25; display: flex; align-items: center; gap: 10px;
+  padding: 8px 18px; background: var(--panel-2); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }
+.intel-bar.collapsed { cursor: pointer; justify-content: flex-start; gap: 8px; }
+.copilot-logo.sm { width: 22px; height: 22px; border-radius: 6px; flex: 0 0 22px; }
+.intel-pulse { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; min-width: 0; }
+.intel-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+.intel-chip .dot { width: 7px; height: 7px; border-radius: 50%; }
+@media (max-width: 640px) { .intel-bar { padding: 7px 12px; } .intel-pulse { gap: 9px; } .intel-chip { font-size: 11.5px; } }
+
+/* ---- morning briefing overlay -------------------------------------------- */
+.brief-scrim { position: fixed; inset: 0; background: rgba(6, 8, 14, 0.55); z-index: 66; display: grid; place-items: start center; padding: 6vh 16px; overflow-y: auto; }
+.brief { width: min(720px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-pop); overflow: hidden; animation: slidein 0.18s ease; }
+.brief-head { display: flex; align-items: center; gap: 11px; padding: 15px 18px; border-bottom: 1px solid var(--line); background: var(--dark); color: #fff; }
+.brief-head .muted { color: var(--grey-2); }
+.brief-body { padding: 16px 18px 18px; max-height: 74vh; overflow-y: auto; }
+.brief-headline { font-size: 15px; font-weight: 600; margin: 0 0 12px; }
+.brief-rec { display: flex; align-items: center; gap: 10px; padding: 11px 13px; border-radius: 11px; background: var(--tint-navy); border: 1px solid var(--line); margin-bottom: 14px; }
+.brief-section { padding: 12px 0; border-top: 1px solid var(--line-2); }
+.brief-list { display: flex; flex-direction: column; gap: 2px; }
+.brief-item { display: flex; align-items: center; gap: 10px; padding: 8px 9px; border-radius: 8px; background: none; text-align: left; }
+.brief-item:hover { background: var(--line-2); }
+
 .stage-pip { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; }
 .stage-pip .bar { height: 6px; border-radius: 3px; background: var(--line); width: 54px; overflow: hidden; }
 .stage-pip .bar > i { display: block; height: 100%; background: var(--navy); }

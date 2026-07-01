@@ -6,6 +6,8 @@ import NavBar, { allowedKeys, navScreens } from './components/NavBar.jsx'
 import Drawer from './components/Drawer.jsx'
 import CommandPalette from './components/CommandPalette.jsx'
 import Copilot from './components/Copilot.jsx'
+import IntelligenceBar from './components/IntelligenceBar.jsx'
+import Briefing from './components/Briefing.jsx'
 import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
 
 import Cockpit from './pages/Cockpit.jsx'
@@ -58,6 +60,8 @@ export default function App() {
   const [drawerId, setDrawerId] = useState(null)
   const [palette, setPalette] = useState(false)
   const [copilot, setCopilot] = useState(false)
+  const [briefing, setBriefing] = useState(false)
+  const [intelHidden, setIntelHidden] = useState(false)
   const [drawer, setDrawer] = useState(false)
   const [toast, setToast] = useState(null)
   const [userId, setUserId] = useState(null)
@@ -84,7 +88,7 @@ export default function App() {
   useEffect(() => {
     const onKey = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPalette((p) => !p) }
-      else if (e.key === 'Escape') { setPalette(false); setCopilot(false) }
+      else if (e.key === 'Escape') { setPalette(false); setCopilot(false); setBriefing(false) }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -143,6 +147,8 @@ export default function App() {
           <PersonaSwitch db={db} userId={userId} setUserId={setUserId} />
           <DataBadge source={source} />
         </header>
+        <IntelligenceBar db={db} user={user} collapsed={intelHidden} onToggle={() => setIntelHidden((h) => !h)}
+          onBriefing={() => setBriefing(true)} onCopilot={() => setCopilot(true)} openDrawer={openDrawer} />
         <main className="content">
           <Page {...ctx} db={pageDb} id={selId} />
         </main>
@@ -151,6 +157,7 @@ export default function App() {
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />
       <CommandPalette open={palette} onClose={() => setPalette(false)} screens={navScreens(user.role)} db={db} navigate={navigate} openDrawer={openDrawer} />
       <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} />
+      <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} />
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>
   )
