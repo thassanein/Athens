@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
-import { optimize } from '../lib/engine.js'
+import { optimize, groupName } from '../lib/engine.js'
 import { money, pct } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
+import { HBars } from '../components/Charts.jsx'
 
 // Capital allocation — an interactive planning board. Drag initiatives between
 // "Funded" and "Available" (or use the optimizer to auto-fill), and watch the
@@ -36,6 +37,19 @@ export default function Optimize({ db, openDrawer }) {
   const overBudget = deployed > budget
   const efficiency = deployed ? fundedValue / (deployed / 1_000_000) : 0
   const meterPct = Math.min(100, (deployed / budget) * 100)
+
+  // Efficient frontier — cumulative RAV as capital is deployed in ROI order.
+  const frontier = useMemo(() => {
+    let cc = 0, cv = 0
+    const ranked = [...candidates].sort((a, b) => b.eff - a.eff)
+    return ranked.map((c) => { cc += c.cost; cv += c.value; return { cost: cc, value: cv } })
+  }, [candidates])
+
+  // Funding buckets — funded capital grouped by sourcing group.
+  const initById = useMemo(() => Object.fromEntries(db.initiatives.map((i) => [i.id, i])), [db])
+  const buckets = Object.entries(
+    fundedItems.reduce((m, c) => { const g = groupName(db, initById[c.id]?.group_id) || 'Other'; m[g] = (m[g] || 0) + c.cost; return m }, {}),
+  ).map(([label, value]) => ({ label, value, color: 'var(--navy)' })).sort((a, b) => b.value - a.value).slice(0, 7)
 
   const set = (id, into) => setFunded((prev) => {
     const next = new Set(prev)
@@ -91,6 +105,20 @@ export default function Optimize({ db, openDrawer }) {
 
       {overBudget && <div className="note section-gap" style={{ borderColor: 'var(--line)', background: 'var(--tint-red)' }}><span>⚑</span><span>Funded set is <b>{money(deployed - budget)}</b> over the capital budget. Drop something back to Available, or raise the budget.</span></div>}
 
+      {/* efficient frontier + funding buckets */}
+      <div className="grid cols-2 section-gap">
+        <div className="card pad">
+          <div className="card-h"><h3>Efficient frontier</h3><span className="spacer" /><span className="tiny muted">RAV vs capital, best-ROI first</span></div>
+          <Frontier points={frontier} budget={budget} funded={{ cost: deployed, value: fundedValue }} over={overBudget} />
+          <p className="tiny muted section-gap">Each dollar of capital, deployed highest-ROI first, buys diminishing returns. The dashed line is your envelope; the dot is the current funded set — above the curve means you can do better, on it means you're efficient.</p>
+        </div>
+        <div className="card pad">
+          <div className="card-h"><h3>Funding buckets</h3><span className="spacer" /><span className="badge b-navy">{money(deployed)}</span></div>
+          <p className="tiny muted" style={{ marginTop: -4 }}>Where the funded capital lands, by sourcing group.</p>
+          {buckets.length === 0 ? <div className="muted section-gap">Nothing funded yet.</div> : <div className="section-gap"><HBars data={buckets} /></div>}
+        </div>
+      </div>
+
       <div className="grid cols-2 section-gap alloc-grid">
         <div className={`card pad dropzone ${over === 'funded' ? 'over' : ''}`}
           onDragOver={(e) => { e.preventDefault(); setOver('funded') }} onDragLeave={() => setOver(null)} onDrop={onDrop(true)}>
@@ -113,6 +141,31 @@ export default function Optimize({ db, openDrawer }) {
         </div>
       </div>
     </>
+  )
+}
+
+// Efficient frontier — concave cumulative-value curve with budget + funded markers.
+function Frontier({ points, budget, funded, over }) {
+  const W = 560, H = 220, padL = 46, padR = 12, padT = 14, padB = 30
+  const maxX = Math.max(1, points.length ? points[points.length - 1].cost : 1, budget * 1.05)
+  const maxY = Math.max(1, points.length ? points[points.length - 1].value : 1)
+  const x = (v) => padL + (v / maxX) * (W - padL - padR)
+  const y = (v) => padT + (1 - v / maxY) * (H - padT - padB)
+  const line = points.map((p) => `${x(p.cost)},${y(p.value)}`).join(' ')
+  return (
+    <div className="table-wrap">
+      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ minWidth: 460 }} preserveAspectRatio="xMidYMid meet">
+        <line x1={padL} y1={y(0)} x2={W - padR} y2={y(0)} stroke="var(--line)" strokeWidth="1" />
+        <line x1={padL} y1={padT} x2={padL} y2={y(0)} stroke="var(--line)" strokeWidth="1" />
+        <polyline points={`${x(0)},${y(0)} ${line}`} fill="none" stroke="var(--green)" strokeWidth="2.2" />
+        <line x1={x(budget)} x2={x(budget)} y1={padT} y2={y(0)} stroke="var(--red)" strokeWidth="1.2" strokeDasharray="4 3" />
+        <text x={x(budget)} y={padT + 2} fontSize="9.5" fill="var(--red)" textAnchor="middle">envelope</text>
+        <circle cx={x(Math.min(funded.cost, maxX))} cy={y(funded.value)} r="4.5" fill={over ? 'var(--red)' : 'var(--navy)'} stroke="var(--bg)" strokeWidth="1.5" />
+        <text x={padL - 4} y={padT + 4} fontSize="9.5" fill="var(--grey)" textAnchor="end">{money(maxY)}</text>
+        <text x={padL} y={H - 6} fontSize="9.5" fill="var(--grey)">$0</text>
+        <text x={W - padR} y={H - 6} fontSize="9.5" fill="var(--grey)" textAnchor="end">{money(maxX)} capital</text>
+      </svg>
+    </div>
   )
 }
 
