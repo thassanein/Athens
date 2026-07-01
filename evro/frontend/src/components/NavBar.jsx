@@ -34,6 +34,7 @@ export const NAV = [
     ['spend', 'Spend Explorer', IconSpend, ALL],
   ] },
   { group: 'Engage', items: [
+    ['movement', 'Value Movement', IconTeam, ALL],
     ['leaderboard', 'Leaderboard', IconLeaderboard, ALL],
     ['recognition', 'Recognition', IconBolt, ALL],
     ['sustainability', 'Sustainability', IconLeaf, ALL],
