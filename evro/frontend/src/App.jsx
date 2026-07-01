@@ -60,6 +60,12 @@ export default function App() {
   const [drawer, setDrawer] = useState(false)
   const [toast, setToast] = useState(null)
   const [userId, setUserId] = useState(null)
+  const [theme, setTheme] = useState(() => (typeof localStorage !== 'undefined' && localStorage.getItem('evro.theme')) || 'dark')
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    try { localStorage.setItem('evro.theme', theme) } catch { /* ignore */ }
+  }, [theme])
 
   useEffect(() => {
     let alive = true
@@ -132,6 +138,7 @@ export default function App() {
           <div className="spacer" />
           <button className="copilot-btn hide-sm" onClick={() => setCopilot(true)} title="Ask EVRO (AI copilot)"><IconAI /> Ask EVRO</button>
           <button className="cmdk" onClick={() => setPalette(true)} title="Command palette (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
+          <button className="theme-btn" onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} aria-label="Toggle theme">{theme === 'dark' ? '☀' : '☾'}</button>
           <PersonaSwitch db={db} userId={userId} setUserId={setUserId} />
           <DataBadge source={source} />
         </header>

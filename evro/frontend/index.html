@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#1A2736" />
+    <meta name="theme-color" content="#0E0E11" />
+    <script>
+      // Set the saved theme before paint to avoid a flash (dark is the default).
+      try { document.documentElement.setAttribute('data-theme', localStorage.getItem('evro.theme') || 'dark') } catch (e) {}
+    </script>
     <meta
       name="description"
       content="Athens EVRO — Enterprise Value Realization Office. Tracks cost-savings and cost-avoidance return across the $437.4M addressable spend base. Return-maximization model: ranks initiatives and opportunities by risk-adjusted value and ROI (no savings target)."

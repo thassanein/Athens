@@ -104,7 +104,7 @@ function Attention({ title, items, navigate, tone, empty, note }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {items.slice(0, 5).map((i) => (
             <button key={i.id} className="kv" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', background: 'none' }} onClick={() => navigate('initiative', { id: i.id })}>
-              <span className="k" style={{ color: 'var(--dark)' }}>{i.title}</span><span className="v tiny muted">{note(i)}</span>
+              <span className="k" style={{ color: 'var(--ink)' }}>{i.title}</span><span className="v tiny muted">{note(i)}</span>
             </button>
           ))}
         </div>

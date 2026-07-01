@@ -42,7 +42,7 @@ export function Donut({ data, size = 150, thickness = 22, center }) {
           return el
         })}
         {center && (
-          <text x={cx} y={cx} textAnchor="middle" dominantBaseline="central" fontSize="15" fontWeight="800" fill="var(--dark)">
+          <text x={cx} y={cx} textAnchor="middle" dominantBaseline="central" fontSize="15" fontWeight="800" fill="var(--ink)">
             {center}
           </text>
         )}
@@ -121,7 +121,7 @@ export function Waterfall({ steps, total, height = 230 }) {
   const maxY = Math.max(1, cum) * 1.1
   const colW = (W - 20) / bars.length
   const y = (v) => padT + (1 - v / maxY) * (H - padT - padB)
-  const COLORS = { base: 'var(--green)', add: 'var(--navy)', total: 'var(--dark)' }
+  const COLORS = { base: 'var(--green)', add: 'var(--navy)', total: 'var(--ink)' }
   const colorOf = (b, i) => (b.kind === 'total' ? COLORS.total : i === 1 ? 'var(--navy)' : i === 2 ? 'var(--red)' : COLORS.base)
   return (
     <div className="table-wrap">
@@ -137,7 +137,7 @@ export function Waterfall({ steps, total, height = 230 }) {
                 <line x1={10 + (i - 1) * colW + colW * 0.18 + bw} x2={cx} y1={y(b.start)} y2={y(b.start)} stroke="var(--grey-2)" strokeWidth="1" strokeDasharray="3 3" />
               )}
               <rect x={cx} y={top} width={bw} height={Math.max(2, h)} rx="3" fill={colorOf(b, i)} />
-              <text x={cx + bw / 2} y={top - 5} textAnchor="middle" fontSize="11" fontWeight="700" fill="var(--dark)">{money(b.value)}</text>
+              <text x={cx + bw / 2} y={top - 5} textAnchor="middle" fontSize="11" fontWeight="700" fill="var(--ink)">{money(b.value)}</text>
               <text x={cx + bw / 2} y={H - padB + 16} textAnchor="middle" fontSize="10.5" fill="var(--grey)">
                 {b.label.length > 18 ? b.label.slice(0, 17) + '…' : b.label}
               </text>
@@ -218,7 +218,7 @@ export function Graph({ nodes, edges, highlight = [], onPick, height = 360 }) {
           const on = hl.has(n.id)
           return (
             <g key={n.id} style={{ cursor: onPick ? 'pointer' : 'default' }} onClick={() => onPick && onPick(n)}>
-              <circle cx={p.x} cy={p.y} r={on ? 8 : 6} fill={RAG[n.rag] || 'var(--navy)'} stroke={on ? 'var(--dark)' : '#fff'} strokeWidth={on ? 2 : 1} />
+              <circle cx={p.x} cy={p.y} r={on ? 8 : 6} fill={RAG[n.rag] || 'var(--navy)'} stroke={on ? 'var(--ink)' : 'var(--bg)'} strokeWidth={on ? 2 : 1} />
               <title>{n.title} · {money(n.rav)}</title>
             </g>
           )

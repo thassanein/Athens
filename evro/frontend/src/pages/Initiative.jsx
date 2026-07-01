@@ -170,7 +170,7 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
             const state = STAGES.indexOf(s) < cur || i.stage === 'closed' ? 'done' : STAGES.indexOf(s) === cur ? 'current' : 'todo'
             return (
               <div key={s} style={{ flex: '1 1 120px', minWidth: 120, padding: 11, borderRadius: 10, border: '1px solid var(--line)',
-                background: state === 'done' ? 'var(--tint-green)' : state === 'current' ? 'var(--tint-navy)' : '#fff' }}>
+                background: state === 'done' ? 'var(--tint-green)' : state === 'current' ? 'var(--tint-navy)' : 'var(--card)' }}>
                 <div className="tiny label" style={{ marginBottom: 2 }}>{pct(STAGE_CONFIDENCE[s])}</div>
                 <b>{STAGE_LABEL[s]}</b>
                 <div className="tiny muted">{state === 'done' ? '✓ passed' : state === 'current' ? '● current' : 'pending'}</div>
@@ -181,7 +181,7 @@ export default function Initiative({ db, id, caps, user, dispatch, navigate, fla
 
         <div className="section-gap">
           {reqState ? (
-            <div className="card pad" style={{ background: 'var(--tint-amber)', borderColor: '#f0e2c0' }}>
+            <div className="card pad" style={{ background: 'var(--tint-amber)', borderColor: 'var(--line)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <b>{reqState.kind === 'intake' ? 'New-project approval' : `Advancement to ${STAGE_LABEL[reqState.to_stage]}`}</b>
                 <span className="tiny muted">requested by {personName(db, i.request.requested_by)}</span>

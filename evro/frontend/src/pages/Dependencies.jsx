@@ -33,7 +33,7 @@ export default function Dependencies({ db, openDrawer }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {cp.path.map((i, k) => (
               <button key={i.id} className="kv" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', background: 'none' }} onClick={() => openDrawer(i.id)}>
-                <span className="k" style={{ color: 'var(--dark)' }}>{k + 1}. {i.title}</span><span className="v tiny muted" style={{ textTransform: 'capitalize' }}>{i.stage}</span>
+                <span className="k" style={{ color: 'var(--ink)' }}>{k + 1}. {i.title}</span><span className="v tiny muted" style={{ textTransform: 'capitalize' }}>{i.stage}</span>
               </button>
             ))}
           </div>
@@ -53,7 +53,7 @@ export default function Dependencies({ db, openDrawer }) {
                   <div className="label">Cascade</div>
                   {impact.initiatives.slice(0, 6).map((i) => (
                     <button key={i.id} className="kv" style={{ width: '100%', textAlign: 'left', cursor: 'pointer', background: 'none' }} onClick={() => openDrawer(i.id)}>
-                      <span className="k" style={{ color: 'var(--dark)' }}>{i.title}</span><span className="v tiny mono muted">{money(rav(i))}</span>
+                      <span className="k" style={{ color: 'var(--ink)' }}>{i.title}</span><span className="v tiny mono muted">{money(rav(i))}</span>
                     </button>
                   ))}
                 </div>

@@ -89,7 +89,7 @@ export default function Optimize({ db, openDrawer }) {
         <Tile tone="red" label="Available, unfunded" value={availItems.length} sub={`${money(availItems.reduce((s, c) => s + c.value, 0))} RAV on the bench`} />
       </div>
 
-      {overBudget && <div className="note section-gap" style={{ borderColor: '#e7b8bd', background: 'var(--tint-red)' }}><span>⚑</span><span>Funded set is <b>{money(deployed - budget)}</b> over the capital budget. Drop something back to Available, or raise the budget.</span></div>}
+      {overBudget && <div className="note section-gap" style={{ borderColor: 'var(--line)', background: 'var(--tint-red)' }}><span>⚑</span><span>Funded set is <b>{money(deployed - budget)}</b> over the capital budget. Drop something back to Available, or raise the budget.</span></div>}
 
       <div className="grid cols-2 section-gap alloc-grid">
         <div className={`card pad dropzone ${over === 'funded' ? 'over' : ''}`}

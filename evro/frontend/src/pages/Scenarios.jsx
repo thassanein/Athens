@@ -93,7 +93,7 @@ export default function Scenarios({ db }) {
           <div style={{ display: 'flex', justifyContent: 'space-between' }} className="tiny muted"><span>P10 {money(mc.p10)}</span><span>P50 {money(mc.p50)}</span><span>P90 {money(mc.p90)}</span></div>
           <div style={{ position: 'relative', height: 22, marginTop: 8, background: 'var(--line)', borderRadius: 11 }}>
             <div style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, background: 'linear-gradient(90deg, var(--tint-amber), var(--tint-green))', borderRadius: 11 }} />
-            <div style={{ position: 'absolute', left: pos(mc.p50), top: -3, bottom: -3, width: 3, background: 'var(--dark)', borderRadius: 2 }} title={`P50 ${money(mc.p50)}`} />
+            <div style={{ position: 'absolute', left: pos(mc.p50), top: -3, bottom: -3, width: 3, background: 'var(--ink)', borderRadius: 2 }} title={`P50 ${money(mc.p50)}`} />
             {dirty && landing >= lo && landing <= hi && <div style={{ position: 'absolute', left: pos(landing), top: -6, bottom: -6, width: 3, background: 'var(--green)', borderRadius: 2 }} title={`Simulated ${money(landing)}`} />}
           </div>
           <p className="tiny muted section-gap">80% confidence interval around the expected landing.{dirty && landing >= lo && landing <= hi ? ' Green marker is your simulated landing.' : ''} Width reflects how much value sits in early, uncertain stages.</p>
