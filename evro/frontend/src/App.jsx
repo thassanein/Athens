@@ -165,7 +165,7 @@ export default function App() {
       </div>
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />
-      <CommandPalette open={palette} onClose={() => setPalette(false)} screens={navScreens(user.role)} db={db} navigate={navigate} openDrawer={openDrawer} />
+      <CommandPalette open={palette} onClose={() => setPalette(false)} screens={navScreens(user.role)} db={db} user={user} caps={caps} navigate={navigate} openDrawer={openDrawer} dispatch={dispatch} flash={flash} onCompanion={() => setCopilot(true)} onBriefing={() => setBriefing(true)} toggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} />
       <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} navigate={navigate} />
       <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} dispatch={dispatch} flash={flash} navigate={navigate} />
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}

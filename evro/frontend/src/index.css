@@ -337,6 +337,10 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
 .brief-block-sub { line-height: 1.35; }
 @media (max-width: 460px) { .brief-blocks { grid-template-columns: 1fr; } }
 
+/* ---- Enhancements: Executive Command Layer (palette categories) ---------- */
+.palette-cat { padding: 9px 14px 3px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--grey-2); font-weight: 800; }
+.palette-cat:first-child { padding-top: 4px; }
+
 /* ---- persistent AI intelligence bar -------------------------------------- */
 .intel-bar { position: sticky; top: var(--topbar-h); z-index: 25; display: flex; align-items: center; gap: 10px;
   padding: 8px 18px; background: var(--panel-2); border-bottom: 1px solid var(--line); backdrop-filter: blur(6px); }
