@@ -228,6 +228,34 @@ export function Graph({ nodes, edges, highlight = [], onPick, height = 360 }) {
   )
 }
 
+// Enterprise Pulse Ring (5B.5) — concentric activity rings. Each ring is a
+// 0..1 progress arc from 12 o'clock over a faint full-circle track.
+export function ActivityRings({ rings, size = 220 }) {
+  const cx = size / 2, cy = size / 2
+  // Size the stroke so all N rings fit with the innermost still a full ring.
+  const n = Math.max(1, rings.length)
+  const stroke = Math.max(6, Math.round((size / 2) / (n * 1.6)))
+  const gap = Math.round(stroke * 0.55)
+  const cl = (v) => Math.max(0, Math.min(1, v))
+  return (
+    <svg width="100%" viewBox={`0 0 ${size} ${size}`} style={{ maxWidth: size, display: 'block', margin: '0 auto' }} role="img">
+      {rings.map((r, i) => {
+        const radius = size / 2 - stroke / 2 - i * (stroke + gap)
+        if (radius < stroke) return null
+        const c = 2 * Math.PI * radius
+        return (
+          <g key={r.key}>
+            <circle cx={cx} cy={cy} r={radius} fill="none" stroke="var(--line-2)" strokeWidth={stroke} />
+            <circle cx={cx} cy={cy} r={radius} fill="none" stroke={r.color} strokeWidth={stroke} strokeLinecap="round"
+              strokeDasharray={`${(c * cl(r.value)).toFixed(1)} ${c.toFixed(1)}`}
+              transform={`rotate(-90 ${cx} ${cy})`} className="ring-arc" />
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
 // ---- Funnel (pipeline by stage) -------------------------------------------
 // ---- Health radar (spider) — axes: [{ label, value 0..1 }] -----------------
 // Optional `overlay` (array of 0..1, same order) draws a dashed forecast ring.

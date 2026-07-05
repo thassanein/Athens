@@ -20,6 +20,7 @@ export const OPERATING_MODES = [
   { key: 'coo', label: 'COO', blurb: 'Delivery, risk & sustainment' },
   { key: 'ops', label: 'Operations', blurb: 'Field realization & adoption' },
   { key: 'procurement', label: 'Procurement', blurb: 'Sourcing opportunity & leakage' },
+  { key: 'transformation', label: 'Transformation', blurb: 'Velocity, adoption & change progress' },
 ]
 
 export const defaultModeFor = (role) =>
@@ -95,6 +96,10 @@ const MODE_PLAN = {
   procurement: {
     order: ['opportunities', 'risks', 'decisions'],
     metric: (vum, s) => ({ label: 'Identified opportunity', value: money(vum.opportunity), sub: `${money(s.ct.leakage)} leaking vs plan` }),
+  },
+  transformation: {
+    order: ['recommendations', 'opportunities', 'decisions', 'risks'],
+    metric: (vum) => ({ label: 'Value in transformation', value: money(vum.pipeline), sub: `${vum.initiatives} initiatives in flight · ${pct(vum.capturePct)} captured` }),
   },
 }
 

@@ -880,6 +880,37 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .int-knob { position: absolute; top: 2px; left: 2px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 .int-switch.on .int-knob { transform: translateX(17px); }
 
+/* ---- Enterprise Mission Control (Phase 5B.5) ---------------------------- */
+.mc-lens { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.mc-lens-blurb { font-size: 12.5px; color: var(--grey-2); }
+.mc-triad { display: flex; flex-direction: column; gap: 3px; }
+.mc-triad-l { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--grey-2); font-weight: 800; }
+.mc-triad-v { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.15; margin-top: 3px; }
+.mc-triad-v.mc-next { font-size: 15px; line-height: 1.3; }
+.mc-triad-s { font-size: 12px; color: var(--grey); margin-top: 2px; }
+.mc-triad-n { font-size: 13.5px; color: var(--ink); line-height: 1.5; font-style: italic; margin-top: 4px; }
+.mc-ring { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 4px; }
+.mc-ring > svg { flex: none; }
+.ring-arc { transition: stroke-dasharray 0.6s ease; }
+.mc-ring-legend { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
+.mc-ring-row { display: grid; grid-template-columns: 12px 1fr auto; align-items: center; gap: 8px; column-gap: 9px; }
+.mc-ring-dot { width: 11px; height: 11px; border-radius: 50%; }
+.mc-ring-l { font-size: 12.5px; font-weight: 700; }
+.mc-ring-v { font-size: 12.5px; font-weight: 800; text-align: right; }
+.mc-ring-d { grid-column: 2 / 4; font-size: 11px; color: var(--grey-2); margin-top: -4px; }
+.mc-signals { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 9px; }
+.mc-sig { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--navy); border-radius: 10px; padding: 10px 12px; }
+.mc-sig-v { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
+.mc-sig-l { font-size: 12px; font-weight: 700; margin-top: 3px; display: flex; align-items: center; gap: 3px; }
+.mc-sig-n { font-size: 11px; color: var(--grey-2); margin-top: 2px; }
+.mc-ai { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.mc-actions { display: flex; flex-direction: column; gap: 8px; }
+.mc-action { display: flex; align-items: center; gap: 10px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.mc-action-main { flex: 1; min-width: 0; cursor: pointer; }
+.mc-action-t { font-size: 13px; font-weight: 700; line-height: 1.3; }
+.mc-action-m { font-size: 11.5px; color: var(--grey-2); margin-top: 2px; }
+.mc-jump { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
 @media print {
   /* force the light palette for paper regardless of active theme */
   :root {
