@@ -1094,6 +1094,18 @@ html[data-theme='light'] .gov-log-tag { background: var(--grey); }
 .own-tbl td { vertical-align: middle; }
 .own-prog { display: flex; flex-direction: column; gap: 3px; min-width: 140px; }
 .own-prog-l { font-size: 10.5px; color: var(--grey-2); }
+
+/* ---- 5B.6: brief template + timeline milestone comparison ------------------ */
+.brief-tpl { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 7px; }
+.brief-tpl-opts { display: flex; flex-wrap: wrap; gap: 5px 14px; }
+.brief-tpl-opt { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--grey); cursor: pointer; }
+.brief-tpl-opt input { accent-color: var(--navy); }
+.tl-compare { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; margin-top: 10px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; animation: fade-in 0.25s ease; }
+.tl-cmp-h { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 800; }
+.tl-cmp-v { font-size: 18px; font-weight: 800; margin-top: 2px; }
+.tl-cmp-mid { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.tl-cmp-delta { font-size: 20px; font-weight: 800; color: var(--green); letter-spacing: -0.4px; }
+@media (max-width: 640px) { .tl-compare { grid-template-columns: 1fr 1fr; } .tl-cmp-mid { grid-column: 1 / -1; order: 3; } }
 @media (max-width: 700px) {
   .mq-row { flex-wrap: wrap; }
   .mq-rank { display: none; }

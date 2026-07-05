@@ -35,9 +35,20 @@ export function buildTimeline(db) {
     const journal = (db.decision_journal || [])
       .filter((e) => (e.at || '').slice(0, 7) === m.key)
       .map((e) => ({ kind: 'journal', label: `${e.decision} — ${e.title}`, detail: `Why: ${e.rationale}` }))
+    // Governance layer (5B.6): dated sign-offs from the validation trail —
+    // intake/gate decisions plus FP&A baseline/logic/productivity approvals —
+    // so the timeline shows WHEN the org decided. (Monthly validations are
+    // excluded: they'd duplicate the 'realized' landings above.)
+    const APPROVAL_TYPES = { intake: 'intake', gate: 'gate', baseline: 'baseline validated', logic: 'savings logic signed off', productivity: 'benefit confirmed' }
+    const approvals = []
+    for (const i of db.initiatives) for (const v of i.validations || []) {
+      if (APPROVAL_TYPES[v.type] && (v.decided_at || '').slice(0, 7) === m.key)
+        approvals.push({ kind: 'approval', label: `${v.decision === 'approved' ? 'Approved' : 'Returned'}: ${APPROVAL_TYPES[v.type]} — ${i.title}`, detail: v.note, id: i.id })
+    }
     m.realizedMonth = realized.reduce((s, e) => s + e.value, 0)
-    m.events = [...realized.slice(0, 5), ...journal.slice(0, 3), ...decisions.slice(0, 3)]
-    m.eventCount = realized.length + journal.length + decisions.length
+    m.events = [...realized.slice(0, 5), ...approvals.slice(0, 3), ...journal.slice(0, 3), ...decisions.slice(0, 3)]
+    m.eventCount = realized.length + approvals.length + journal.length + decisions.length
+    m.kindCounts = { realized: realized.length, approval: approvals.length, journal: journal.length, decision: decisions.length }
   }
 
   const roll = enterpriseRollup(db)

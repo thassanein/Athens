@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { executiveBriefing } from '../lib/briefing.js'
 import { narrative } from '../lib/narrative.js'
+import { printBriefing, BRIEF_SECTIONS, DEFAULT_TPL } from '../lib/brief-report.js'
 import { scopedView } from '../lib/engine.js'
 import { money } from '../lib/format.js'
 import { IconAI, IconClose, IconBolt } from './Icons.jsx'
@@ -10,6 +12,11 @@ const KIND = { summary: 'b-navy', approval: 'b-amber', leakage: 'b-red', opportu
 // Executive Morning Briefing 2.0 — an auto-generated, structured deterministic
 // briefing with one-click action execution. Mobile-first side panel.
 export default function Briefing({ open, onClose, db, user, openDrawer, dispatch, flash, navigate }) {
+  // Personalized brief template (5B.6 item 5) — which sections the export
+  // includes; persisted per browser.
+  const [tpl, setTpl] = useState(() => { try { return { ...DEFAULT_TPL, ...(JSON.parse(localStorage.getItem('evro.brief.tpl')) || {}) } } catch { return DEFAULT_TPL } })
+  const [custom, setCustom] = useState(false)
+  const toggleSec = (k) => setTpl((t) => { const next = { ...t, [k]: !t[k] }; try { localStorage.setItem('evro.brief.tpl', JSON.stringify(next)) } catch { /* ignore */ } return next })
   if (!open) return null
   const b = executiveBriefing(db, user)
   // Scope the board narrative exactly like the briefing itself — scopedView
@@ -48,10 +55,25 @@ export default function Briefing({ open, onClose, db, user, openDrawer, dispatch
           </div>
           <span className="spacer" />
           <button className="btn sm ghost" onClick={copyEmail} title="Copy an email-ready plaintext of this briefing">✉ Copy</button>
+          <button className="btn sm ghost" onClick={() => { const ok = printBriefing(db, user, tpl); flash?.(ok ? 'Brief opened for print / Save as PDF' : 'Pop-up blocked — allow pop-ups to export') }} title="Print or save this briefing as PDF">⎙ PDF</button>
+          <button className="btn sm ghost" onClick={() => setCustom((c) => !c)} aria-expanded={custom} title="Choose which sections your export includes">☰</button>
           <button className="iconbtn" onClick={onClose} aria-label="Close"><IconClose /></button>
         </div>
 
         <div className="brief-body">
+          {custom && (
+            <div className="brief-tpl">
+              <b style={{ fontSize: 12 }}>Your brief template</b>
+              <div className="brief-tpl-opts">
+                {BRIEF_SECTIONS.map((s) => (
+                  <label key={s.key} className="brief-tpl-opt">
+                    <input type="checkbox" checked={!!tpl[s.key]} onChange={() => toggleSec(s.key)} /> {s.label}
+                  </label>
+                ))}
+              </div>
+              <span className="tiny muted">Applies to the ⎙ PDF export — saved for next time.</span>
+            </div>
+          )}
           <p className="brief-headline">{b.headline}</p>
           <p className="nar-ask" style={{ margin: '0 0 12px' }}>{board.ask}</p>
 

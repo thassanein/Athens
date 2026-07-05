@@ -4,7 +4,7 @@ import { money, pct, monthLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 
 const STEP_MS = 1100
-const KIND = { realized: 'b-green', decision: 'b-navy', journal: 'b-amber' }
+const KIND = { realized: 'b-green', decision: 'b-navy', journal: 'b-amber', approval: 'b-opp' }
 
 // Enterprise Timeline — a longitudinal value story across the fiscal year.
 // Cumulative realized (solid) → forecast (dashed), month event markers, a
@@ -13,7 +13,21 @@ export default function Timeline({ db, openDrawer }) {
   const t = useMemo(() => buildTimeline(db), [db])
   const [cur, setCur] = useState(t.nowIdx)
   const [playing, setPlaying] = useState(false)
+  const [compare, setCompare] = useState(false)
+  const [refIdx, setRefIdx] = useState(0)
   const n = t.months.length
+
+  // Milestone comparison (5B.6 item 6) — the delta between two months.
+  const lo = Math.min(refIdx, cur), hi = Math.max(refIdx, cur)
+  const span = t.months.slice(lo, hi + 1)
+  const delta = {
+    a: t.months[lo], b: t.months[hi],
+    value: t.months[hi].cumValue - t.months[lo].cumValue,
+    realized: span.slice(1).reduce((s, mm) => s + mm.realizedMonth, 0),
+    approvals: span.slice(1).reduce((s, mm) => s + (mm.kindCounts?.approval || 0), 0),
+    journal: span.slice(1).reduce((s, mm) => s + (mm.kindCounts?.journal || 0), 0),
+    actions: span.slice(1).reduce((s, mm) => s + (mm.kindCounts?.decision || 0), 0),
+  }
 
   useEffect(() => {
     if (!playing) return undefined
@@ -46,6 +60,7 @@ export default function Timeline({ db, openDrawer }) {
         <div className="card-h">
           <h3>Value timeline</h3>
           <span className="spacer" />
+          <button className={`btn sm ${compare ? '' : 'ghost'}`} onClick={() => setCompare((c) => !c)} aria-pressed={compare}>⇄ Compare</button>
           <button className="btn sm" onClick={() => { if (cur >= n - 1) setCur(0); setPlaying((p) => !p) }}>{playing ? '⏸ Pause' : '▶ Play'}</button>
         </div>
         <div className="table-wrap">
@@ -61,6 +76,15 @@ export default function Timeline({ db, openDrawer }) {
             {/* realized (solid) + forecast (dashed) */}
             <path d={pathUpTo(0, t.nowIdx)} fill="none" stroke="var(--green)" strokeWidth="2.6" strokeLinejoin="round" strokeLinecap="round" />
             <path d={pathUpTo(t.nowIdx, n - 1)} fill="none" stroke="var(--navy)" strokeWidth="2.4" strokeDasharray="5 4" strokeLinejoin="round" strokeLinecap="round" />
+            {/* milestone comparison band */}
+            {compare && (
+              <g>
+                <rect x={x(lo)} y={padT} width={Math.max(0, x(hi) - x(lo))} height={H - padT - padB} fill="var(--tint-navy)" opacity="0.55" />
+                <line x1={x(refIdx)} x2={x(refIdx)} y1={padT} y2={H - padB} stroke="var(--amber)" strokeWidth="1.6" strokeDasharray="3 3" />
+                <text x={x(refIdx)} y={padT - 3} textAnchor="middle" fontSize="9" fontWeight="800" fill="var(--amber)">A</text>
+                <text x={x(cur)} y={padT - 3} textAnchor="middle" fontSize="9" fontWeight="800" fill="var(--red)">B</text>
+              </g>
+            )}
             {/* month event dots + x labels */}
             {t.months.map((mm) => {
               const dimmed = mm.idx > cur
@@ -76,7 +100,30 @@ export default function Timeline({ db, openDrawer }) {
             })}
           </svg>
         </div>
-        <input type="range" min="0" max={n - 1} value={cur} onChange={(e) => { setPlaying(false); setCur(Number(e.target.value)) }} style={{ width: '100%', marginTop: 6, accentColor: 'var(--red)' }} aria-label="Scrub timeline" />
+        <input type="range" min="0" max={n - 1} value={cur} onChange={(e) => { setPlaying(false); setCur(Number(e.target.value)) }} style={{ width: '100%', marginTop: 6, accentColor: 'var(--red)' }} aria-label="Scrub timeline (milestone B)" />
+        {compare && (
+          <>
+            <input type="range" min="0" max={n - 1} value={refIdx} onChange={(e) => setRefIdx(Number(e.target.value))} style={{ width: '100%', marginTop: 2, accentColor: 'var(--amber)' }} aria-label="Comparison milestone A" />
+            <div className="tl-compare">
+              <div className="tl-cmp-col">
+                <div className="tl-cmp-h" style={{ color: 'var(--amber)' }}>A · {monthLabel(delta.a.key)}</div>
+                <div className="mono tl-cmp-v">{money(delta.a.cumValue)}</div>
+                <div className="tiny muted">{delta.a.past ? 'realized to date' : 'forecast to date'}</div>
+              </div>
+              <div className="tl-cmp-mid">
+                <div className="tl-cmp-delta mono">{delta.value >= 0 ? '+' : ''}{money(delta.value)}</div>
+                <div className="tiny muted" style={{ textAlign: 'center' }}>
+                  {money(delta.realized)} landed · {delta.approvals} approval{delta.approvals === 1 ? '' : 's'} · {delta.journal} journaled decision{delta.journal === 1 ? '' : 's'} · {delta.actions} logged action{delta.actions === 1 ? '' : 's'} between milestones
+                </div>
+              </div>
+              <div className="tl-cmp-col" style={{ textAlign: 'right' }}>
+                <div className="tl-cmp-h" style={{ color: 'var(--red)' }}>B · {monthLabel(delta.b.key)}</div>
+                <div className="mono tl-cmp-v">{money(delta.b.cumValue)}</div>
+                <div className="tiny muted">{delta.b.past ? 'realized to date' : 'forecast to date'}</div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* state as of the cursor month */}
