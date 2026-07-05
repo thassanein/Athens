@@ -824,6 +824,33 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .cos-mem-d { font-size: 12.5px; line-height: 1.4; }
 .cos-mem-meta { font-size: 11px; color: var(--grey-2); margin-top: 2px; }
 
+/* ---- Workflow & Governance (Phase 5B) ----------------------------------- */
+.gov-queue { display: flex; flex-direction: column; gap: 10px; }
+.gov-appr { display: flex; gap: 12px; align-items: center; background: var(--panel-2); border: 1px solid var(--line); border-radius: 11px; padding: 11px 13px; flex-wrap: wrap; }
+.gov-appr-main { flex: 1; min-width: 220px; }
+.gov-appr-t { font-weight: 800; font-size: 14px; cursor: pointer; }
+.gov-appr-t:hover { color: var(--navy); }
+.gov-stepper { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.gov-step { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; border: 1px solid var(--line); }
+.gov-step.done { background: var(--tint-green, rgba(63,201,127,0.14)); color: var(--green); border-color: transparent; }
+.gov-step.wait { background: var(--card); color: var(--grey-2); border-style: dashed; }
+.gov-step-dot { font-weight: 800; }
+.gov-appr-act { display: flex; gap: 6px; align-items: center; }
+.gov-ladder { display: flex; align-items: stretch; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
+.gov-rung { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; min-width: 92px; flex: 1; }
+.gov-rung-n { font-size: 22px; font-weight: 800; line-height: 1; }
+.gov-rung-l { font-size: 11px; color: var(--grey); margin-top: 4px; text-align: center; }
+.gov-rung-arrow { position: absolute; right: -12px; top: 50%; transform: translateY(-50%); color: var(--grey-2); font-size: 14px; z-index: 1; }
+.gov-perm td, .gov-perm th { text-align: center; } .gov-perm td:first-child, .gov-perm th:first-child, .gov-perm td:last-child, .gov-perm th:last-child { text-align: left; }
+.gov-yes { color: var(--green); font-weight: 800; } .gov-no { color: var(--grey-2); } .gov-part { color: var(--amber); font-weight: 800; }
+.gov-you td { background: var(--tint-navy); }
+.gov-log { display: flex; flex-direction: column; gap: 7px; max-height: 420px; overflow-y: auto; }
+.gov-log-row { display: flex; gap: 9px; align-items: flex-start; }
+.gov-log-tag { flex: none; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: #fff; border-radius: 5px; padding: 2px 7px; min-width: 58px; text-align: center; background: var(--grey-2); }
+.gov-log-main { min-width: 0; }
+.gov-log-d { font-size: 12.5px; line-height: 1.4; }
+.gov-log-m { font-size: 11px; color: var(--grey-2); margin-top: 1px; }
+
 @media print {
   /* force the light palette for paper regardless of active theme */
   :root {

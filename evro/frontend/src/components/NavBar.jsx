@@ -27,6 +27,7 @@ export const NAV = [
     ['forecast', 'Forecast', IconForecast, ALL],
     ['timeline', 'Timeline', IconForecast, ENTL],
     ['reporting', 'Reporting', IconReport, ENT],
+    ['governance', 'Governance', IconCockpit, ENTL],
   ] },
   { group: 'Value engines', items: [
     ['valuemap', 'Value Map', IconMap, ENTL],
