@@ -1134,3 +1134,42 @@ html[data-theme='light'] .gov-log-tag { background: var(--grey); }
   *, *::before, *::after { animation: none !important; opacity: 1 !important; }
   .line-draw { stroke-dashoffset: 0 !important; }
 }
+
+/* ---- 5B.7 Wave 1: Enterprise Intelligence — health score + narrative ------ */
+.eh-hero { display: flex; gap: 26px; align-items: center; flex-wrap: wrap; }
+.eh-hero-gauge { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 0 0 auto; }
+.eh-gauge { width: 280px; max-width: 100%; }
+.eh-gauge-score { font-size: 44px; font-weight: 800; fill: var(--ink); }
+.eh-gauge-grade { font-size: 13px; font-weight: 800; letter-spacing: 0.4px; }
+.eh-gauge-tick { font-size: 8.5px; fill: var(--grey-2); }
+@media (prefers-reduced-motion: no-preference) {
+  .eh-gauge-arc { stroke-dasharray: 600; stroke-dashoffset: 600; animation: eh-sweep 0.9s ease-out forwards; }
+  @keyframes eh-sweep { to { stroke-dashoffset: 0; } }
+}
+.eh-hero-note { font-size: 11.5px; color: var(--grey-2); text-align: center; }
+.eh-hero-side { display: flex; flex-direction: column; gap: 7px; flex: 1 1 240px; min-width: 0; }
+.eh-spark { width: 100%; max-width: 320px; height: 40px; }
+.eh-trend-d { font-size: 12.5px; font-weight: 700; }
+.eh-fine { font-size: 11.5px; color: var(--grey-2); }
+.eh-dims { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1000px) { .eh-dims { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .eh-dims { grid-template-columns: 1fr; } }
+.eh-dim { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 13px 15px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s ease; color: var(--ink); font: inherit; }
+.eh-dim:hover { border-color: var(--grey-2); }
+.eh-dim.active { border-color: var(--navy); box-shadow: 0 0 0 1px var(--navy); }
+.eh-dim-h { display: flex; align-items: center; gap: 7px; width: 100%; }
+.eh-dim-l { font-weight: 700; font-size: 13.5px; }
+.eh-dim-s { font-size: 19px; font-weight: 800; }
+.eh-dim-bar { position: relative; height: 9px; border-radius: 999px; background: var(--panel-2); overflow: hidden; width: 100%; }
+.eh-dim-bench { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--grey-2) 26%, transparent); }
+.eh-dim-fill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; }
+.eh-dim-w { font-size: 11px; color: var(--grey-2); }
+.eh-drill { margin-top: 12px; border-left: 3px solid var(--navy); }
+.eh-drill-f { font-size: 12px; color: var(--grey-2); margin-bottom: 6px; }
+.eh-drill-list { margin: 0 0 8px; padding-left: 18px; font-size: 13px; display: flex; flex-direction: column; gap: 3px; }
+.pn-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 900px) { .pn-grid { grid-template-columns: 1fr; } }
+.pn-sec { background: var(--panel-2); border-radius: var(--r); padding: 12px 14px; }
+.pn-q { font-weight: 800; font-size: 12.5px; letter-spacing: 0.3px; text-transform: uppercase; color: var(--grey-2); margin-bottom: 6px; }
+.pn-a { margin: 0 0 5px; font-size: 13.5px; line-height: 1.45; }
+.pn-a:last-child { margin-bottom: 0; }

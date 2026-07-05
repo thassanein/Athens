@@ -13,6 +13,7 @@ const ENTL = ['exec', 'admin', 'fpna', 'leader'] // enterprise + leader
 export const NAV = [
   { group: 'Decisions', items: [
     ['mission', 'Mission Control', IconCockpit, ENTL],
+    ['intelligence', 'Intelligence', IconAI, ENTL],
     ['missions', 'Mission Queue', IconBolt, ENTL],
     ['wall', 'The Wall', IconOpportunity, ENTL],
     ['morning', 'Today', IconBolt, ALL],
