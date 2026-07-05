@@ -52,6 +52,60 @@ export function missionHealth(db) {
 }
 
 // ---------------------------------------------------------------------------
+// Interactive Pulse Ring (5B.6 item 2) — drill-through, score explainability,
+// benchmarks, and the one trend the data genuinely supports (realized value by
+// month). Benchmarks are ILLUSTRATIVE operating bands, labelled as such; ring
+// history other than realized value is not stored, and the UI says so rather
+// than fabricating a series.
+// ---------------------------------------------------------------------------
+const RING_BENCH = { created: 0.4, risk: 0.75, velocity: 0.5, adoption: 0.6, transformation: 0.3 }
+
+export function ringExplain(db, key) {
+  const pulse = enterprisePulse(db)
+  const roll = pulse.roll
+  const ct = controlTower(db)
+  const active = db.initiatives.filter(isActive)
+  const mature = active.filter((i) => ['capability', ...REALIZING_STAGES].includes(i.stage)).length
+  const activeRav = active.reduce((a, i) => a + rav(i), 0)
+  const realizingRav = active.filter((i) => REALIZING_STAGES.includes(i.stage)).reduce((a, i) => a + rav(i), 0)
+  const rec = roll.recurringSplit
+  const E = {
+    created: { formula: 'realized ÷ (realized + risk-adjusted forecast)', inputs: [`Realized (validated) ${money(roll.realizedYTD)}`, `Forecast remainder ${money(roll.forecastRemainderFY)}`] },
+    risk: { formula: '1 − value at risk ÷ (pipeline + value at risk)', inputs: [`Value at risk ${money(ct.valueAtRisk)}`, `Risk-adjusted pipeline ${money(ct.raPipeline)}`] },
+    velocity: { formula: 'initiatives at Capability+ ÷ active initiatives', inputs: [`${mature} at Capability or beyond`, `${active.length} active`] },
+    adoption: { formula: 'recurring RAV ÷ (recurring + one-time RAV)', inputs: [`Recurring ${money(rec.recurring)}`, `One-time ${money(rec.oneTime)}`] },
+    transformation: { formula: 'RAV in realizing stages ÷ active RAV', inputs: [`Realizing ${money(realizingRav)}`, `Active ${money(activeRav)}`] },
+  }
+  const e = E[key] || { formula: '', inputs: [] }
+  return { ...e, benchmark: RING_BENCH[key], benchNote: 'illustrative operating band — pending Athens KPI definitions' }
+}
+
+export function ringDrill(db, key) {
+  const active = db.initiatives.filter(isActive)
+  const rows = (list, val) => list
+    .map((i) => ({ id: i.id, label: i.title, value: val(i) }))
+    .filter((r) => r.value > 0).sort((a, b) => b.value - a.value).slice(0, 6)
+  switch (key) {
+    case 'created': return { title: 'Top realized value (validated)', rows: rows(db.initiatives, (i) => (i.actuals || []).filter((a) => a.validated).reduce((s, a) => s + a.realized_amount, 0)) }
+    case 'risk': return { title: 'Largest value at risk (red)', rows: rows(active.filter((i) => i.status_rag === 'red'), rav) }
+    case 'velocity': return { title: 'Value at Capability and beyond', rows: rows(active.filter((i) => ['capability', ...REALIZING_STAGES].includes(i.stage)), rav) }
+    case 'adoption': return { title: 'Top recurring value', rows: rows(active, (i) => rav(i) * (i.benefit_lines || []).filter((b) => b.recurrence === 'recurring').reduce((s, b) => s + b.annual_amount, 0) / Math.max(1, i.gross_annual_value)) }
+    case 'transformation': return { title: 'Value in realizing stages', rows: rows(active.filter((i) => REALIZING_STAGES.includes(i.stage)), rav) }
+    default: return { title: '', rows: [] }
+  }
+}
+
+// Monthly cumulative validated-realized series — the trend that IS in the data.
+export function ringTrend(db) {
+  const months = (db.meta?.fyMonths || []).map((m) => m.slice(0, 7))
+  const perMonth = months.map((mk) => db.initiatives.reduce((s, i) => s + (i.actuals || []).filter((a) => a.validated && (a.period || '').slice(0, 7) === mk).reduce((x, a) => x + a.realized_amount, 0), 0))
+  let cum = 0
+  const series = perMonth.map((v) => (cum += v))
+  const last = months.reduce((acc, mk, idx) => (perMonth[idx] > 0 ? idx : acc), -1)
+  return { months, series: series.slice(0, last + 1), total: cum }
+}
+
+// ---------------------------------------------------------------------------
 // Operating context (5B.6 item 1) — scope Mission Control to the enterprise, a
 // region, or a business unit. A presentation filter over initiatives; every
 // derived rollup recomputes automatically because it reads db.initiatives.

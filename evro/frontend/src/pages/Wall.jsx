@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { opportunityRiskWall } from '../lib/mission.js'
 import { money, pct } from '../lib/format.js'
 import { Tile, Bar } from '../components/ui.jsx'
+import TrustBadge from '../components/Evidence.jsx'
 
 // Strategic Opportunity & Risk Wall (5B.5 item 9) — every open opportunity and
 // live risk on one prioritized wall: value impact, signal confidence, owner,
@@ -44,6 +45,7 @@ export default function Wall({ db, navigate }) {
             <div key={`${x.type}-${x.id}`} className={`wall-card wall-${x.type}`}>
               <div className="wall-top">
                 <span className={`badge ${x.type === 'opportunity' ? 'b-green' : 'b-red'}`}>{x.type}</span>
+                <TrustBadge db={db} rec={{ confidence: x.confidence, evidence: [x.confNote], linked_id: x.id, assumptions: x.type === 'opportunity' ? ['Sizing band is illustrative pending FP&A validation'] : ['Risk scores (likelihood × impact) are current'] }} align="right" />
                 <span className="wall-urg" style={{ color: URG_TONE[x.urgency] }}>{x.urgency}</span>
               </div>
               <div className="wall-t">{x.title}</div>

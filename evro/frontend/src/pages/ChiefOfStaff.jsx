@@ -6,6 +6,7 @@ import { personName } from '../lib/engine.js'
 import { money, pct, dateLabel } from '../lib/format.js'
 import { Bar } from '../components/ui.jsx'
 import { InfoDot } from '../components/Explain.jsx'
+import TrustBadge from '../components/Evidence.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // EVRO AI Experience Shell — Chief of Staff (5B.5). A persistent AI surface: a
@@ -136,7 +137,8 @@ export default function ChiefOfStaff({ db, user, navigate }) {
               <div className="cos-reco-h">
                 <span className="badge b-navy"><IconAI /> {r.agent}</span>
                 <span className="cos-reco-cat" style={{ color: CAT_TONE[r.category] }}>{r.category}</span>
-                {r.value_impact ? <span className="spacer" /> : null}
+                <span className="spacer" />
+                <TrustBadge db={db} rec={r} align="right" />
                 {r.value_impact ? <span className="mono cos-reco-v">{money(r.value_impact)}</span> : null}
               </div>
               <div className="cos-reco-t">{r.title}</div>

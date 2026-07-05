@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { missionHealth, operatingContexts, contextView } from '../lib/mission.js'
+import { missionHealth, operatingContexts, contextView, ringDrill, ringExplain, ringTrend } from '../lib/mission.js'
 import { narrative, NARRATIVE_FORMATS } from '../lib/narrative.js'
 import { OPERATING_MODES, defaultModeFor, companionBrief, strategicNarratives } from '../lib/companion.js'
 import { decisionsRequired, canApproveRoles, ROLE_APPROVE_LABEL, personName } from '../lib/engine.js'
@@ -56,6 +56,11 @@ export default function MissionControl({ db, user, dispatch, navigate, flash }) 
     setViews(next)
     try { localStorage.setItem(LS_VIEWS, JSON.stringify(next)) } catch { /* ignore */ }
   }
+
+  // Interactive Pulse Ring (5B.6 item 2) — segment drill + score explainability.
+  const [ringKey, setRingKey] = useState(null)
+  const drill = ringKey ? ringDrill(cdb, ringKey) : null
+  const trend = useMemo(() => ringTrend(cdb), [cdb])
 
   // "What to do next" — decisions ranked by value, then top AI recommendations.
   const decisions = decisionsRequired(cdb, user).slice(0, 3)
@@ -122,16 +127,50 @@ export default function MissionControl({ db, user, dispatch, navigate, flash }) 
           <div className="mc-ring">
             <ActivityRings rings={h.rings} size={230} />
             <div className="mc-ring-legend">
-              {h.rings.map((r) => (
-                <div key={r.key} className="mc-ring-row">
-                  <span className="mc-ring-dot" style={{ background: r.color }} />
-                  <span className="mc-ring-l">{r.label}</span>
-                  <span className="mc-ring-v mono">{pct(r.value)}</span>
-                  <span className="mc-ring-d">{r.detail}</span>
-                </div>
-              ))}
+              {h.rings.map((r) => {
+                const ex = ringExplain(cdb, r.key)
+                const above = r.value >= ex.benchmark
+                return (
+                  <button key={r.key} className={`mc-ring-row ${ringKey === r.key ? 'active' : ''}`} onClick={() => setRingKey(ringKey === r.key ? null : r.key)} aria-expanded={ringKey === r.key}>
+                    <span className="mc-ring-dot" style={{ background: r.color }} />
+                    <span className="mc-ring-l">{r.label}</span>
+                    <span className="mc-ring-v mono">{pct(r.value)}</span>
+                    <span className={`mc-bench ${above ? 'ok' : 'lag'}`} title={ex.benchNote}>{above ? '▲' : '▼'} {pct(ex.benchmark)}</span>
+                    <span className="kinfo" tabIndex={0} onClick={(e) => e.stopPropagation()} aria-label={`How ${r.label} is scored`}>
+                      <span className="kinfo-i">i</span>
+                      <span className="kpop kpop-r" role="tooltip">
+                        <span className="kpop-t">{r.label} — how it's scored</span>
+                        <span className="kpop-f mono">{ex.formula}</span>
+                        <span className="kpop-d">{ex.inputs.join(' · ')}</span>
+                        <span className="kpop-e">Benchmark {pct(ex.benchmark)} — {ex.benchNote}.</span>
+                      </span>
+                    </span>
+                  </button>
+                )
+              })}
             </div>
           </div>
+          {drill && (
+            <div className="vr-drill">
+              <div className="vr-drill-h"><b>{drill.title}</b><span className="spacer" /><button className="btn sm ghost" onClick={() => setRingKey(null)}>Close</button></div>
+              {ringKey === 'created' && trend.series.length > 1 && (
+                <div className="mc-trend">
+                  <svg viewBox={`0 0 120 30`} preserveAspectRatio="none" className="mc-spark" aria-label="Cumulative realized by month">
+                    <polyline fill="none" stroke="var(--green)" strokeWidth="2"
+                      points={trend.series.map((v, i) => `${(i / (trend.series.length - 1)) * 118 + 1},${29 - (v / Math.max(1, trend.total)) * 27}`).join(' ')} />
+                  </svg>
+                  <span className="muted" style={{ fontSize: 11 }}>cumulative validated realized, {trend.months[0]} → {trend.months[trend.series.length - 1]}. Other rings are as-of-now facts — history isn't tracked for them yet.</span>
+                </div>
+              )}
+              {drill.rows.map((r, k) => (
+                <div key={k} className="vr-row clickable" onClick={() => navigate('initiative', { id: r.id })}>
+                  <span className="vr-row-l">{r.label}</span>
+                  <span className="mono vr-row-v">{money(r.value)}</span>
+                </div>
+              ))}
+              {drill.rows.length === 0 && <div className="muted" style={{ fontSize: 12, padding: 6 }}>Nothing behind this ring in the current context.</div>}
+            </div>
+          )}
         </div>
 
         <div className="card pad">
