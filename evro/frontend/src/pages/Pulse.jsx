@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { enterprisePulse, axisNote } from '../lib/pulse.js'
+import { enterprisePulse, axisNote, stressedAxes, axisConfidence, axisDrill, confNote } from '../lib/pulse.js'
 import {
   pendingApprovalsFor, canApproveRoles, ROLE_APPROVE_LABEL,
   sizedOpportunities, personName, groupName, rav,
 } from '../lib/engine.js'
 import { OPERATING_MODES, defaultModeFor, companionBrief, strategicNarratives } from '../lib/companion.js'
-import { aiRecommendations } from '../lib/model.js'
+import { aiRecommendations, scenarios } from '../lib/model.js'
 import { money, pct } from '../lib/format.js'
 import { Tile, Bar, RagBadge } from '../components/ui.jsx'
 import { Radar } from '../components/Charts.jsx'
@@ -23,7 +23,13 @@ const BAND_LABEL = { strong: 'Strong', steady: 'Steady', fragile: 'Fragile' }
 export default function Pulse({ db, user, dispatch, navigate, flash }) {
   const [mode, setMode] = useState(defaultModeFor(user.role))
   const [narr, setNarr] = useState(0)
+  const [scenKey, setScenKey] = useState('base')
+  const [drillKey, setDrillKey] = useState(null)
   const pulse = enterprisePulse(db)
+  const scen = scenarios(db).find((s) => s.key === scenKey)
+  const overlayAxes = scenKey !== 'base' ? stressedAxes(db, scen) : null
+  const conf = axisConfidence(db)
+  const drill = drillKey ? axisDrill(db, drillKey) : null
   const brief = companionBrief(db, user, mode)
   const narratives = strategicNarratives(db)
   const pending = pendingApprovalsFor(db, user)
@@ -103,9 +109,38 @@ export default function Pulse({ db, user, dispatch, navigate, flash }) {
         </div>
 
         <div className="card pad">
-          <div className="card-h"><h3>Value radar</h3><span className="spacer" /><span className="badge b-grey">6 dimensions</span></div>
-          <Radar axes={pulse.axes} color={BAND_TONE[pulse.band]} size={220} />
-          <p className="muted" style={{ fontSize: 12, textAlign: 'center', marginTop: 4 }}>Enterprise value health across realization, coverage, momentum, risk, spread & durability.</p>
+          <div className="card-h" style={{ flexWrap: 'wrap', rowGap: 6 }}>
+            <h3>Value radar</h3>
+            <span className="spacer" />
+            <div className="seg seg-sm">
+              {scenarios(db).filter((s) => s.key !== 'custom').map((s) => (
+                <button key={s.key} className={scenKey === s.key ? 'active' : ''} onClick={() => setScenKey(s.key)}>{s.key === 'base' ? 'Today' : s.name}</button>
+              ))}
+            </div>
+          </div>
+          <div key={scenKey} className="vr-anim">
+            <Radar axes={pulse.axes} overlay={overlayAxes ? overlayAxes.map((a) => a.value) : undefined} color={BAND_TONE[pulse.band]} size={220} />
+          </div>
+          {overlayAxes && <p className="muted" style={{ fontSize: 11.5, textAlign: 'center', marginTop: 2 }}>solid = today · dashed = {scen?.name} lens. Momentum, risk & spread are facts of the current book — they don't move.</p>}
+          <div className="vr-chips">
+            {pulse.axes.map((a) => (
+              <button key={a.key} className={`vr-chip ${drillKey === a.key ? 'active' : ''}`} onClick={() => setDrillKey(drillKey === a.key ? null : a.key)} title={`${axisNote(a.key)} Confidence: ${confNote(a.key)}.`}>
+                {a.label} <span className="mono vr-chip-c">{pct(conf[a.key])}</span>
+              </button>
+            ))}
+          </div>
+          {drill && (
+            <div className="vr-drill">
+              <div className="vr-drill-h"><b>{drill.title}</b><span className="spacer" /><span className="muted" style={{ fontSize: 11 }}>confidence: {confNote(drillKey)}</span></div>
+              {drill.rows.map((r, k) => (
+                <div key={k} className={`vr-row ${r.id ? 'clickable' : ''}`} onClick={() => r.id && (r.nav === 'opportunities' ? navigate('opportunities') : navigate('initiative', { id: r.id }))}>
+                  <span className="vr-row-l">{r.label}{r.blocked && <span className="badge b-amber" style={{ marginLeft: 6 }}>dep-blocked</span>}</span>
+                  <span className="mono vr-row-v">{money(r.value)}{r.share != null ? ` · ${pct(r.share)}` : ''}</span>
+                </div>
+              ))}
+              {drill.rows.length === 0 && <div className="muted" style={{ fontSize: 12, padding: 6 }}>Nothing behind this axis right now.</div>}
+            </div>
+          )}
         </div>
 
         <div className="card pad">

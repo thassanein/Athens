@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { missionHealth } from '../lib/mission.js'
+import { narrative, NARRATIVE_FORMATS } from '../lib/narrative.js'
 import { OPERATING_MODES, defaultModeFor, companionBrief, strategicNarratives } from '../lib/companion.js'
 import { decisionsRequired, canApproveRoles, ROLE_APPROVE_LABEL, personName } from '../lib/engine.js'
 import { aiRecommendations } from '../lib/model.js'
@@ -19,9 +20,11 @@ const SIG_TONE = { green: 'var(--green)', red: 'var(--red)', navy: 'var(--navy)'
 
 export default function MissionControl({ db, user, dispatch, navigate, flash }) {
   const [mode, setMode] = useState(defaultModeFor(user.role))
+  const [nfmt, setNfmt] = useState('executive')
   const h = missionHealth(db)
   const brief = companionBrief(db, user, mode)
-  const narrative = strategicNarratives(db)[0]
+  const headline = strategicNarratives(db)[0]
+  const story = narrative(db, user, nfmt)
 
   // "What to do next" — decisions ranked by value, then top AI recommendations.
   const decisions = decisionsRequired(db, user).slice(0, 3)
@@ -58,7 +61,7 @@ export default function MissionControl({ db, user, dispatch, navigate, flash }) 
           <div className="mc-triad-v">{money(h.roll.realizedYTD)} created</div>
           <div className="mc-triad-s">{money(h.roll.leakage)} leaking · {money(h.ct.valueAtRisk)} at risk</div></div>
         <div className="card pad mc-triad"><div className="mc-triad-l">Why it matters</div>
-          <div className="mc-triad-n">{narrative}</div></div>
+          <div className="mc-triad-n">{headline}</div></div>
         <div className="card pad mc-triad"><div className="mc-triad-l">What to do next</div>
           <div className="mc-triad-v mc-next">{(decisions[0]?.title) || brief.rec?.title || 'Portfolio is settled'}</div>
           <div className="mc-triad-s">{decisions.length ? `${decisions.length} decisions waiting on you` : 'No approvals pending'}</div></div>
@@ -131,6 +134,73 @@ export default function MissionControl({ db, user, dispatch, navigate, flash }) 
           <button className="btn sm ghost" onClick={() => navigate('governance')}>Governance →</button>
           <button className="btn sm ghost" onClick={() => navigate('timeline')}>Timeline →</button>
         </div>
+      </div>
+
+      {/* Executive Narrative Engine (5B.5 item 8) — deterministic, rules-based */}
+      <div className="card pad section-gap">
+        <div className="card-h" style={{ flexWrap: 'wrap', rowGap: 8 }}>
+          <h3>The narrative</h3>
+          <span className="badge b-navy"><IconAI /> rules-based</span>
+          <span className="spacer" />
+          <div className="seg seg-sm">
+            {NARRATIVE_FORMATS.map((f) => (
+              <button key={f.key} className={nfmt === f.key ? 'active' : ''} onClick={() => setNfmt(f.key)} title={f.blurb}>{f.label}</button>
+            ))}
+          </div>
+        </div>
+
+        {nfmt === 'board' && (
+          <div className="nar-board">
+            <div className="nar-headline">{story.headline}</div>
+            <ul className="nar-bullets">{story.bullets.map((b, k) => <li key={k}>{b}</li>)}</ul>
+            <div className="nar-ask">{story.ask}</div>
+          </div>
+        )}
+
+        {nfmt === 'executive' && (
+          <div className="nar-exec">
+            <div className="nar-col">
+              <div className="nar-col-h">What changed</div>
+              {story.changed.map((c, k) => (
+                <div key={k} className="nar-item"><span className={`gov-log-tag cos-a-${c.action}`}>{c.action}</span><span className="nar-item-t">{c.text}</span></div>
+              ))}
+            </div>
+            <div className="nar-col">
+              <div className="nar-col-h">Why it matters</div>
+              {story.why.map((w, k) => <div key={k} className="nar-item nar-why">{w}</div>)}
+            </div>
+            <div className="nar-col">
+              <div className="nar-col-h">What should happen next</div>
+              {story.next.map((n, k) => {
+                const nid = n.id ? String(n.id) : ''
+                const target = nid.startsWith('i-') ? 'initiative' : nid.startsWith('o-') ? 'opportunities' : null
+                return (
+                  <div key={k} className={`nar-item nar-next ${target ? 'clickable' : ''}`} onClick={() => target && navigate(target, target === 'initiative' ? { id: n.id } : {})}>→ {n.text}</div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {nfmt === 'operational' && (
+          <div className="nar-ops">
+            <div className="nar-headline" style={{ fontSize: 14 }}>{story.headline}</div>
+            {story.actions.length > 0 && <div className="table-wrap">
+              <table className="tbl">
+                <thead><tr><th>Who</th><th>Action</th><th>Why now</th></tr></thead>
+                <tbody>
+                  {story.actions.map((a, k) => (
+                    <tr key={k} className="clickable" onClick={() => a.id && navigate('initiative', { id: a.id })}>
+                      <td className="nowrap"><b>{a.who}</b></td>
+                      <td>{a.what}</td>
+                      <td className="muted">{a.why}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>}
+          </div>
+        )}
       </div>
     </>
   )
