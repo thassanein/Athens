@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { enterpriseHealth, healthTrend, pulseNarrative, GRADE_BANDS } from '../lib/intel.js'
 import { pct } from '../lib/format.js'
+import ValueWaterfall from '../components/ValueWaterfall.jsx'
+import StrategicMap from '../components/StrategicMap.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Enterprise Intelligence (5B.7) — the flagship intelligence experience. Wave 1
@@ -56,7 +58,7 @@ function TrendSpark({ trend }) {
   )
 }
 
-export default function Intelligence({ db, user }) {
+export default function Intelligence({ db, user, navigate }) {
   const h = useMemo(() => enterpriseHealth(db), [db])
   const trend = useMemo(() => healthTrend(db), [db])
   const nar = useMemo(() => pulseNarrative(db, user), [db, user])
@@ -134,6 +136,12 @@ export default function Intelligence({ db, user }) {
           </div>
         </div>
       )}
+
+      {/* enterprise value waterfall (5B.7 item 4) */}
+      <ValueWaterfall db={db} navigate={navigate} />
+
+      {/* strategic value map (5B.7 item 8) */}
+      <StrategicMap db={db} navigate={navigate} />
 
       {/* enterprise pulse narrative */}
       <div className="card pad section-gap">
