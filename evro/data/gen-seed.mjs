@@ -589,9 +589,22 @@ const points_ledger = [
 // ---------------------------------------------------------------------------
 // 9) Audit log seed — append-only; the app appends on every write.
 // ---------------------------------------------------------------------------
+// Append-only activity — seeded with a realistic recent history so the memory
+// log / audit trail renders alive on first run. Newest first (the app unshifts).
+const _launch = initiatives.find((i) => i.stage === 'launch')
+const _real = initiatives.find((i) => i.stage === 'realization')
+const _cap = initiatives.find((i) => i.stage === 'capability')
+const _feas = initiatives.find((i) => i.stage === 'feasibility')
 const audit_log = [
+  { id: 'al-9', ts: isoDaysAgo(2), actor_id: 'u-nguyen', action: 'validate', entity: _real?.id || 'i-01', detail: `Realized month validated — "${_real?.title || 'initiative'}".` },
+  { id: 'al-8', ts: isoDaysAgo(4), actor_id: 'u-schwartz', action: 'recovery', entity: _real?.id || 'i-01', detail: 'Value-leakage recovery opened (implemented run-rate trailing negotiated price).' },
+  { id: 'al-7', ts: isoDaysAgo(7), actor_id: 'u-brooks', action: 'advance', entity: _cap?.id || 'i-02', detail: `Advanced to Capability — "${_cap?.title || 'initiative'}".` },
+  { id: 'al-6', ts: isoDaysAgo(11), actor_id: 'u-rivera', action: 'risk', entity: _launch?.id || 'i-03', detail: 'High risk raised with a documented countermeasure ahead of Launch.' },
+  { id: 'al-5', ts: isoDaysAgo(16), actor_id: 'u-nguyen', action: 'reject', entity: 'i-p2', detail: 'Intake returned for rework — baseline not yet tied to the AP register.' },
+  { id: 'al-4', ts: isoDaysAgo(21), actor_id: 'u-torres', action: 'approve', entity: _launch?.id || 'i-03', detail: `Approved into Launch — "${_launch?.title || 'initiative'}".` },
+  { id: 'al-3', ts: isoDaysAgo(30), actor_id: 'u-chen', action: 'advance', entity: _feas?.id || 'i-04', detail: `Advanced to Feasibility — "${_feas?.title || 'initiative'}".` },
+  { id: 'al-2', ts: isoDaysAgo(45), actor_id: fpna.id, action: 'validate', entity: _launch?.id || 'i-01', detail: 'Baseline approved.' },
   { id: 'al-1', ts: isoDaysAgo(120), actor_id: 'u-schwartz', action: 'seed', entity: 'portfolio', detail: 'Initial portfolio seeded from 2025 AP register.' },
-  { id: 'al-2', ts: isoDaysAgo(45), actor_id: fpna.id, action: 'validate', entity: initiatives.find((i) => i.stage === 'launch')?.id || 'i-01', detail: 'Baseline approved.' },
 ]
 
 // ---------------------------------------------------------------------------

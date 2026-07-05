@@ -7773,12 +7773,60 @@
   ],
   "audit_log": [
     {
-      "id": "al-1",
-      "ts": "2026-03-02",
+      "id": "al-9",
+      "ts": "2026-06-28",
+      "actor_id": "u-nguyen",
+      "action": "validate",
+      "entity": "i-36",
+      "detail": "Realized month validated — \"Avoided escalation — Fleet Capital\"."
+    },
+    {
+      "id": "al-8",
+      "ts": "2026-06-26",
       "actor_id": "u-schwartz",
-      "action": "seed",
-      "entity": "portfolio",
-      "detail": "Initial portfolio seeded from 2025 AP register."
+      "action": "recovery",
+      "entity": "i-36",
+      "detail": "Value-leakage recovery opened (implemented run-rate trailing negotiated price)."
+    },
+    {
+      "id": "al-7",
+      "ts": "2026-06-23",
+      "actor_id": "u-brooks",
+      "action": "advance",
+      "entity": "i-22",
+      "detail": "Advanced to Capability — \"Supplier consolidation — Disposal & Transportation Out\"."
+    },
+    {
+      "id": "al-6",
+      "ts": "2026-06-19",
+      "actor_id": "u-rivera",
+      "action": "risk",
+      "entity": "i-30",
+      "detail": "High risk raised with a documented countermeasure ahead of Launch."
+    },
+    {
+      "id": "al-5",
+      "ts": "2026-06-14",
+      "actor_id": "u-nguyen",
+      "action": "reject",
+      "entity": "i-p2",
+      "detail": "Intake returned for rework — baseline not yet tied to the AP register."
+    },
+    {
+      "id": "al-4",
+      "ts": "2026-06-09",
+      "actor_id": "u-torres",
+      "action": "approve",
+      "entity": "i-30",
+      "detail": "Approved into Launch — \"Spec standardization — Fleet Capital\"."
+    },
+    {
+      "id": "al-3",
+      "ts": "2026-05-31",
+      "actor_id": "u-chen",
+      "action": "advance",
+      "entity": "i-12",
+      "detail": "Advanced to Feasibility — \"Insourcing — Outside & Subcontract Labor\"."
     },
     {
       "id": "al-2",
@@ -7787,6 +7835,14 @@
       "action": "validate",
       "entity": "i-30",
       "detail": "Baseline approved."
+    },
+    {
+      "id": "al-1",
+      "ts": "2026-03-02",
+      "actor_id": "u-schwartz",
+      "action": "seed",
+      "entity": "portfolio",
+      "detail": "Initial portfolio seeded from 2025 AP register."
     }
   ],
   "org_nodes": [

@@ -783,6 +783,47 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .k-related { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .k-more { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--navy); font-weight: 800; margin-top: 9px; }
 
+/* ---- EVRO AI Shell — Chief of Staff (Phase 5B) --------------------------- */
+.cos-logo { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 7px; background: var(--tint-navy); color: var(--navy); vertical-align: middle; margin-right: 6px; }
+.cos-logo svg { width: 15px; height: 15px; }
+.cos-brief-body { display: grid; grid-template-columns: minmax(180px, 1fr) 2fr; gap: 16px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.cos-brief-val { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.1; margin: 3px 0; }
+.cos-brief-next { display: flex; flex-direction: column; gap: 4px; }
+.cos-next-t { font-weight: 700; font-size: 14px; margin-top: 2px; }
+.cos-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.cos-tab { padding: 6px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--line); background: var(--panel-2); color: var(--grey); display: inline-flex; align-items: center; gap: 6px; }
+.cos-tab.active { background: var(--tint-navy); color: var(--navy); border-color: var(--navy); }
+.cos-tab-n { background: var(--card); border-radius: 999px; padding: 0 6px; font-size: 11px; }
+.cos-recos { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.cos-reco { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--navy); border-radius: 11px; padding: 12px 13px; display: flex; flex-direction: column; gap: 7px; }
+.cos-reco-h { display: flex; align-items: center; gap: 8px; }
+.cos-reco-cat { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 800; }
+.cos-reco-v { font-size: 13px; font-weight: 800; }
+.cos-reco-t { font-weight: 800; font-size: 14px; line-height: 1.3; }
+.cos-reco-r { font-size: 12.5px; color: var(--grey); line-height: 1.5; }
+.cos-conf { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
+.cos-conf-l { font-size: 11px; font-weight: 700; color: var(--grey-2); }
+.cos-conf-v { font-size: 11.5px; font-weight: 700; }
+.cos-evidence { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.cos-ev-l { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); font-weight: 800; margin-right: 2px; }
+.cos-ev-chip { font-size: 11px; background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; color: var(--grey); }
+.cos-reco .btn { align-self: flex-start; margin-top: 2px; }
+.cos-journal, .cos-mem { display: flex; flex-direction: column; gap: 9px; }
+.cos-dj { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.cos-dj-h { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.cos-dj-date { font-size: 11px; color: var(--grey-2); margin-left: auto; }
+.cos-dj-t { font-weight: 800; font-size: 13.5px; }
+.cos-dj-r, .cos-dj-o { font-size: 12px; color: var(--grey); line-height: 1.5; margin-top: 3px; }
+.cos-dj-l { font-size: 12px; color: var(--navy); margin-top: 4px; }
+.cos-dj-by { font-size: 11px; color: var(--grey-2); margin-top: 5px; font-style: italic; }
+.cos-mem-row { display: flex; gap: 9px; align-items: flex-start; }
+.cos-mem-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--grey-2); margin-top: 5px; }
+.cos-a-approve, .cos-a-validate { background: var(--green); } .cos-a-advance { background: var(--navy); }
+.cos-a-reject, .cos-a-risk { background: var(--red); } .cos-a-create, .cos-a-request { background: var(--amber); }
+.cos-mem-main { min-width: 0; }
+.cos-mem-d { font-size: 12.5px; line-height: 1.4; }
+.cos-mem-meta { font-size: 11px; color: var(--grey-2); margin-top: 2px; }
+
 @media print {
   /* force the light palette for paper regardless of active theme */
   :root {

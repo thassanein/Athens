@@ -1,0 +1,149 @@
+import { useMemo, useState } from 'react'
+import { aiRecommendations, decisionJournal } from '../lib/model.js'
+import { companionBrief, OPERATING_MODES, defaultModeFor } from '../lib/companion.js'
+import { personName } from '../lib/engine.js'
+import { money, pct, dateLabel } from '../lib/format.js'
+import { Bar } from '../components/ui.jsx'
+import { InfoDot } from '../components/Explain.jsx'
+import { IconAI } from '../components/Icons.jsx'
+
+// EVRO AI Experience Shell — Chief of Staff (5B.5). A persistent AI surface: a
+// persona-framed brief, an agent console (deterministic, rules-based
+// recommendations with a confidence/evidence panel), a decision journal, and a
+// memory log. Reads Wave 1's ai_recommendations + decision_journal + audit_log.
+//
+// LLM SEAM: every recommendation is read from db.ai_recommendations, produced
+// today by the deterministic rules layer. Swapping that producer for an LLM
+// service leaves this shell unchanged — it only ever renders the entity.
+
+const CAT_TONE = { governance: 'var(--amber)', opportunity: 'var(--green)', risk: 'var(--red)', value: 'var(--navy)' }
+const confLabel = (c) => (c >= 0.85 ? 'High' : c >= 0.7 ? 'Medium' : 'Indicative')
+
+export default function ChiefOfStaff({ db, user, navigate }) {
+  const [mode, setMode] = useState(defaultModeFor(user.role))
+  const [agent, setAgent] = useState('all')
+  const brief = companionBrief(db, user, mode)
+  const recos = aiRecommendations(db)
+  const journal = decisionJournal(db)
+  const memory = (db.audit_log || []).slice(0, 10)
+
+  const agents = useMemo(() => ['all', ...Array.from(new Set(recos.map((r) => r.agent)))], [recos])
+  const shown = agent === 'all' ? recos : recos.filter((r) => r.agent === agent)
+
+  const goto = (r) => {
+    if (r.linked_id && r.linked_id.startsWith('i-')) return navigate('initiative', { id: r.linked_id })
+    navigate(r.category === 'opportunity' ? 'opportunities' : r.category === 'risk' ? 'sustainment' : 'valueoffice')
+  }
+
+  return (
+    <>
+      <p className="page-intro">
+        <b>Chief of Staff</b> — your persistent AI partner. A deterministic, rules-based
+        team of agents watches the portfolio and surfaces what to do next, each with a
+        confidence and the evidence behind it. Every decision and action is remembered.
+      </p>
+
+      {/* persona brief */}
+      <div className="card pad cos-brief">
+        <div className="card-h" style={{ flexWrap: 'wrap', rowGap: 8 }}>
+          <h3><span className="cos-logo"><IconAI /></span> Your briefing</h3>
+          <span className="spacer" />
+          <div className="seg">
+            {OPERATING_MODES.map((m) => (
+              <button key={m.key} className={mode === m.key ? 'active' : ''} onClick={() => setMode(m.key)}>{m.label}</button>
+            ))}
+          </div>
+        </div>
+        <div className="cos-brief-body">
+          <div>
+            <div className="t-label">{brief.metric.label}</div>
+            <div className="cos-brief-val mono">{brief.metric.value}</div>
+            <div className="t-sub">{brief.metric.sub}</div>
+          </div>
+          {brief.rec && (
+            <div className="cos-brief-next">
+              <span className="badge b-navy">What I'd do next</span>
+              <div className="cos-next-t">{brief.rec.title}</div>
+              <div className="muted" style={{ fontSize: 12.5 }}>{brief.rec.body}</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* agent console */}
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>Agent console</h3><span className="spacer" /><span className="badge b-grey">{recos.length} recommendations · rules-based</span></div>
+        <div className="cos-tabs">
+          {agents.map((a) => (
+            <button key={a} className={`cos-tab ${agent === a ? 'active' : ''}`} onClick={() => setAgent(a)}>
+              {a === 'all' ? 'All agents' : a}{a !== 'all' && <span className="cos-tab-n">{recos.filter((r) => r.agent === a).length}</span>}
+            </button>
+          ))}
+        </div>
+        <div className="cos-recos">
+          {shown.map((r) => (
+            <div key={r.id} className="cos-reco" style={{ borderLeftColor: CAT_TONE[r.category] || 'var(--navy)' }}>
+              <div className="cos-reco-h">
+                <span className="badge b-navy"><IconAI /> {r.agent}</span>
+                <span className="cos-reco-cat" style={{ color: CAT_TONE[r.category] }}>{r.category}</span>
+                {r.value_impact ? <span className="spacer" /> : null}
+                {r.value_impact ? <span className="mono cos-reco-v">{money(r.value_impact)}</span> : null}
+              </div>
+              <div className="cos-reco-t">{r.title}</div>
+              <div className="cos-reco-r">{r.recommendation}</div>
+              <div className="cos-conf">
+                <span className="cos-conf-l">Confidence · {confLabel(r.confidence)}</span>
+                <span className="cos-conf-b"><Bar value={r.confidence} max={1} color={CAT_TONE[r.category] || 'var(--navy)'} height={7} /></span>
+                <span className="cos-conf-v mono">{pct(r.confidence)}</span>
+              </div>
+              <div className="cos-evidence">
+                <span className="cos-ev-l">Evidence</span>
+                {r.evidence.map((e, k) => <span key={k} className="cos-ev-chip">{e}</span>)}
+              </div>
+              <button className="btn sm" onClick={() => goto(r)}>Open →</button>
+            </div>
+          ))}
+          {shown.length === 0 && <div className="muted" style={{ padding: 10 }}>No recommendations from this agent.</div>}
+        </div>
+      </div>
+
+      {/* decision journal + memory log */}
+      <div className="grid cols-2 section-gap">
+        <div className="card pad">
+          <div className="card-h"><h3>Decision journal <InfoDot k="Stage Gate" /></h3><span className="spacer" /><span className="badge b-grey">{journal.length}</span></div>
+          <div className="cos-journal">
+            {journal.map((d) => (
+              <div key={d.id} className="cos-dj" onClick={() => d.linked_initiative_id && navigate('initiative', { id: d.linked_initiative_id })} style={{ cursor: d.linked_initiative_id ? 'pointer' : 'default' }}>
+                <div className="cos-dj-h">
+                  <span className={`badge ${d.decision === 'Approved' ? 'b-green' : d.decision === 'Returned for rework' ? 'b-amber' : 'b-grey'}`}>{d.decision}</span>
+                  <span className="cos-dj-date">{dateLabel(d.at)}</span>
+                </div>
+                <div className="cos-dj-t">{d.title}</div>
+                <div className="cos-dj-r"><b>Why:</b> {d.rationale}</div>
+                {d.outcome && <div className="cos-dj-o"><b>Outcome:</b> {d.outcome}</div>}
+                {d.lessons && <div className="cos-dj-l">💡 {d.lessons}</div>}
+                <div className="cos-dj-by">— {personName(db, d.decided_by)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card pad">
+          <div className="card-h"><h3>Memory log</h3><span className="spacer" /><span className="badge b-grey">last {memory.length}</span></div>
+          <p className="muted" style={{ fontSize: 12, marginTop: -2, marginBottom: 8 }}>What the system remembers — every action is logged and attributed.</p>
+          <div className="cos-mem">
+            {memory.map((m) => (
+              <div key={m.id} className="cos-mem-row">
+                <span className={`cos-mem-dot cos-a-${m.action}`} />
+                <div className="cos-mem-main">
+                  <div className="cos-mem-d">{m.detail}</div>
+                  <div className="cos-mem-meta">{personName(db, m.actor_id)} · {m.action} · {dateLabel((m.ts || '').slice(0, 10))}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
