@@ -6,6 +6,7 @@ import {
 import { scenarios, defaultScenario, knowledgeCard, explain } from '../lib/model.js'
 import { money, pct } from '../lib/format.js'
 import { Tile, StagePip, RagBadge, PillarBadge } from '../components/ui.jsx'
+import { InfoDot } from '../components/Explain.jsx'
 
 // The Athens Value Office — the MVP operating module for enterprise value
 // management. It composes existing engine surfaces (rollup, funnel, ranking,
@@ -69,10 +70,10 @@ export default function ValueOffice({ db, user, navigate }) {
 
       {/* value model KPIs — forward metrics carry the lens; realized does not */}
       <div className="grid cols-4 section-gap">
-        <Tile label="Realized YTD (validated)" value={money(roll.realizedYTD)} sub="FP&A-signed only" tone="green" />
-        <Tile label="Risk-adjusted pipeline" value={money(roll.raPipeline * mult)} sub={scenKey === 'base' ? 'Plan of record' : scen?.name + ' lens'} />
-        <Tile label="Forecast remainder FY" value={money(roll.forecastRemainderFY * mult)} sub="Risk-adjusted" />
-        <Tile label="Identified opportunity" value={money(roll.identifiedOpportunity * mult)} sub="Advertised, unclaimed" tone="dark" />
+        <Tile label={<>Realized YTD (validated) <InfoDot k="Realized Value" /></>} value={money(roll.realizedYTD)} sub="FP&A-signed only" tone="green" />
+        <Tile label={<>Risk-adjusted pipeline <InfoDot k="RAV" /></>} value={money(roll.raPipeline * mult)} sub={scenKey === 'base' ? 'Plan of record' : scen?.name + ' lens'} />
+        <Tile label={<>Forecast remainder FY <InfoDot k="Pipeline Value" /></>} value={money(roll.forecastRemainderFY * mult)} sub="Risk-adjusted" />
+        <Tile label={<>Identified opportunity <InfoDot k="Opportunity" /></>} value={money(roll.identifiedOpportunity * mult)} sub="Advertised, unclaimed" tone="dark" />
       </div>
 
       {/* the value pipeline board */}

@@ -47,6 +47,7 @@ export const NAV = [
     ['sustainability', 'Sustainability', IconLeaf, ALL],
   ] },
   { group: 'Reference', items: [
+    ['knowledge', 'Knowledge Layer', IconBook, ALL],
     ['methodology', 'Methodology', IconBook, ALL],
   ] },
 ]

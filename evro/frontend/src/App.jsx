@@ -42,9 +42,11 @@ import Intake from './pages/Intake.jsx'
 import Initiative from './pages/Initiative.jsx'
 import ValueOffice from './pages/ValueOffice.jsx'
 import Pulse from './pages/Pulse.jsx'
+import Knowledge from './pages/Knowledge.jsx'
+import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
 
-const PAGES = { morning: Morning, valueoffice: ValueOffice, pulse: Pulse, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, timeline: Timeline, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, valuegraph: ValueGraph, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, summit: Summit, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, intake: Intake, initiative: Initiative }
-const TITLES = { morning: 'Morning operating screen', valueoffice: 'Athens Value Office', pulse: 'Enterprise Pulse', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', timeline: 'Enterprise timeline', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', valuegraph: 'Enterprise value graph', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', summit: 'AVCM Value Summit', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', intake: 'New initiative', initiative: 'Initiative' }
+const PAGES = { morning: Morning, valueoffice: ValueOffice, pulse: Pulse, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, timeline: Timeline, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, valuegraph: ValueGraph, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, summit: Summit, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, knowledge: Knowledge, intake: Intake, initiative: Initiative }
+const TITLES = { morning: 'Morning operating screen', valueoffice: 'Athens Value Office', pulse: 'Enterprise Pulse', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', timeline: 'Enterprise timeline', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', valuegraph: 'Enterprise value graph', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', summit: 'AVCM Value Summit', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', knowledge: 'Knowledge Layer', intake: 'New initiative', initiative: 'Initiative' }
 
 const HOME = { exec: 'morning', admin: 'morning', fpna: 'morning', leader: 'morning', owner: 'morning', procurement: 'morning' }
 const ALWAYS_OK = ['initiative', 'intake']
@@ -76,6 +78,7 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [userId, setUserId] = useState(null)
   const [theme, setTheme] = useState(() => (typeof localStorage !== 'undefined' && localStorage.getItem('evro.theme')) || 'dark')
+  const [level, setLevel] = useState(() => (typeof localStorage !== 'undefined' && localStorage.getItem('evro.explain')) || null)
   const [entered, setEntered] = useState(() => { try { return sessionStorage.getItem('evro.entered') === '1' } catch { return false } })
   const enter = useCallback(() => { setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ } }, [])
 
@@ -83,6 +86,9 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', theme)
     try { localStorage.setItem('evro.theme', theme) } catch { /* ignore */ }
   }, [theme])
+
+  // Explanation depth (Knowledge Layer): persist, and default by role on first run.
+  useEffect(() => { if (level) { try { localStorage.setItem('evro.explain', level) } catch { /* ignore */ } } }, [level])
 
   useEffect(() => {
     let alive = true
@@ -146,8 +152,10 @@ export default function App() {
   const Page = PAGES[page] || Cockpit
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
   const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, onCompanion: () => setCopilot(true), home: HOME[user.role] || 'morning' }
+  const effLevel = level || defaultLevelFor(user.role)
 
   return (
+   <KnowledgeProvider value={{ db, level: effLevel, setLevel }}>
     <div className="layout">
       <aside className={`sidebar ${drawer ? 'open' : ''}`}>
         <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={ROLE_LABEL[user.role] || 'EVRO'} onBrand={() => setEntered(false)} />
@@ -161,6 +169,7 @@ export default function App() {
           <div className="spacer" />
           <button className="copilot-btn hide-sm" onClick={() => setCopilot(true)} title="EVRO Companion (executive intelligence)"><IconAI /> Companion</button>
           <button className="cmdk" onClick={() => setPalette(true)} title="Command palette (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
+          <span className="hide-sm" title="Explanation depth (Knowledge Layer)"><LevelToggle compact /></span>
           <button className="theme-btn" onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} aria-label="Toggle theme">{theme === 'dark' ? '☀' : '☾'}</button>
           <PersonaSwitch db={db} userId={userId} setUserId={setUserId} />
           <DataBadge source={source} />
@@ -178,6 +187,7 @@ export default function App() {
       <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} dispatch={dispatch} flash={flash} navigate={navigate} />
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>
+   </KnowledgeProvider>
   )
 }
 
