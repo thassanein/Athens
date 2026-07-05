@@ -132,7 +132,9 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
   border-bottom: 1px solid var(--line);
   display: flex; align-items: center; gap: 12px; padding: 0 18px;
 }
-.topbar .page-title { font-size: 17px; font-weight: 800; }
+/* title may shrink with ellipsis at ANY width so the topbar chrome (persona,
+   Demo badge, toggles) never forces page-level horizontal scroll */
+.topbar .page-title { font-size: 17px; font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .topbar .spacer { flex: 1; }
 .hamburger { display: none; width: 38px; height: 38px; border-radius: 9px; place-items: center; }
 .hamburger:hover { background: var(--line-2); }
@@ -468,6 +470,9 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 
 .link { border: none; background: none; color: inherit; font: inherit; padding: 0; }
 @media (max-width: 720px) { .hide-sm { display: none !important; } }
+/* optional topbar chrome (Companion, explain-depth) yields earlier so the page
+   title never collapses to 0px in the 721–1130px band */
+@media (max-width: 1140px) { .hide-md { display: none !important; } }
 
 /* ---- Ask EVRO copilot panel ---------------------------------------------- */
 .copilot-scrim { position: fixed; inset: 0; background: rgba(12, 19, 32, 0.3); z-index: 62; }
@@ -998,6 +1003,25 @@ html[data-theme='light'] .gov-log-tag { background: var(--grey); }
 .nar-why { border-left: 3px solid var(--amber); padding-left: 9px; }
 .nar-next { color: var(--ink); font-weight: 600; }
 .nar-next.clickable { cursor: pointer; } .nar-next.clickable:hover { color: var(--navy); }
+/* the ✉ Copy button sits on the brief's fixed DARK header: keep its label
+   readable in light theme (ghost grey is 3.2:1 there) and never wrapped */
+.brief-head .btn { white-space: nowrap; }
+.brief-head .btn.ghost { color: #cfd6e0; }
+
+/* ---- Opportunity & Risk Wall (Phase 5B.5) --------------------------------- */
+.wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 11px; }
+.wall-card { background: var(--panel-2); border: 1px solid var(--line); border-top: 3px solid var(--green); border-radius: 12px; padding: 12px 13px; display: flex; flex-direction: column; gap: 6px; }
+.wall-risk { border-top-color: var(--red); }
+.wall-top { display: flex; align-items: center; justify-content: space-between; }
+.wall-urg { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.wall-t { font-weight: 800; font-size: 14px; line-height: 1.3; }
+.wall-sub { font-size: 11.5px; color: var(--grey-2); line-height: 1.4; }
+.wall-val { font-size: 21px; font-weight: 800; letter-spacing: -0.5px; margin-top: 2px; }
+.wall-conf { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 7px; cursor: help; }
+.wall-conf-l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); font-weight: 800; }
+.wall-conf-v { font-size: 11px; font-weight: 700; }
+.wall-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; gap: 8px; }
+.wall-owner { font-size: 11.5px; color: var(--grey); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 700px) {
   .mq-row { flex-wrap: wrap; }
   .mq-rank { display: none; }

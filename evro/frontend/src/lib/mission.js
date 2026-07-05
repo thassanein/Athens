@@ -5,7 +5,7 @@ import { enterprisePulse } from './pulse.js'
 import {
   controlTower, isActive, rav, REALIZING_STAGES, STAGES,
   decisionsRequired, canApproveRoles, ROLE_APPROVE_LABEL, sizedOpportunities,
-  hasUnmitigatedHigh, personName,
+  hasUnmitigatedHigh, personName, leakageBreakdown, worstRisk,
 } from './engine.js'
 import { aiRecommendations } from './model.js'
 import { money, pct } from './format.js'
@@ -128,4 +128,42 @@ export function missionQueue(db, user) {
   const byClass = Object.fromEntries(MISSION_CLASSES.map((c) => [c.key, missions.filter((m) => m.cls === c.key)]))
   const totalValue = missions.reduce((a, m) => a + (m.value || 0), 0)
   return { missions, byClass, totalValue, counts: Object.fromEntries(MISSION_CLASSES.map((c) => [c.key, byClass[c.key].length])) }
+}
+
+// ---------------------------------------------------------------------------
+// Strategic Opportunity & Risk Wall (5B.5 item 9) — every open opportunity and
+// live risk as one prioritized wall: value impact, signal confidence, owner,
+// urgency. Confidence is about the SIGNAL, stated per source: leakage is
+// measured from actuals (0.9); a red flag comes from validated risk rules
+// (0.85); opportunity sizing is illustrative pending FP&A validation (0.6).
+// ---------------------------------------------------------------------------
+const OPP_URGENCY = { Hot: 'Now', High: 'This month', Medium: 'This quarter', Low: 'This quarter' }
+export function opportunityRiskWall(db) {
+  const items = []
+  for (const o of sizedOpportunities(db).filter((x) => x.status === 'open'))
+    items.push({ type: 'opportunity', id: o.id, title: o.groupName || o.title, sub: `${o.lever} · band ${money(o.est_low)}–${money(o.est_high)}`, value: o.midpoint || 0, confidence: 0.6, confNote: 'illustrative sizing — pending FP&A validation', owner: 'Unclaimed', urgency: OPP_URGENCY[o.priority] || 'This quarter', nav: 'opportunities' })
+
+  // Risks: red realizing initiatives + measured leakage, merged per initiative.
+  const risk = {}
+  for (const i of db.initiatives.filter((x) => isActive(x) && x.status_rag === 'red')) {
+    const w = worstRisk(i) // highest likelihood×impact score (a number, 0–25)
+    // Red already implies score ≥ 15, so tier WITHIN red: ≥20 is "Now".
+    risk[i.id] = { type: 'risk', id: i.id, title: i.title, sub: `at risk in ${i.stage}${w ? ` · worst risk ${w}` : ''}`, value: rav(i), confidence: 0.85, confNote: 'flagged by validated risk rules', owner: personName(db, i.owner_id), urgency: w >= 20 ? 'Now' : 'This month', nav: 'initiative' }
+  }
+  for (const l of leakageBreakdown(db).items) {
+    const i = db.initiatives.find((x) => x.id === l.id)
+    const base = risk[l.id]
+    // rav + leakage ADD (matching controlTower.valueAtRisk) so the wall's
+    // "value to protect" reconciles with every other at-risk rollup.
+    if (base) { base.value += l.total; base.sub += ` · ${money(l.total)} leaking`; base.urgency = 'Now'; base.confidence = 0.9; base.confNote = 'measured from actuals vs plan' }
+    else risk[l.id] = { type: 'risk', id: l.id, title: l.title, sub: `${money(l.total)} leaking vs plan`, value: l.total, confidence: 0.9, confNote: 'measured from actuals vs plan', owner: personName(db, i?.owner_id), urgency: 'Now', nav: 'initiative' }
+  }
+  items.push(...Object.values(risk))
+  items.sort((a, b) => b.value - a.value)
+  return {
+    items,
+    oppValue: items.filter((x) => x.type === 'opportunity').reduce((a, x) => a + x.value, 0),
+    riskValue: items.filter((x) => x.type === 'risk').reduce((a, x) => a + x.value, 0),
+    nowCount: items.filter((x) => x.urgency === 'Now').length,
+  }
 }

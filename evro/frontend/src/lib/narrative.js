@@ -31,6 +31,15 @@ export function narrative(db, user, format = 'executive') {
   const inflTop = infl.byGroup[0]
 
   if (format === 'board') {
+    // "No approvals outstanding" must be TRUE for the reader: some personas
+    // (e.g. exec) can never approve, yet gates may still be pending with the
+    // entitled approvers — say that instead of implying a clear queue.
+    const pendingAll = db.initiatives.filter((i) => i.request).length
+    const ask = topDec
+      ? `The ask: approve "${topDec.title}" (${money(topDec.value)}).`
+      : pendingAll
+        ? `The ask: ${pendingAll} gate${pendingAll === 1 ? '' : 's'} pending with the entitled approvers — hold the cadence.`
+        : 'No approvals outstanding — the ask is continued cadence.'
     return {
       headline: `${money(roll.realizedYTD)} realized and FP&A-validated · ${money(roll.raPipeline)} risk-adjusted pipeline · ${money(roll.identifiedOpportunity)} identified beyond plan.`,
       bullets: [
@@ -38,7 +47,7 @@ export function narrative(db, user, format = 'executive') {
         `Risk: ${money(ct.valueAtRisk)} at risk — ${money(leak.total)} leaking vs plan${topRisk ? `; largest single risk sits on "${topRisk.title}"` : ''}.`,
         `Outlook: ${money(infl.total)} of inflation exposure${inflTop ? `, led by ${inflTop.name} (${pct(inflTop.inflation)})` : ''}; avoidance work is sequenced against it.`,
       ],
-      ask: topDec ? `The ask: approve "${topDec.title}" (${money(topDec.value)}).` : 'No approvals outstanding — the ask is continued cadence.',
+      ask,
     }
   }
 

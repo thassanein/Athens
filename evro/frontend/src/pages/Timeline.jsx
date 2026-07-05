@@ -4,7 +4,7 @@ import { money, pct, monthLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 
 const STEP_MS = 1100
-const KIND = { realized: 'b-green', decision: 'b-navy' }
+const KIND = { realized: 'b-green', decision: 'b-navy', journal: 'b-amber' }
 
 // Enterprise Timeline — a longitudinal value story across the fiscal year.
 // Cumulative realized (solid) → forecast (dashed), month event markers, a

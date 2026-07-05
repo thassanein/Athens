@@ -30,9 +30,14 @@ export function buildTimeline(db) {
     const decisions = (db.audit_log || [])
       .filter((e) => (e.ts || '').slice(0, 7) === m.key)
       .map((e) => ({ kind: 'decision', label: `${personName(db, e.actor_id)} · ${e.action}`, detail: e.detail }))
+    // Memory layer (5B.5): journaled decisions — richer than audit rows, each
+    // carrying its rationale so the timeline reads as a story of judgement.
+    const journal = (db.decision_journal || [])
+      .filter((e) => (e.at || '').slice(0, 7) === m.key)
+      .map((e) => ({ kind: 'journal', label: `${e.decision} — ${e.title}`, detail: `Why: ${e.rationale}` }))
     m.realizedMonth = realized.reduce((s, e) => s + e.value, 0)
-    m.events = [...realized.slice(0, 5), ...decisions.slice(0, 3)]
-    m.eventCount = realized.length + decisions.length
+    m.events = [...realized.slice(0, 5), ...journal.slice(0, 3), ...decisions.slice(0, 3)]
+    m.eventCount = realized.length + journal.length + decisions.length
   }
 
   const roll = enterpriseRollup(db)
