@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { missionHealth } from '../lib/mission.js'
+import { useEffect, useMemo, useState } from 'react'
+import { missionHealth, operatingContexts, contextView } from '../lib/mission.js'
 import { narrative, NARRATIVE_FORMATS } from '../lib/narrative.js'
 import { OPERATING_MODES, defaultModeFor, companionBrief, strategicNarratives } from '../lib/companion.js'
 import { decisionsRequired, canApproveRoles, ROLE_APPROVE_LABEL, personName } from '../lib/engine.js'
@@ -11,24 +11,55 @@ import { InfoDot } from '../components/Explain.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Enterprise Mission Control (5B.5) — the flagship executive landing. Answers,
-// in one screen: what happened, why it matters, what to do next. Built on the
-// existing pulse / rollup / decision engines + the Phase 5B AI entity. View-
-// only: one-click actions call the existing approveRequest mutation.
+// in one screen: what happened, why it matters, what to do next. 5B.6 makes it
+// the DEFAULT operating experience: lens/format/context persist per user, a
+// context selector scopes the whole screen (enterprise / region / business
+// unit), and named views can be saved and recalled. View-only: one-click
+// actions call the existing approveRequest mutation.
 
 const BAND_TONE = { strong: 'var(--green)', steady: 'var(--navy)', fragile: 'var(--red)' }
 const SIG_TONE = { green: 'var(--green)', red: 'var(--red)', navy: 'var(--navy)', amber: 'var(--amber)' }
+const LS_PREFS = 'evro.mc.prefs'
+const LS_VIEWS = 'evro.mc.views'
+const loadJson = (k, fb) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fb } catch { return fb } }
 
 export default function MissionControl({ db, user, dispatch, navigate, flash }) {
-  const [mode, setMode] = useState(defaultModeFor(user.role))
-  const [nfmt, setNfmt] = useState('executive')
-  const h = missionHealth(db)
-  const brief = companionBrief(db, user, mode)
-  const headline = strategicNarratives(db)[0]
-  const story = narrative(db, user, nfmt)
+  const prefs = useMemo(() => loadJson(LS_PREFS, {}), [])
+  const [mode, setMode] = useState(prefs.mode || defaultModeFor(user.role))
+  const [nfmt, setNfmt] = useState(prefs.nfmt || 'executive')
+  const [ctx, setCtx] = useState(prefs.ctx || 'enterprise')
+  const [views, setViews] = useState(() => loadJson(LS_VIEWS, []))
+  useEffect(() => { try { localStorage.setItem(LS_PREFS, JSON.stringify({ mode, nfmt, ctx })) } catch { /* ignore */ } }, [mode, nfmt, ctx])
+
+  const contexts = useMemo(() => operatingContexts(db), [db])
+  // If the stored context no longer exists (stale cache), fall back safely.
+  const ctxOk = contexts.some((c) => c.key === ctx) ? ctx : 'enterprise'
+  const cdb = useMemo(() => contextView(db, ctxOk), [db, ctxOk])
+
+  const h = useMemo(() => missionHealth(cdb), [cdb])
+  const brief = companionBrief(cdb, user, mode)
+  const headline = strategicNarratives(cdb)[0]
+  const story = useMemo(() => narrative(cdb, user, nfmt), [cdb, user, nfmt])
+
+  const saveView = () => {
+    const label = contexts.find((c) => c.key === ctxOk)?.label || 'Enterprise'
+    const name = `${OPERATING_MODES.find((m) => m.key === mode)?.label || mode} · ${label}`
+    const v = { name, mode, nfmt, ctx: ctxOk }
+    const next = [...views.filter((x) => x.name !== name), v].slice(-4)
+    setViews(next)
+    try { localStorage.setItem(LS_VIEWS, JSON.stringify(next)) } catch { /* ignore */ }
+    flash(`View saved — "${name}"`)
+  }
+  const applyView = (v) => { setMode(v.mode); setNfmt(v.nfmt); setCtx(v.ctx) }
+  const dropView = (v) => {
+    const next = views.filter((x) => x.name !== v.name)
+    setViews(next)
+    try { localStorage.setItem(LS_VIEWS, JSON.stringify(next)) } catch { /* ignore */ }
+  }
 
   // "What to do next" — decisions ranked by value, then top AI recommendations.
-  const decisions = decisionsRequired(db, user).slice(0, 3)
-  const recs = aiRecommendations(db, { status: 'open' }).slice(0, 3)
+  const decisions = decisionsRequired(cdb, user).slice(0, 3)
+  const recs = aiRecommendations(cdb, { status: 'open' }).slice(0, 3)
 
   const act = async (d) => {
     if (d.action === 'approve') {
@@ -45,15 +76,32 @@ export default function MissionControl({ db, user, dispatch, navigate, flash }) 
         to reweight the view.
       </p>
 
-      {/* lens */}
+      {/* lens + operating context + saved views */}
       <div className="mc-lens">
         <div className="seg">
           {OPERATING_MODES.map((m) => (
             <button key={m.key} className={mode === m.key ? 'active' : ''} onClick={() => setMode(m.key)}>{m.label}</button>
           ))}
         </div>
-        <span className="mc-lens-blurb">{OPERATING_MODES.find((m) => m.key === mode)?.blurb}</span>
+        <select className="mc-ctx" value={ctxOk} onChange={(e) => setCtx(e.target.value)} title="Operating context — scope the whole screen" aria-label="Operating context">
+          <optgroup label="Enterprise"><option value="enterprise">Enterprise</option></optgroup>
+          <optgroup label="Regions">{contexts.filter((c) => c.kind === 'region').map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}</optgroup>
+          <optgroup label="Business units">{contexts.filter((c) => c.kind === 'business_unit').map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}</optgroup>
+        </select>
+        <button className="btn sm ghost" onClick={saveView} title="Save the current lens + format + context as a view">☆ Save view</button>
+        <span className="mc-lens-blurb">{OPERATING_MODES.find((m) => m.key === mode)?.blurb}{ctxOk !== 'enterprise' && <b> · scoped to {contexts.find((c) => c.key === ctxOk)?.label}</b>}</span>
       </div>
+      {views.length > 0 && (
+        <div className="mc-views">
+          <span className="mc-views-l">Saved views</span>
+          {views.map((v) => (
+            <span key={v.name} className={`mc-view ${v.mode === mode && v.ctx === ctxOk && v.nfmt === nfmt ? 'active' : ''}`}>
+              <button className="mc-view-b" onClick={() => applyView(v)}>{v.name}</button>
+              <button className="mc-view-x" onClick={() => dropView(v)} aria-label={`Delete view ${v.name}`}>×</button>
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* the 30-second triad */}
       <div className="grid cols-3">

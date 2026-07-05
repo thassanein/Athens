@@ -52,6 +52,31 @@ export function missionHealth(db) {
 }
 
 // ---------------------------------------------------------------------------
+// Operating context (5B.6 item 1) — scope Mission Control to the enterprise, a
+// region, or a business unit. A presentation filter over initiatives; every
+// derived rollup recomputes automatically because it reads db.initiatives.
+// ---------------------------------------------------------------------------
+export function operatingContexts(db) {
+  // 'Enterprise' is the HQ geo-tag on corporate-owned initiatives, not a field
+  // region — offering it as a region would confusingly duplicate (and shrink)
+  // the enterprise-wide option, so it is excluded here.
+  const regions = [...new Set(db.initiatives.map((i) => i.region).filter((r) => r && r !== 'Enterprise'))].sort()
+  const bus = [...new Set(db.initiatives.map((i) => i.business_unit).filter(Boolean))].sort()
+  return [
+    { key: 'enterprise', label: 'Enterprise', kind: 'enterprise' },
+    ...regions.map((r) => ({ key: `region:${r}`, label: r, kind: 'region' })),
+    ...bus.map((b) => ({ key: `bu:${b}`, label: b, kind: 'business_unit' })),
+  ]
+}
+
+export function contextView(db, ctxKey) {
+  if (!ctxKey || ctxKey === 'enterprise') return db
+  const [kind, value] = ctxKey.split(/:(.+)/)
+  const field = kind === 'region' ? 'region' : 'business_unit'
+  return { ...db, initiatives: db.initiatives.filter((i) => i[field] === value) }
+}
+
+// ---------------------------------------------------------------------------
 // Mission Queue (sprint item 4) — the work of the enterprise classified into
 // five mission types and ranked by value impact. Composes existing engine
 // surfaces only; actions map to existing mutations/navigation.

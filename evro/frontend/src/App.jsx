@@ -49,6 +49,7 @@ import Integrations from './pages/Integrations.jsx'
 import MissionControl from './pages/MissionControl.jsx'
 import MissionQueue from './pages/MissionQueue.jsx'
 import Wall from './pages/Wall.jsx'
+import NextBestRail from './components/NextBestRail.jsx'
 import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
 import { disabledNavKeys } from './lib/model.js'
 
@@ -60,6 +61,8 @@ const TITLES = { morning: 'Morning operating screen', mission: 'Enterprise Missi
 const HOME = { exec: 'mission', admin: 'mission', fpna: 'mission', leader: 'mission', owner: 'morning', procurement: 'morning' }
 const ALWAYS_OK = ['initiative', 'intake']
 const SCOPED_PAGES = new Set(['portfolio', 'forecast', 'sustainability', 'sustainment', 'realization'])
+// Operating screens that carry the persistent "Do next" rail (5B.6 item 7).
+const RAIL_PAGES = new Set(['mission', 'valueoffice', 'pulse', 'wall', 'chief', 'governance'])
 const ROLE_LABEL = { admin: 'EVRO Lead', fpna: 'FP&A', leader: 'Function leader', owner: 'Initiative owner', procurement: 'Procurement', exec: 'Executive' }
 
 function capsFor(role) {
@@ -193,6 +196,7 @@ export default function App() {
         <main className="content">
           <Page key={`${page}:${selId || ''}`} {...ctx} db={pageDb} id={selId} />
         </main>
+        {RAIL_PAGES.has(page) && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
       </div>
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />
