@@ -3,6 +3,7 @@ import { enterpriseHealth, healthTrend, pulseNarrative, GRADE_BANDS } from '../l
 import { pct } from '../lib/format.js'
 import ValueWaterfall from '../components/ValueWaterfall.jsx'
 import PulsePlayback from '../components/PulsePlayback.jsx'
+import ExecScenario from '../components/ExecScenario.jsx'
 import StrategicMap from '../components/StrategicMap.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
@@ -143,6 +144,9 @@ export default function Intelligence({ db, user, navigate }) {
 
       {/* enterprise value waterfall (5B.7 item 4) */}
       <ValueWaterfall db={db} navigate={navigate} />
+
+      {/* executive scenario mode (5B.7 item 6) */}
+      <ExecScenario db={db} />
 
       {/* strategic value map (5B.7 item 8) */}
       <StrategicMap db={db} navigate={navigate} />
