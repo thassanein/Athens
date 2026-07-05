@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { enterpriseHealth, healthTrend, pulseNarrative, GRADE_BANDS } from '../lib/intel.js'
 import { pct } from '../lib/format.js'
 import ValueWaterfall from '../components/ValueWaterfall.jsx'
+import PulsePlayback from '../components/PulsePlayback.jsx'
 import StrategicMap from '../components/StrategicMap.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
@@ -136,6 +137,9 @@ export default function Intelligence({ db, user, navigate }) {
           </div>
         </div>
       )}
+
+      {/* enterprise pulse playback (5B.7 item 2) */}
+      <PulsePlayback db={db} />
 
       {/* enterprise value waterfall (5B.7 item 4) */}
       <ValueWaterfall db={db} navigate={navigate} />

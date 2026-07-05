@@ -1193,3 +1193,23 @@ html[data-theme='light'] .gov-log-tag { background: var(--grey); }
 .smap-node { cursor: pointer; }
 .smap-node:hover rect { filter: brightness(1.12); }
 .smap-detail { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 12.5px; padding: 2px 2px 0; }
+
+/* ---- 5B.7 Wave 3: pulse playback ------------------------------------------- */
+.ppb-transport { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.ppb-month { font-size: 17px; font-weight: 800; min-width: 84px; }
+.ppb-pin-on { border-color: var(--amber); color: var(--amber); }
+.ppb-scrub { width: 100%; accent-color: var(--navy); margin: 2px 0 8px; }
+.ppb-kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 10px 0; }
+@media (max-width: 980px) { .ppb-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.ppb-kpi { background: var(--panel-2); border-radius: var(--r); padding: 9px 12px; display: flex; flex-direction: column; gap: 2px; }
+.ppb-kpi b { font-size: 17px; }
+.ppb-kpi-s { font-size: 10.5px; color: var(--grey-2); }
+.ppb-events { display: flex; flex-direction: column; gap: 4px; }
+.ppb-ev { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 3px 2px; }
+.ppb-ev-dot { width: 8px; height: 8px; border-radius: 999px; flex: 0 0 auto; }
+.ppb-ev-t { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ppb-ev-v { font-weight: 700; }
+.ppb-cmp { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 10px; }
+.ppb-cmp-h { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ppb-cmp-grid { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12.5px; }
+.ppb-cmp-grid b { margin-left: 4px; }

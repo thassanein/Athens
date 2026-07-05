@@ -6,7 +6,7 @@
 import {
   enterpriseRollup, controlTower, isActive, rav, REALIZING_STAGES,
   realizedYTD, expectedToDate, hasUnmitigatedHigh, sustainmentBook,
-  decisionsRequired, personName,
+  decisionsRequired, personName, profileWeights,
 } from './engine.js'
 import { movementStats } from './movement.js'
 import { buildTimeline } from './timeline.js'
@@ -145,6 +145,53 @@ export function healthTrend(db) {
     return Math.round((restPart + finScore * fin.weight) / wTotal * 100)
   })
   return { months: past, series, note: 'reconstructed from the realized-value history — the other five dimensions aren’t historized yet, so they are held at today’s level' }
+}
+
+// ---------------------------------------------------------------------------
+// Enterprise Pulse Playback (5B.7 item 2) — the replay model. One frame per
+// fiscal-year month carrying everything the data genuinely dates: validated
+// landings, the timing gap vs plan ("value lost"), governance sign-offs,
+// journaled decisions, tasks raised, audit actions, and the reconstructed
+// health score. Risks are NOT date-stamped in the model, so the replay never
+// pretends to know when they appeared — the UI carries that note.
+// ---------------------------------------------------------------------------
+export function playbackModel(db) {
+  const tl = buildTimeline(db)
+  const trend = healthTrend(db)
+
+  // tasks raised per month (the dated "actions taken" signal)
+  const tasksByMonth = {}
+  for (const i of db.initiatives) for (const t of i.tasks || []) {
+    const mk = (t.at || '').slice(0, 7)
+    if (mk) tasksByMonth[mk] = (tasksByMonth[mk] || 0) + 1
+  }
+
+  // per-month plan for the realizing book — the engine's forecastCurve only
+  // projects FUTURE months, so reconstruct past-month expectations from the
+  // same profile weights expectedToDate() uses (mirrors the leakage math)
+  const realizing = db.initiatives.filter((i) => REALIZING_STAGES.includes(i.stage))
+  const planByIdx = tl.months.map((_, idx) =>
+    realizing.reduce((s, i) => s + rav(i) * (profileWeights(i.profile || 'linear', 12)[idx] || 0), 0))
+
+  let cumLost = 0
+  const frames = tl.months.map((m, idx) => {
+    const lost = m.past ? Math.max(0, planByIdx[idx] - (m.actualMonth || 0)) : 0
+    if (m.past) cumLost += lost
+    const decisions = (m.kindCounts?.approval || 0) + (m.kindCounts?.journal || 0)
+    const actions = (tasksByMonth[m.key] || 0) + (m.kindCounts?.decision || 0)
+    return {
+      key: m.key, idx, past: m.past,
+      created: m.actualMonth || 0, cumCreated: m.past ? m.cumR : null,
+      lost, cumLost: m.past ? cumLost : null,
+      forecastMonth: m.expectedMonth || 0, cumValue: m.cumValue,
+      decisions, actions, events: m.events || [],
+      health: m.past ? trend.series[idx] ?? null : null,
+    }
+  })
+  return {
+    frames, nowIdx: tl.nowIdx, maxCum: tl.maxVal,
+    riskNote: 'risk events aren’t date-stamped in the model yet — the replay shows only what the data genuinely dates',
+  }
 }
 
 // ---------------------------------------------------------------------------
