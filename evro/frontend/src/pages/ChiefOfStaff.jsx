@@ -7,6 +7,8 @@ import { money, pct, dateLabel } from '../lib/format.js'
 import { Bar } from '../components/ui.jsx'
 import { InfoDot } from '../components/Explain.jsx'
 import TrustBadge from '../components/Evidence.jsx'
+import MissionReplay from '../components/MissionReplay.jsx'
+import ConfidenceHeatmap from '../components/ConfidenceHeatmap.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // EVRO AI Experience Shell — Chief of Staff (5B.5). A persistent AI surface: a
@@ -127,6 +129,12 @@ export default function ChiefOfStaff({ db, user, caps, dispatch, flash, navigate
           </>
         )}
       </div>
+
+      {/* mission replay — the orchestration run, animated (5B.7 item 3) */}
+      <MissionReplay db={db} user={user} navigate={navigate} />
+
+      {/* AI confidence heatmap (5B.7 item 5) */}
+      <ConfidenceHeatmap db={db} />
 
       {/* agent console */}
       <div className="card pad section-gap">

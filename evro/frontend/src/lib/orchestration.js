@@ -53,3 +53,51 @@ export function orchestrationModel(db, user) {
 
   return { stages, agents, tensions, avgConf, recCount: recs.length }
 }
+
+// ---------------------------------------------------------------------------
+// Mission replay (5B.7 item 3) — the orchestration run as a NASA-style mission
+// sequence: five phases, each with console log lines computed from the live
+// portfolio (evidence gathered, advice drafted, plan stress-tested, precedent
+// recalled, conflicts resolved, final call issued). Deterministic; the replay
+// is a presentation of orchestrationModel, not a new engine.
+// ---------------------------------------------------------------------------
+export function missionReplay(db, user) {
+  const orch = orchestrationModel(db, user)
+  const recs = aiRecommendations(db, { status: 'open' })
+  const journal = decisionJournal(db)
+  const st = scenarioTotals(db)
+  const active = db.initiatives.filter(isActive)
+  const validated = db.initiatives.reduce((a, i) => a + (i.actuals || []).filter((x) => x.validated).length, 0)
+  const risks = db.initiatives.reduce((a, i) => a + (i.risks || []).length, 0)
+  const evidenceCount = recs.reduce((a, r) => a + (r.evidence || []).length, 0)
+  const finalRec = [...recs].sort((a, b) => (b.value_impact || 0) - (a.value_impact || 0) || (b.confidence || 0) - (a.confidence || 0))[0] || null
+  const lesson = journal.find((d) => d.lessons)
+
+  const phases = [
+    { key: 'analyst', name: 'Analyst', title: 'Sweep the enterprise', lines: [
+      `SWEEP ${active.length} active initiatives · ${(db.spend_categories || []).length} spend lines`,
+      `SIGNALS ${validated} validated actuals · ${risks} logged risks`,
+      `EVIDENCE ${evidenceCount} items gathered and attached`,
+    ] },
+    { key: 'advisor', name: 'Advisor', title: 'Draft the advice', lines: [
+      ...orch.agents.map((a) => `${a.name.toUpperCase().replace(' AGENT', '')} ▸ ${a.count} signal${a.count === 1 ? '' : 's'} · ${pct(a.confidence)} confidence`),
+      `DRAFT ${orch.recCount} recommendations · ${pct(orch.avgConf)} avg confidence`,
+    ] },
+    { key: 'simulator', name: 'Simulator', title: 'Stress-test the plan', lines: [
+      'RUN base / aggressive / conservative lenses',
+      `HOLD committed ${money(st.committed)} — survives every lens`,
+      `RANGE expected ${money(st.expected)} · upside ${money(st.upside)}`,
+    ] },
+    { key: 'memory', name: 'Memory', title: 'Recall precedent', lines: [
+      `RECALL ${journal.length} journaled decisions · ${(db.audit_log || []).length} logged actions`,
+      lesson ? `LESSON "${lesson.lessons}"` : 'LESSON none recorded yet — postmortems feed this',
+      'CONTEXT precedent returned to every agent',
+    ] },
+    { key: 'chief', name: 'Chief of Staff', title: 'Resolve & issue the call', lines: [
+      ...orch.tensions.slice(0, 2).map((t) => `CONFLICT ${t.a.agent.replace(' Agent', '').toUpperCase()} vs ${t.b.agent.replace(' Agent', '').toUpperCase()} → ${(t.leads === 'a' ? t.a : t.b).agent.replace(' Agent', '').toUpperCase()} leads (${pct((t.leads === 'a' ? t.a : t.b).confidence)}) · dissent retained`),
+      ...(orch.tensions.length === 0 ? ['CONFLICT none — agents aligned this cycle'] : []),
+      finalRec ? `ISSUE ${finalRec.title} · ${pct(finalRec.confidence)} confidence` : 'ISSUE queue clear — no open recommendation',
+    ] },
+  ]
+  return { phases, finalRec, tensions: orch.tensions, agents: orch.agents }
+}
