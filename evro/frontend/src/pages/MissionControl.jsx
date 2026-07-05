@@ -94,6 +94,7 @@ export default function MissionControl({ db, user, dispatch, navigate, flash }) 
           <optgroup label="Business units">{contexts.filter((c) => c.kind === 'business_unit').map((c) => <option key={c.key} value={c.key}>{c.label}</option>)}</optgroup>
         </select>
         <button className="btn sm ghost" onClick={saveView} title="Save the current lens + format + context as a view">☆ Save view</button>
+        <button className="btn sm ghost" onClick={() => navigate('intelligence')} title="The flagship intelligence dashboard — health score, replay, waterfall, scenarios">◈ Intelligence</button>
         <span className="mc-lens-blurb">{OPERATING_MODES.find((m) => m.key === mode)?.blurb}{ctxOk !== 'enterprise' && <b> · scoped to {contexts.find((c) => c.key === ctxOk)?.label}</b>}</span>
       </div>
       {views.length > 0 && (

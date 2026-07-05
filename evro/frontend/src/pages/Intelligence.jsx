@@ -1,10 +1,14 @@
 import { useMemo, useState } from 'react'
 import { enterpriseHealth, healthTrend, pulseNarrative, GRADE_BANDS } from '../lib/intel.js'
-import { pct } from '../lib/format.js'
+import { enterprisePulse, axisNote } from '../lib/pulse.js'
+import { decisionsRequired, controlTower } from '../lib/engine.js'
+import { money, pct } from '../lib/format.js'
+import { Radar } from '../components/Charts.jsx'
 import ValueWaterfall from '../components/ValueWaterfall.jsx'
 import PulsePlayback from '../components/PulsePlayback.jsx'
 import ExecScenario from '../components/ExecScenario.jsx'
 import StrategicMap from '../components/StrategicMap.jsx'
+import ConfidenceHeatmap from '../components/ConfidenceHeatmap.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Enterprise Intelligence (5B.7) — the flagship intelligence experience. Wave 1
@@ -68,17 +72,33 @@ export default function Intelligence({ db, user, navigate }) {
   const dim = h.dims.find((d) => d.key === dimKey)
   const first = trend.series[0]
   const last = trend.series[trend.series.length - 1]
+  const pulse = useMemo(() => enterprisePulse(db), [db])
+  const ct = useMemo(() => controlTower(db), [db])
+  const decisions = useMemo(() => decisionsRequired(db, user).filter((d) => d.kind === 'approval'), [db, user])
 
   return (
     <>
       <p className="page-intro">
-        <b>Enterprise Intelligence</b> — the health of the enterprise as one number, the way a
-        credit score works: six weighted dimensions, each traceable to the operating data
-        behind it. Read the score, drill the dimension, then let the narrative explain what
-        changed and what should happen next.
+        <b>Enterprise Intelligence</b> — the flagship operating environment: enterprise health
+        as one credit-score number, the value radar, the year on replay, the value waterfall,
+        strategic what-ifs, AI confidence, the strategic map, and the narrative — every panel
+        deterministic and traceable to the operating data behind it.
       </p>
 
-      {/* hero — the enterprise health score */}
+      {/* command strip — the mission-control summary + one-click routes */}
+      <div className="intel-strip">
+        <span className="eis-chip"><b className="mono" style={{ color: 'var(--green)' }}>{money(pulse.roll.realizedYTD)}</b> created</span>
+        <span className="eis-chip"><b className="mono" style={{ color: 'var(--amber)' }}>{money(ct.leakage)}</b> leaking</span>
+        <span className="eis-chip"><b className="mono" style={{ color: 'var(--red)' }}>{money(ct.valueAtRisk)}</b> at risk</span>
+        <span className="eis-chip">{decisions.length ? <><b className="mono" style={{ color: 'var(--amber)' }}>{decisions.length}</b> decision{decisions.length === 1 ? '' : 's'} on you</> : 'no approvals pending'}</span>
+        <span className="spacer" />
+        <button className="btn sm ghost" onClick={() => navigate('mission')}>Mission Control</button>
+        <button className="btn sm ghost" onClick={() => navigate('missions')}>Queue</button>
+        <button className="btn sm" onClick={() => navigate('decisions')}>Decision Workspace →</button>
+      </div>
+
+      {/* hero — health score + value radar, the 30-second read */}
+      <div className="intel-hero-grid">
       <div className="card pad eh-hero">
         <div className="eh-hero-gauge">
           <HealthGauge score={h.score} grade={h.grade} gradeLabel={h.gradeLabel} />
@@ -96,6 +116,16 @@ export default function Intelligence({ db, user, navigate }) {
           <div className="eh-fine">{h.benchNote}</div>
           <span className="badge b-navy" style={{ alignSelf: 'flex-start' }}><IconAI /> deterministic · rules-based</span>
         </div>
+      </div>
+      <div className="card pad intel-radar">
+        <div className="card-h"><h3>Value Radar</h3><span className="spacer" /><span className="badge b-grey">pulse {pulse.index}</span></div>
+        <Radar axes={pulse.axes} size={200} color="var(--navy)" />
+        <div className="intel-radar-axes">
+          {pulse.axes.map((a) => (
+            <span key={a.key} className="intel-axis" title={axisNote(a.key)}>{a.label} <b className="mono">{pct(a.value)}</b></span>
+          ))}
+        </div>
+      </div>
       </div>
 
       {/* six dimensions */}
@@ -147,6 +177,9 @@ export default function Intelligence({ db, user, navigate }) {
 
       {/* executive scenario mode (5B.7 item 6) */}
       <ExecScenario db={db} />
+
+      {/* AI confidence heatmap (5B.7 item 5 — shared with Chief of Staff) */}
+      <ConfidenceHeatmap db={db} />
 
       {/* strategic value map (5B.7 item 8) */}
       <StrategicMap db={db} navigate={navigate} />
