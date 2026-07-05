@@ -1,20 +1,25 @@
 import { useState } from 'react'
-import { missionQueue, MISSION_CLASSES } from '../lib/mission.js'
+import { missionQueue, missionWhy, MISSION_CLASSES } from '../lib/mission.js'
 import { canApproveRoles, ROLE_APPROVE_LABEL } from '../lib/engine.js'
-import { money } from '../lib/format.js'
+import { money, pct } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
-// Mission Queue (5B.5 item 4) — the traditional approval queue, reimagined:
-// everything the enterprise needs a human for, classified into five mission
-// types and ranked by enterprise value impact. Presentation only: Approve
-// dispatches the existing approveRequest mutation; everything else navigates.
+// Mission Queue (5B.5 item 4; intelligence layer 5B.6 item 3) — everything the
+// enterprise needs a human for, classified and ranked by value impact. Every
+// mission can explain its rank ("Why #N?"), shows urgency/aging/escalation,
+// and initiative-backed missions can be DELEGATED — a real task on the record
+// via the existing addTask mutation. Presentation only.
 
 const CLS = Object.fromEntries(MISSION_CLASSES.map((c) => [c.key, c]))
+const URG_TONE = { Now: 'var(--red)', 'This week': 'var(--amber)', 'This month': 'var(--navy)', 'This quarter': 'var(--grey)' }
 
-export default function MissionQueue({ db, user, dispatch, navigate, flash }) {
+export default function MissionQueue({ db, user, caps, dispatch, navigate, flash }) {
   const [view, setView] = useState('ranked') // ranked | class
+  const [whyKey, setWhyKey] = useState(null)
+  const [delKey, setDelKey] = useState(null)
   const q = missionQueue(db, user)
+  const assignables = db.people.filter((p) => ['owner', 'procurement', 'leader', 'admin'].includes(p.role))
 
   const act = async (m) => {
     if (m.action === 'approve') {
@@ -31,20 +36,52 @@ export default function MissionQueue({ db, user, dispatch, navigate, flash }) {
     }
   }
 
+  const delegate = async (m, assigneeId) => {
+    const r = await dispatch('addTask', m.refId, `Mission: ${m.title} — ${m.why}`, assigneeId, user.id)
+    setDelKey(null)
+    if (!r?.error) flash(`Delegated to ${db.people.find((p) => p.id === assigneeId)?.name} — task on the record`)
+  }
+
   const MissionRow = ({ m, rank }) => {
     const c = CLS[m.cls]
+    const t = m.intel || {}
+    const open = whyKey === m.key
+    const canDelegate = caps?.edit && m.refId && String(m.refId).startsWith('i-')
     return (
-      <div className="mq-row" style={{ borderLeftColor: c.tone }}>
-        {rank != null && <span className="mq-rank mono">{rank}</span>}
-        <div className="mq-main" onClick={() => act({ ...m, action: m.action === 'approve' ? 'open' : m.action })}>
-          <div className="mq-t">{m.title}</div>
-          <div className="mq-why">{m.why}</div>
+      <div className={`mq-wrap ${open ? 'open' : ''}`}>
+        <div className="mq-row" style={{ borderLeftColor: c.tone }}>
+          {rank != null && <span className="mq-rank mono">{rank}</span>}
+          <div className="mq-main" onClick={() => act({ ...m, action: m.action === 'approve' ? 'open' : m.action })}>
+            <div className="mq-t">{m.title}{t.escalated && <span className="badge b-red" style={{ marginLeft: 6 }}>escalated</span>}</div>
+            <div className="mq-why">{m.why}{t.ageDays != null ? ` · ${t.ageDays}d old` : ''}</div>
+          </div>
+          <span className="mq-urg" style={{ color: URG_TONE[t.urgency] }}>{t.urgency}</span>
+          <span className="mq-cls" style={{ color: c.tone, background: `color-mix(in srgb, ${c.tone} 14%, transparent)` }}>
+            {m.cls === 'ai' && <IconAI />} {c.label}
+          </span>
+          {m.value > 0 && <span className="mq-val mono">{money(m.value)}</span>}
+          <button className="mq-whybtn" onClick={() => { setWhyKey(open ? null : m.key); setDelKey(null) }} aria-expanded={open} title="Why is this ranked here?">why?</button>
+          {canDelegate && <button className="btn sm ghost" onClick={() => { setDelKey(delKey === m.key ? null : m.key); setWhyKey(null) }}>Delegate</button>}
+          <button className="btn sm" onClick={() => act(m)}>{m.action === 'approve' ? 'Approve' : m.action === 'navigate' ? 'View' : 'Open'}</button>
         </div>
-        <span className="mq-cls" style={{ color: c.tone, background: `color-mix(in srgb, ${c.tone} 14%, transparent)` }}>
-          {m.cls === 'ai' && <IconAI />} {c.label}
-        </span>
-        {m.value > 0 && <span className="mq-val mono">{money(m.value)}</span>}
-        <button className="btn sm" onClick={() => act(m)}>{m.action === 'approve' ? 'Approve' : m.action === 'navigate' ? 'View' : 'Open'}</button>
+        {open && (
+          <div className="mq-explain">
+            <b>Why {rank != null ? `#${rank}` : 'here'}?</b>
+            <ul>{missionWhy(m, rank ?? '—', q.missions.length).map((p, k) => <li key={k}>{p}</li>)}</ul>
+            {(t.deps || []).map((d, k) => <div key={k} className="mq-dep">⛓ {d}</div>)}
+          </div>
+        )}
+        {delKey === m.key && (
+          <div className="mq-explain">
+            <b>Delegate this mission</b>
+            <div className="mq-del">
+              {assignables.map((p) => (
+                <button key={p.id} className="btn sm" onClick={() => delegate(m, p.id)}>{p.name}</button>
+              ))}
+            </div>
+            <span className="muted" style={{ fontSize: 11 }}>Creates a task on the initiative via the existing workflow — visible in its workspace and the audit log.</span>
+          </div>
+        )}
       </div>
     )
   }

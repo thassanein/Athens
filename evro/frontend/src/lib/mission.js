@@ -8,7 +8,16 @@ import {
   hasUnmitigatedHigh, personName, leakageBreakdown, worstRisk,
 } from './engine.js'
 import { aiRecommendations } from './model.js'
+import { recDependencies } from './evidence.js'
 import { money, pct } from './format.js'
+
+// Days between an ISO date and the portfolio "now" (db.meta.now — never the
+// wall clock, so demo output stays deterministic).
+const daysSince = (db, iso) => {
+  if (!iso) return null
+  const d = (new Date(db.meta?.now || '2026-06-30') - new Date(String(iso).slice(0, 10))) / 86400000
+  return Number.isFinite(d) ? Math.max(0, Math.round(d)) : null
+}
 
 const clamp01 = (v) => Math.max(0, Math.min(1, isFinite(v) ? v : 0))
 
@@ -203,10 +212,52 @@ export function missionQueue(db, user) {
       block(to, `Blocked by "${from.title}" (${from.stage}) — ${personName(db, from.owner_id)}`)
   }
 
+  // Mission intelligence (5B.6 item 3) — confidence, urgency, aging,
+  // escalation, dependencies, and timing on every mission. Aging thresholds:
+  // an approval pending > 7 days or a blocked item stuck > 30 days escalates.
+  const CLS_CONF = {
+    decision: [0.95, 'gate rules — deterministic'],
+    risk: [0.85, 'flagged by validated risk rules'],
+    opportunity: [0.6, 'illustrative sizing — pending FP&A validation'],
+    blocked: [0.9, 'derived from request & dependency state'],
+  }
+  const byInit = Object.fromEntries(db.initiatives.map((i) => [i.id, i]))
+  for (const m of missions) {
+    const i = m.refId ? byInit[m.refId] : null
+    const rec = m.cls === 'ai' ? (db.ai_recommendations || []).find((r) => `ai-${r.id}` === m.key) : null
+    const [conf, confNote] = m.cls === 'ai' ? [rec?.confidence ?? 0.7, `${rec?.agent || 'agent'} signal`] : CLS_CONF[m.cls]
+    const age = m.cls === 'decision' || (m.cls === 'blocked' && i?.request)
+      ? daysSince(db, i?.request?.requested_at)
+      : i ? daysSince(db, i.start_date) : null
+    const escalated = (m.cls === 'decision' && age > 7) ? `approval pending ${age} days`
+      : (m.cls === 'blocked' && age > 30) ? `stuck ${age} days` : null
+    const urgency = escalated || m.cls === 'risk' ? 'Now' : m.cls === 'decision' ? 'This week' : m.cls === 'blocked' ? 'This month' : 'This quarter'
+    m.intel = {
+      confidence: conf, confNote,
+      ageDays: age, escalated, urgency,
+      deps: recDependencies(db, m.refId),
+      due: i?.target_close || null,
+    }
+  }
+
   missions.sort((a, b) => b.value - a.value)
   const byClass = Object.fromEntries(MISSION_CLASSES.map((c) => [c.key, missions.filter((m) => m.cls === c.key)]))
   const totalValue = missions.reduce((a, m) => a + (m.value || 0), 0)
   return { missions, byClass, totalValue, counts: Object.fromEntries(MISSION_CLASSES.map((c) => [c.key, byClass[c.key].length])) }
+}
+
+// "Why is this ranked #N?" — the transparent composition of a mission's rank.
+export function missionWhy(m, rank, total) {
+  const t = m.intel || {}
+  const parts = [
+    m.value > 0 ? `${money(m.value)} value impact — rank #${rank} of ${total} is by dollar, nothing else` : `no dollar attached — ranked below every valued mission`,
+    `urgency ${t.urgency}${t.escalated ? ` (ESCALATED — ${t.escalated})` : ''}`,
+    `confidence ${pct(t.confidence)} (${t.confNote})`,
+  ]
+  if (t.ageDays != null) parts.push(`open ${t.ageDays} day${t.ageDays === 1 ? '' : 's'}`)
+  if (t.due) parts.push(`target close ${t.due.slice(0, 7)}`)
+  if ((t.deps || []).length) parts.push(`${t.deps.length} blocking dependenc${t.deps.length === 1 ? 'y' : 'ies'}`)
+  return parts
 }
 
 // ---------------------------------------------------------------------------

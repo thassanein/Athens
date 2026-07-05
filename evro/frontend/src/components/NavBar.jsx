@@ -24,6 +24,7 @@ export const NAV = [
   ] },
   { group: 'Dashboards', items: [
     ['valueoffice', 'Value Office', IconPortfolio, ENTL],
+    ['accountability', 'Accountability', IconTeam, ENTL],
     ['exec', 'Executive', IconExec, ENT],
     ['hierarchy', 'Portfolios', IconHierarchy, ENTL],
     ['portfolio', 'Initiatives', IconPortfolio, ENTL],
