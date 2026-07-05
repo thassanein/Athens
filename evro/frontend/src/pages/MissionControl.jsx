@@ -103,7 +103,7 @@ export default function MissionControl({ db, user, dispatch, navigate, flash }) 
 
       {/* next best actions */}
       <div className="card pad section-gap">
-        <div className="card-h"><h3>What to do next</h3><span className="spacer" /><span className="badge b-amber">{decisions.length + recs.length}</span></div>
+        <div className="card-h"><h3>What to do next</h3><span className="spacer" /><button className="btn sm ghost" onClick={() => navigate('missions')}>Mission queue →</button><span className="badge b-amber">{decisions.length + recs.length}</span></div>
         <div className="mc-actions">
           {decisions.map((d) => (
             <div key={d.id} className="mc-action">
