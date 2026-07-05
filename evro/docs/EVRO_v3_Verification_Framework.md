@@ -1,7 +1,9 @@
 # Athens EVRO — v3 Verification & Validation Framework
 
-Version: v3 · Last updated: 2026-06-30
+Version: v3 · Last updated: 2026-07-05 (current through Phase 5B.7)
 Companion to `EVRO_v3_System_Specification.md` and `EVRO_v3_Requirements_Traceability.md`.
+Athens OS-era sections: §9D (5B platform), §9E (5B.5), §9F (5B.6), §9G (5B.7);
+the 5B change log lives in `ATHENS_OS_PHASE5B.md`.
 
 > **Purpose.** A reviewer (human or AI) uses this to *verify* — not assume — that
 > EVRO behaves as specified. Every check has: a stable ID, the acceptance
@@ -236,6 +238,87 @@ enhancements are the cleanest presentation-only span yet — **not even a data c
 
 ---
 
+## 9D. Phase 5B — Athens OS platform (S1/S2)
+
+Phase 5B is the one deliberate **additive** span: seven new JSONB entities, one
+new mutation, and mirrored server support — under an authorization that allowed
+backend change. The guardrail is therefore *additive-only*, not *empty-diff*:
+nothing existing was modified. The engine remains byte-stable.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-5B-additive** (S1) | Engine untouched; mutations/schema grew additively only. | `git diff f2fb864~1..1347f5f -- evro/frontend/src/lib/engine.js evro/server/src/engine.js` is **empty**. `mutations.js` diff adds `toggleModule` (and later `journalDecision`/`journalOutcome`, §9F) without altering any existing reducer; `schema.sql` adds `evro_`-prefixed tables only. Client↔server mirrors stay byte-identical (`diff` both pairs). | Engine empty diff; additive-only mutations/schema; mirror parity. |
+| **V-5B-entities** | Seven new entities, deterministically seeded. | `org_nodes`, `forecast_scenarios` (4 lenses), `knowledge_cards` (22), `decision_journal`, `ai_recommendations` (6), `integration_sources`, `feature_flags` all present in `data/seed.json` via `gen-seed.mjs`; regen is byte-stable (V-DET-seed). `api.js` `withSchemaBackfill` adds missing collections to a stale localStorage db without touching existing data. | All seven present + deterministic; stale demo dbs backfill additively. |
+| **V-5B-valueoffice** | Athens Value Office hub renders the operating surfaces. | Nav → Value Office: portfolio/value surfaces render for ENTL roles with 0 page errors. | Renders, role-gated. |
+| **V-5B-pulse** | Enterprise Pulse — six-axis Value Radar + pulse index. | `enterprisePulse(db)` → 6 axes each 0..1, `index` 0–100, `band`; Pulse screen renders the radar. | 6 axes; index finite; radar renders. |
+| **V-5B-knowledge** | Knowledge Layer explains every concept at three depths. | `knowledgeCards(db).length === 22`; `explain(card, level)` returns distinct copy for exec/practitioner/analyst; InfoDot popovers render. | 22 cards × 3 levels. |
+| **V-5B-chief** | Chief of Staff AI shell with an explicit LLM seam. | `aiRecommendations(db)` → 6 recs, each `{agent, confidence, evidence[], rules_based: true}`; the shell renders only the entity (swapping the deterministic producer for an LLM would leave the UI unchanged — stated in code). | 6 recs; `rules_based` on every one; seam documented. |
+| **V-5B-governance** | Workflow & Governance surface reads the audit trail. | Governance screen renders validations/approvals/audit entries with actor + date; 0 errors. | Renders. |
+| **V-5B-integration** | Integration registry + module assembly flags. | `integrationSources(db)` with status/cadence/mappings; `featureFlags(db)`; `toggleModule` disables a non-core module (nav hides via `disabledNavKeys`) and **refuses core modules** — verified against live Postgres too (`/api/action`, `/api/integration`). | Toggle works; core refusal; nav reacts; server parity. |
+| **V-5B-ai-label** | All "AI" is deterministic and labelled as such. | Grep the new surfaces for LLM calls (none exist); every AI badge/copy says rules-based/deterministic. | No model calls; labels present. |
+
+---
+
+## 9E. Phase 5B.5 — executive excellence sprint (S2/S3)
+
+Presentation-only over the 5B platform. `V-55-nologic` is the guardrail (S1).
+Verified with multi-agent adversarial review before each commit; the confirmed
+defects (queue double-counting, unscoped board narrative, dead urgency tier,
+reconciliation residual) were fixed pre-merge and are locked in below.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-55-nologic** (S1) | No engine/mutations/schema/server/data change. | `git diff a7f51ca~1..f353a94 -- evro/frontend/src/lib/engine.js evro/frontend/src/lib/mutations.js evro/server evro/data` is empty. | Empty diff. |
+| **V-55-mission** | Enterprise Mission Control — Pulse Ring + signals + one-click decisions. | `missionHealth(db)` → 5 rings (created/risk/velocity/adoption/transformation) + 6 signals; approve fires the existing `approveRequest`. | 5 rings, 6 signals; approvals work. |
+| **V-55-queue** | Mission Queue classifies and NEVER double-counts. | `missionQueue(db,user)` → 5 classes; the `emitted` set guarantees one mission per underlying refId across classes, so `totalValue` counts each dollar once (the adversarial-review fix). | No refId appears twice; KPI = de-duplicated sum. |
+| **V-55-orch** | Orchestration model — agent team + tensions. | `orchestrationModel(db,user)` → 5 stages with live stats; `tensions` resolve by higher confidence with dissent retained. | Stages + tensions render; resolution rule stated. |
+| **V-55-radar** | Interactive Value Radar — stress, confidence, drill. | `stressedAxes(db, scen)` moves axes under a scenario; `axisConfidence(db)` grounds each axis; `axisDrill` lists contributors. | All three respond. |
+| **V-55-narrative** | Executive Narrative Engine is persona-scoped. | `narrative(db, user, format)` for executive/board/operational formats; the **board** format must be built from `scopedView(db,user)` (the 5B.5 W5 fix — an owner's board brief shows only their book). | Formats differ; board narrative scoped. |
+| **V-55-wall** | Opportunity & Risk Wall reconciles to the control tower. | `opportunityRiskWall(db)` risk column merges leakage into at-risk items; the intentional engine overlap vs `controlTower.valueAtRisk` is labelled "overlap de-duplicated" on the tile, not hidden. | Reconciliation stated; urgency tiers (incl. "This month") all reachable. |
+
+---
+
+## 9F. Phase 5B.6 — production hardening & executive workflow (S2/S3)
+
+Additive-only mutations exception: `journalDecision` / `journalOutcome` (mirrored
+client + server) power the auto-journal. Everything else is presentation.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-56-additive** (S1) | Engine untouched; only the two journal reducers added. | `git diff eecf8da~1..713f0f2 -- evro/frontend/src/lib/engine.js evro/server/src/engine.js` empty; `mutations.js` diff = `journalDecision` + `journalOutcome` only, mirrored byte-identically server-side. | Empty engine diff; additive mirrored reducers. |
+| **V-56-default** | Mission Control is the operating default with persistent context. | `HOME` maps exec/admin/fpna/leader → `mission`; lens/format/context persist (`evro.mc.prefs`); saved views (`evro.mc.views`, ≤4) apply/delete; `contextView(db, ctx)` scopes the whole screen; the `Enterprise` HQ geo-tag is excluded from the region list. | Default home; persistence; scoping; no bogus region. |
+| **V-56-ring** | Pulse Ring is explainable, benchmarked, honestly trended. | `ringExplain(db,key)` → formula + live inputs; `RING_BENCH` bands labelled "illustrative — pending Athens KPI definitions"; `ringTrend` returns ONLY the historized series (validated realized by month) and the UI says other ring history isn't stored. | Formulas render; bands labelled; no fabricated series. |
+| **V-56-evidence** | Explainability score: +25 × (confidence, evidence, linked record, assumptions). | `explainability(db, rec)` → score/tier (≥75 High, ≥50 Medium, else Basic) + parts; `TrustBadge` hover shows parts, evidence, assumptions, dependencies. | Score arithmetic exact; badge renders. |
+| **V-56-queue-intel** | Mission intelligence: confidence, aging, escalation, "why #N?". | Every mission carries `intel` (per-class confidence + note, `ageDays` from `db.meta.now` — never the wall clock, escalation at >7d approvals / >30d blocked, urgency tier, deps); `missionWhy` explains the rank; Delegate creates a real task via `addTask`. | Deterministic aging; escalation badges; delegation on the record. |
+| **V-56-account** | Ownership & Accountability board. | `ownershipBoard(db, dim)` for owner/BU/region/department → at-stake, realized, red, leaking, pending, red-age, hygiene (validated-actuals share), escalations; Escalate posts an `addComment` starting "Escalation:" and is disabled when nothing is red/leaking. | All four dims; hygiene correct; escalation gated + recorded. |
+| **V-56-brief** | Morning Brief 2.0 — templates, copy-as-email, print/PDF. | Template checkboxes persist (`evro.brief.tpl`); ✉ Copy composes from the persona-scoped board narrative; ⎙ PDF opens the print window (`printBriefing`, popup-block safe). | All three work; scoped content. |
+| **V-56-timeline** | Timeline carries decisions + supports A/B comparison. | `buildTimeline` months include journal + validation sign-off events (`kindCounts`); compare mode draws the A/B band and computes span deltas (value/realized/approvals/journal/actions). | Events present; compare deltas correct. |
+| **V-56-journal-auto** | Gate decisions journal THEMSELVES — correctly. | Approve a request → a `decision_journal` entry appears with `auto: true`, composed BEFORE the mutation (the request state is destroyed on commit) and ONLY when the gate actually commits (partial approvals don't journal); postmortem (`journalOutcome`) records outcome + lessons. | Auto-entry on commit only; postmortems persist. |
+| **V-56-hardening** | Error boundary, local telemetry, Do-next rail, a11y. | `ErrorBoundary` catches a thrown page render → fallback card + `track('error')`, reset on navigation; telemetry is local-only (`evro.telemetry`, "nothing leaves the device" stated, Reset works); `NextBestRail` shows top-3 missions on operating screens (collapse persists, hidden ≤900px); toasts are `role="status" aria-live="polite"`. | All four hold. |
+
+---
+
+## 9G. Phase 5B.7 — enterprise intelligence excellence (S2/S3)
+
+The flagship sprint: ten brief items, all presentation-layer. `V-57-nologic` is
+the guardrail (S1) — and with it, the engine's empty diff now spans the entire
+5B era (f2fb864~1..3b848b5).
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-57-nologic** (S1) | No engine/mutations/schema/server/data change. | `git diff da497af~1..3b848b5 -- evro/frontend/src/lib/engine.js evro/frontend/src/lib/mutations.js evro/server evro/data` is empty. | Empty diff. |
+| **V-57-health** | Enterprise Health Score — six dimensions, credit-score grades, honest trend. | `enterpriseHealth(db)` → 6 weighted dims each with formula/drivers/illustrative band; grade bands AAA…CCC; Customer & Workforce carry explicit `proxy` labels; `healthTrend` reconstructs ONLY the financial-realization input from history and the note says the other five aren't historized. | Seed scores **66 · BBB**; proxies labelled; no fabricated history. |
+| **V-57-playback** | Enterprise Pulse Playback — replay, per-month truth, milestones. | `playbackModel(db)`: per-month "value lost" comes from the same profile weights as `expectedToDate` (NOT `forecastCurve`, which only projects future months); replay stops at `db.meta.now`; future frames are labelled forecast preview; the risks-aren't-date-stamped note renders; A/B pins produce span deltas. | Seed Feb→Jun compare: **$1.24M created · $48K lost · 19 decisions · 32 actions · +3 pts**. |
+| **V-57-waterfall** | Value Waterfall is an exact identity with drill + scenario ghosts. | Per initiative `gross ≡ gross(1−conf) + gross·conf(1−rf) + rav`, so Potential − Risk − Adoption ≡ Σ rav **to the dollar**; scenario lenses reuse `forecast_scenarios` assumptions; ghost outlines + signed deltas where positive-is-good for every bar kind (a bigger drag under a downside lens must read RED); every step drills to initiatives + owners. | Seed base: **$13M → $7.70M RAV → $6.55M net → $1.63M realized** (all initiatives; the map's Realized sink shows $1.54M because it scopes to active only); delta colours correct. |
+| **V-57-map** | Strategic Value Map — flow + transitive dependency trace, nothing hidden. | `strategicMap(db)`: functions → initiatives → outcomes; the tail pools into one labelled node (never silently dropped); `traceMap` follows blocking dependencies transitively BOTH ways; outcome sinks = realized / forecast / at-risk / leaking sums. | Trace dims non-neighbourhood; pooled node present; sinks reconcile. |
+| **V-57-replay** | Chief of Staff mission animation — computed, not scripted. | `missionReplay(db,user)` → 5 phases whose console lines are live portfolio numbers (sweep counts, per-agent confidence, scenario holds, recalled lessons, conflicts with dissent retained, final call = max value then confidence); transport (run/step/pause/reset) works; reduced-motion leaves it fully usable. | Full run issues the final recommendation card with trust badge. |
+| **V-57-heatmap** | AI Confidence Heatmap — quality-flagged, gaps stated. | `confidenceHeatmap(db)`: domains from what each agent actually watches (`AGENT_DOMAIN`); weak flag = explainability < 50 or evidence < 2; **Customer Experience renders as a coverage gap, never an invented score**; cells drill to their recommendations. | Gap row present; weak flags correct; drill works. |
+| **V-57-scenario** | Executive Scenario Mode — scoped read-outs, digital-twin seams. | `execScenario(db, levers)`: inflation pressure on the addressable base is its **own** read-out (never silently netted into program EBITDA — the scope-mixing fix); capacity slots labelled illustrative; each lever names its integration-registry feed + status; capital lever re-runs the optimizer. | Six read-outs; scopes stated; feed badges resolve to real registry rows. |
+| **V-57-decisions** | Decision Workspace — evidence, simulation, debate, existing mutations only. | `decisionCases(db,user)`: evidence strip (baseline/gate/sign-offs/risks/ROI·payback·NPV/trust); simulation unlock = `g·rf·(c₂−c₁)`, quarter-delay cost = unlock×3/12 (labelled illustrative); debate FOR/AGAINST composed from live signals, higher avg confidence leads, dissent retained, "the decision is yours"; Approve/Return/Delegate map ONLY to `approveRequest`/`rejectRequest`/`addTask`; approving auto-journals (V-56-journal-auto). | Case files complete; actions execute + journal; no new mutations. |
+| **V-57-flagship** | Enterprise Intelligence Dashboard assembles it all. | The page carries: command strip (created/leaking/at-risk/decisions + routes), health hero + six-axis Value Radar, dimension drills, Playback, Waterfall, Scenario Mode, Confidence Heatmap, Strategic Map, Pulse Narrative (what changed/why/what matters/what next); Mission Control cross-links; strip chips use `.eis-chip` (no collision with the IntelligenceBar's `.intel-chip`); dark/light/mobile/reduced-motion sweeps show 0 page errors. | All panels present; routes work; clean sweeps. |
+
+---
+
 ## 10. Pass/fail summary template
 
 | Section | Checks | Pass | Fail | N/A |
@@ -251,8 +334,15 @@ enhancements are the cleanest presentation-only span yet — **not even a data c
 | Phase 3A experience | 9 | | | |
 | Phase 3B experience | 9 | | | |
 | Phase 4A + enhancements | 12 | | | |
-| **Total** | **83** | | | |
+| Phase 5B platform | 9 | | | |
+| Phase 5B.5 executive excellence | 7 | | | |
+| Phase 5B.6 production hardening | 10 | | | |
+| Phase 5B.7 enterprise intelligence | 10 | | | |
+| **Total** | **119** | | | |
 
 A release is **verified** when every **S1** check passes and no **S2** check fails.
-The three experience guardrails — `V-3A-nologic`, `V-3B-nologic`, `V-4A-nologic` (all
-S1) — must all pass: the experience grew, the substance never changed.
+The experience guardrails — `V-3A-nologic`, `V-3B-nologic`, `V-4A-nologic`,
+`V-55-nologic`, `V-57-nologic` (empty-diff) and `V-5B-additive`, `V-56-additive`
+(additive-only, mirrored) — must all pass. The strongest single invariant in the
+repo: **`engine.js` has an empty diff from Phase 3A through Phase 5B.7** — five
+sprints of experience, zero change to the value math.
