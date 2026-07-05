@@ -390,8 +390,8 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.2px; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
-.seg { display: inline-flex; background: var(--line-2); border-radius: 9px; padding: 3px; gap: 2px; }
-.seg button { padding: 6px 12px; border-radius: 7px; font-size: 12.5px; font-weight: 700; color: var(--grey); }
+.seg { display: inline-flex; background: var(--line-2); border-radius: 9px; padding: 3px; gap: 2px; max-width: 100%; overflow-x: auto; }
+.seg button { padding: 6px 12px; border-radius: 7px; font-size: 12.5px; font-weight: 700; color: var(--grey); white-space: nowrap; }
 .seg button.active { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
 
 /* ---- Tables -------------------------------------------------------------- */
@@ -926,6 +926,47 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .mq-val { flex: none; font-size: 12.5px; font-weight: 800; min-width: 62px; text-align: right; }
 .mq-lane { margin-top: 16px; }
 .mq-lane-h { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+
+/* ---- Chief of Staff orchestration (Phase 5B.5) --------------------------- */
+.orch-flow { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding: 6px 2px 10px; }
+/* flex-basis auto + no shrink: segments never collapse below their content, so
+   the flow's own overflow-x scroll engages instead of nodes overlapping */
+.orch-seg { display: flex; align-items: stretch; flex: 1 0 auto; }
+.orch-node { flex: 1; min-width: 148px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 11px 12px; }
+.orch-node-n { font-weight: 800; font-size: 13.5px; }
+.orch-node-r { font-size: 11px; color: var(--navy); font-weight: 700; margin-top: 1px; }
+.orch-node-s { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.orch-node-s li { font-size: 11px; color: var(--grey); line-height: 1.35; padding-left: 10px; position: relative; }
+.orch-node-s li::before { content: ''; position: absolute; left: 0; top: 5px; width: 4px; height: 4px; border-radius: 50%; background: var(--grey-2); }
+.orch-chief { border-color: var(--navy); background: var(--tint-navy); }
+.orch-chief .orch-node-s li::before { background: var(--navy); }
+.orch-link { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 84px; gap: 4px; padding: 0 4px; }
+.orch-wire { position: relative; width: 100%; height: 2px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.orch-pulse { position: absolute; top: 0; left: -30%; width: 30%; height: 100%; background: var(--navy); border-radius: 2px; animation: orch-travel 2.2s linear infinite; }
+@keyframes orch-travel { to { left: 100%; } }
+.orch-flow-l { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); font-weight: 800; text-align: center; line-height: 1.2; }
+.orch-tension-h { margin: 4px 0 10px; font-size: 13px; }
+.orch-tensions { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 10px; }
+/* minmax(0,1fr) lets the position cards shrink below badge min-content instead
+   of forcing page-level horizontal scroll; the header wraps the % under the badge */
+.orch-tension { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: 8px; }
+.orch-pos { position: relative; background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; opacity: 0.75; min-width: 0; overflow: hidden; }
+.orch-pos.leads { opacity: 1; border-color: var(--navy); }
+.orch-pos-h { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.orch-pos-c { margin-left: auto; font-size: 11.5px; font-weight: 800; }
+.orch-pos-t { font-size: 12px; font-weight: 700; line-height: 1.35; margin-top: 5px; }
+.orch-leads { position: absolute; top: -8px; right: 8px; background: var(--navy); color: #fff; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 999px; padding: 2px 8px; }
+.orch-vs { align-self: center; font-size: 10.5px; font-weight: 800; color: var(--grey-2); text-transform: uppercase; }
+@media (max-width: 1000px) {
+  .orch-flow { flex-direction: column; }
+  .orch-seg { flex-direction: column; }
+  .orch-link { width: 100%; flex-direction: row; height: 34px; gap: 8px; }
+  .orch-wire { width: 40px; }
+}
+@media (max-width: 700px) {
+  .orch-tension { grid-template-columns: 1fr; }
+  .orch-vs { justify-self: center; }
+}
 @media (max-width: 700px) {
   .mq-row { flex-wrap: wrap; }
   .mq-rank { display: none; }

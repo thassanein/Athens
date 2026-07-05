@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { aiRecommendations, decisionJournal } from '../lib/model.js'
 import { companionBrief, OPERATING_MODES, defaultModeFor } from '../lib/companion.js'
+import { orchestrationModel } from '../lib/orchestration.js'
 import { personName } from '../lib/engine.js'
 import { money, pct, dateLabel } from '../lib/format.js'
 import { Bar } from '../components/ui.jsx'
@@ -26,6 +27,7 @@ export default function ChiefOfStaff({ db, user, navigate }) {
   const recos = aiRecommendations(db)
   const journal = decisionJournal(db)
   const memory = (db.audit_log || []).slice(0, 10)
+  const orch = orchestrationModel(db, user)
 
   const agents = useMemo(() => ['all', ...Array.from(new Set(recos.map((r) => r.agent)))], [recos])
   const shown = agent === 'all' ? recos : recos.filter((r) => r.agent === agent)
@@ -68,6 +70,54 @@ export default function ChiefOfStaff({ db, user, navigate }) {
             </div>
           )}
         </div>
+      </div>
+
+      {/* orchestration — how the agent team collaborates (5B.5 item 3) */}
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>How your AI team works</h3><span className="spacer" /><span className="badge b-navy"><IconAI /> deterministic orchestration</span></div>
+        <div className="orch-flow">
+          {orch.stages.map((s, k) => (
+            <div key={s.key} className="orch-seg">
+              <div className={`orch-node ${s.key === 'chief' ? 'orch-chief' : ''}`}>
+                <div className="orch-node-n">{s.name}</div>
+                <div className="orch-node-r">{s.role}</div>
+                <ul className="orch-node-s">
+                  {s.stats.map((x, i) => <li key={i}>{x}</li>)}
+                </ul>
+              </div>
+              {k < orch.stages.length - 1 && (
+                <div className="orch-link" aria-hidden="true">
+                  <span className="orch-wire"><span className="orch-pulse" /></span>
+                  <span className="orch-flow-l">{s.flow}</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {orch.tensions.length > 0 && (
+          <>
+            <div className="divider" />
+            <div className="orch-tension-h"><b>Where agents disagree</b><span className="muted" style={{ fontSize: 12 }}> — the higher confidence leads; the dissent is kept as evidence, never discarded.</span></div>
+            <div className="orch-tensions">
+              {orch.tensions.map((t, k) => (
+                <div key={k} className="orch-tension">
+                  <div className={`orch-pos ${t.leads === 'a' ? 'leads' : ''}`}>
+                    <div className="orch-pos-h"><span className="badge b-green">{t.a.agent}</span><span className="mono orch-pos-c">{pct(t.a.confidence)}</span></div>
+                    <div className="orch-pos-t">{t.a.title}</div>
+                    {t.leads === 'a' && <div className="orch-leads">leads</div>}
+                  </div>
+                  <div className="orch-vs">vs</div>
+                  <div className={`orch-pos ${t.leads === 'b' ? 'leads' : ''}`}>
+                    <div className="orch-pos-h"><span className="badge b-red">{t.b.agent}</span><span className="mono orch-pos-c">{pct(t.b.confidence)}</span></div>
+                    <div className="orch-pos-t">{t.b.title}</div>
+                    {t.leads === 'b' && <div className="orch-leads">leads</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* agent console */}
