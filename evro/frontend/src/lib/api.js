@@ -7,10 +7,22 @@ const LS_KEY = 'evro.db.v1'
 const TIMEOUT = 6000
 const clone = (o) => JSON.parse(JSON.stringify(o))
 
+// Backfill any top-level collections added since a cached db was written, from
+// the bundled snapshot. Additive-only: a returning demo user keeps their edits
+// but still gains new entities (e.g. Phase 5B org/knowledge/scenario tables)
+// without a destructive localStorage version bump.
+function withSchemaBackfill(db) {
+  if (!db || typeof db !== 'object') return clone(SEED)
+  for (const k of Object.keys(SEED)) {
+    if (db[k] === undefined) db[k] = clone(SEED[k])
+  }
+  return db
+}
+
 function loadLocal() {
   try {
     const raw = localStorage.getItem(LS_KEY)
-    if (raw) return JSON.parse(raw)
+    if (raw) return withSchemaBackfill(JSON.parse(raw))
   } catch { /* ignore */ }
   return clone(SEED)
 }

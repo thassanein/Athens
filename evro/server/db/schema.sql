@@ -14,3 +14,10 @@ CREATE TABLE IF NOT EXISTS evro_badges            (id TEXT PRIMARY KEY, data JSO
 CREATE TABLE IF NOT EXISTS evro_points_ledger     (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_audit_log         (id TEXT PRIMARY KEY, data JSONB, ts TIMESTAMPTZ);
 CREATE INDEX IF NOT EXISTS idx_evro_audit_ts ON evro_audit_log (ts DESC);
+-- Phase 5B — Athens OS foundation entities (configurable org, scenarios,
+-- knowledge/glossary, decision journal, deterministic AI recommendations).
+CREATE TABLE IF NOT EXISTS evro_org_nodes          (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_forecast_scenarios (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_knowledge_cards    (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_decision_journal   (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_ai_recommendations (id TEXT PRIMARY KEY, data JSONB);

@@ -33,6 +33,7 @@ const rand = () => rng()
 const randInt = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1))
 const pick = (arr) => arr[Math.floor(rand() * arr.length)]
 const round = (n) => Math.round(n)
+const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 const M = 1_000_000
 
 // --- time frame -------------------------------------------------------------
@@ -695,6 +696,109 @@ for (let k = 0; k < 5 && k + 1 < realizing.length; k++) addDep(realizing[k].id, 
 const INFLATION = { 'g-fuel': 0.07, 'g-benefits': 0.09, 'g-disposal': 0.05, 'g-labor': 0.045, 'g-maint': 0.04, 'g-facilities': 0.035, 'g-containers': 0.03, 'g-fleet': 0.03, 'g-utilities': 0.04, 'g-itt': 0.03, 'g-prof': 0.03, 'g-supplies': 0.025, 'g-rental': 0.03, 'g-indirect': 0.03 }
 
 // ---------------------------------------------------------------------------
+// 11) Athens OS (Phase 5B) foundation entities — the net-new Section-6 entities
+//     the app reads instead of hardcoding structure/definitions: a configurable
+//     org hierarchy, forecast scenarios, knowledge cards (glossary/
+//     explainability), a decision journal, and deterministic (rules-based) AI
+//     recommendations. User/Initiative/ValueModel/Risk/Approval/Comment/
+//     ActivityLog already exist (people, initiatives + embedded value/risk/
+//     approval/comment models, audit_log) — not duplicated here.
+// ---------------------------------------------------------------------------
+
+// 11a) OrganizationNode — a configurable hierarchy so Athens' structure is data,
+//      not code. One enterprise root; two dimensions hang off it: geography
+//      (region → yard) and operating (business unit, department). Derived from
+//      the seeded people/initiatives so the tree always matches live tags.
+const org_nodes = [{ id: 'org-root', type: 'enterprise', name: 'Athens Services', parent_id: null, dimension: 'enterprise', meta: { fiscalYear: FY } }]
+for (const r of [...new Set(people.map((p) => p.region))]) {
+  const rid = `org-region-${slug(r)}`
+  org_nodes.push({ id: rid, type: 'region', name: r, parent_id: 'org-root', dimension: 'geography', meta: {} })
+  for (const y of [...new Set(people.filter((p) => p.region === r).map((p) => p.yard))])
+    org_nodes.push({ id: `org-yard-${slug(y)}`, type: 'yard', name: y, parent_id: rid, dimension: 'geography', meta: {} })
+}
+for (const bu of [...new Set(initiatives.map((i) => i.business_unit).filter(Boolean))])
+  org_nodes.push({ id: `org-bu-${slug(bu)}`, type: 'business_unit', name: bu, parent_id: 'org-root', dimension: 'operating', meta: {} })
+for (const d of [...new Set(people.map((p) => p.fn))])
+  org_nodes.push({ id: `org-dept-${slug(d)}`, type: 'department', name: d, parent_id: 'org-root', dimension: 'operating', meta: {} })
+
+// 11b) ForecastScenario — Base / Aggressive / Conservative / Custom. Presentation
+//      lenses (assumption multipliers the UI can apply), NOT a change to the
+//      forecast engine or a savings target. Base = plan of record, unadjusted.
+const forecast_scenarios = [
+  { id: 'fs-base', key: 'base', name: 'Base case', description: 'Validated plan of record — realization exactly as the engine forecasts. No adjustment.', assumptions: { realization_multiplier: 1.0, timing_shift_months: 0, adoption_factor: 1.0 }, editable: false, is_default: true },
+  { id: 'fs-aggressive', key: 'aggressive', name: 'Aggressive', description: 'Upside lens — faster ramp, full adoption. Illustrative, not a target.', assumptions: { realization_multiplier: 1.15, timing_shift_months: -1, adoption_factor: 1.0 }, editable: false, is_default: false },
+  { id: 'fs-conservative', key: 'conservative', name: 'Conservative', description: 'Downside stress lens — slower adoption, delayed timing.', assumptions: { realization_multiplier: 0.85, timing_shift_months: 2, adoption_factor: 0.9 }, editable: false, is_default: false },
+  { id: 'fs-custom', key: 'custom', name: 'Custom', description: 'Editable scenario — adjust the assumptions to model your own case.', assumptions: { realization_multiplier: 1.0, timing_shift_months: 0, adoption_factor: 1.0 }, editable: true, is_default: false },
+]
+
+// 11c) KnowledgeCard — the glossary + explainability substrate (no glossary
+//      source was provided, so these are sensible EVRO defaults). Each term
+//      carries a one-line short, a fuller definition, an optional formula and
+//      worked example, three audience levels, and related terms. Feeds hover
+//      help, "Explain This", and the Knowledge Layer.
+const kc = (id, term, category, aka, short, definition, extra = {}) => ({
+  id, term, category, aka, short, definition,
+  formula: extra.formula || null, example: extra.example || null,
+  levels: { beginner: extra.beginner || short, practitioner: extra.practitioner || definition, executive: extra.executive || short },
+  related: extra.related || [],
+})
+const knowledge_cards = [
+  kc('kc-rav', 'Risk-Adjusted Value', 'value', ['RAV'], 'Expected value after discounting for stage confidence and delivery risk.', 'The headline number EVRO ranks on. It takes an initiative\'s gross annual value and multiplies by stage confidence and the realization factor, so early-stage or at-risk value is not counted at face value.', { formula: 'RAV = Gross annual value × Stage confidence × Realization factor', example: '$1.0M gross × 0.75 (Capability) × 0.85 (at risk) = $637.5K RAV', related: ['kc-gross', 'kc-confidence', 'kc-realization-factor'], executive: 'Our honest, risk-adjusted view of what an initiative is worth — not its best-case headline.' }),
+  kc('kc-gross', 'Gross Annual Value', 'value', ['Gross value'], 'The full annualised benefit an initiative would deliver at face value.', 'The un-adjusted annual benefit before any confidence or risk discount. It is the starting point for RAV and is never itself booked as realized.', { related: ['kc-rav', 'kc-realized'] }),
+  kc('kc-realized', 'Realized Value', 'value', ['Realized'], 'Value that FP&A has validated as actually delivered.', 'The only value that counts as realized is a monthly actual that FP&A has signed off. Un-validated actuals sit in pipeline but never in the realized total — this keeps the number defensible.', { formula: 'Realized = Σ validated monthly actuals', related: ['kc-pipeline', 'kc-fpna-validation'], executive: 'Money we can prove hit the P&L — validated by Finance, not self-reported.' }),
+  kc('kc-pipeline', 'Pipeline Value', 'value', [], 'Risk-adjusted value of everything in flight that is not yet realized.', 'The forward book of value — initiatives from Idea through Launch, risk-adjusted. Realized value is a strict subset of what the pipeline promised.', { related: ['kc-rav', 'kc-realized'] }),
+  kc('kc-reduction', 'Cost Reduction', 'method', [], 'Actively eliminating existing cost: original price − new lower price.', 'One of three benefit types. A reduction removes cost that is on the books today, typically by renegotiating a price or standardizing a spec.', { formula: 'Benefit = Original (run-rate) cost − New lower cost', example: 'Renegotiate a $2.0M contract to $1.8M → $200K reduction', related: ['kc-savings', 'kc-avoidance'] }),
+  kc('kc-savings', 'Cost Savings', 'method', [], 'Productivity: lowering run-rate cost without cutting the price you pay.', 'A savings improves how efficiently work is done — fewer hours, less waste, higher throughput — so the run-rate falls without a price change or headcount cut.', { example: 'Route optimization cuts miles 6% → lower fuel & labor run-rate', related: ['kc-reduction', 'kc-avoidance'] }),
+  kc('kc-avoidance', 'Cost Avoidance', 'method', [], 'Preventing a future cost increase: projected cost − actual cost.', 'Avoidance stops a cost that has not happened yet — capping an index escalation, locking a price before a rise. It is real value but is tracked separately from reductions/savings because it never lowers today\'s run-rate.', { formula: 'Benefit = Projected future cost − Actual cost after intervention', example: 'Supplier seeks +9%; cap at +3% → 6 points of avoidance', related: ['kc-reduction', 'kc-savings'] }),
+  kc('kc-baseline', 'Baseline', 'method', [], 'The validated reference cost an initiative\'s benefit is measured against.', 'The anchor for every benefit claim, tied to the 2025 AP register run-rate (or a forecast, for avoidance). FP&A validates the baseline before value can be recognized.', { related: ['kc-fpna-validation', 'kc-realized'] }),
+  kc('kc-leakage', 'Value Leakage', 'value', [], 'Negotiated value that never lands because real volume did not flow through.', 'The gap between the value negotiated on paper and the value actually implemented in the run-rate. A discount only pays off if spend flows through the new contract.', { formula: 'Leakage = Negotiated value − Implemented (actual) value', related: ['kc-realized', 'kc-realization-factor'] }),
+  kc('kc-confidence', 'Stage Confidence', 'method', [], 'The probability weight attached to each lifecycle stage.', 'Each stage carries a confidence factor (Idea 25% → Launch 100%) used to risk-adjust value. It reflects how likely the benefit is to land given how mature the work is.', { formula: 'Idea .25 · Feasibility .50 · Capability .75 · Launch+ 1.0', related: ['kc-rav', 'kc-stage-gate'] }),
+  kc('kc-realization-factor', 'Realization Factor', 'method', [], 'A haircut applied to value when an initiative carries unmitigated high risk.', 'When a realizing initiative has an open high risk, its recognized value is trimmed (e.g. ×0.85) until the risk is mitigated — so the portfolio never over-books at-risk value.', { related: ['kc-rav', 'kc-risk-score'] }),
+  kc('kc-npv', 'Net Present Value', 'finance', ['NPV'], 'Time-value view of an initiative: discounted benefits minus investment.', 'Future benefits are discounted to today\'s dollars at the enterprise discount rate and netted against the implementation cost, so multi-year value is comparable to a one-time spend.', { formula: 'NPV = Σ (benefit_t ÷ (1+r)^t) − implementation cost', related: ['kc-payback', 'kc-rav'] }),
+  kc('kc-payback', 'Payback Period', 'finance', [], 'How long until an initiative\'s cumulative benefit repays its investment.', 'The month at which running benefits equal the up-front implementation cost. Shorter payback = faster self-funding.', { related: ['kc-npv'] }),
+  kc('kc-hhi', 'Concentration (HHI)', 'value', ['Herfindahl'], 'How concentrated value is in a few owners, regions, or units.', 'A Herfindahl-style index of value share. High concentration means the portfolio depends heavily on a few sources — a delivery-risk signal.', { formula: 'HHI = Σ (value share)²', related: ['kc-rav'] }),
+  kc('kc-addressable', 'Addressable Spend', 'value', [], 'The portion of spend EVRO can realistically influence.', 'Third-party, sourceable spend — the denominator for opportunity sizing. Pass-through items (franchise fees, disposal, taxes, pension) are tagged non-addressable and excluded.', { example: '$437.4M addressable of ~$694M total', related: ['kc-opportunity'] }),
+  kc('kc-opportunity', 'Opportunity', 'value', [], 'An advertised, sized value idea a team can claim into an initiative.', 'A pre-sized value pool (conservative–stretch band) on a sourcing group. Claiming one spins up a pre-tagged initiative and enters the approval funnel.', { related: ['kc-addressable', 'kc-initiative'] }),
+  kc('kc-effort', 'Effort Score', 'method', [], 'A 1–5 estimate of how hard an initiative is to deliver.', 'Used with value to prioritise (value-vs-effort). Higher effort pushes an item down the ranking unless the value justifies it.', { related: ['kc-rav'] }),
+  kc('kc-risk-score', 'Risk Score', 'method', [], 'Likelihood × impact for a logged risk (1–25).', 'Every risk is scored likelihood × impact. ≥15 is high (drives red status and may trigger a realization-factor haircut); 8–14 amber.', { formula: 'Score = Likelihood (1–5) × Impact (1–5)', related: ['kc-realization-factor', 'kc-rag'] }),
+  kc('kc-rag', 'RAG Status', 'method', ['Red/Amber/Green'], 'The health colour of an initiative, driven by its worst open risk.', 'Green = on track, Amber = watch, Red = intervention needed. Set from the highest risk score on the record.', { related: ['kc-risk-score'] }),
+  kc('kc-stage-gate', 'Stage Gate', 'governance', [], 'An approval checkpoint an initiative must pass to advance a stage.', 'Advancing (e.g. Feasibility → Capability) needs the required approvals — line manager and FP&A, plus Steering for the biggest moves — recorded on the initiative.', { related: ['kc-confidence', 'kc-fpna-validation'] }),
+  kc('kc-fpna-validation', 'FP&A Validation', 'governance', [], 'Finance sign-off that makes value real.', 'FP&A validates the baseline and each monthly actual. Nothing counts as realized value without it — the control that keeps the number credible.', { related: ['kc-realized', 'kc-baseline'] }),
+  kc('kc-sustainment', 'Sustainment', 'governance', [], 'Keeping delivered value from eroding after launch.', 'Post-launch stage where benefits are monitored to ensure the run-rate improvement holds and does not quietly leak back.', { related: ['kc-leakage', 'kc-realized'] }),
+]
+
+// 11d) DecisionJournal — a traceable record of consequential calls, each linked
+//      to evidence and (where relevant) an initiative. Seeded from real records.
+const dj = (id, daysAgo, title, decision, rationale, by, evidence, outcome, lessons, linked) =>
+  ({ id, at: isoDaysAgo(daysAgo), title, decision, rationale, decided_by: by, evidence, outcome, lessons, linked_initiative_id: linked || null })
+const launchLike = initiatives.filter((i) => ['launch', 'realization', 'sustainment'].includes(i.stage))
+const decision_journal = [
+  dj('dj-1', 40, `Advance "${launchLike[0]?.title || 'lead initiative'}" to Launch`, 'Approved', 'Baseline validated by FP&A and the single high risk had a logged countermeasure; expected RAV justified the implementation capital.', 'u-torres', ['FP&A baseline validation', 'Risk countermeasure log', 'RAV ranking'], 'Realizing on plan — first months of actuals within tolerance.', 'Insist on a countermeasure before Launch, not after — it de-risked the ramp.', launchLike[0]?.id),
+  dj('dj-2', 55, 'Fund the FY26 implementation-capital envelope at $6.0M', 'Approved', 'The efficient-frontier optimizer showed diminishing RAV per dollar beyond ~$6M given current pipeline maturity.', 'u-nguyen', ['Capital-allocation frontier', 'Pipeline RAV by stage'], 'Envelope set; optimizer re-runs as pipeline matures.', 'Size the envelope to pipeline maturity, not ambition.', null),
+  dj('dj-3', 30, 'Prioritise Fuel & CNG index-cap over spec work this quarter', 'Approved', 'Fuel carries the highest inflation exposure (7%); an index cap avoids the largest forecast increase per unit of effort.', 'u-chen', ['Inflation exposure by group', 'Opportunity attractiveness score'], 'Index-cap opportunity advanced ahead of lower-urgency specs.', 'Let inflation exposure, not just size, drive avoidance sequencing.', null),
+  dj('dj-4', 22, 'Hold one Benefits & Insurance proposal for re-scoping', 'Returned for rework', 'Proposed value leaned on volume assumptions FP&A could not yet tie to the AP register baseline.', 'u-nguyen', ['Intake financials', 'AP register baseline gap'], 'Returned to owner; awaiting a defensible baseline.', 'A proposal without a tie-out to baseline is not ready for the pipeline.', null),
+  dj('dj-5', 12, 'Open a value-leakage recovery on a realizing contract', 'Approved', 'Implemented run-rate trailed the negotiated price — volume was not fully flowing through the new contract.', 'u-schwartz', ['Negotiated vs implemented delta', 'Monthly actuals trend'], 'Recovery opened; owner reconciling invoice routing.', 'Track implemented vs negotiated monthly, not at year-end.', launchLike[1]?.id),
+]
+
+// 11e) AIRecommendation — deterministic, RULES-BASED suggestions (no LLM),
+//      derived here from real portfolio signals so the AI shell has grounded
+//      content. Each carries a confidence, evidence, and a value impact.
+const topInflationGroup = [...GROUPS].sort((a, b) => (INFLATION[b.id] || 0) - (INFLATION[a.id] || 0))[0]
+const unvalidatedCount = initiatives.filter((i) => i.actuals?.some((a) => !a.validated)).length
+const biggestOpp = [...opportunities].filter((o) => o.status === 'open').sort((a, b) => b.est_high - a.est_high)[0]
+const highRiskLaunch = initiatives.filter((i) => i.stage === 'launch' && (i.risks || []).some((r) => r.score >= 15))
+const air = (id, agent, title, recommendation, confidence, evidence, value_impact, category, linked) =>
+  ({ id, agent, title, recommendation, confidence, evidence, value_impact, category, status: 'open', rules_based: true, linked_id: linked || null })
+const ai_recommendations = [
+  air('ai-1', 'Realization Agent', `${unvalidatedCount} initiatives have unvalidated latest actuals`, `Nudge FP&A to validate the most recent month on ${unvalidatedCount} realizing initiatives so booked value reflects reality.`, 0.9, ['Monthly actuals flagged validated=false', 'Realized = validated actuals only'], null, 'governance', null),
+  air('ai-2', 'Avoidance Agent', `Prioritise an index cap on ${topInflationGroup?.name}`, `${topInflationGroup?.name} carries the highest inflation exposure (${Math.round((INFLATION[topInflationGroup?.id] || 0) * 100)}%). Sequence an index-cap / price-lock avoidance ahead of lower-urgency work.`, 0.8, [`Inflation exposure ${Math.round((INFLATION[topInflationGroup?.id] || 0) * 100)}% (highest of 14 groups)`, 'Avoidance = projected − actual'], Math.round((topInflationGroup?.spend || 0) * (INFLATION[topInflationGroup?.id] || 0) * 0.3), 'opportunity', null),
+  air('ai-3', 'Opportunity Agent', `Claim the largest open opportunity`, biggestOpp ? `"${biggestOpp.title}" is the largest unclaimed pool (up to $${(biggestOpp.est_high / M).toFixed(1)}M stretch). Assign an owner to enter it into the funnel.` : 'No open opportunities remain — pipeline is fully claimed.', 0.75, biggestOpp ? [`Stretch band $${(biggestOpp.est_low / M).toFixed(1)}M–$${(biggestOpp.est_high / M).toFixed(1)}M`, `Attractiveness ${biggestOpp.attractiveness}`] : ['All opportunities claimed'], biggestOpp ? Math.round((biggestOpp.est_low + biggestOpp.est_high) / 2) : null, 'opportunity', biggestOpp?.id || null),
+  air('ai-4', 'Risk Agent', highRiskLaunch.length ? `${highRiskLaunch.length} launch initiatives carry an unmitigated high risk` : 'No unmitigated high risks at Launch', highRiskLaunch.length ? `Review the countermeasure on ${highRiskLaunch.length} Launch-stage initiative(s); their value is haircut by the realization factor until mitigated.` : 'All Launch-stage high risks have a logged countermeasure.', highRiskLaunch.length ? 0.85 : 0.6, ['Risk score ≥ 15 = high', 'Realization factor haircut applies while open'], null, 'risk', highRiskLaunch[0]?.id || null),
+  air('ai-5', 'Concentration Agent', 'Watch value concentration by business unit', 'A large share of risk-adjusted value sits in one business unit. Diversify the pipeline or stress-test that unit\'s delivery capacity.', 0.7, ['Value share by business unit (HHI)', 'Delivery-risk signal'], null, 'risk', null),
+  air('ai-6', 'Leakage Agent', 'Monitor implemented vs negotiated value monthly', 'Several contract-based initiatives show a gap between negotiated and implemented value. Reconcile invoice routing to stop leakage before year-end.', 0.75, ['Negotiated − implemented delta', 'Leakage recovery precedent (decision journal)'], null, 'value', null),
+]
+
+// ---------------------------------------------------------------------------
 const seed = {
   meta: {
     now: NOW,
@@ -721,6 +825,12 @@ const seed = {
   badges,
   points_ledger,
   audit_log,
+  // Phase 5B — Athens OS foundation entities
+  org_nodes,
+  forecast_scenarios,
+  knowledge_cards,
+  decision_journal,
+  ai_recommendations,
 }
 
 // --- write outputs ----------------------------------------------------------
@@ -740,4 +850,5 @@ const realizedYTD = initiatives.reduce(
   0
 )
 console.log(`seed.json written: ${initiatives.length} initiatives, ${spend_categories.length} categories, ${opportunities.length} opportunities`)
+console.log(`athens-os foundation: ${org_nodes.length} org nodes, ${forecast_scenarios.length} scenarios, ${knowledge_cards.length} knowledge cards, ${decision_journal.length} decisions, ${ai_recommendations.length} AI recs`)
 console.log(`addressable Σ = $${(addressableTotal / M).toFixed(1)}M · realized YTD (validated) ≈ $${(realizedYTD / M).toFixed(2)}M`)

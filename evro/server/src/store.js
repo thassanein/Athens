@@ -24,6 +24,12 @@ export async function loadDb(exec = pool) {
     badges: await get('badges'),
     points_ledger: await get('points_ledger'),
     audit_log: (await q(`SELECT data FROM ${phys('audit_log')} ORDER BY ts DESC`)).rows.map((r) => r.data),
+    // Phase 5B — Athens OS foundation entities
+    org_nodes: await get('org_nodes'),
+    forecast_scenarios: await get('forecast_scenarios'),
+    knowledge_cards: await get('knowledge_cards'),
+    decision_journal: await get('decision_journal'),
+    ai_recommendations: await get('ai_recommendations'),
   }
 }
 
@@ -31,7 +37,7 @@ export async function loadDb(exec = pool) {
 // pair's first element is the logical name (= db object key AND, via phys(),
 // the physical table name).
 export async function persistMutable(client, db) {
-  for (const [t, key] of [['initiatives', 'id'], ['opportunities', 'id'], ['savings_pct_config', 'group_id'], ['points_ledger', 'id']]) {
+  for (const [t, key] of [['initiatives', 'id'], ['opportunities', 'id'], ['savings_pct_config', 'group_id'], ['points_ledger', 'id'], ['decision_journal', 'id'], ['ai_recommendations', 'id']]) {
     await client.query(`DELETE FROM ${phys(t)}`)
     for (const r of db[t]) await client.query(`INSERT INTO ${phys(t)} (${key}, data) VALUES ($1, $2)`, [r[key], r])
   }

@@ -33,6 +33,9 @@ function inserts() {
     savings_pct_config: seed.savings_pct_config, opportunities: seed.opportunities,
     initiatives: seed.initiatives, dependencies: seed.dependencies, badges: seed.badges,
     points_ledger: seed.points_ledger,
+    org_nodes: seed.org_nodes, forecast_scenarios: seed.forecast_scenarios,
+    knowledge_cards: seed.knowledge_cards, decision_journal: seed.decision_journal,
+    ai_recommendations: seed.ai_recommendations,
   }
   for (const t of TABLES) {
     if (t === 'audit_log') continue

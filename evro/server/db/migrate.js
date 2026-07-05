@@ -20,7 +20,7 @@ export const PREFIX = 'evro_'
 export const phys = (t) => PREFIX + t // logical table name -> physical (prefixed) name
 export const META = PREFIX + 'meta'   // evro_meta — namespaced key/value metadata
 // Logical table names (also the keys on the in-memory db object + seed.json).
-export const TABLES = ['krs', 'people', 'portfolios', 'programs', 'sourcing_groups', 'spend_categories', 'savings_pct_config', 'opportunities', 'initiatives', 'dependencies', 'badges', 'points_ledger', 'audit_log']
+export const TABLES = ['krs', 'people', 'portfolios', 'programs', 'sourcing_groups', 'spend_categories', 'savings_pct_config', 'opportunities', 'initiatives', 'dependencies', 'badges', 'points_ledger', 'audit_log', 'org_nodes', 'forecast_scenarios', 'knowledge_cards', 'decision_journal', 'ai_recommendations']
 
 export const DDL = `
 CREATE TABLE IF NOT EXISTS evro_meta              (key TEXT PRIMARY KEY, value TEXT);
@@ -38,6 +38,13 @@ CREATE TABLE IF NOT EXISTS evro_badges            (id TEXT PRIMARY KEY, data JSO
 CREATE TABLE IF NOT EXISTS evro_points_ledger     (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_audit_log         (id TEXT PRIMARY KEY, data JSONB, ts TIMESTAMPTZ);
 CREATE INDEX IF NOT EXISTS idx_evro_audit_ts ON evro_audit_log (ts DESC);
+-- Phase 5B — Athens OS foundation entities (configurable org, scenarios,
+-- knowledge/glossary, decision journal, deterministic AI recommendations).
+CREATE TABLE IF NOT EXISTS evro_org_nodes          (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_forecast_scenarios (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_knowledge_cards    (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_decision_journal   (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_ai_recommendations (id TEXT PRIMARY KEY, data JSONB);
 `
 
 export async function migrate() {
@@ -67,6 +74,11 @@ export async function migrate() {
     await ins('dependencies', 'id', seed.dependencies)
     await ins('badges', 'id', seed.badges)
     await ins('points_ledger', 'id', seed.points_ledger)
+    await ins('org_nodes', 'id', seed.org_nodes)
+    await ins('forecast_scenarios', 'id', seed.forecast_scenarios)
+    await ins('knowledge_cards', 'id', seed.knowledge_cards)
+    await ins('decision_journal', 'id', seed.decision_journal)
+    await ins('ai_recommendations', 'id', seed.ai_recommendations)
     for (const r of seed.audit_log || []) await client.query(`INSERT INTO ${phys('audit_log')} (id, data, ts) VALUES ($1, $2, $3)`, [r.id, r, r.ts])
     await client.query(`INSERT INTO ${META} (key, value) VALUES ('meta', $1) ON CONFLICT (key) DO UPDATE SET value = excluded.value`, [JSON.stringify(seed.meta)])
     await client.query(`INSERT INTO ${META} (key, value) VALUES ('seed_hash', $1) ON CONFLICT (key) DO UPDATE SET value = excluded.value`, [hash])
