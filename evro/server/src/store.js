@@ -30,6 +30,8 @@ export async function loadDb(exec = pool) {
     knowledge_cards: await get('knowledge_cards'),
     decision_journal: await get('decision_journal'),
     ai_recommendations: await get('ai_recommendations'),
+    integration_sources: await get('integration_sources'),
+    feature_flags: await get('feature_flags'),
   }
 }
 
@@ -37,7 +39,7 @@ export async function loadDb(exec = pool) {
 // pair's first element is the logical name (= db object key AND, via phys(),
 // the physical table name).
 export async function persistMutable(client, db) {
-  for (const [t, key] of [['initiatives', 'id'], ['opportunities', 'id'], ['savings_pct_config', 'group_id'], ['points_ledger', 'id'], ['decision_journal', 'id'], ['ai_recommendations', 'id']]) {
+  for (const [t, key] of [['initiatives', 'id'], ['opportunities', 'id'], ['savings_pct_config', 'group_id'], ['points_ledger', 'id'], ['decision_journal', 'id'], ['ai_recommendations', 'id'], ['feature_flags', 'id']]) {
     await client.query(`DELETE FROM ${phys(t)}`)
     for (const r of db[t]) await client.query(`INSERT INTO ${phys(t)} (${key}, data) VALUES ($1, $2)`, [r[key], r])
   }

@@ -45,10 +45,12 @@ import Pulse from './pages/Pulse.jsx'
 import Knowledge from './pages/Knowledge.jsx'
 import ChiefOfStaff from './pages/ChiefOfStaff.jsx'
 import Governance from './pages/Governance.jsx'
+import Integrations from './pages/Integrations.jsx'
 import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
+import { disabledNavKeys } from './lib/model.js'
 
-const PAGES = { morning: Morning, valueoffice: ValueOffice, pulse: Pulse, chief: ChiefOfStaff, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, timeline: Timeline, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, valuegraph: ValueGraph, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, summit: Summit, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, knowledge: Knowledge, governance: Governance, intake: Intake, initiative: Initiative }
-const TITLES = { morning: 'Morning operating screen', valueoffice: 'Athens Value Office', pulse: 'Enterprise Pulse', chief: 'Chief of Staff', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', timeline: 'Enterprise timeline', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', valuegraph: 'Enterprise value graph', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', summit: 'AVCM Value Summit', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', knowledge: 'Knowledge Layer', governance: 'Workflow & Governance', intake: 'New initiative', initiative: 'Initiative' }
+const PAGES = { morning: Morning, valueoffice: ValueOffice, pulse: Pulse, chief: ChiefOfStaff, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, timeline: Timeline, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, valuegraph: ValueGraph, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, summit: Summit, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, knowledge: Knowledge, governance: Governance, integrations: Integrations, intake: Intake, initiative: Initiative }
+const TITLES = { morning: 'Morning operating screen', valueoffice: 'Athens Value Office', pulse: 'Enterprise Pulse', chief: 'Chief of Staff', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', timeline: 'Enterprise timeline', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', valuegraph: 'Enterprise value graph', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', summit: 'AVCM Value Summit', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', knowledge: 'Knowledge Layer', governance: 'Workflow & Governance', integrations: 'Integration & Assembly Readiness', intake: 'New initiative', initiative: 'Initiative' }
 
 const HOME = { exec: 'morning', admin: 'morning', fpna: 'morning', leader: 'morning', owner: 'morning', procurement: 'morning' }
 const ALWAYS_OK = ['initiative', 'intake']
@@ -143,6 +145,11 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
+  // Assembly readiness: if the active page's module was just disabled, leave it.
+  useEffect(() => {
+    if (db && user && disabledNavKeys(db).has(page)) { setPage(HOME[user.role] || 'morning'); setSelId(null) }
+  }, [db, user, page])
+
   if (!db || !user) return (
     <div className="app-loading">
       <div className="app-loading-mark"><BrandMark size={64} /></div>
@@ -160,7 +167,7 @@ export default function App() {
    <KnowledgeProvider value={{ db, level: effLevel, setLevel }}>
     <div className="layout">
       <aside className={`sidebar ${drawer ? 'open' : ''}`}>
-        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={ROLE_LABEL[user.role] || 'EVRO'} onBrand={() => setEntered(false)} />
+        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={ROLE_LABEL[user.role] || 'EVRO'} onBrand={() => setEntered(false)} disabled={disabledNavKeys(db)} />
       </aside>
       <div className={`scrim ${drawer ? 'show' : ''}`} onClick={() => setDrawer(false)} />
 

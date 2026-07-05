@@ -51,6 +51,23 @@ app.get('/api/portfolio', async (_req, res, next) => {
   try { res.json(portfolioDiagnostics(await loadDb())) } catch (err) { next(err) }
 })
 
+// ---- integration readiness (Phase 5B) --------------------------------------
+// Read-only source-system registry + module flags, for external tools and the
+// Integrations screen. Real ERP CONNECTORS attach here: each source in the
+// registry (Soft-Pak, Workday, Finance/GL, Salesforce, Genesys…) would gain an
+// ingest handler that maps its fields (see each source's `mappings`) onto the
+// EVRO entities and writes via the existing store — no schema change needed.
+app.get('/api/integration', async (_req, res, next) => {
+  try {
+    const db = await loadDb()
+    res.json({
+      sources: db.integration_sources || [],
+      modules: db.feature_flags || [],
+      note: 'Stub registry. Connectors not yet live; only the AP register feeds real data.',
+    })
+  } catch (err) { next(err) }
+})
+
 // ---- audited write: apply a mutation reducer, persist, return new db --------
 app.post('/api/action', async (req, res, next) => {
   const { action, payload } = req.body || {}
@@ -78,7 +95,7 @@ app.get('/api', (_req, res) => {
   res.json({
     app: 'Athens EVRO',
     description: 'Enterprise Value Realization Office — cost-management PoC. Return-maximization model (no target).',
-    endpoints: { health: '/api/health', db: '/api/db', exec: '/api/exec', portfolio: '/api/portfolio', action: 'POST /api/action', overview: '/overview', llms: '/llms.txt' },
+    endpoints: { health: '/api/health', db: '/api/db', exec: '/api/exec', portfolio: '/api/portfolio', integration: '/api/integration', action: 'POST /api/action', overview: '/overview', llms: '/llms.txt' },
   })
 })
 

@@ -30,6 +30,7 @@ export const NAV = [
     ['governance', 'Governance', IconCockpit, ENTL],
   ] },
   { group: 'Value engines', items: [
+    ['integrations', 'Integrations', IconGraph, ENTL],
     ['valuemap', 'Value Map', IconMap, ENTL],
     ['scenarios', 'Scenarios', IconScenarios, ENT],
     ['optimize', 'Capital Allocation', IconOptimize, ENT],
@@ -57,7 +58,8 @@ export const NAV = [
 export const allowedKeys = (role) => NAV.flatMap((s) => s.items).filter(([, , , roles]) => roles.includes(role)).map(([k]) => k)
 export const navScreens = (role) => NAV.flatMap((s) => s.items).filter(([, , , roles]) => roles.includes(role)).map(([key, label]) => ({ key, label }))
 
-export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel, onBrand }) {
+export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel, onBrand, disabled }) {
+  const off = disabled || new Set()
   return (
     <>
       <div className="brand">
@@ -72,7 +74,7 @@ export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel
       <nav className="nav">
         {showNew && <button className="new-btn" onClick={onNew}><IconPlus /> New initiative</button>}
         {NAV.map((sec) => {
-          const items = sec.items.filter(([, , , roles]) => roles.includes(role))
+          const items = sec.items.filter(([key, , , roles]) => roles.includes(role) && !off.has(key))
           if (!items.length) return null
           return (
             <div key={sec.group}>

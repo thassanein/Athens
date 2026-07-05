@@ -851,6 +851,35 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 .gov-log-d { font-size: 12.5px; line-height: 1.4; }
 .gov-log-m { font-size: 11px; color: var(--grey-2); margin-top: 1px; }
 
+/* ---- Integration & Assembly Readiness (Phase 5B) ------------------------- */
+.int-list { display: flex; flex-direction: column; gap: 8px; }
+.int-src { border: 1px solid var(--line); border-radius: 11px; overflow: hidden; }
+.int-src.open { border-color: var(--navy); }
+.int-src-h { display: flex; align-items: center; gap: 11px; width: 100%; text-align: left; padding: 12px 13px; background: var(--panel-2); cursor: pointer; }
+.int-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; }
+.int-src-main { flex: 1; min-width: 0; }
+.int-src-t { font-weight: 800; font-size: 14px; }
+.int-src-cat { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); font-weight: 700; margin-left: 6px; }
+.int-src-note { font-size: 12px; color: var(--grey); margin-top: 2px; }
+.int-src-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex: none; }
+.int-src-sync { font-size: 11px; color: var(--grey-2); } .int-src-recs { font-size: 11px; color: var(--grey); font-weight: 700; }
+.int-src-body { padding: 12px 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+.int-lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--grey-2); font-weight: 800; margin-bottom: 6px; }
+.int-feeds { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; } .int-feeds .int-lbl { margin-bottom: 0; margin-right: 4px; }
+.int-flag-group { margin-top: 6px; }
+.int-flag-gl { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--grey-2); font-weight: 800; margin: 12px 0 8px; }
+.int-flags { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 9px; }
+.int-flag { display: flex; align-items: center; gap: 10px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 11px; padding: 11px 13px; }
+.int-flag.off { opacity: 0.62; }
+.int-flag-main { flex: 1; min-width: 0; }
+.int-flag-t { font-weight: 700; font-size: 13.5px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.int-flag-d { font-size: 11.5px; color: var(--grey); margin-top: 2px; }
+.int-switch { flex: none; width: 40px; height: 23px; border-radius: 999px; background: var(--line-2); border: 1px solid var(--line); position: relative; transition: background 0.15s; cursor: pointer; }
+.int-switch.on { background: var(--green); border-color: transparent; }
+.int-switch.locked { opacity: 0.55; cursor: not-allowed; }
+.int-knob { position: absolute; top: 2px; left: 2px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.int-switch.on .int-knob { transform: translateX(17px); }
+
 @media print {
   /* force the light palette for paper regardless of active theme */
   :root {

@@ -21,3 +21,5 @@ CREATE TABLE IF NOT EXISTS evro_forecast_scenarios (id TEXT PRIMARY KEY, data JS
 CREATE TABLE IF NOT EXISTS evro_knowledge_cards    (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_decision_journal   (id TEXT PRIMARY KEY, data JSONB);
 CREATE TABLE IF NOT EXISTS evro_ai_recommendations (id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_integration_sources(id TEXT PRIMARY KEY, data JSONB);
+CREATE TABLE IF NOT EXISTS evro_feature_flags      (id TEXT PRIMARY KEY, data JSONB);

@@ -36,6 +36,7 @@ function inserts() {
     org_nodes: seed.org_nodes, forecast_scenarios: seed.forecast_scenarios,
     knowledge_cards: seed.knowledge_cards, decision_journal: seed.decision_journal,
     ai_recommendations: seed.ai_recommendations,
+    integration_sources: seed.integration_sources, feature_flags: seed.feature_flags,
   }
   for (const t of TABLES) {
     if (t === 'audit_log') continue

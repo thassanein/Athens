@@ -811,6 +811,42 @@ const ai_recommendations = [
   air('ai-6', 'Leakage Agent', 'Monitor implemented vs negotiated value monthly', 'Several contract-based initiatives show a gap between negotiated and implemented value. Reconcile invoice routing to stop leakage before year-end.', 0.75, ['Negotiated − implemented delta', 'Leakage recovery precedent (decision journal)'], null, 'value', null),
 ]
 
+// 11f) Integration & Assembly Readiness — a source-system registry (ERP/source
+//      mapping + sync status; API stubs live server-side) and a feature-flag /
+//      module registry for phased, modular rollout. Only the AP register is
+//      actually connected (it seeds the spend cube); the rest are stubs/planned,
+//      with illustrative field mappings showing where real connectors attach.
+const integration_sources = [
+  { id: 'src-appreg', name: 'AP Register (2025)', vendor: 'Finance / Procurement', category: 'procurement', status: 'connected', cadence: 'manual', last_sync: NOW, record_count: spend_categories.length, feeds: ['spend_categories', 'sourcing_groups'], note: 'The real 2025 Athens AP register — the source the seeded spend cube derives from.',
+    mappings: [ { source_field: 'GL_ACCOUNT', target: 'spend_categories.name', transform: 'direct' }, { source_field: 'AMOUNT', target: 'spend_categories.spend', transform: 'sum by GL account' }, { source_field: 'GL_GROUP', target: 'sourcing_groups.id', transform: 'lookup' } ] },
+  { id: 'src-softpak', name: 'Soft-Pak', vendor: 'Soft-Pak', category: 'operations', status: 'stubbed', cadence: 'daily', last_sync: null, record_count: 0, feeds: ['spend_categories', 'initiatives'], note: 'Routing, disposal tickets & container operations (waste ERP).',
+    mappings: [ { source_field: 'ROUTE_COST', target: 'spend_categories.spend', transform: 'sum by route → GL' }, { source_field: 'DISPOSAL_TONS', target: 'initiatives.baseline', transform: 'run-rate basis' } ] },
+  { id: 'src-workday', name: 'Workday', vendor: 'Workday', category: 'hr', status: 'stubbed', cadence: 'daily', last_sync: null, record_count: 0, feeds: ['people', 'org_nodes'], note: 'Worker master & supervisory org — feeds users and the configurable org hierarchy.',
+    mappings: [ { source_field: 'WORKER', target: 'people.name', transform: 'direct' }, { source_field: 'SUP_ORG', target: 'org_nodes', transform: 'hierarchy build' }, { source_field: 'COST_CENTER', target: 'people.fn', transform: 'lookup' } ] },
+  { id: 'src-finance', name: 'Finance / GL', vendor: 'ERP finance', category: 'finance', status: 'planned', cadence: 'weekly', last_sync: null, record_count: 0, feeds: ['initiatives'], note: 'General ledger actuals — the future source for FP&A-validated realized value.',
+    mappings: [ { source_field: 'GL_ACTUAL', target: 'initiatives.actuals', transform: 'period match + validate' }, { source_field: 'COST_CENTER', target: 'initiatives.department', transform: 'lookup' } ] },
+  { id: 'src-salesforce', name: 'Salesforce', vendor: 'Salesforce', category: 'crm', status: 'planned', cadence: 'daily', last_sync: null, record_count: 0, feeds: [], note: 'Customer & contract master — commercial context for value initiatives.',
+    mappings: [ { source_field: 'ACCOUNT', target: '(future) customer dimension', transform: 'n/a' } ] },
+  { id: 'src-genesys', name: 'Genesys', vendor: 'Genesys', category: 'contact_center', status: 'planned', cadence: 'daily', last_sync: null, record_count: 0, feeds: [], note: 'Contact-center / CX metrics — service-level context for operations initiatives.',
+    mappings: [ { source_field: 'CX_METRIC', target: '(future) service dimension', transform: 'n/a' } ] },
+]
+
+const feature_flags = [
+  { id: 'ff-value-office', module: 'value_office', nav: 'valueoffice', label: 'Athens Value Office', group: 'Core', description: 'Initiative & enterprise value management.', enabled: true, core: true, phase: '5B' },
+  { id: 'ff-pulse', module: 'enterprise_pulse', nav: 'pulse', label: 'Enterprise Pulse', group: 'Core', description: 'Executive cockpit + value radar.', enabled: true, core: true, phase: '5B' },
+  { id: 'ff-chief', module: 'chief_of_staff', nav: 'chief', label: 'Chief of Staff (AI shell)', group: 'Core', description: 'Deterministic AI experience shell.', enabled: true, core: true, phase: '5B' },
+  { id: 'ff-knowledge', module: 'knowledge_layer', nav: 'knowledge', label: 'Knowledge Layer', group: 'Core', description: 'Glossary + explainability.', enabled: true, core: true, phase: '5B' },
+  { id: 'ff-governance', module: 'governance', nav: 'governance', label: 'Workflow & Governance', group: 'Core', description: 'Approvals, gates & audit trail.', enabled: true, core: true, phase: '5B' },
+  { id: 'ff-integrations', module: 'integrations', nav: 'integrations', label: 'ERP Integrations', group: 'Platform', description: 'Source-system registry & mapping.', enabled: true, core: true, phase: '5B' },
+  { id: 'ff-valuegraph', module: 'value_graph', nav: 'valuegraph', label: 'Enterprise Value Graph', group: 'Intelligence', description: 'Relationship & concentration view.', enabled: true, core: false, phase: '4A' },
+  { id: 'ff-timeline', module: 'timeline', nav: 'timeline', label: 'Enterprise Timeline', group: 'Intelligence', description: 'Longitudinal value story.', enabled: true, core: false, phase: '4A' },
+  { id: 'ff-mining', module: 'ai_mining', nav: 'mining', label: 'AI Opportunity Mining', group: 'Intelligence', description: 'Rules-based opportunity signals.', enabled: true, core: false, phase: 'v2' },
+  { id: 'ff-summit', module: 'value_summit', nav: 'summit', label: 'AVCM Value Summit', group: 'Engagement', description: 'Recognition & gamification.', enabled: true, core: false, phase: '4A' },
+  { id: 'ff-movement', module: 'value_movement', nav: 'movement', label: 'Value Movement', group: 'Engagement', description: 'Participation & leaderboards.', enabled: true, core: false, phase: '3B' },
+  { id: 'ff-sustainability', module: 'sustainability', nav: 'sustainability', label: 'Sustainability', group: 'Engagement', description: 'ESG / sustainability lens.', enabled: true, core: false, phase: 'v2' },
+  { id: 'ff-digital-twin', module: 'digital_twin', nav: null, label: 'Digital Twin (simulation)', group: 'Platform', description: 'Scenario-simulation engine — activates in a later phase.', enabled: false, core: false, phase: 'future' },
+]
+
 // ---------------------------------------------------------------------------
 const seed = {
   meta: {
@@ -844,6 +880,8 @@ const seed = {
   knowledge_cards,
   decision_journal,
   ai_recommendations,
+  integration_sources,
+  feature_flags,
 }
 
 // --- write outputs ----------------------------------------------------------
@@ -864,4 +902,5 @@ const realizedYTD = initiatives.reduce(
 )
 console.log(`seed.json written: ${initiatives.length} initiatives, ${spend_categories.length} categories, ${opportunities.length} opportunities`)
 console.log(`athens-os foundation: ${org_nodes.length} org nodes, ${forecast_scenarios.length} scenarios, ${knowledge_cards.length} knowledge cards, ${decision_journal.length} decisions, ${ai_recommendations.length} AI recs`)
+console.log(`integration/assembly: ${integration_sources.length} source systems, ${feature_flags.length} module flags`)
 console.log(`addressable Σ = $${(addressableTotal / M).toFixed(1)}M · realized YTD (validated) ≈ $${(realizedYTD / M).toFixed(2)}M`)

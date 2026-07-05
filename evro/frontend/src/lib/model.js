@@ -78,3 +78,17 @@ export function aiRecommendations(db, { category, status } = {}) {
     (r) => (!category || r.category === category) && (!status || r.status === status)
   )
 }
+
+// ---- Integration & Assembly Readiness ---------------------------------------
+export function integrationSources(db) { return db?.integration_sources || [] }
+export function featureFlags(db) { return db?.feature_flags || [] }
+
+// Nav keys of optional modules that are currently disabled — used to gate the
+// nav so module toggles produce real, phased activation (core modules never
+// appear here). Returns a Set for O(1) lookup.
+export function disabledNavKeys(db) {
+  const out = new Set()
+  for (const f of featureFlags(db)) if (!f.enabled && f.nav) out.add(f.nav)
+  return out
+}
+export const moduleEnabled = (db, navKey) => !disabledNavKeys(db).has(navKey)

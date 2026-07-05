@@ -284,9 +284,20 @@ export function addAttachment(db, id, att, actorId) {
   return { db: next }
 }
 
+// ---- assembly readiness: enable/disable an optional module (feature flag) --
+export function toggleModule(db, id, actorId) {
+  const next = clone(db)
+  const f = (next.feature_flags || []).find((x) => x.id === id)
+  if (!f) return { db, error: 'Unknown module.' }
+  if (f.core) return { db, error: 'Core modules cannot be disabled.' }
+  f.enabled = !f.enabled
+  log(next, actorId, 'config', id, `Module "${f.label}" ${f.enabled ? 'enabled' : 'disabled'}.`)
+  return { db: next }
+}
+
 export const MUTATIONS = {
   createInitiative, requestGate, approveRequest, rejectRequest,
   validateBaseline, validateActual, addActual, addRisk, claimOpportunity, setSavingsPct,
-  claimMined, recoverLeakage, addComment, addTask, toggleTask, addAttachment,
+  claimMined, recoverLeakage, addComment, addTask, toggleTask, addAttachment, toggleModule,
 }
 export { STAGES }
