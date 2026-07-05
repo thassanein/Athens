@@ -1106,6 +1106,12 @@ html[data-theme='light'] .gov-log-tag { background: var(--grey); }
 .tl-cmp-mid { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
 .tl-cmp-delta { font-size: 20px; font-weight: 800; color: var(--green); letter-spacing: -0.4px; }
 @media (max-width: 640px) { .tl-compare { grid-template-columns: 1fr 1fr; } .tl-cmp-mid { grid-column: 1 / -1; order: 3; } }
+
+/* ---- 5B.6: postmortem form + usage telemetry ------------------------------ */
+.cos-pm { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.cos-pm-in { padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); font-size: 12.5px; }
+.use-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding: 4px 0; border-bottom: 1px solid var(--line-2); }
+.use-row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 @media (max-width: 700px) {
   .mq-row { flex-wrap: wrap; }
   .mq-rank { display: none; }

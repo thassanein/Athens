@@ -295,9 +295,38 @@ export function toggleModule(db, id, actorId) {
   return { db: next }
 }
 
+
+// ---- 5B.6: executive decision journal — auto-capture + postmortem ----------
+// Auto-captures consequential calls (gate commits, returns, module toggles)
+// into the decision_journal entity; journalOutcome records postmortems so the
+// organization learns. Additive: no existing reducer or rule is changed.
+export function journalDecision(db, entry, actorId) {
+  const next = clone(db)
+  next.decision_journal = next.decision_journal || []
+  next.decision_journal.unshift({
+    id: uid('dj'), at: today(),
+    title: entry.title || 'Decision', decision: entry.decision || 'Approved',
+    rationale: entry.rationale || '', decided_by: actorId,
+    evidence: entry.evidence || [], outcome: entry.outcome || '', lessons: entry.lessons || '',
+    linked_initiative_id: entry.linked_initiative_id || null, auto: true,
+  })
+  log(next, actorId, 'journal', entry.linked_initiative_id || 'journal', `Decision journaled — ${entry.title}.`)
+  return { db: next }
+}
+
+export function journalOutcome(db, id, outcome, lessons, actorId) {
+  const next = clone(db)
+  const d = (next.decision_journal || []).find((x) => x.id === id)
+  if (!d) return { db, error: 'Journal entry not found.' }
+  if (outcome) d.outcome = outcome
+  if (lessons) d.lessons = lessons
+  log(next, actorId, 'journal', d.linked_initiative_id || 'journal', `Outcome recorded — ${d.title}.`)
+  return { db: next }
+}
+
 export const MUTATIONS = {
   createInitiative, requestGate, approveRequest, rejectRequest,
   validateBaseline, validateActual, addActual, addRisk, claimOpportunity, setSavingsPct,
-  claimMined, recoverLeakage, addComment, addTask, toggleTask, addAttachment, toggleModule,
+  claimMined, recoverLeakage, addComment, addTask, toggleTask, addAttachment, toggleModule, journalDecision, journalOutcome,
 }
 export { STAGES }

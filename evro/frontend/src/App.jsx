@@ -51,6 +51,8 @@ import MissionQueue from './pages/MissionQueue.jsx'
 import Wall from './pages/Wall.jsx'
 import Accountability from './pages/Accountability.jsx'
 import NextBestRail from './components/NextBestRail.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
+import { track } from './lib/telemetry.js'
 import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
 import { disabledNavKeys } from './lib/model.js'
 
@@ -129,18 +131,51 @@ export default function App() {
   const navigate = useCallback((p, opts = {}) => {
     if (p === 'initiative') setSelId(opts.id)
     setPage(p); setDrawer(false); window.scrollTo(0, 0)
+    track('page', p)
   }, [])
   const openDrawer = useCallback((id) => setDrawerId(id), [])
+
+  // Decision-journal auto-capture (5B.6 item 8): consequential mutations are
+  // journaled with rationale + evidence. Composed BEFORE the mutation runs
+  // (the request state is gone after commit); approvals journal only when the
+  // gate actually commits, not on partial sign-offs.
+  const composeJournal = (action, args, before) => {
+    const [id, actorId] = args
+    if (action === 'toggleModule') {
+      const f = (before.feature_flags || []).find((x) => x.id === id)
+      return f && { actorId, always: true, entry: {
+        title: `${f.enabled ? 'Disable' : 'Enable'} module "${f.label}"`, decision: f.enabled ? 'Disabled' : 'Enabled',
+        rationale: 'Assembly change — phased module activation.', evidence: ['Feature-flag registry state'], linked_initiative_id: null,
+      } }
+    }
+    const i = before.initiatives.find((x) => x.id === id)
+    if (!i?.request) return null
+    const kind = i.request.kind
+    const title = kind === 'intake' ? `Approve "${i.title}" into the pipeline` : `Advance "${i.title}" → ${i.request.to_stage}`
+    const evidence = [`Approval request state (${(i.request.approvals || []).length}/${i.request.need.length} roles signed pre-decision)`, `${(before.ai_recommendations || []).filter((r) => r.status === 'open').length} AI signals open at decision time`]
+    if (action === 'approveRequest') return { actorId, commitOnly: true, entry: { title, decision: 'Approved', rationale: `${kind === 'intake' ? 'Intake' : 'Stage gate'} sign-off — required ${i.request.need.join(' + ')}.`, evidence, linked_initiative_id: id } }
+    if (action === 'rejectRequest') return { actorId, always: true, entry: { title, decision: 'Returned for rework', rationale: args[2] || 'Returned for rework.', evidence, linked_initiative_id: id } }
+    return null
+  }
 
   const dispatch = useCallback(async (action, ...args) => {
     const fn = MUTATIONS[action]
     if (!fn) return {}
-    const res = fn(db, ...args)
+    track('action', action)
+    const journal = ['approveRequest', 'rejectRequest', 'toggleModule'].includes(action) ? composeJournal(action, args, db) : null
+    let res = fn(db, ...args)
     if (res.error) { flash(res.error); return res }
+    // journal only when the decision actually happened (gate committed / always)
+    const committed = journal && (journal.always || !res.db.initiatives.find((x) => x.id === args[0])?.request)
+    if (committed) res = { ...res, db: MUTATIONS.journalDecision(res.db, journal.entry, journal.actorId).db }
     setDb(res.db)
     if (source === 'postgres') {
-      try { const out = await postAction(action, args); setDb(out.db); return { ...res, ...out } }
-      catch { flash('Saved locally — server sync pending') }
+      try {
+        const out = await postAction(action, args)
+        const fin = committed ? await postAction('journalDecision', [journal.entry, journal.actorId]) : out
+        setDb(fin.db)
+        return { ...res, ...out }
+      } catch { flash('Saved locally — server sync pending') }
     } else saveLocal(res.db)
     return res
   }, [db, source, flash])
@@ -195,7 +230,9 @@ export default function App() {
         <IntelligenceBar db={db} user={user} collapsed={intelHidden} onToggle={() => setIntelHidden((h) => !h)}
           onBriefing={() => setBriefing(true)} onCopilot={() => setCopilot(true)} openDrawer={openDrawer} />
         <main className="content">
-          <Page key={`${page}:${selId || ''}`} {...ctx} db={pageDb} id={selId} />
+          <ErrorBoundary page={page} resetKey={page} onHome={() => navigate(HOME[user.role] || 'morning')}>
+            <Page key={`${page}:${selId || ''}`} {...ctx} db={pageDb} id={selId} />
+          </ErrorBoundary>
         </main>
         {RAIL_PAGES.has(page) && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
       </div>
@@ -231,5 +268,5 @@ function DataBadge({ source }) {
 
 function Toast({ msg, onDone }) {
   useEffect(() => { const t = setTimeout(onDone, 2600); return () => clearTimeout(t) }, [msg, onDone])
-  return <div className="toast">{msg}</div>
+  return <div className="toast" role="status" aria-live="polite">{msg}</div>
 }

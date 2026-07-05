@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { missionQueue, MISSION_CLASSES } from '../lib/mission.js'
 import { canApproveRoles, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money } from '../lib/format.js'
@@ -14,7 +14,7 @@ const LS = 'evro.nextrail'
 export default function NextBestRail({ db, user, dispatch, navigate, flash }) {
   const [open, setOpen] = useState(() => { try { return localStorage.getItem(LS) !== 'closed' } catch { return true } })
   const toggle = () => setOpen((o) => { try { localStorage.setItem(LS, o ? 'closed' : 'open') } catch { /* ignore */ } return !o })
-  const q = missionQueue(db, user)
+  const q = useMemo(() => missionQueue(db, user), [db, user])
   const top = q.missions.slice(0, 3)
 
   const act = async (m) => {

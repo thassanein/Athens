@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { integrationSources, featureFlags } from '../lib/model.js'
+import { usage, resetUsage } from '../lib/telemetry.js'
 import { dateLabel, num } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 
@@ -19,8 +20,11 @@ const CAT_LABEL = { operations: 'Operations', crm: 'CRM', finance: 'Finance', hr
 
 export default function Integrations({ db, user, dispatch, flash }) {
   const [open, setOpen] = useState(null)
+  const [useTick, setUseTick] = useState(0)
   const sources = integrationSources(db)
   const flags = featureFlags(db)
+  const u = usage() // eslint-disable-line no-unused-vars -- useTick forces refresh
+  void useTick
   const connected = sources.filter((s) => s.status === 'connected').length
 
   const flagGroups = flags.reduce((o, f) => { (o[f.group] ||= []).push(f); return o }, {})
@@ -118,6 +122,36 @@ export default function Integrations({ db, user, dispatch, flash }) {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* local usage telemetry (5B.6 item 10) */}
+      <div className="card pad section-gap">
+        <div className="card-h">
+          <h3>Usage telemetry</h3>
+          <span className="badge b-grey">local only</span>
+          <span className="spacer" />
+          <button className="btn sm ghost" onClick={() => { resetUsage(); setUseTick((t) => t + 1); flash('Local telemetry reset') }}>Reset</button>
+        </div>
+        <p className="muted" style={{ fontSize: 12.5, marginTop: -2, marginBottom: 10 }}>
+          Page views, actions, and screen errors counted in THIS browser's storage — nothing leaves the device. This is the seam a production telemetry pipeline replaces.
+        </p>
+        <div className="grid cols-3">
+          <div>
+            <div className="label">Top screens · {u.totalViews} views</div>
+            {u.pages.slice(0, 5).map(([k, v]) => <div key={k} className="use-row"><span>{k}</span><span className="mono">{v}</span></div>)}
+            {u.pages.length === 0 && <div className="muted" style={{ fontSize: 12 }}>Nothing yet — navigate around.</div>}
+          </div>
+          <div>
+            <div className="label">Top actions</div>
+            {u.actions.slice(0, 5).map(([k, v]) => <div key={k} className="use-row"><span>{k}</span><span className="mono">{v}</span></div>)}
+            {u.actions.length === 0 && <div className="muted" style={{ fontSize: 12 }}>No actions recorded.</div>}
+          </div>
+          <div>
+            <div className="label">Screen errors caught</div>
+            {(u.errors || []).slice(0, 5).map(([k, v]) => <div key={k} className="use-row"><span style={{ color: 'var(--red)' }}>{k}</span><span className="mono">{v}</span></div>)}
+            {(!u.errors || u.errors.length === 0) && <div className="muted" style={{ fontSize: 12 }}>None — the error boundary is idle.</div>}
+          </div>
+        </div>
       </div>
     </>
   )

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { missionQueue, missionWhy, MISSION_CLASSES } from '../lib/mission.js'
 import { canApproveRoles, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money, pct } from '../lib/format.js'
@@ -18,7 +18,7 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
   const [view, setView] = useState('ranked') // ranked | class
   const [whyKey, setWhyKey] = useState(null)
   const [delKey, setDelKey] = useState(null)
-  const q = missionQueue(db, user)
+  const q = useMemo(() => missionQueue(db, user), [db, user])
   const assignables = db.people.filter((p) => ['owner', 'procurement', 'leader', 'admin'].includes(p.role))
 
   const act = async (m) => {

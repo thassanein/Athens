@@ -21,9 +21,16 @@ import { IconAI } from '../components/Icons.jsx'
 const CAT_TONE = { governance: 'var(--amber)', opportunity: 'var(--green)', risk: 'var(--red)', value: 'var(--navy)' }
 const confLabel = (c) => (c >= 0.85 ? 'High' : c >= 0.7 ? 'Medium' : 'Indicative')
 
-export default function ChiefOfStaff({ db, user, navigate }) {
+export default function ChiefOfStaff({ db, user, caps, dispatch, flash, navigate }) {
   const [mode, setMode] = useState(defaultModeFor(user.role))
   const [agent, setAgent] = useState('all')
+  const [pmFor, setPmFor] = useState(null) // postmortem form target (journal id)
+  const [pmOutcome, setPmOutcome] = useState('')
+  const [pmLessons, setPmLessons] = useState('')
+  const savePm = async (id) => {
+    const r = await dispatch?.('journalOutcome', id, pmOutcome.trim(), pmLessons.trim(), user.id)
+    if (!r?.error) { flash?.('Outcome recorded — the organization just learned something'); setPmFor(null); setPmOutcome(''); setPmLessons('') }
+  }
   const brief = companionBrief(db, user, mode)
   const recos = aiRecommendations(db)
   const journal = decisionJournal(db)
@@ -170,11 +177,24 @@ export default function ChiefOfStaff({ db, user, navigate }) {
                   <span className={`badge ${d.decision === 'Approved' ? 'b-green' : d.decision === 'Returned for rework' ? 'b-amber' : 'b-grey'}`}>{d.decision}</span>
                   <span className="cos-dj-date">{dateLabel(d.at)}</span>
                 </div>
-                <div className="cos-dj-t">{d.title}</div>
+                <div className="cos-dj-t">{d.title}{d.auto && <span className="badge b-grey" style={{ marginLeft: 6 }}>auto-captured</span>}</div>
                 <div className="cos-dj-r"><b>Why:</b> {d.rationale}</div>
                 {d.outcome && <div className="cos-dj-o"><b>Outcome:</b> {d.outcome}</div>}
                 {d.lessons && <div className="cos-dj-l">💡 {d.lessons}</div>}
                 <div className="cos-dj-by">— {personName(db, d.decided_by)}</div>
+                {!d.outcome && caps?.edit && pmFor !== d.id && (
+                  <button className="btn sm ghost" style={{ marginTop: 6 }} onClick={(e) => { e.stopPropagation(); setPmFor(d.id); setPmOutcome(''); setPmLessons('') }}>+ Record outcome</button>
+                )}
+                {pmFor === d.id && (
+                  <div className="cos-pm" onClick={(e) => e.stopPropagation()}>
+                    <input className="cos-pm-in" placeholder="What actually happened?" value={pmOutcome} onChange={(e) => setPmOutcome(e.target.value)} />
+                    <input className="cos-pm-in" placeholder="Lesson for next time (optional)" value={pmLessons} onChange={(e) => setPmLessons(e.target.value)} />
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button className="btn sm" disabled={!pmOutcome.trim()} onClick={() => savePm(d.id)}>Save postmortem</button>
+                      <button className="btn sm ghost" onClick={() => setPmFor(null)}>Cancel</button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
