@@ -18,6 +18,7 @@ export const NAV = [
     ['mywork', 'My Initiatives', IconFolder, ['owner', 'procurement']],
   ] },
   { group: 'Dashboards', items: [
+    ['valueoffice', 'Value Office', IconPortfolio, ENTL],
     ['exec', 'Executive', IconExec, ENT],
     ['hierarchy', 'Portfolios', IconHierarchy, ENTL],
     ['portfolio', 'Initiatives', IconPortfolio, ENTL],
