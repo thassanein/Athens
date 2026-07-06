@@ -129,12 +129,13 @@ export function MasterLockup({ size = 40, orientation = 'horizontal', sub = 'Ent
 }
 
 // The four-layer identity architecture — the convergence 6C.1B commits to.
-// role: what the layer is FOR; surface: where it lives. Layers 2–4 reference
-// the systems as they stand today; their formalized behaviors land in the
-// later waves of this phase.
+// role: what the layer is FOR; surface: where it lives. All four layers are
+// live: the master brand shipped in Wave 1; the Compass, Pulse and Signal
+// systems formalized in Wave 2 (components/IdentitySystems.jsx + the
+// Identity Architecture page).
 export const IDENTITY_LAYERS = [
   { n: 1, key: 'master', name: 'Master Brand', mark: 'EV Monogram', says: 'Premium · ownership · timelessness', surface: 'App chrome, favicon, covers, ceremony — the signature.', status: 'live' },
-  { n: 2, key: 'operating', name: 'Operating Identity', mark: 'Enterprise Compass', says: 'Command · navigation · strategy', surface: 'Mission control, navigation, strategic direction.', status: 'wave 2' },
-  { n: 3, key: 'state', name: 'Enterprise State', mark: 'Pulse Rings', says: 'Energy · health · momentum', surface: 'Gauges and vitals — the operating language the product already speaks.', status: 'wave 2' },
-  { n: 4, key: 'ai', name: 'AI Identity', mark: 'Enterprise Signal', says: 'Sensing · intelligence · telemetry', surface: 'AI presence, predictions, orchestration.', status: 'wave 2' },
+  { n: 2, key: 'operating', name: 'Operating Identity', mark: 'Enterprise Compass', says: 'Command · navigation · strategy', surface: 'Mission control, navigation, strategic direction.', status: 'live' },
+  { n: 3, key: 'state', name: 'Enterprise State', mark: 'Pulse Rings', says: 'Energy · health · momentum', surface: 'Gauges and vitals — the operating language the product already speaks.', status: 'live' },
+  { n: 4, key: 'ai', name: 'AI Identity', mark: 'Enterprise Signal', says: 'Sensing · intelligence · telemetry', surface: 'AI presence, predictions, orchestration.', status: 'live' },
 ]

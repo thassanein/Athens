@@ -1695,3 +1695,71 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .bp-scale-note { font-size: 10.5px; color: var(--grey-2); align-self: center; max-width: 340px; line-height: 1.4; }
 .bp-board { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 16px; padding: 26px 16px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel-2); }
 .bp-board-cap { font-size: 10.5px; color: var(--grey-2); text-align: center; max-width: 420px; line-height: 1.45; }
+
+/* 6C.1B Wave 2 — identity systems (compass / pulse / signal) + architecture page */
+@media (prefers-reduced-motion: no-preference) {
+  .ids-motion .ids-orienting { animation: ids-orient 2.6s ease-in-out infinite; }
+  @keyframes ids-orient { 0%, 100% { transform: rotate(-24deg); } 50% { transform: rotate(18deg); } }
+  .ids-motion .ids-lockring { transform-origin: 50% 50%; animation: ids-lock 3s ease-in-out infinite; }
+  @keyframes ids-lock { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 0.15; transform: scale(1.08); } }
+  .ids-motion .ids-ring { animation: ids-ring 4.8s ease-in-out infinite; }
+  @keyframes ids-ring { 0%, 100% { opacity: 1; } 50% { opacity: 0.62; } }
+  .ids-motion .ids-front { animation: ids-front 2.4s ease-in-out infinite; }
+  @keyframes ids-front { 0%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+  .ids-motion .ids-contact { transform-origin: 66px 34px; animation: ids-contact 2.2s ease-in-out infinite; }
+  @keyframes ids-contact { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.82); } }
+}
+.idp-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 900px) { .idp-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.idp-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel-2); }
+.idp-cell b { font-size: 12.5px; margin-top: 4px; }
+.idp-cell span { font-size: 10px; color: var(--grey-2); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
+.idp-sys { display: flex; gap: 20px; align-items: flex-start; }
+@media (max-width: 760px) { .idp-sys { flex-direction: column; } }
+.idp-sys-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.idp-live { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; color: var(--grey); background: var(--panel-2); border-radius: var(--r); padding: 8px 12px; }
+.idp-live b { color: var(--ink); }
+.idp-live i { width: 8px; height: 8px; border-radius: 999px; flex: 0 0 auto; align-self: center; }
+.idp-states { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 760px) { .idp-states { grid-template-columns: 1fr; } }
+.idp-state { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; opacity: 0.65; }
+.idp-state.on { opacity: 1; border-color: var(--brand-energy); }
+.idp-state b { font-size: 12px; }
+.idp-state span { font-size: 11px; color: var(--grey-2); line-height: 1.45; }
+.idp-rule { font-size: 12px; color: var(--grey); line-height: 1.55; margin: 0; }
+.idp-dims { display: flex; flex-direction: column; gap: 8px; }
+.idp-dim { display: grid; grid-template-columns: 10px 130px 34px 1fr; gap: 8px; align-items: baseline; }
+@media (max-width: 760px) { .idp-dim { grid-template-columns: 10px 1fr 34px; } .idp-dim .idp-formula { grid-column: 2 / -1; } }
+.idp-dim i { width: 10px; height: 10px; border-radius: 3px; align-self: center; }
+.idp-dim b { font-size: 12.5px; }
+.idp-score { font-size: 13px; font-weight: 700; text-align: right; }
+.idp-detail { font-size: 11px; color: var(--grey); }
+.idp-formula { grid-column: 2 / -1; font-size: 10.5px; color: var(--grey-2); }
+.idp-behaviors { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+@media (max-width: 760px) { .idp-behaviors { grid-template-columns: 1fr; } }
+.idp-beh { border: 1px dashed var(--line); border-radius: var(--r); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.idp-beh-h { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); }
+.idp-beh > span { font-size: 11px; color: var(--grey-2); line-height: 1.45; }
+.idp-beh-row { display: flex; gap: 10px; align-items: center; }
+.idp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.idp-chip { font-size: 10.5px; font-weight: 700; border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.idp-agents { display: flex; flex-direction: column; gap: 6px; }
+.idp-agent { display: grid; grid-template-columns: 8px 110px 70px 44px 1fr; gap: 8px; align-items: baseline; font-size: 12px; }
+@media (max-width: 760px) { .idp-agent { grid-template-columns: 8px 1fr 70px 44px; } .idp-agent-note { display: none; } }
+.idp-agent i { width: 8px; height: 8px; border-radius: 999px; align-self: center; }
+.idp-agent-st { font-size: 10.5px; color: var(--grey-2); text-transform: uppercase; letter-spacing: 0.4px; }
+.idp-agent .mono { text-align: right; }
+.idp-agent-note { font-size: 11px; color: var(--grey-2); }
+.idp-rules { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 860px) { .idp-rules { grid-template-columns: 1fr; } }
+.idp-rules-h { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); margin-bottom: 8px; }
+.idp-h { display: flex; gap: 10px; margin-bottom: 10px; }
+.idp-hn { font-size: 12px; font-weight: 800; color: var(--brand-energy); }
+.idp-h b { font-size: 12.5px; display: block; }
+.idp-h span { font-size: 11.5px; color: var(--grey-2); line-height: 1.5; }
+.idp-co { font-size: 12px; color: var(--grey); line-height: 1.55; margin-bottom: 8px; }
+.idp-trans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 860px) { .idp-trans { grid-template-columns: 1fr; } }
+.idp-t { border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; font-size: 11.5px; color: var(--grey-2); line-height: 1.5; }
+.idp-t b { color: var(--ink); font-size: 12px; }
+.idp-t-arrow { color: var(--brand-energy); font-weight: 700; margin: 0 6px; }

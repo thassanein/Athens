@@ -59,6 +59,7 @@ export const NAV = [
     ['knowledge', 'Knowledge Layer', IconBook, ALL],
     ['methodology', 'Methodology', IconBook, ALL],
     ['brand', 'Brand', IconOpportunity, ALL],
+    ['identity', 'Identity', IconOpportunity, ALL],
     ['identitylab', 'Identity Lab', IconOpportunity, ALL],
   ] },
 ]
