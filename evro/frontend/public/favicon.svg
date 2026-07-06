@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="EVRO">
   <defs>
-    <linearGradient id="t" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#E5243B"/>
-      <stop offset="1" stop-color="#8F1220"/>
+    <linearGradient id="f" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0C1626"/>
+      <stop offset="1" stop-color="#16325A"/>
     </linearGradient>
   </defs>
-  <rect x="2" y="2" width="96" height="96" rx="24" fill="url(#t)"/>
-  <polyline points="26,72 45,59 64,45 80,27" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
-  <circle cx="26" cy="72" r="5" fill="#fff"/>
-  <circle cx="45" cy="59" r="6" fill="#fff"/>
-  <circle cx="64" cy="45" r="7" fill="#fff"/>
-  <circle cx="80" cy="27" r="9.5" fill="#fff"/>
+  <rect x="2" y="2" width="96" height="96" rx="24" fill="url(#f)"/>
+  <path d="M 63.98 50.73 A 14 14 0 1 1 49.27 36.02" fill="none" stroke="#EAF1FA" stroke-width="7.5" stroke-linecap="round"/>
+  <path d="M 75.96 51.36 A 26 26 0 1 1 48.64 24.04" fill="none" stroke="#EAF1FA" stroke-width="6.5" stroke-linecap="round" opacity="0.78"/>
+  <path d="M 87.95 51.99 A 38 38 0 1 1 48.01 12.05" fill="none" stroke="#EAF1FA" stroke-width="5.5" stroke-linecap="round" opacity="0.56"/>
+  <circle cx="50" cy="50" r="6.5" fill="#EAF1FA"/>
+  <circle cx="76.87" cy="23.13" r="7" fill="#F5A524"/>
 </svg>

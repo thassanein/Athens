@@ -73,7 +73,7 @@ export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel
           <BrandMark size={38} />
           <div>
             <div className="name">Athens EVRO</div>
-            <div className="sub">Value Realization OS</div>
+            <div className="sub">Enterprise Intelligence OS</div>
           </div>
         </button>
       </div>

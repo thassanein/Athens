@@ -1487,3 +1487,11 @@ html[data-theme='light'] .mr-console { background: #101722; }
 .brief-command { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); padding: 8px 13px; margin-bottom: 12px; }
 .brief-cmd-l { font-size: 10.5px; font-weight: 800; letter-spacing: 1.4px; color: var(--grey-2); }
 .brief-cmd-chip { font-size: 11.5px; font-weight: 700; white-space: nowrap; }
+
+/* ---- 6C.1 Wave 1: brand motion variant (the living mark) -------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .evm-motion .evm-arcs { transform-origin: 50% 50%; animation: evm-breathe 5.2s ease-in-out infinite; }
+  @keyframes evm-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+  .evm-motion .evm-spark { animation: evm-spark 2.8s ease-in-out infinite; }
+  @keyframes evm-spark { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+}
