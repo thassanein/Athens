@@ -9,6 +9,7 @@ import { aiRecommendations, scenarios } from '../lib/model.js'
 import { money, pct } from '../lib/format.js'
 import { Tile, Bar, RagBadge } from '../components/ui.jsx'
 import { Radar } from '../components/Charts.jsx'
+import MomentumBoard from '../components/MomentumBoard.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Executive Cockpit / Enterprise Pulse (5B.3) — the leadership command center.
@@ -87,6 +88,9 @@ export default function Pulse({ db, user, dispatch, navigate, flash }) {
         {/* rotating narrative strip */}
         {narratives.length > 0 && <div className="pulse-narr" key={narr}>“{narratives[narr]}”</div>}
       </div>
+
+      {/* momentum at every altitude (6B item 2) */}
+      <MomentumBoard db={db} />
 
       {/* pulse index + value radar + decision queue */}
       <div className="grid cols-3 section-gap">

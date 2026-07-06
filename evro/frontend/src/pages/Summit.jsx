@@ -1,6 +1,7 @@
-import { championList, millionClub, awardsGallery, gamificationStats, summitHighlights, valueSeasons, executiveScorecard, LEVEL_TONE, MEDAL } from '../lib/avcm.js'
+import { championList, millionClub, awardsGallery, gamificationStats, summitHighlights, executiveScorecard, LEVEL_TONE, MEDAL } from '../lib/avcm.js'
 import { money, pct, num } from '../lib/format.js'
 import { Tile, Avatar } from '../components/ui.jsx'
+import SeasonBoard from '../components/SeasonBoard.jsx'
 
 // AVCM Value Summit — the annual recognition showcase. Champions, the Million
 // Dollar Club, an awards gallery, gamification and records. View-only; every
@@ -11,9 +12,7 @@ export default function Summit({ db, openDrawer, navigate }) {
   const mdc = millionClub(db)
   const awards = awardsGallery(db)
   const g = gamificationStats(db)
-  const seasons = valueSeasons(db)
   const scorecard = executiveScorecard(db)
-  const maxSeason = Math.max(1, ...seasons.map((s) => s.realized))
   const podium = champs.slice(0, 3)
   const LEVEL_ORDER = ['Platinum', 'Gold', 'Silver', 'Bronze']
   const maxLevel = Math.max(1, ...LEVEL_ORDER.map((l) => g.byLevel[l] || 0))
@@ -94,20 +93,8 @@ export default function Summit({ db, openDrawer, navigate }) {
         </div>
       </div>
 
-      {/* value seasons */}
-      <div className="card pad section-gap">
-        <div className="card-h"><h3>Value seasons</h3><span className="spacer" /><span className="tiny muted">FY{h.fiscalYear} · realized by quarter</span></div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
-          {seasons.map((q) => (
-            <div key={q.name} className="season-card">
-              <div className="card-h"><b>{q.name}</b><span className="spacer" /><span className="tiny muted">{q.label}</span></div>
-              <div className="mono" style={{ fontWeight: 800, fontSize: 18, color: 'var(--green)', marginTop: 4 }}>{money(q.realized)}</div>
-              <div className="meter" style={{ marginTop: 8 }}><i style={{ width: `${(q.realized / maxSeason) * 100}%`, background: 'var(--green)' }} /></div>
-              <div className="tiny muted" style={{ marginTop: 6 }}>{q.leader ? `🏅 ${q.leader}` : 'no standings yet'}</div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* value seasons — the full season framework (6B item 4) */}
+      <SeasonBoard db={db} />
 
       {/* executive scorecard */}
       <div className="card pad section-gap">
