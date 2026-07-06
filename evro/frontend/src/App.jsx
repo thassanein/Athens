@@ -54,6 +54,8 @@ import Intelligence from './pages/Intelligence.jsx'
 import Decisions from './pages/Decisions.jsx'
 import NextBestRail from './components/NextBestRail.jsx'
 import AIPresence from './components/AIPresence.jsx'
+import Celebration from './components/Celebration.jsx'
+import { detectCelebrations } from './lib/celebrations.js'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { track } from './lib/telemetry.js'
 import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
@@ -91,6 +93,7 @@ export default function App() {
   const [palette, setPalette] = useState(false)
   const [copilot, setCopilot] = useState(false)
   const [briefing, setBriefing] = useState(false)
+  const [celebrations, setCelebrations] = useState([])
   const [intelHidden, setIntelHidden] = useState(false)
   const [drawer, setDrawer] = useState(false)
   const [toast, setToast] = useState(null)
@@ -171,6 +174,10 @@ export default function App() {
     // journal only when the decision actually happened (gate committed / always)
     const committed = journal && (journal.always || !res.db.initiatives.find((x) => x.id === args[0])?.request)
     if (committed) res = { ...res, db: MUTATIONS.journalDecision(res.db, journal.entry, journal.actorId).db }
+    // celebration detection (6B item 11) — diff the provable state; never
+    // allowed to break the mutation path
+    const cels = detectCelebrations(db, res.db, action)
+    if (cels.length) setCelebrations((q) => [...q, ...cels])
     setDb(res.db)
     if (source === 'postgres') {
       try {
@@ -239,6 +246,7 @@ export default function App() {
         </main>
         {RAIL_PAGES.has(page) && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
         <AIPresence db={db} user={user} page={page} navigate={navigate} />
+        <Celebration queue={celebrations} onDismiss={() => setCelebrations((q) => q.slice(1))} />
       </div>
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />

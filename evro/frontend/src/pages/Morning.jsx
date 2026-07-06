@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { companionBrief, OPERATING_MODES, defaultModeFor } from '../lib/companion.js'
 import { money, dateLabel } from '../lib/format.js'
 import { Tile, MoreList } from '../components/ui.jsx'
+import { RitualsCard } from '../components/Rituals.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Executive Morning Operating Screen — the default post-login experience.
@@ -75,6 +76,9 @@ export default function Morning({ db, user, navigate, openDrawer, onCompanion })
           </div>
         ))}
       </div>
+
+      {/* operating rituals (6B item 10) */}
+      <RitualsCard db={db} user={user} />
 
       <p className="tiny muted section-gap">
         <span className="badge b-grey"><IconAI /> AI · rules-based</span>&nbsp; Deterministic executive intelligence, computed from the live portfolio — no language model.
