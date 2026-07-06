@@ -81,8 +81,10 @@ export function EvroMark({ size = 34, tile = true, motion = false, journey = fal
 
 // Lockups. orientation: 'horizontal' (chrome) | 'vertical' (covers/heros).
 export function EvroLockup({ size = 40, orientation = 'horizontal', sub = 'Enterprise Intelligence OS', variant = 'dark', motion = false }) {
-  const ink = variant === 'light' ? '#0E0E11' : '#fff'
-  const muted = variant === 'light' ? '#6b7480' : 'rgba(255,255,255,0.62)'
+  // 'dark' (white ink — hero/landing overlays), 'light' (fixed dark ink), or
+  // 'auto' (theme tokens — for in-app surfaces that flip with the theme).
+  const ink = variant === 'light' ? '#0E0E11' : variant === 'auto' ? 'var(--ink)' : '#fff'
+  const muted = variant === 'light' ? '#6b7480' : variant === 'auto' ? 'var(--grey)' : 'rgba(255,255,255,0.62)'
   const vertical = orientation === 'vertical'
   return (
     <div style={{ display: 'flex', flexDirection: vertical ? 'column' : 'row', alignItems: 'center', gap: vertical ? 10 : 12, textAlign: vertical ? 'center' : 'left' }}>

@@ -1531,3 +1531,39 @@ html[data-theme='light'] {
 .t-caption { font-size: 11px; color: var(--grey-2); letter-spacing: 0.3px; }
 .t-data { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -0.3px; font-weight: 700; }
 .sym { display: inline-flex; align-items: center; vertical-align: -0.15em; }
+
+/* ---- 6C.1 Wave 3: the Brand page --------------------------------------------- */
+.bp-hero { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 34px 24px; text-align: center; }
+.bp-open { max-width: 560px; font-size: 16px; line-height: 1.6; color: var(--grey); margin: 0; }
+.bp-marks { display: flex; gap: 26px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 14px; }
+.bp-marks figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.bp-marks figcaption { font-size: 10.5px; color: var(--grey-2); }
+.bp-lockup { padding-bottom: 4px; }
+.bp-anatomy { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; margin-bottom: 10px; }
+.bp-anatomy i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--line); }
+.bp-colors { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.bp-color { display: grid; grid-template-columns: 34px 1fr; grid-template-rows: auto auto auto; gap: 1px 10px; align-items: center; background: var(--panel-2); border-radius: var(--r); padding: 10px 12px; }
+.bp-swatch { grid-row: 1 / 4; width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--line); }
+.bp-color b { font-size: 12.5px; }
+.bp-token { font-size: 9.5px; color: var(--grey-2); }
+.bp-meaning { font-size: 10.5px; color: var(--grey-2); }
+.bp-type { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+.bp-motion { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-bottom: 8px; }
+.bp-fx { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; color: var(--grey-2); background: var(--panel-2); border-radius: var(--r); padding: 12px; }
+.bp-fx b { color: var(--ink); font-size: 12.5px; }
+.bp-fx-chip { width: 26px; height: 26px; border-radius: 8px; background: color-mix(in srgb, var(--brand-intelligence) 30%, var(--card)); border: 1px solid var(--brand-intelligence); }
+.bp-syms { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.bp-sym { display: flex; flex-direction: column; gap: 4px; background: var(--panel-2); border-radius: var(--r); padding: 12px; font-size: 11px; color: var(--grey-2); }
+.bp-sym b { color: var(--ink); font-size: 12.5px; }
+.bp-moments { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.bp-moment { background: var(--panel-2); border-radius: var(--r); padding: 11px 13px; display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--grey-2); }
+.bp-moment b { color: var(--ink); }
+.bp-man-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 22px; }
+@media (max-width: 860px) { .bp-man-grid { grid-template-columns: 1fr; } }
+.bp-man-grid p { margin: 6px 0 0; font-size: 13px; line-height: 1.55; }
+.bp-man-grid .t-caption { margin-top: 10px; }
+.bp-is, .bp-isnot { font-size: 13px; padding: 4px 0; }
+.bp-is { color: var(--ink); }
+.bp-isnot { color: var(--grey-2); }
+.bp-journey { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.bp-j i { display: inline-block; width: 9px; height: 9px; border-radius: 999px; margin-right: 6px; }
