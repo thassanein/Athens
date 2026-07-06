@@ -1788,3 +1788,21 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
   .vit-spark, .vit-deep { display: none; }
   .vit-vel { gap: 10px; }
 }
+
+/* 6C.1B Wave 4 — motion identity + finalized manifesto */
+.idp-motion { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1080px) { .idp-motion { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .idp-motion { grid-template-columns: 1fr; } }
+.idp-mo { display: flex; flex-direction: column; gap: 4px; border: 1px solid var(--line); border-radius: var(--r); padding: 14px; background: var(--panel-2); }
+.idp-mo-mark { margin-bottom: 6px; }
+.idp-mo b { font-size: 12.5px; }
+.idp-mo-verb { font-size: 11px; font-weight: 700; color: var(--brand-energy); }
+.idp-mo-means { font-size: 11.5px; color: var(--grey); line-height: 1.5; }
+.idp-mo-law { font-size: 10.5px; color: var(--grey-2); line-height: 1.45; margin-top: 5px; font-style: italic; }
+.idp-laws { margin-top: 14px; }
+.bp-emotions { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 8px; }
+@media (max-width: 1080px) { .bp-emotions { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.bp-emotion { display: flex; flex-direction: column; gap: 3px; border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; }
+.bp-emotion b { font-size: 12px; }
+.bp-emotion span { font-size: 10.5px; color: var(--grey-2); line-height: 1.45; }
+.bp-close { margin: 14px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--ink); border-left: 3px solid var(--brand-energy); padding-left: 14px; }

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { MasterMark } from '../components/Identity.jsx'
 import { CompassSymbol, PulseRings, PulseCompact, SignalGlyph } from '../components/IdentitySystems.jsx'
 import { pulseIdentity, compassIdentity, signalIdentity, COMPASS_STATES, SIGNAL_STATES, HIERARCHY, COEXISTENCE, TRANSITIONS } from '../lib/identity-systems.js'
+import { MOTION_IDENTITY, MOTION_LAWS } from '../lib/brand.js'
 
 // The Identity Architecture page (6C.1B Wave 2) — the four coordinated
 // identity layers, live. Every mark on this page is the production component
@@ -176,6 +177,30 @@ export default function IdentityPage({ db, user }) {
           {TRANSITIONS.map((t) => (
             <div key={t.from} className="idp-t"><b>{t.from}</b><span className="idp-t-arrow">{t.to !== '—' ? `→ ${t.to}` : '∅'}</span><span>{t.when}</span></div>
           ))}
+        </div>
+      </div>
+
+      {/* the motion identity (Wave 4) — each layer owns its verbs */}
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>The motion identity</h3><span className="spacer" /><span className="badge b-grey">breathe · sweep · orient · glint · propagate</span></div>
+        <div className="idp-motion">
+          {MOTION_IDENTITY.map((m, i) => (
+            <div key={m.layer} className="idp-mo">
+              <div className="idp-mo-mark">
+                {i === 0 && <MasterMark size={56} motion id="mo-m" decorative />}
+                {i === 1 && <CompassSymbol size={56} state="orient" motion id="mo-c" />}
+                {i === 2 && <PulseRings dims={pulse.dims} size={56} motion id="mo-p" />}
+                {i === 3 && <SignalGlyph size={56} state="sensing" motion id="mo-s" />}
+              </div>
+              <b>{m.layer}</b>
+              <span className="idp-mo-verb mono">{m.verbs}</span>
+              <span className="idp-mo-means">{m.means}</span>
+              <span className="idp-mo-law">{m.law}</span>
+            </div>
+          ))}
+        </div>
+        <div className="idp-laws">
+          {MOTION_LAWS.map((l, i) => <div key={i} className="idp-co">◈ {l}</div>)}
         </div>
       </div>
 

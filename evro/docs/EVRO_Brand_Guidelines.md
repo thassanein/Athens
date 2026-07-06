@@ -1,5 +1,12 @@
 # Athens EVRO — Brand Identity System
 
+> **6C.1B convergence note.** This document describes the 6C.1 system. Its master-brand
+> sections are superseded: the **EV Monogram** is now the master brand and the Pulse
+> Orbital continues as the enterprise-state identity (layer 3 of the four-layer
+> architecture). See `EVRO_Identity_Architecture.md` — the authoritative record — and
+> the in-app **Identity** page. Tokens, typography, symbols, signature moments and
+> motion principles below remain current.
+
 Version: 2.0 (Phase 6C.1) · Last updated: 2026-07-06
 Supersedes v1.0 (Phase 4A). Everything here is implemented — the living
 specimens render on the in-app **Brand** page (Reference → Brand), sourced from

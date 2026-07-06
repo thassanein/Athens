@@ -2,7 +2,7 @@ import { EvroMark, EvroLockup, BRAND, JOURNEY } from '../components/Brand.jsx'
 import { MasterMark, MasterLockup, IDENTITY_LAYERS } from '../components/Identity.jsx'
 import { MarkCompass, MarkSignal } from '../components/Marks.jsx'
 import { SYMBOLS } from '../components/Symbols.jsx'
-import { MANIFESTO, EVRO_IS, EVRO_IS_NOT, SIGNATURE_MOMENTS, MOTION_PRINCIPLES } from '../lib/brand.js'
+import { MANIFESTO, MANIFESTO_CLOSE, EMOTIONAL_REGISTER, EVRO_IS, EVRO_IS_NOT, SIGNATURE_MOMENTS, MOTION_PRINCIPLES } from '../lib/brand.js'
 
 // The EVRO Brand page (6C.1 Wave 3, converged in 6C.1B) — the identity
 // system, ALIVE: every specimen on this page is the real component, the real
@@ -180,15 +180,22 @@ export default function BrandPage() {
         </div>
       </div>
 
-      {/* manifesto */}
+      {/* manifesto — finalized in 6C.1B */}
       <div className="card pad section-gap bp-manifesto">
-        <div className="card-h"><h3>The manifesto</h3></div>
+        <div className="card-h"><h3>The manifesto</h3><span className="spacer" /><span className="badge b-grey">finalized · 6C.1B</span></div>
         <div className="bp-man-grid">
           <div><div className="t-caption">WE BELIEVE</div>{MANIFESTO.beliefs.map((x, k) => <p key={k}>{x}</p>)}</div>
           <div><div className="t-caption">HOW WE BUILD</div>{MANIFESTO.philosophy.map((x, k) => <p key={k}>{x}</p>)}</div>
           <div><div className="t-caption">OPERATING PRINCIPLES</div>{MANIFESTO.principles.map((x, k) => <p key={k}>{x}</p>)}</div>
           <div><div className="t-caption">THE VOICE</div>{MANIFESTO.voice.map((x, k) => <p key={k}>{x}</p>)}</div>
         </div>
+        <div className="t-caption" style={{ marginTop: 14 }}>THE EMOTIONAL LANGUAGE</div>
+        <div className="bp-emotions">
+          {EMOTIONAL_REGISTER.map((e) => (
+            <div key={e.feeling} className="bp-emotion"><b>{e.feeling}</b><span>{e.lives}</span></div>
+          ))}
+        </div>
+        <p className="bp-close">{MANIFESTO_CLOSE}</p>
       </div>
 
       {/* is / is not */}

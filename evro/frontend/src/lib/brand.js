@@ -66,3 +66,35 @@ export const MOTION_PRINCIPLES = [
   { fx: 'fx-rotate', name: 'Rotate', use: 'Continuous processes, sparingly.' },
   { fx: 'fx-expand', name: 'Expand', use: 'Every entrance — content arrives, it does not just appear.' },
 ]
+
+// ---------------------------------------------------------------------------
+// 6C.1B Wave 4 — the motion identity and the finalized manifesto.
+
+// Motion relationships across the four identity layers. Each layer owns its
+// verbs; the laws below keep four moving systems feeling like one identity.
+export const MOTION_IDENTITY = [
+  { layer: 'Master Brand', verbs: 'glint', means: 'The gold apex catches light — 3.6s, the apex only.', law: 'The signature never breathes and never travels. A master brand that dances is a mascot.' },
+  { layer: 'Enterprise Compass', verbs: 'orient · lock', means: 'The needle searches while decisions are open; the lock ring settles when a heading is held.', law: 'Moves only when the decision state moves — a compass that dances is a compass nobody trusts.' },
+  { layer: 'Pulse Rings', verbs: 'breathe · sweep', means: 'The living gauge breathes; sweeps move when scores move.', law: 'Ambient only where the enterprise is live — vitals, pulse, mission surfaces.' },
+  { layer: 'Enterprise Signal', verbs: 'propagate · contact', means: 'Fronts propagate from the origin; the gold contact pings on a confirmed detection.', law: 'Event-driven: the AI moves when it senses, never to look busy.' },
+]
+
+export const MOTION_LAWS = [
+  'One moving layer per surface — motion hierarchy follows identity hierarchy.',
+  'Transform and opacity only, with the one honoured exception: glow animates box-shadow at low frequency, for ceremonies.',
+  'prefers-reduced-motion is mandatory. Under reduce, every state rests in its final pose — nothing is lost but the movement.',
+  'Motion must mean something: a state change, a detection, a living gauge. Never decoration.',
+]
+
+// The emotional language — what the identity is allowed to make you feel,
+// and the surfaces responsible for it. Five registers; nothing outside them.
+export const EMOTIONAL_REGISTER = [
+  { feeling: 'Calm authority', lives: 'the master brand, the boardroom lockup, the type hierarchy' },
+  { feeling: 'Earned confidence', lives: 'numbers that reconcile, provenance on every claim, formulas on every ring' },
+  { feeling: 'Quiet urgency', lives: 'weather, the risk ring, the alert line — felt, never shouted' },
+  { feeling: 'Momentum', lives: 'velocity telemetry, the momentum chips, the breathing gauge' },
+  { feeling: 'Ceremony', lives: 'seasons, celebrations, the vertical lockup — rare by design, so it stays worth feeling' },
+]
+
+// The convergence, closed.
+export const MANIFESTO_CLOSE = 'Four systems, one identity: the monogram signs, the compass orients, the rings gauge, the signal senses. Nothing decorative, nothing borrowed, nothing that lies.'
