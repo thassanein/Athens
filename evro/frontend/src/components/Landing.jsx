@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { strategicSummary, strategicNarratives } from '../lib/companion.js'
 import { money, num } from '../lib/format.js'
 import { AnimatedValue } from './ui.jsx'
-import { BrandMark, BrandLockup, JOURNEY } from './Brand.jsx'
+import { EvroMark, BrandLockup, JOURNEY } from './Brand.jsx'
 import { IconAI } from './Icons.jsx'
 
 // EVRO landing experience — the premium "enterprise operating system" front
@@ -102,7 +102,8 @@ export default function Landing({ db, user, onEnter }) {
 
         <section className="landing-journey">
           <div className="landing-journey-head">
-            <BrandMark size={30} journey />
+            {/* the journey strip speaks the Pulse (state) layer, not the master brand */}
+            <EvroMark size={30} journey id="lj" />
             <span>The value journey — every initiative moves through four stages.</span>
           </div>
           <div className="landing-journey-flow">

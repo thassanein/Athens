@@ -72,7 +72,7 @@ export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel
     <>
       <div className="brand">
         <button className="mark" onClick={onBrand} title="EVRO landing" style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', width: '100%', textAlign: 'left' }}>
-          <BrandMark size={38} />
+          <BrandMark size={38} id="nvb" />
           <div>
             <div className="name">Athens EVRO</div>
             <div className="sub">Enterprise Intelligence OS</div>

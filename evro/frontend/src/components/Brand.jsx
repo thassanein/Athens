@@ -1,21 +1,22 @@
-// EVRO brand identity v2 (Phase 6C.1) — the ENTERPRISE PULSE ORBITAL.
+// EVRO brand — the ENTERPRISE PULSE ORBITAL (6C.1), now layer 3 of the
+// identity architecture (6C.1B convergence).
 //
-// The mark: three concentric pulse arcs — the same Pulse Ring that anchors the
-// product — swept as an orbital system, with a gold VALUE SPARK at the head of
-// the outer orbit ascending to the upper-right (the value-flow direction
-// inherited from the original ascent mark) and a solid core: the enterprise
-// "now". Field: deep-space navy, calm and premium. This makes the decision the
-// brief asked for explicit: the Enterprise Pulse IS the core visual identity.
+// The mark: three concentric pulse arcs swept as an orbital system, gold
+// VALUE SPARK at 45° NE, solid core — the enterprise "now". It served as the
+// master brand through 6C.1; after the 6C.1A panel verdict, 6C.1B converged
+// on the EV Monogram as the master brand (components/Identity.jsx) and the
+// Pulse Orbital continues as the ENTERPRISE STATE identity — the ring
+// language of energy, health and momentum the product already speaks.
 //
-// Usage rules (the Pulse Identity):
-//  · The mark is never decorated, tilted or recoloured; the spark is always
-//    gold (#F5A524) and always at 45° NE — value ascends.
-//  · Motion variant only where the enterprise is "live" (app chrome, landing):
-//    arcs breathe, the spark pulses — inside prefers-reduced-motion guards.
-//  · Icon-only ≥ 16px; horizontal lockup for chrome; vertical for covers.
+// Usage rules (the Pulse layer):
+//  · Never decorated, tilted or recoloured; the spark is always gold
+//    (#F5A524) and always at 45° NE — value ascends.
+//  · Motion only where the enterprise is "live" — inside reduced-motion guards.
 //
-// Variants: EvroMark (icon), EvroLockup (horizontal | vertical), motion via
-// the `motion` prop. BrandMark / BrandLockup remain as compatible aliases.
+// BrandMark / BrandLockup aliases now resolve to the MASTER BRAND (the
+// monogram) so every chrome surface signs with the company's signature;
+// EvroMark / EvroLockup remain the Pulse Orbital for state-layer use.
+import { MasterMark, MasterLockup } from './Identity.jsx'
 
 // The value journey (kept from v1 — Landing's journey strip + stage colours).
 export const JOURNEY = [
@@ -97,8 +98,12 @@ export function EvroLockup({ size = 40, orientation = 'horizontal', sub = 'Enter
   )
 }
 
-// ---- compatible aliases (v1 API) -------------------------------------------
-export function BrandMark(props) { return <EvroMark {...props} /> }
+// ---- compatible aliases ----------------------------------------------------
+// Since 6C.1B these resolve to the master brand: the EV Monogram. `journey`
+// belongs to the Pulse layer — callers that want it use EvroMark directly.
+export function BrandMark({ size, motion, id, tile }) {
+  return <MasterMark size={size} motion={motion} id={id} tile={tile} />
+}
 export function BrandLockup({ size, sub, variant }) {
-  return <EvroLockup size={size} sub={sub === 'Enterprise Value Realization OS' ? 'Enterprise Intelligence OS' : sub} variant={variant} />
+  return <MasterLockup size={size} sub={sub === 'Enterprise Value Realization OS' ? 'Enterprise Intelligence OS' : sub} tone={variant} />
 }

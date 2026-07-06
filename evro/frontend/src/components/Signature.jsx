@@ -20,7 +20,7 @@ export function SignatureWelcome({ db, user, onDone }) {
   return (
     <div className="sig-scrim" role="dialog" aria-label="Welcome to Athens OS">
       <div className="sig-card fx-expand">
-        <div className="sig-brand"><BrandMark size={44} /><span>Athens OS</span></div>
+        <div className="sig-brand"><BrandMark size={44} id="sgb" /><span>Athens OS</span></div>
         <div className="sig-beat" key={beat}>
           <div className="sig-t">{b.title}</div>
           {b.lines.map((l, k) => <p key={k} className="sig-l">{l}</p>)}

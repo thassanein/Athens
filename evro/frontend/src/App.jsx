@@ -211,7 +211,7 @@ export default function App() {
 
   if (!db || !user) return (
     <div className="app-loading">
-      <div className="app-loading-mark"><BrandMark size={64} /></div>
+      <div className="app-loading-mark"><BrandMark size={64} id="ldg" /></div>
       <div className="tiny muted">Loading the operating system…</div>
     </div>
   )

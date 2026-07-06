@@ -1673,3 +1673,25 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
   .pv-win td:first-child { background: linear-gradient(rgba(245, 165, 36, 0.07), rgba(245, 165, 36, 0.07)) var(--card); }
   html[data-theme='light'] .pv-win td:first-child { background: linear-gradient(rgba(245, 165, 36, 0.14), rgba(245, 165, 36, 0.14)) var(--card); }
 }
+
+/* 6C.1B Wave 1 — master brand (EV Monogram) + identity architecture */
+@media (prefers-reduced-motion: no-preference) {
+  .mbm-motion .mbm-apex { transform-origin: 65px 64px; animation: mbm-glint 3.6s ease-in-out infinite; }
+  @keyframes mbm-glint { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.66; transform: scale(0.88); } }
+}
+.bp-arch { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1080px) { .bp-arch { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .bp-arch { grid-template-columns: 1fr; } }
+.bp-layer { display: flex; flex-direction: column; gap: 3px; border: 1px solid var(--line); border-radius: var(--r); padding: 14px; background: var(--panel-2); }
+.bp-layer-mark { margin-bottom: 6px; }
+.bp-layer-n { font-size: 9.5px; font-weight: 800; letter-spacing: 0.8px; color: var(--brand-energy); }
+.bp-layer b { font-size: 13.5px; }
+.bp-layer-mk { font-size: 11px; color: var(--grey); font-weight: 700; }
+.bp-layer-says { font-size: 10.5px; color: var(--grey-2); letter-spacing: 0.2px; }
+.bp-layer-sur { font-size: 11px; color: var(--grey); line-height: 1.45; margin-top: 5px; }
+.bp-layer-st { font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--amber); margin-top: 5px; }
+.bp-scale { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-top: 14px; padding: 12px; border: 1px dashed var(--line); border-radius: var(--r); }
+.bp-scale-l { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); align-self: center; }
+.bp-scale-note { font-size: 10.5px; color: var(--grey-2); align-self: center; max-width: 340px; line-height: 1.4; }
+.bp-board { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 16px; padding: 26px 16px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel-2); }
+.bp-board-cap { font-size: 10.5px; color: var(--grey-2); text-align: center; max-width: 420px; line-height: 1.45; }
