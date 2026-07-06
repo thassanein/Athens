@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { momentum, MOMENTUM_SCOPES, MOMENTUM_STATES } from '../lib/momentum.js'
+import { SymMomentum } from './Symbols.jsx'
 import { money } from '../lib/format.js'
 
 // Momentum Board (6B item 2) — acceleration, deceleration and stagnation at
@@ -25,7 +26,7 @@ export default function MomentumBoard({ db }) {
   return (
     <div className="card pad section-gap">
       <div className="card-h" style={{ flexWrap: 'wrap', rowGap: 8 }}>
-        <h3>Momentum</h3>
+        <h3><span className="sym" style={{ color: 'var(--brand-momentum)', marginRight: 6 }}><SymMomentum size={15} /></span>Momentum</h3>
         <div className="mom-legend">
           {Object.entries(MOMENTUM_STATES).map(([k, s]) => (
             <span key={k} className="mom-leg" style={{ color: s.tone }}>{s.arrow} {m.counts[k]}</span>

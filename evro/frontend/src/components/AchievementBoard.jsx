@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { orgMilestones, maturityModel, transformationAchievements, MATURITY_LEVELS } from '../lib/achievements.js'
+import { SymAchievement } from './Symbols.jsx'
 import { money } from '../lib/format.js'
 import { Bar } from './ui.jsx'
 
@@ -18,7 +19,7 @@ export default function AchievementBoard({ db }) {
   return (
     <div className="card pad section-gap">
       <div className="card-h" style={{ flexWrap: 'wrap', rowGap: 8 }}>
-        <h3>Enterprise achievements</h3>
+        <h3><span className="sym" style={{ color: 'var(--brand-energy)', marginRight: 6 }}><SymAchievement size={15} /></span>Enterprise achievements</h3>
         <span className="spacer" />
         <span className="badge b-green">{earned} earned</span>
         <span className="badge b-grey">computed from the validated record</span>

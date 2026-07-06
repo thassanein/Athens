@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { aiPresence, PRESENCE_STATES } from '../lib/presence.js'
 import { pct } from '../lib/format.js'
-import { IconAI } from './Icons.jsx'
+import { SymAI } from './Symbols.jsx'
 
 // AI Presence rail (6B item 8) — the persistent, glanceable proof that the
 // agent team is on duty: six dots (the active one pulses), expanding to each
@@ -18,7 +18,7 @@ export default function AIPresence({ db, user, page, navigate }) {
   return (
     <aside className={`aip ${open ? 'open' : ''}`} aria-label="AI presence">
       <button className="aip-head" onClick={toggle} aria-expanded={open} title="The agent team — live states and reasoning">
-        <span className="aip-logo"><IconAI /></span>
+        <span className="aip-logo" style={{ color: 'var(--brand-ai)' }}><SymAI size={16} /></span>
         <span className="aip-dots" aria-hidden="true">
           {p.agents.map((a) => (
             <span key={a.key} className={`aip-dot ${a.state === 'active' ? 'fx-pulse' : ''}`} style={{ background: PRESENCE_STATES[a.state].tone }} />

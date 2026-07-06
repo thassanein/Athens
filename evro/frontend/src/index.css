@@ -1495,3 +1495,39 @@ html[data-theme='light'] .mr-console { background: #101722; }
   .evm-motion .evm-spark { animation: evm-spark 2.8s ease-in-out infinite; }
   @keyframes evm-spark { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 }
+
+/* ---- 6C.1 Wave 2: brand color system + typography hierarchy -----------------
+   COLOR — the EVRO semantic palette, mapped to enterprise meaning (6C.1):
+     value        → green   (validated, banked, compounding)
+     risk         → red     (exposure, escalation, storm)
+     caution      → amber   (leakage, weather fronts, watch items)
+     intelligence → navy    (analysis, forecast, the calm instrument field)
+     momentum     → signal cyan (velocity, execution, motion — distinct from navy)
+     ai           → violet  (the deterministic agent layer)
+     energy       → gold    (the value spark — the HUE is constant; like every
+                             accent it darkens for the light theme's contrast)
+   TYPE — the EVRO hierarchy on Archivo + Space Mono. Evaluated per the brief:
+     SF Pro (platform-locked), Inter (ubiquitous — reads generic), Geist
+     (vendor-flavoured). Archivo keeps the grotesque authority of the Inter
+     class with more character, and Space Mono gives data its instrument
+     voice — both already load with full system fallbacks, no new deps. */
+:root {
+  --brand-value: var(--green);
+  --brand-risk: var(--red);
+  --brand-caution: var(--amber);
+  --brand-intelligence: var(--navy);
+  --brand-momentum: #2FB6E0;
+  --brand-ai: #8B5CF6;
+  --brand-energy: #F5A524;
+}
+html[data-theme='light'] {
+  --brand-momentum: #0b7ba6;
+  --brand-ai: #7c3aed;
+  --brand-energy: #9a6b0a;
+}
+.t-display { font-size: 34px; font-weight: 800; letter-spacing: -0.6px; line-height: 1.1; }
+.t-headline { font-size: 21px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; }
+.t-title { font-size: 15px; font-weight: 700; }
+.t-caption { font-size: 11px; color: var(--grey-2); letter-spacing: 0.3px; }
+.t-data { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -0.3px; font-weight: 700; }
+.sym { display: inline-flex; align-items: center; vertical-align: -0.15em; }

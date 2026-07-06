@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { seasonFramework } from '../lib/seasons.js'
+import { SymSeason } from './Symbols.jsx'
 import { money } from '../lib/format.js'
 import { Bar } from './ui.jsx'
 
@@ -20,7 +21,7 @@ export default function SeasonBoard({ db }) {
   return (
     <div className="card pad section-gap">
       <div className="card-h" style={{ flexWrap: 'wrap', rowGap: 8 }}>
-        <h3>Value seasons</h3>
+        <h3><span className="sym" style={{ color: 'var(--brand-intelligence)', marginRight: 6 }}><SymSeason size={15} /></span>Value seasons</h3>
         <span className="spacer" />
         {f.compare.map((c) => (
           <span key={c.to} className="badge b-grey" title={`${c.from} → ${c.to}`}>

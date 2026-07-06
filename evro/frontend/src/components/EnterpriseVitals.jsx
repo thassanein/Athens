@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { enterpriseEnergy, energyHistory, energyForecast, enterpriseWeather, valueVelocity } from '../lib/experience.js'
+import { SymEnergy, SymValue, SymWeather } from './Symbols.jsx'
 import { money } from '../lib/format.js'
 
 // Enterprise Vitals (6B Wave 1) — the living strip: the Energy ring breathes,
@@ -38,7 +39,7 @@ export default function EnterpriseVitals({ db, compact = false }) {
       <div className="vit-energy" title={`${e.formula} — ${e.parts.map((p) => `${p.label}: ${p.note}`).join(' · ')}`}>
         <EnergyRing score={e.score} tone={e.state.tone} />
         <div className="vit-energy-t">
-          <span className="vit-state" style={{ color: e.state.tone }}>{e.state.label}</span>
+          <span className="vit-state" style={{ color: e.state.tone }}><span className="sym" style={{ color: 'var(--brand-energy)', marginRight: 4 }}><SymEnergy size={14} /></span>{e.state.label}</span>
           <span className="vit-sub">Enterprise Energy · {e.state.blurb}</span>
         </div>
       </div>
@@ -59,7 +60,7 @@ export default function EnterpriseVitals({ db, compact = false }) {
           <span className="vit-sub">{w.urgency} · hover for the read</span>
         </div>
         <span className="kpop card pad" style={{ width: 280 }}>
-          <b style={{ fontSize: 12.5 }}>{w.icon} {w.label}</b>
+          <b style={{ fontSize: 12.5, display: 'inline-flex', alignItems: 'center', gap: 6 }}><span className="sym" style={{ color: 'var(--brand-caution)' }}><SymWeather size={14} /></span>{w.label}</b>
           <span style={{ display: 'block', fontSize: 11.5, color: 'var(--grey)', margin: '4px 0' }}>{w.why}</span>
           <span style={{ display: 'block', fontSize: 12 }}>{w.recommendation}</span>
         </span>
@@ -68,6 +69,7 @@ export default function EnterpriseVitals({ db, compact = false }) {
       <span className="vit-div" aria-hidden="true" />
 
       <div className="vit-vel">
+        <span className="sym" style={{ color: 'var(--brand-value)', alignSelf: 'center' }} title="Value velocity"><SymValue size={15} /></span>
         <span className="vit-v"><b className="mono" style={{ color: 'var(--green)' }}>{perDay(vel.createdPerDay)}</b><span>value created</span></span>
         <span className="vit-v"><b className="mono" style={{ color: vel.leakPerDay > 0 ? 'var(--amber)' : 'var(--ink)' }}>{perDay(vel.leakPerDay)}</b><span>leaking</span></span>
         <span className="vit-v"><b className="mono">{perDay(vel.netPerDay)}</b><span>net momentum</span></span>

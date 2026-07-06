@@ -4,6 +4,7 @@ import { missionProfile, missionCeremony } from '../lib/mission-engine.js'
 import { canApproveRoles, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money, pct } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
+import { SymMission } from '../components/Symbols.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Mission Queue (5B.5 item 4; intelligence layer 5B.6 item 3) — everything the
@@ -116,7 +117,7 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
 
       <div className="card pad section-gap">
         <div className="card-h" style={{ flexWrap: 'wrap', rowGap: 8 }}>
-          <h3>Missions</h3>
+          <h3><span className="sym" style={{ color: 'var(--brand-risk)', marginRight: 6 }}><SymMission size={15} /></span>Missions</h3>
           <span className="spacer" />
           <div className="mq-legend">
             {MISSION_CLASSES.map((c) => (
