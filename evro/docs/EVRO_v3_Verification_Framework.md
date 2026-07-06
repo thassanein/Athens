@@ -319,6 +319,73 @@ the guardrail (S1) — and with it, the engine's empty diff now spans the entire
 
 ---
 
+## 9H. Phase 6B — experience engine development (S2/S3)
+
+Twelve brief items, six waves — the enterprise made felt, never faked.
+`V-6B-nologic` is the guardrail (S1).
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-6B-nologic** (S1) | No engine/mutations/server/data change. | `git diff bfd0da7~1..0c8d22f -- evro/frontend/src/lib/engine.js evro/frontend/src/lib/mutations.js evro/server evro/data` is empty. | Empty diff. |
+| **V-6B-energy** | Enterprise Energy — stated formula, honest history. | `enterpriseEnergy(db)`: 45% health + 30% pulse + 25% delivery pace, formula string carried; `energyHistory` reconstructs only the historized inputs and the note says so; `energyForecast` is a labelled projection. | Seed **56 · Stable**. |
+| **V-6B-velocity** | Value velocity in $/day. | `valueVelocity(db)` → created/leak/net/needed per day from dated record; no wall clock (db.meta.now). | Seed ≈ **$9K/$6K/$3K/$21K per day**. |
+| **V-6B-weather** | Enterprise Weather — worst signal first. | `enterpriseWeather(db)`: state from the worst live signal; carries why + recommendation + accent; alert renders only when a real threshold trips. | Seed **Overcast** with recommendation. |
+| **V-6B-momentum** | Momentum engine — windows stated. | `momentum(db, scope)` for 6 scopes: recent 2 months vs the 2 before, validated landings only (`window` string); states accelerating/steady/decelerating/stagnant. | Seed business units: **0 accelerating · 3 decelerating**. |
+| **V-6B-seasons** | Seasons — delivery vs profile, never aspiration. | `seasonFramework(db)`: per-quarter expected from `profileWeights`; score = 70% delivery + 30% hygiene; objectives are computed facts. | Seed **Q1 100 complete · Q2 97 current**. |
+| **V-6B-mission** | Mission engine — difficulty & probability derived. | `missionProfile`: probability = conf × (1 − 0.4·risk) × dependency cut; weight ★1–5 uses `criticalPath(db).path` ids; ceremony composed from live numbers. | Formulas reproduce; no scripted values. |
+| **V-6B-achieve** | Achievements — earned from dated data only. | `orgMilestones` crossings carry `crossedOn` dates derived from the record; maturity model level + progress computed. | Seed **L3 Practicing, 67% toward Optimizing**. |
+| **V-6B-presence** | AI presence — honesty about the rules layer. | `aiPresence(db,user,page)`: six agents + Operator states; lead follows `PAGE_AGENT`; every confidence carries a grounding `confNote`. | Lead matches page; notes render. |
+| **V-6B-moments** | Celebrations, rituals, signature — provable, gated, repeatable-safe. | `detectCelebrations` fires only on state diffs vs the `evro.celebrated` store; rituals run through `contextView`; `detectSynergies` uses real structure (enables edges, shared groups); welcome/AI-discovery/synergy intros gate once via `evro.signature`. | No un-earned ceremony; gates persist. |
+
+## 9I. Phase 6C.1 — brand identity system (S2/S3)
+
+The Pulse Identity era: mark, symbols, tokens, manifesto, living Brand page.
+Superseded on the master-brand question by 6C.1B (§9K) — these checks verify
+the system as the state layer it became.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-6C1-nologic** (S1) | No engine/mutations/server/data change. | `git diff 73bfcb1~1..776f587 -- …` (guard paths) is empty. | Empty diff. |
+| **V-6C1-mark** | Pulse Orbital geometry exact. | `EvroMark`: three arcs sweep 357°→93° clockwise (gap opens NE), spark at 45° on r38, core r6.5; the journey variant colours the arcs from `JOURNEY[1..3]`. | Arc endpoints match `arcPath`; gap NE. |
+| **V-6C1-symbols** | Eight enterprise symbols, theme-safe. | `SYMBOLS`: 24-grid, currentColor, 2px strokes; filled dots carry `stroke="none"`; light theme overrides the three theme-static hexes (momentum/ai/energy). | Glyphs legible both themes. |
+| **V-6C1-tokens** | Brand tokens themed. | `--brand-value/risk/caution/intelligence/momentum/ai/energy` defined for dark AND light (e.g. energy #F5A524 / #9a6b0a). | Both blocks present in index.css. |
+| **V-6C1-page** | Brand page = living specimens. | Every mark/token/glyph/motion on the page is the production component; anatomy chips visible in both themes. | No pictures-of-the-brand. |
+| **V-6C1-doc** | Guidelines claims corrected + superseded honestly. | v2.0 carries the fixed claims (three-arc journey; three gated one-time moments; glow box-shadow caveat) and the 6C.1B convergence preface pointing to the architecture record. | Preface present; claims accurate. |
+
+## 9J. Phase 6C.1A — icon & identity exploration (S2/S3)
+
+Five directions, three systems, five live-number concepts, a recorded
+six-judge verdict. The exploration is itself a product surface (Identity Lab).
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-6CA-nologic** (S1) | No engine/mutations/server/data change. | `git diff 9ad1190~1..639db0c -- …` (guard paths) is empty. | Empty diff. |
+| **V-6CA-marks** | Five direction systems, floor-safe, a11y-clean. | `Marks.jsx`: MarkPulse closes rings ≤24px; GOLD darkens to #B45309 on light fields (≥3:1); every decorative instance is `aria-hidden`, labelled ones announce. | 16px scale rows legible; ARIA split correct. |
+| **V-6CA-artboards** | Comp artboards are theme-proof fixed fields. | `.con-sys/.con-desk/.con-phone` pin their palette via local custom properties — flipping `data-theme` cannot invert their ink (the review-confirmed fix). | Wordmarks/heroes legible under light theme. |
+| **V-6CA-live** | Even a mock must not lie. | Every number in the landing/homepage concepts computes from the live db (EVUM, at-stake, value-at-risk, top opportunity, momentum counts, season score); the H1 bars scale from `enterpriseRollup().bridge`. | No fabricated figures; bars 3-step honest. |
+| **V-6CA-panel** | The verdict is a disclosed, auditable, recorded judgment. | All three surfaces say the judges were model-run AI personas; `identity-verdict.js` matches `docs/EVRO_6C1A_panel_result.json` verbatim; means/Borda recompute from the raw per-judge scores. | **Monogram 6.9 mean · Borda 21**; compass/signal 5.5 tie breaks 17 v 15; as-of-panel-time qualifier present. |
+| **V-6CA-pages** | Pages verdict recorded with picks. | Landing pick **L3 Value First** (9/8), home pick **H1 Command Center** (7/4 with mobile-rebuild note); pick tags render; the second card carries the advisory badge. | Picks + provenance visible. |
+| **V-6CA-mobile** | Verdict table mobile + AA. | ≤640px the direction column is sticky with opaque composite on the winner row; light-theme winner text #8a5f08 (≥AA on the gold wash). | Sticky column; contrast ≥4.5:1. |
+
+## 9K. Phase 6C.1B — enterprise identity convergence (S2/S3)
+
+The verdict becomes architecture: four coordinated layers, converged surfaces,
+motion identity, finalized manifesto. `V-6CB-nologic` is the guardrail — and
+with it the engine's empty diff spans Phase 3A through 6C.1B.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-6CB-nologic** (S1) | No engine/mutations/server/data change. | `git diff e8aefa4~1..eb64f9e -- …` (guard paths) is empty; the full-era check `git diff bfd0da7~1..eb64f9e -- …` is also empty. | Both diffs empty. |
+| **V-6CB-master** | Master brand promoted, size-aware, id-clean. | `MasterMark`: ≤28px drops the bezel, strokes 6.8→8, apex 5.2→6 ("EV" readable at 16px); six variants; favicon.svg is the small-size geometry verbatim; BrandMark/BrandLockup aliases resolve to the monogram (NavBar, loading, Signature, Landing); no duplicate DOM ids across chrome instances. | Ladder legible to 16px; aliases swapped; `[id]` dupes = 0. |
+| **V-6CB-compass** | Compass states read the mission queue. | `compassIdentity(db,user)`: orient when decisions open; locked when a ranked mission leads with none open; idle when clear. | Seed: **orient — "2 decisions open"**. |
+| **V-6CB-rings** | Five named gauges, formulas on the rings, honest zero. | `pulseIdentity(db)`: Energy/Momentum/Health/Risk containment/Transformation, each from the engine that owns it, formula string carried; sweep = score; score < 1 renders an empty track (no linecap dot); mobile behavior = Energy gauge + chips. | Seed **56 / 0 / 66 / 61 / 49**; zero ring empty. |
+| **V-6CB-signal** | Signal states from real presence. | `signalIdentity(db,user)`: orchestrating when missions ranked; sensing when agents watch; agent roster carries state/confidence/confNote. | Seed: **orchestrating — Chief of Staff leads · 32 missions**. |
+| **V-6CB-rules** | Interaction rules rendered and internally consistent. | Identity page: hierarchy (signs→orients→gauges→senses), coexistence (one leader per surface; gold the only crossing token; the mark that signs never gauges), transition loop with the master abstaining. | All three blocks render; no contradiction with §9I/§9K marks. |
+| **V-6CB-landing** | Definitive landing = Value First + Status, theme-proof. | Status band (compact gauge, state, weather, net/day) renders above the EVUM hero; `.landing` pins its palette — setting `data-theme=light` does not flip its ink. | Seed band: **56 Stable · Overcast · $3K/day**; pinned tones. |
+| **V-6CB-home** | Homepage convergence + mobile distillation. | Vitals strip carries momentum chips (window in tooltip) + season chip; ≤760px `.vit-deep` and the sparkline hide (gauge + state + weather + created/net + chips remain). | Seed chips: **▲0 · ▼3 · Q2 in season 97**; distilled at 440px. |
+| **V-6CB-motion** | Motion identity — verbs per layer, reduced-motion rests. | `MOTION_IDENTITY`/`MOTION_LAWS` render with live demos; under `prefers-reduced-motion: reduce` every animation computes to `none` (emulated check). | Four layers × verbs; reduce → none. |
+| **V-6CB-docs** | The architecture record is authoritative and honest. | `EVRO_Identity_Architecture.md`: lineage 6C.1 → 6C.1A verdict → 6C.1B; layer specs match the shipped components; guidelines preface declares the supersession. | Doc ↔ code agree; preface present. |
+
 ## 10. Pass/fail summary template
 
 | Section | Checks | Pass | Fail | N/A |
@@ -338,11 +405,16 @@ the guardrail (S1) — and with it, the engine's empty diff now spans the entire
 | Phase 5B.5 executive excellence | 7 | | | |
 | Phase 5B.6 production hardening | 10 | | | |
 | Phase 5B.7 enterprise intelligence | 10 | | | |
-| **Total** | **119** | | | |
+| Phase 6B experience engines | 10 | | | |
+| Phase 6C.1 brand identity | 6 | | | |
+| Phase 6C.1A identity exploration | 7 | | | |
+| Phase 6C.1B identity convergence | 10 | | | |
+| **Total** | **152** | | | |
 
 A release is **verified** when every **S1** check passes and no **S2** check fails.
 The experience guardrails — `V-3A-nologic`, `V-3B-nologic`, `V-4A-nologic`,
-`V-55-nologic`, `V-57-nologic` (empty-diff) and `V-5B-additive`, `V-56-additive`
-(additive-only, mirrored) — must all pass. The strongest single invariant in the
-repo: **`engine.js` has an empty diff from Phase 3A through Phase 5B.7** — five
-sprints of experience, zero change to the value math.
+`V-55-nologic`, `V-57-nologic`, `V-6B-nologic`, `V-6C1-nologic`, `V-6CA-nologic`,
+`V-6CB-nologic` (empty-diff) and `V-5B-additive`, `V-56-additive` (additive-only,
+mirrored) — must all pass. The strongest single invariant in the repo:
+**`engine.js` has an empty diff from Phase 3A through Phase 6C.1B** — nine
+sprints of experience, brand and identity work, zero change to the value math.
