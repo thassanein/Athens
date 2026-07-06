@@ -7,6 +7,7 @@ import { aiRecommendations } from '../lib/model.js'
 import { money, pct } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { ActivityRings } from '../components/Charts.jsx'
+import EnterpriseVitals from '../components/EnterpriseVitals.jsx'
 import { InfoDot } from '../components/Explain.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
@@ -108,6 +109,9 @@ export default function MissionControl({ db, user, dispatch, navigate, flash }) 
           ))}
         </div>
       )}
+
+      {/* enterprise vitals — energy · weather · velocity (6B) */}
+      <EnterpriseVitals db={cdb} />
 
       {/* the 30-second triad */}
       <div className="grid cols-3">

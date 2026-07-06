@@ -1315,3 +1315,47 @@ html[data-theme='light'] .mr-console { background: #101722; }
 .intel-radar-axes { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; margin-top: 4px; }
 .intel-axis { font-size: 11px; color: var(--grey); cursor: help; }
 .intel-axis b { margin-left: 3px; }
+
+/* ---- 6B Wave 1: Motion Framework (.fx-*) ------------------------------------
+   The reusable motion vocabulary. Every behavior is wrapped in a
+   prefers-reduced-motion guard; under reduce, elements render in their final
+   resting state (the global print/reduced guards also apply). GPU-friendly:
+   transform + opacity only (glow animates box-shadow at low frequency). */
+@media (prefers-reduced-motion: no-preference) {
+  .fx-breathe { animation: fx-breathe 4.2s ease-in-out infinite; }
+  @keyframes fx-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+  .fx-pulse { animation: fx-pulse 2.6s ease-in-out infinite; }
+  @keyframes fx-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+  .fx-glow { animation: fx-glow 3.6s ease-in-out infinite; }
+  @keyframes fx-glow { 0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--fx-accent, var(--navy)) 0%, transparent); } 50% { box-shadow: 0 0 18px 2px color-mix(in srgb, var(--fx-accent, var(--navy)) 28%, transparent); } }
+  .fx-flow { background-size: 200% 100%; animation: fx-flow 6s linear infinite; }
+  @keyframes fx-flow { from { background-position: 0% 0; } to { background-position: -200% 0; } }
+  .fx-float { animation: fx-float 5.5s ease-in-out infinite; }
+  @keyframes fx-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  .fx-rotate { animation: fx-rotate 14s linear infinite; }
+  @keyframes fx-rotate { to { transform: rotate(360deg); } }
+  .fx-expand { animation: fx-expand 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  @keyframes fx-expand { from { opacity: 0; transform: scale(0.96) translateY(4px); } to { opacity: 1; transform: none; } }
+}
+
+/* ---- 6B Wave 1: Enterprise Vitals (energy · weather · velocity) ------------ */
+.vitals { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 10px 16px; margin-bottom: 14px; }
+.vit-energy { display: flex; align-items: center; gap: 10px; }
+.vit-ring { position: relative; width: 52px; height: 52px; flex: 0 0 auto; }
+.vit-ring svg { display: block; }
+.vit-ring-n { position: absolute; inset: 0; display: grid; place-items: center; font-size: 15px; font-weight: 800; }
+.vit-energy-t { display: flex; flex-direction: column; gap: 1px; }
+.vit-state { font-weight: 800; font-size: 13px; }
+.vit-sub { font-size: 10.5px; color: var(--grey-2); }
+.vit-div { width: 1px; align-self: stretch; background: var(--line); }
+.vit-weather { display: flex; align-items: center; gap: 9px; position: relative; cursor: help; }
+.vit-w-icon { font-size: 21px; line-height: 1; }
+.vit-weather .kpop { display: none; position: absolute; top: calc(100% + 8px); left: 0; z-index: 60; }
+.vit-weather:hover .kpop, .vit-weather:focus-within .kpop { display: block; }
+.vit-vel { display: flex; gap: 14px; flex-wrap: wrap; }
+.vit-v { display: flex; flex-direction: column; gap: 0; }
+.vit-v b { font-size: 13.5px; }
+.vit-v span { font-size: 10px; color: var(--grey-2); }
+.vit-spark { width: 92px; height: 30px; }
+.vit-alert { width: 100%; font-size: 12px; font-weight: 700; color: var(--red); }
+@media (max-width: 760px) { .vit-div { display: none; } .vitals { gap: 10px; } }

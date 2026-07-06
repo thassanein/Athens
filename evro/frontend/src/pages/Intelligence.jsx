@@ -9,6 +9,7 @@ import PulsePlayback from '../components/PulsePlayback.jsx'
 import ExecScenario from '../components/ExecScenario.jsx'
 import StrategicMap from '../components/StrategicMap.jsx'
 import ConfidenceHeatmap from '../components/ConfidenceHeatmap.jsx'
+import EnterpriseVitals from '../components/EnterpriseVitals.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Enterprise Intelligence (5B.7) — the flagship intelligence experience. Wave 1
@@ -96,6 +97,9 @@ export default function Intelligence({ db, user, navigate }) {
         <button className="btn sm ghost" onClick={() => navigate('missions')}>Queue</button>
         <button className="btn sm" onClick={() => navigate('decisions')}>Decision Workspace →</button>
       </div>
+
+      {/* enterprise vitals — energy · weather · velocity (6B) */}
+      <EnterpriseVitals db={db} />
 
       {/* hero — health score + value radar, the 30-second read */}
       <div className="intel-hero-grid">
