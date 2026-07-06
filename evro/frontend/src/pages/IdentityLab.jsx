@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { DIRECTIONS } from '../components/Marks.jsx'
+import { LogoSystems, PageConcepts } from '../components/Concepts.jsx'
 
 // EVRO Identity Lab (6C.1A) — the icon & identity exploration, live. Five
 // directions render as real SVG systems with dark/light fields and motion/
@@ -8,7 +9,7 @@ import { DIRECTIONS } from '../components/Marks.jsx'
 // logo systems and the landing/homepage concepts; Wave 3 adds the panel
 // verdict. The shipped mark stays shipped — this lab informs the next call.
 
-export default function IdentityLab() {
+export default function IdentityLab({ db, user }) {
   const [light, setLight] = useState(false)
   const [motion, setMotion] = useState(true)
 
@@ -70,6 +71,12 @@ export default function IdentityLab() {
         motion honors prefers-reduced-motion. The shipped 6C.1 mark (the Enterprise Pulse
         Orbital) is the production identity; this lab pressure-tests it against alternatives.
       </p>
+
+      {/* three complete logo systems (Wave 2) */}
+      <LogoSystems light={light} />
+
+      {/* landing + homepage explorations (Wave 2) — live numbers */}
+      <PageConcepts db={db} user={user} />
     </>
   )
 }
