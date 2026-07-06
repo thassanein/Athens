@@ -56,6 +56,8 @@ import NextBestRail from './components/NextBestRail.jsx'
 import AIPresence from './components/AIPresence.jsx'
 import Celebration from './components/Celebration.jsx'
 import { detectCelebrations } from './lib/celebrations.js'
+import { SignatureWelcome } from './components/Signature.jsx'
+import { signatureSeen } from './lib/signature.js'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { track } from './lib/telemetry.js'
 import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
@@ -94,6 +96,7 @@ export default function App() {
   const [copilot, setCopilot] = useState(false)
   const [briefing, setBriefing] = useState(false)
   const [celebrations, setCelebrations] = useState([])
+  const [welcome, setWelcome] = useState(() => !signatureSeen('welcomed'))
   const [intelHidden, setIntelHidden] = useState(false)
   const [drawer, setDrawer] = useState(false)
   const [toast, setToast] = useState(null)
@@ -247,6 +250,7 @@ export default function App() {
         {RAIL_PAGES.has(page) && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
         <AIPresence db={db} user={user} page={page} navigate={navigate} />
         <Celebration queue={celebrations} onDismiss={() => setCelebrations((q) => q.slice(1))} />
+        {welcome && <SignatureWelcome db={db} user={user} onDone={() => setWelcome(false)} />}
       </div>
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />

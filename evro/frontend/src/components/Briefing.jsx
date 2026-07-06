@@ -5,6 +5,23 @@ import { printBriefing, BRIEF_SECTIONS, DEFAULT_TPL } from '../lib/brief-report.
 import { scopedView } from '../lib/engine.js'
 import { money } from '../lib/format.js'
 import { IconAI, IconClose, IconBolt } from './Icons.jsx'
+import { enterpriseEnergy, enterpriseWeather } from '../lib/experience.js'
+import { dateLabel } from '../lib/format.js'
+
+// Command-briefing entrance (6B item 12) — the signature opening line: the
+// stamp, the conditions, the reader. Computed live; sets the register.
+function CommandStrip({ db }) {
+  const e = enterpriseEnergy(db)
+  const w = enterpriseWeather(db)
+  return (
+    <div className="brief-command fx-expand">
+      <span className="brief-cmd-l">COMMAND BRIEFING · {dateLabel(db.meta?.now)}</span>
+      <span className="spacer" />
+      <span className="brief-cmd-chip" style={{ color: e.state.tone }}>◉ Energy {e.score} · {e.state.label}</span>
+      <span className="brief-cmd-chip" style={{ color: w.accent }}>{w.icon} {w.label}</span>
+    </div>
+  )
+}
 
 const TONEV = { green: 'var(--green)', navy: 'var(--navy)', red: 'var(--red)', amber: 'var(--amber)', opp: 'var(--opp)' }
 const KIND = { summary: 'b-navy', approval: 'b-amber', leakage: 'b-red', opportunity: 'b-green', sustainment: 'b-red' }
@@ -61,6 +78,8 @@ export default function Briefing({ open, onClose, db, user, openDrawer, dispatch
         </div>
 
         <div className="brief-body">
+          {/* command-briefing signature strip (6B item 12) */}
+          <CommandStrip db={db} />
           {custom && (
             <div className="brief-tpl">
               <b style={{ fontSize: 12 }}>Your brief template</b>

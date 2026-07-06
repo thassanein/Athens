@@ -1467,3 +1467,23 @@ html[data-theme='light'] .mr-console { background: #101722; }
 .rit-dots { display: flex; gap: 5px; }
 .rit-dots i { width: 7px; height: 7px; border-radius: 999px; background: var(--line); }
 .rit-dots i.on { background: var(--navy); }
+
+/* ---- 6B Wave 6: signature experiences ---------------------------------------- */
+.sig-scrim { position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; background: rgba(5, 7, 12, 0.72); backdrop-filter: blur(3px); }
+.sig-card { width: min(520px, calc(100vw - 32px)); background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 28px 30px 20px; box-shadow: 0 30px 90px rgba(0,0,0,0.55); }
+.sig-brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 15px; letter-spacing: 0.4px; margin-bottom: 18px; }
+.sig-t { font-size: 21px; font-weight: 800; line-height: 1.25; margin-bottom: 10px; }
+.sig-l { margin: 0 0 8px; font-size: 13.5px; line-height: 1.6; color: var(--grey); }
+.sig-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }
+.sig-disc { display: flex; align-items: center; gap: 12px; border: 1px solid color-mix(in srgb, var(--fx-accent, var(--navy)) 45%, var(--line)); background: color-mix(in srgb, var(--fx-accent, var(--navy)) 7%, var(--card)); border-radius: var(--r); padding: 11px 14px; margin-bottom: 14px; }
+.sig-disc-i { width: 32px; height: 32px; border-radius: 999px; display: grid; place-items: center; border: 1px solid var(--fx-accent, var(--navy)); color: var(--fx-accent, var(--navy)); flex: 0 0 auto; font-size: 14px; }
+.sig-disc-m { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.sig-disc-m span { font-size: 12px; color: var(--grey); }
+.sig-syn { display: flex; align-items: center; gap: 12px; padding: 9px 11px; border-radius: 9px; background: var(--panel-2); margin-bottom: 6px; }
+.sig-syn-k { font-size: 15px; width: 22px; text-align: center; color: var(--navy); flex: 0 0 auto; }
+.sig-syn-m { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; font-size: 12.5px; }
+.sig-syn-m span { font-size: 11.5px; color: var(--grey-2); }
+.sig-syn-v { font-weight: 800; flex: 0 0 auto; }
+.brief-command { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); padding: 8px 13px; margin-bottom: 12px; }
+.brief-cmd-l { font-size: 10.5px; font-weight: 800; letter-spacing: 1.4px; color: var(--grey-2); }
+.brief-cmd-chip { font-size: 11.5px; font-weight: 700; white-space: nowrap; }

@@ -9,6 +9,8 @@ import { InfoDot } from '../components/Explain.jsx'
 import TrustBadge from '../components/Evidence.jsx'
 import MissionReplay from '../components/MissionReplay.jsx'
 import ConfidenceHeatmap from '../components/ConfidenceHeatmap.jsx'
+import { DiscoveryMoment } from '../components/Signature.jsx'
+import { signatureSeen, markSignature } from '../lib/signature.js'
 import { IconAI } from '../components/Icons.jsx'
 
 // EVRO AI Experience Shell — Chief of Staff (5B.5). A persistent AI surface: a
@@ -27,6 +29,7 @@ export default function ChiefOfStaff({ db, user, caps, dispatch, flash, navigate
   const [mode, setMode] = useState(defaultModeFor(user.role))
   const [agent, setAgent] = useState('all')
   const [pmFor, setPmFor] = useState(null) // postmortem form target (journal id)
+  const [aiSeen, setAiSeen] = useState(() => signatureSeen('aiDiscovered'))
   const [pmOutcome, setPmOutcome] = useState('')
   const [pmLessons, setPmLessons] = useState('')
   const savePm = async (id) => {
@@ -129,6 +132,9 @@ export default function ChiefOfStaff({ db, user, caps, dispatch, flash, navigate
           </>
         )}
       </div>
+
+      {/* AI discovery moment — first visit only (6B item 12) */}
+      {!aiSeen && <DiscoveryMoment onDismiss={() => { markSignature('aiDiscovered'); setAiSeen(true) }} />}
 
       {/* mission replay — the orchestration run, animated (5B.7 item 3) */}
       <MissionReplay db={db} user={user} navigate={navigate} />

@@ -10,6 +10,7 @@ import ExecScenario from '../components/ExecScenario.jsx'
 import StrategicMap from '../components/StrategicMap.jsx'
 import ConfidenceHeatmap from '../components/ConfidenceHeatmap.jsx'
 import EnterpriseVitals from '../components/EnterpriseVitals.jsx'
+import { SynergyMoments } from '../components/Signature.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
 // Enterprise Intelligence (5B.7) — the flagship intelligence experience. Wave 1
@@ -181,6 +182,9 @@ export default function Intelligence({ db, user, navigate }) {
 
       {/* executive scenario mode (5B.7 item 6) */}
       <ExecScenario db={db} />
+
+      {/* synergy detection moments (6B item 12) */}
+      <SynergyMoments db={db} navigate={navigate} />
 
       {/* AI confidence heatmap (5B.7 item 5 — shared with Chief of Staff) */}
       <ConfidenceHeatmap db={db} />
