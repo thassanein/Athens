@@ -1,13 +1,105 @@
 import { useState } from 'react'
 import { DIRECTIONS } from '../components/Marks.jsx'
 import { LogoSystems, PageConcepts } from '../components/Concepts.jsx'
+import { PANEL_CRITERIA, PANEL_MATRIX, PANEL_JUDGES, PANEL_VERDICT, PAGES_VERDICT } from '../lib/identity-verdict.js'
 
 // EVRO Identity Lab (6C.1A) — the icon & identity exploration, live. Five
 // directions render as real SVG systems with dark/light fields and motion/
 // static variants; each carries its rationale AND its risk, because an
 // exploration that can't criticise its own options isn't one. Wave 2 adds the
-// logo systems and the landing/homepage concepts; Wave 3 adds the panel
+// logo systems and the landing/homepage concepts; Wave 3 records the panel
 // verdict. The shipped mark stays shipped — this lab informs the next call.
+
+const DIR_META = Object.fromEntries(DIRECTIONS.map((d) => [d.key, { n: d.n, name: d.name }]))
+
+function PanelVerdict() {
+  return (
+    <>
+      <div className="card pad section-gap">
+        <div className="card-h" style={{ flexWrap: 'wrap', rowGap: 8 }}>
+          <h3>The panel verdict</h3>
+          <span className="spacer" />
+          <span className="badge b-grey">advisory · recorded judgment</span>
+        </div>
+        <p className="muted vwf-sub">
+          Six AI judges — five identity lenses plus a landing/mobile lens, model-run personas,
+          not human panelists — scored the artifacts on this page against the brief's success
+          criteria, once, during 6C.1A. The matrix is the mean of the five identity judges (1–10);
+          Borda points come from their explicit rankings (1st = 5 pts … 5th = 1). Figures the
+          prose quotes are as the artboards rendered at panel time. A recorded editorial judgment,
+          not live analytics — and advisory: the shipped Pulse Orbital remains the production identity.
+        </p>
+        <div className="pv-table-wrap">
+          <table className="pv-table">
+            <thead>
+              <tr>
+                <th>Direction</th>
+                {PANEL_CRITERIA.map((c) => <th key={c.key}>{c.label}</th>)}
+                <th>Overall</th>
+                <th>Borda</th>
+              </tr>
+            </thead>
+            <tbody>
+              {PANEL_MATRIX.map((r, i) => (
+                <tr key={r.key} className={i === 0 ? 'pv-win' : ''}>
+                  <td><span className="lab-n mono">D{DIR_META[r.key].n}</span> {DIR_META[r.key].name}</td>
+                  {PANEL_CRITERIA.map((c) => <td key={c.key} className="mono">{r[c.key]}</td>)}
+                  <td className="mono"><b>{r.overall}</b></td>
+                  <td className="mono">{r.borda}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="pv-verdict">{PANEL_VERDICT.verdict}</div>
+        <div className="pv-judges">
+          {PANEL_JUDGES.map((j) => (
+            <span key={j.lens} className="pv-judge"><b>{j.lens}</b> → D{DIR_META[j.top].n} {DIR_META[j.top].name}</span>
+          ))}
+        </div>
+        <div className="pv-lines">
+          {PANEL_MATRIX.map((r) => (
+            <div key={r.key} className="pv-line">
+              <span className="lab-n mono">D{DIR_META[r.key].n}</span>
+              <p>{r.line}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card pad section-gap">
+        <div className="card-h">
+          <h3>Pages verdict</h3>
+          <span className="spacer" />
+          <span className="badge b-grey">advisory · recorded judgment</span>
+        </div>
+        <div className="pv-pages">
+          <div>
+            <div className="pv-ph">Landings — value immediacy / mobile</div>
+            {PAGES_VERDICT.landings.map((l) => (
+              <div key={l.key} className={`pv-prow ${l.key === PAGES_VERDICT.landingPick ? 'pick' : ''}`}>
+                <span>{l.name}{l.key === PAGES_VERDICT.landingPick && <i className="pv-picktag">panel pick</i>}</span>
+                <span className="mono">{l.valueImmediacy} / {l.mobile}</span>
+              </div>
+            ))}
+            <p className="pv-pnote">{PAGES_VERDICT.landingLine}</p>
+          </div>
+          <div>
+            <div className="pv-ph">Homes — executive fit / mobile</div>
+            {PAGES_VERDICT.homes.map((h) => (
+              <div key={h.key} className={`pv-prow ${h.key === PAGES_VERDICT.homePick ? 'pick' : ''}`}>
+                <span>{h.name}{h.key === PAGES_VERDICT.homePick && <i className="pv-picktag">panel pick</i>}</span>
+                <span className="mono">{h.executiveFit} / {h.mobile}</span>
+              </div>
+            ))}
+            <p className="pv-pnote">{PAGES_VERDICT.homeLine}</p>
+          </div>
+        </div>
+        <p className="eh-fine" style={{ marginTop: 12 }}>{PANEL_VERDICT.coexistence}</p>
+      </div>
+    </>
+  )
+}
 
 export default function IdentityLab({ db, user }) {
   const [light, setLight] = useState(false)
@@ -77,6 +169,9 @@ export default function IdentityLab({ db, user }) {
 
       {/* landing + homepage explorations (Wave 2) — live numbers */}
       <PageConcepts db={db} user={user} />
+
+      {/* the six-judge panel's recorded verdict (Wave 3) — advisory */}
+      <PanelVerdict />
     </>
   )
 }

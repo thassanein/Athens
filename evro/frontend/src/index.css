@@ -1640,3 +1640,36 @@ html[data-theme='light'] {
    var() tones passed inline from Concepts.jsx (chips, energy ring, state tone). */
 .con-sys, .con-desk, .con-phone { --ink: #F4F4F6; --grey: #9A9AA2; --grey-2: #65656D; --line: rgba(255, 255, 255, 0.09); --green: #3FC97F; --navy: #4F8DF2; --amber: #F2B23E; --red: #E5243B; --brand-ai: #8B5CF6; }
 .con-sys.lightfield .con-lock-v { border-color: #d5deea; } /* var(--line) is white-alpha — invisible on the light field */
+
+/* 6C.1A Wave 3 — the panel verdict (recorded editorial judgment, advisory) */
+.pv-table-wrap { overflow-x: auto; }
+.pv-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.pv-table th { text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); font-weight: 700; padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.pv-table th:not(:first-child), .pv-table td:not(:first-child) { text-align: right; }
+.pv-table td { padding: 7px 8px; border-bottom: 1px solid var(--line-2); color: var(--grey); }
+.pv-table td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.pv-win td { background: rgba(245, 165, 36, 0.07); }
+.pv-win td:first-child { color: var(--brand-energy); }
+.pv-verdict { font-size: 13px; line-height: 1.6; color: var(--ink); background: var(--panel-2); border-left: 3px solid var(--brand-energy); border-radius: 0 var(--r) var(--r) 0; padding: 10px 14px; margin-top: 12px; }
+.pv-judges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.pv-judge { font-size: 10.5px; color: var(--grey); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.pv-judge b { color: var(--ink); font-weight: 700; }
+.pv-lines { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.pv-line { display: flex; gap: 10px; align-items: baseline; }
+.pv-line p { margin: 0; font-size: 12px; color: var(--grey); line-height: 1.55; }
+.pv-pages { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 900px) { .pv-pages { grid-template-columns: 1fr; } }
+.pv-ph { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); font-weight: 700; margin-bottom: 6px; }
+.pv-prow { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 12px; color: var(--grey); padding: 5px 8px; border-radius: 6px; }
+.pv-prow.pick { background: rgba(63, 201, 127, 0.09); color: var(--ink); font-weight: 600; }
+.pv-picktag { font-style: normal; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--green); margin-left: 7px; }
+.pv-pnote { font-size: 11.5px; color: var(--grey-2); line-height: 1.5; margin: 8px 0 0; }
+/* review fixes: light-theme winner contrast (4.46:1 → 5.38:1) + visible wash */
+html[data-theme='light'] .pv-win td { background: rgba(245, 165, 36, 0.14); }
+html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
+/* mobile: sticky direction column (mirrors the table.tbl treatment) — winner cell needs an opaque composite */
+@media (max-width: 640px) {
+  .pv-table th:first-child, .pv-table td:first-child { position: sticky; left: 0; z-index: 1; background: var(--card); box-shadow: 1px 0 0 var(--line-2); }
+  .pv-win td:first-child { background: linear-gradient(rgba(245, 165, 36, 0.07), rgba(245, 165, 36, 0.07)) var(--card); }
+  html[data-theme='light'] .pv-win td:first-child { background: linear-gradient(rgba(245, 165, 36, 0.14), rgba(245, 165, 36, 0.14)) var(--card); }
+}
