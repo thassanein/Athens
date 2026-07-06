@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { missionQueue, missionWhy, MISSION_CLASSES } from '../lib/mission.js'
+import { missionProfile, missionCeremony } from '../lib/mission-engine.js'
 import { canApproveRoles, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money, pct } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
@@ -18,6 +19,7 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
   const [view, setView] = useState('ranked') // ranked | class
   const [whyKey, setWhyKey] = useState(null)
   const [delKey, setDelKey] = useState(null)
+  const [ceremony, setCeremony] = useState(null) // completion ceremony (6B item 5)
   const q = useMemo(() => missionQueue(db, user), [db, user])
   const assignables = db.people.filter((p) => ['owner', 'procurement', 'leader', 'admin'].includes(p.role))
 
@@ -26,7 +28,10 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
       const i = db.initiatives.find((x) => x.id === m.refId)
       const roles = i ? canApproveRoles(user, i) : []
       const r = await dispatch('approveRequest', m.refId, user.id)
-      if (!r?.error) flash(roles.length ? `Approved as ${roles.map((x) => ROLE_APPROVE_LABEL[x]).join(', ')}` : 'Approved')
+      if (!r?.error) {
+        flash(roles.length ? `Approved as ${roles.map((x) => ROLE_APPROVE_LABEL[x]).join(', ')}` : 'Approved')
+        setCeremony(missionCeremony(db, m))
+      }
     } else if (m.action === 'navigate') {
       navigate(m.nav || 'valueoffice')
     } else if (m.refId && String(m.refId).startsWith('i-')) {
@@ -47,6 +52,7 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
     const t = m.intel || {}
     const open = whyKey === m.key
     const canDelegate = caps?.edit && m.refId && String(m.refId).startsWith('i-')
+    const prof = missionProfile(db, m)
     return (
       <div className={`mq-wrap ${open ? 'open' : ''}`}>
         <div className="mq-row" style={{ borderLeftColor: c.tone }}>
@@ -54,6 +60,12 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
           <div className="mq-main" onClick={() => act({ ...m, action: m.action === 'approve' ? 'open' : m.action })}>
             <div className="mq-t">{m.title}{t.escalated && <span className="badge b-red" style={{ marginLeft: 6 }}>escalated</span>}</div>
             <div className="mq-why">{m.why}{t.ageDays != null ? ` · ${t.ageDays}d old` : ''}</div>
+            <div className="mq-prof">
+              <span style={{ color: prof.difficulty.tone }} title={`Difficulty: ${prof.difficulty.why.join(' · ')}`}>{prof.difficulty.label}</span>
+              <span title="Deterministic completion estimate — confidence × risk × dependencies">{pct(prof.probability)} likely</span>
+              <span title={`Strategic weight: ${prof.weightWhy.join(' · ')}`}>{'★'.repeat(prof.weight)}<i>{'★'.repeat(5 - prof.weight)}</i></span>
+              <span style={{ color: prof.progression.tone }}>{prof.progression.label}</span>
+            </div>
           </div>
           <span className="mq-urg" style={{ color: URG_TONE[t.urgency] }}>{t.urgency}</span>
           <span className="mq-cls" style={{ color: c.tone, background: `color-mix(in srgb, ${c.tone} 14%, transparent)` }}>
@@ -116,6 +128,17 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
             <button className={view === 'class' ? 'active' : ''} onClick={() => setView('class')}>By class</button>
           </div>
         </div>
+
+        {ceremony && (
+          <div className="mq-ceremony fx-expand" style={{ '--fx-accent': 'var(--green)' }}>
+            <span className="mq-cer-i fx-glow">✓</span>
+            <div className="mq-cer-main">
+              <b>{ceremony.headline}</b>
+              <span>{ceremony.title}{ceremony.value > 0 ? ` — ${money(ceremony.value)}` : ''} · {ceremony.detail}</span>
+            </div>
+            <button className="btn sm ghost" onClick={() => setCeremony(null)}>Dismiss</button>
+          </div>
+        )}
 
         {q.missions.length === 0 && <div className="muted" style={{ padding: 8 }}>Queue is clear — nothing needs a human right now.</div>}
 

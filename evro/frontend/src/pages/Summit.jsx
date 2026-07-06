@@ -2,6 +2,7 @@ import { championList, millionClub, awardsGallery, gamificationStats, summitHigh
 import { money, pct, num } from '../lib/format.js'
 import { Tile, Avatar } from '../components/ui.jsx'
 import SeasonBoard from '../components/SeasonBoard.jsx'
+import AchievementBoard from '../components/AchievementBoard.jsx'
 
 // AVCM Value Summit — the annual recognition showcase. Champions, the Million
 // Dollar Club, an awards gallery, gamification and records. View-only; every
@@ -95,6 +96,9 @@ export default function Summit({ db, openDrawer, navigate }) {
 
       {/* value seasons — the full season framework (6B item 4) */}
       <SeasonBoard db={db} />
+
+      {/* enterprise achievements — the organization's trophy case (6B item 7) */}
+      <AchievementBoard db={db} />
 
       {/* executive scorecard */}
       <div className="card pad section-gap">
