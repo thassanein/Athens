@@ -1,11 +1,17 @@
 import { useMemo } from 'react'
 import { enterpriseEnergy, energyHistory, energyForecast, enterpriseWeather, valueVelocity } from '../lib/experience.js'
+import { momentum } from '../lib/momentum.js'
+import { seasonFramework } from '../lib/seasons.js'
 import { SymEnergy, SymValue, SymWeather } from './Symbols.jsx'
 import { money } from '../lib/format.js'
 
-// Enterprise Vitals (6B Wave 1) — the living strip: the Energy ring breathes,
-// the Weather chip carries a recommendation, the velocity telemetry shows the
-// enterprise moving in $/day. All deterministic; motion honors reduced-motion.
+// Enterprise Vitals (6B Wave 1; converged in 6C.1B Wave 3) — the living
+// strip: the Energy ring breathes, the Weather chip carries a recommendation,
+// the velocity telemetry shows the enterprise moving in $/day, and the
+// momentum/season chips carry the living layer (the H2 elements the 6C.1A
+// panel asked the command center to absorb). On mobile the strip distills
+// per the layer-3 spec: gauge + state + weather + created/net + chips.
+// All deterministic; motion honors reduced-motion.
 
 const perDay = (n) => `${money(Math.round(n))}/day`
 
@@ -29,6 +35,8 @@ export default function EnterpriseVitals({ db, compact = false }) {
   const fc = useMemo(() => energyForecast(db), [db])
   const w = useMemo(() => enterpriseWeather(db), [db])
   const vel = useMemo(() => valueVelocity(db), [db])
+  const mom = useMemo(() => momentum(db, 'business_unit'), [db])
+  const season = useMemo(() => seasonFramework(db).current, [db])
 
   const min = Math.min(...hist.series, e.score) - 3, max = Math.max(...hist.series, e.score) + 3
   const X = (i) => (hist.series.length < 2 ? 46 : (i / (hist.series.length - 1)) * 88 + 2)
@@ -71,10 +79,18 @@ export default function EnterpriseVitals({ db, compact = false }) {
       <div className="vit-vel">
         <span className="sym" style={{ color: 'var(--brand-value)', alignSelf: 'center' }} title="Value velocity"><SymValue size={15} /></span>
         <span className="vit-v"><b className="mono" style={{ color: 'var(--green)' }}>{perDay(vel.createdPerDay)}</b><span>value created</span></span>
-        <span className="vit-v"><b className="mono" style={{ color: vel.leakPerDay > 0 ? 'var(--amber)' : 'var(--ink)' }}>{perDay(vel.leakPerDay)}</b><span>leaking</span></span>
+        <span className="vit-v vit-deep"><b className="mono" style={{ color: vel.leakPerDay > 0 ? 'var(--amber)' : 'var(--ink)' }}>{perDay(vel.leakPerDay)}</b><span>leaking</span></span>
         <span className="vit-v"><b className="mono">{perDay(vel.netPerDay)}</b><span>net momentum</span></span>
-        <span className="vit-v"><b className="mono" style={{ color: 'var(--navy)' }}>{perDay(vel.neededPerDay)}</b><span>needed to land plan</span></span>
-        {!compact && <span className="vit-v"><b className="mono" style={{ color: fc.projected >= e.score ? 'var(--green)' : 'var(--amber)' }}>{fc.projected} · {fc.state.label}</b><span title={fc.note}>FY-end projection*</span></span>}
+        <span className="vit-v vit-deep"><b className="mono" style={{ color: 'var(--navy)' }}>{perDay(vel.neededPerDay)}</b><span>needed to land plan</span></span>
+        {!compact && <span className="vit-v vit-deep"><b className="mono" style={{ color: fc.projected >= e.score ? 'var(--green)' : 'var(--amber)' }}>{fc.projected} · {fc.state.label}</b><span title={fc.note}>FY-end projection*</span></span>}
+      </div>
+
+      <span className="vit-div" aria-hidden="true" />
+
+      <div className="vit-chips" title={`Momentum by business unit — ${mom.window}`}>
+        <span className="vit-chip" style={{ color: 'var(--green)' }}>▲ {mom.counts.accelerating} accelerating</span>
+        <span className="vit-chip" style={{ color: 'var(--amber)' }}>▼ {mom.counts.decelerating} decelerating</span>
+        {season && <span className="vit-chip" style={{ color: 'var(--navy)' }}>{season.name} in season · {season.score}</span>}
       </div>
 
       {w.alert && <div className="vit-alert fx-pulse">{w.alert}</div>}

@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { strategicSummary, strategicNarratives } from '../lib/companion.js'
+import { enterpriseEnergy, enterpriseWeather, valueVelocity } from '../lib/experience.js'
+import { pulseIdentity } from '../lib/identity-systems.js'
 import { money, num } from '../lib/format.js'
 import { AnimatedValue } from './ui.jsx'
 import { EvroMark, BrandLockup, JOURNEY } from './Brand.jsx'
+import { PulseCompact } from './IdentitySystems.jsx'
 import { IconAI } from './Icons.jsx'
 
 // EVRO landing experience — the premium "enterprise operating system" front
@@ -20,6 +23,11 @@ const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia &
 export default function Landing({ db, user, onEnter }) {
   const s = useMemo(() => strategicSummary(db), [db])
   const narratives = useMemo(() => strategicNarratives(db), [db])
+  // the status layer (6C.1B convergence: Value First + Enterprise Status)
+  const energy = useMemo(() => enterpriseEnergy(db), [db])
+  const weather = useMemo(() => enterpriseWeather(db), [db])
+  const vel = useMemo(() => valueVelocity(db), [db])
+  const pulse = useMemo(() => pulseIdentity(db), [db])
   const [ni, setNi] = useState(0)
   const [leaving, setLeaving] = useState(false)
   const fy = db.meta.fiscalYear
@@ -62,6 +70,26 @@ export default function Landing({ db, user, onEnter }) {
           <div className="landing-narrative">
             <span className="badge b-grey"><IconAI /> AI · rules-based</span>
             <span key={ni} className="landing-narrative-text">{narratives[ni]}</span>
+          </div>
+
+          {/* the status band — how the enterprise is, before how much (L3 + L1 converged) */}
+          <div className="landing-status" role="group" aria-label="Enterprise status, live">
+            <PulseCompact dims={pulse.dims} size={54} id="lps" />
+            <div className="landing-status-t">
+              <b style={{ color: energy.state.tone }}>{energy.state.label}</b>
+              <span>Enterprise Energy</span>
+            </div>
+            <span className="landing-status-div" aria-hidden="true" />
+            <div className="landing-status-t">
+              <b style={{ color: weather.accent }}>{weather.icon} {weather.label}</b>
+              <span>this week</span>
+            </div>
+            <span className="landing-status-div" aria-hidden="true" />
+            <div className="landing-status-t">
+              <b className="mono">{money(Math.round(vel.netPerDay))}/day</b>
+              <span>net momentum</span>
+            </div>
+            <span className="landing-status-note">the enterprise, live — before you even enter</span>
           </div>
 
           <div className="landing-summary">
