@@ -53,6 +53,7 @@ import Accountability from './pages/Accountability.jsx'
 import Intelligence from './pages/Intelligence.jsx'
 import Decisions from './pages/Decisions.jsx'
 import NextBestRail from './components/NextBestRail.jsx'
+import AIPresence from './components/AIPresence.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { track } from './lib/telemetry.js'
 import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
@@ -237,6 +238,7 @@ export default function App() {
           </ErrorBoundary>
         </main>
         {RAIL_PAGES.has(page) && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
+        <AIPresence db={db} user={user} page={page} navigate={navigate} />
       </div>
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />
