@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from 'react'
-import { procurementModel, decisionQueue } from '../lib/procurement.js'
+import { procurementModel, decisionQueue, SAVINGS_TYPES } from '../lib/procurement.js'
 import { money, pct, num } from '../lib/format.js'
 import { EvroMark } from './Brand.jsx'
 import { AnimatedValue } from './ui.jsx'
@@ -19,73 +19,80 @@ export default function Onboarding({ db, navigate, onClose }) {
   const dq = useMemo(() => decisionQueue(db), [db])
   const oppId = (dq[0] && dq[0].id) || (m.opportunities[0] && m.opportunities[0].id)
   const evAtStake = dq.reduce((s, o) => s + o.nextDecision.expectedValue, 0)
-  const types = m.byType.filter((t) => t.count > 0).length
+  const defs = SAVINGS_TYPES.length
 
   const STEPS = useMemo(() => [
     {
-      page: 'procurement', target: '.pdash-sum', eyebrow: 'WELCOME',
-      title: 'EVRO — one operating system for enterprise value.',
-      body: 'Athens is not turning on a procurement tool. It is turning on the first capability of EVRO, its Enterprise Intelligence Operating System. This 5-minute tour shows what Procurement does — and how the same platform will run Fleet, CX, Operations and Finance next.',
-      point: 'One platform, one identity, one engine — Procurement is capability one.',
-      metrics: [{ label: 'Active capability', value: 'Procurement' }, { label: 'Under management', value: money(m.sum.total) }],
+      page: 'procurement', target: '.pdash-sum', eyebrow: 'ONE SOURCE OF TRUTH',
+      title: 'One number, everyone agrees on.',
+      body: `EVRO is Athens' Enterprise Intelligence Operating System, and Procurement is its first live capability. Savings Under Management is ${money(m.sum.total)} across ${num(m.sum.count)} opportunities, at ${pct(m.sum.confidence)} confidence, landing ${money(m.velocity.perMonth)} a month — read left to right through Identified, Committed, Realized, Sustained.`,
+      solves: 'Today, every team keeps its own savings number in its own spreadsheet, and reviews start with an argument about whose number is right. EVRO gives one aligned source of truth, readable in seconds.',
+      metrics: [{ label: 'Under management', value: money(m.sum.total) }, { label: 'Confidence', value: pct(m.sum.confidence) }, { label: 'Velocity', value: `${money(m.velocity.perMonth)}/mo` }],
     },
     {
-      page: 'procurement', target: '.pdash-lenses', eyebrow: 'THE FIVE-SECOND READ',
-      title: 'Open it, and know where you stand.',
-      body: `Savings Under Management is ${money(m.sum.total)} across ${num(m.sum.count)} opportunities, running at ${pct(m.sum.confidence)} confidence and landing ${money(m.velocity.perMonth)} a month. The four lenses read the funnel left to right — Identified, Committed, Realized, Sustained. No savings target: value is ranked by return.`,
-      point: 'Status, confidence, risk and the next decision — in one glance.',
-      metrics: [{ label: 'Opportunities', value: num(m.sum.count) }, { label: 'Confidence', value: pct(m.sum.confidence) }, { label: 'Velocity', value: `${money(m.velocity.perMonth)}/mo` }],
+      page: 'procurement', target: '.pdash-types', eyebrow: 'SAVINGS DEFINITION ALIGNMENT',
+      title: 'One measure of savings — no more debates.',
+      body: `${defs} standardized savings types — Hard Savings, Cost Avoidance, Productivity and more — each with a governance definition, all measured against the FP&A baseline off the 2025 AP register. Hard Savings and Productivity move the P&L run-rate; the rest are reported apart, so the headline stays credible.`,
+      solves: 'Today, Procurement, Finance and Operations each define "savings" differently, so half of every review is spent debating what counts. EVRO is one measure-of-savings taxonomy the whole enterprise signs up to.',
+      metrics: [{ label: 'Savings definitions', value: String(defs) }, { label: 'Baseline', value: 'FP&A-validated' }],
     },
     {
-      page: 'procurement', target: '.pdash-funnel', eyebrow: 'ONE SHARED LIFECYCLE',
-      title: 'Every dollar moves through one visible value chain.',
-      body: 'This funnel is the eleven-stage savings lifecycle — Potential through Closed — grouped into the procurement value chain: Source-to-Contract, Contract-to-Value, Value Realization. The eleven stages sum, to the dollar, to the headline above. Everything on every screen reconciles.',
-      point: 'The highlighted funnel sums exactly to Savings Under Management.',
+      page: 'procurement', target: '.pdash-funnel', eyebrow: 'VALUE CHAIN & OPPORTUNITY ID',
+      title: 'A strong value chain — nothing falls through.',
+      body: 'Opportunities are surfaced from spend analytics across the addressable base, then move through one visible eleven-stage lifecycle grouped into the procurement value chain: Source-to-Contract, Contract-to-Value, Value Realization. The eleven stages sum, to the dollar, to the headline above.',
+      solves: 'Today, ideas stall between sourcing and finance, and good opportunities quietly fall through the cracks. EVRO gives one value chain where every opportunity is identified, staged and visible end to end.',
       metrics: [{ label: 'Lifecycle stages', value: '11' }, { label: 'Reconciles to', value: money(m.sum.total) }],
     },
     {
+      page: 'procurement', target: '.pdash-forecast', eyebrow: 'ACCURATE FINANCIAL FORECASTING',
+      title: 'A forecast the board can trust.',
+      body: 'Realized run-rate to date, then a risk-adjusted projection for the rest of the year — committed versus expected, month by month. Value is time-phased and confidence-weighted, and only counts as realized once FP&A validates the actuals.',
+      solves: 'Today, forecasts are optimistic, manual and out of date the day they ship. EVRO forecasts are risk-adjusted and validation-gated — aligned to the same record as the actuals, so the number holds up in the boardroom.',
+      metrics: [{ label: 'Realized YTD', value: money(m.sum.lenses.realized) }, { label: 'Basis', value: 'Risk-adjusted' }],
+    },
+    {
       page: 'savingspipeline', target: '.svp-filters', eyebrow: 'THE SAVINGS BOOK',
-      title: 'The whole book, in one shared language.',
-      body: `Every opportunity across Athens' fourteen sourcing groups — Fleet Capital, Facilities, Benefits & Insurance and the rest of the $437M addressable base — grouped by stage. Filter by savings type: Hard Savings, Cost Avoidance, Productivity and five more, each with a governance definition Procurement, FP&A and Operations all share.`,
-      point: 'Tap any opportunity to open its full workspace.',
-      metrics: [{ label: 'Savings types', value: String(types) }, { label: 'Addressable spend', value: '$437.4M' }],
+      title: 'The whole pipeline, in one place.',
+      body: `Every opportunity across Athens' fourteen sourcing groups — Fleet Capital, Facilities, Benefits & Insurance and the rest of the $437.4M addressable base — grouped by stage, filterable by savings type. One book, not fourteen spreadsheets.`,
+      solves: 'Today, the pipeline lives in one analyst’s workbook and nobody trusts the version they were sent. EVRO is the single, always-current savings book — every category, every stage, one source.',
+      metrics: [{ label: 'Opportunities', value: num(m.sum.count) }, { label: 'Addressable spend', value: '$437.4M' }],
     },
     {
-      page: 'opportunity', id: oppId, target: '.ows-head', eyebrow: 'ONE OPPORTUNITY, END TO END',
-      title: 'The whole story on a single screen.',
-      body: 'Mission header, the lifecycle, a board-ready summary, the business case, financial and operational impact, supplier and category, dependencies and risks, the decision trail, and an AI recommendation — all here. Press "View evidence" and every number drills to the source record it came from.',
-      point: 'No number is asserted without its evidence one click away.',
-      metrics: [{ label: 'Evidence-backed', value: 'Yes' }, { label: 'Source records', value: 'Traceable' }],
+      page: 'opportunity', id: oppId, target: '.ows-head', eyebrow: 'ONE SCREEN, ONE OWNER',
+      title: 'The whole story — and who owns it.',
+      body: 'Business case, financial and operational impact, supplier and category, dependencies and risks, the decision trail, and an AI recommendation — all on one screen, with a named owner and sponsor at the top. Press "View evidence" and every number drills to its source record.',
+      solves: 'Today, the story is scattered across decks, emails and DMs, and no one can say who owns the full picture. EVRO puts it on one screen with one accountable owner — a single source of truth per opportunity.',
+      metrics: [{ label: 'Owner', value: 'Named' }, { label: 'Evidence', value: 'Traceable' }],
     },
     {
-      page: 'decisioncenter', target: '.dc-rec', eyebrow: 'THE DECISION THAT MATTERS',
-      title: 'Make the next decision obvious — and take it.',
-      body: `${num(dq.length)} decisions are waiting, ${money(evAtStake)} of expected value at stake, ranked by value. Each shows what to decide, who owns it, the confidence, the missing evidence, the alternatives, and why the recommendation was made. The governance ladder — Category Manager, FP&A Validation, CPO / Steering — governs who can sign, and you can approve, return or comment right here.`,
-      point: 'Decisions are taken in-app, under real approval governance.',
+      page: 'decisioncenter', target: '.dc-ladder', eyebrow: 'CLEAR APPROVALS · WHO DOES WHAT',
+      title: 'Who decides, who signs, by when.',
+      body: `${num(dq.length)} decisions are waiting, ${money(evAtStake)} of expected value at stake. Each names its owner and the exact approval ladder — Category Manager, then FP&A Validation, then CPO / Steering for material awards — with due dates and the missing evidence. Approve, return or comment right here.`,
+      solves: 'Today, approvals stall because nobody knows who has to sign, or what the deal is waiting on. EVRO makes the approval process explicit and shows who is doing what, at any point in time.',
       metrics: [{ label: 'Decisions waiting', value: num(dq.length) }, { label: 'Value at stake', value: money(evAtStake) }],
     },
     {
       page: 'procai', target: '.pai-brief', eyebrow: 'ENTERPRISE AI',
       title: 'Decision intelligence — not a chatbot.',
-      body: 'Five executive briefs — pipeline, risk, forecast variance, approvals, realization — each written as what happened, why it matters, and what to decide next. Every brief carries its confidence, evidence, assumptions, risks and expected value. It is deterministic and rules-based: no language model, and no fabricated numbers anywhere in the system.',
-      point: 'Every AI claim exposes its confidence and its evidence.',
-      metrics: [{ label: 'Executive briefs', value: '5' }, { label: 'Fabricated numbers', value: 'Zero' }],
+      body: 'Five executive briefs — pipeline, risk, forecast variance, approvals, realization — each written as what happened, why it matters, and what to decide next. Every brief carries its confidence, evidence, assumptions, risks and expected value, and deep-links to the source.',
+      solves: 'Today, "the AI number" is a black box no one can trace. EVRO is deterministic and rules-based, and every recommendation is aligned to the same validated record you can open and check.',
+      metrics: [{ label: 'Executive briefs', value: '5' }, { label: 'Every claim', value: 'Traceable' }],
     },
     {
       page: 'settings', target: '.set-grid', eyebrow: 'ONE PLATFORM, MORE TO COME',
       title: 'Procurement today. The enterprise next.',
-      body: 'Procurement is the active capability. Fleet & Maintenance, Customer Experience, Operations, People and Finance are declared here and switched off — each is one flag away. When Athens is ready, they light up on the same platform, the same identity, the same value engine and the same decision governance you just saw.',
-      point: 'The architecture you saw is reusable for every future capability.',
+      body: 'Procurement is the active capability. Fleet & Maintenance, Customer Experience, Operations, People and Finance are declared here and switched off — each one flag away. When Athens is ready, they light up on the same platform, the same identity, the same engine and the same governance you just saw.',
+      solves: 'Today, every function buys its own tool and the enterprise never sees one picture. EVRO reuses this exact architecture for the next capability — no re-platforming.',
       metrics: [{ label: 'Active', value: '1 of 6' }, { label: 'Reactivation', value: 'Config only' }],
     },
     {
-      page: 'procurement', target: '.pdash-sum', eyebrow: 'WHY IT IS REAL', last: true,
-      title: 'One coherent platform, provably grounded.',
-      body: `${money(m.sum.total)} reconciles to the dollar across the dashboard, the workspace, the briefs and the evidence. The deterministic value engine is provably unchanged — Procurement is a lens over it, not a rewrite. It is purpose-built on mobile, accessible in both themes, and board-demo ready today. This is Phase One of EVRO.`,
-      point: 'Ready to run the board demo now.',
+      page: 'procurement', target: '.pdash-sum', eyebrow: 'THE PAYOFF', last: true,
+      title: 'One aligned truth, board-ready today.',
+      body: `${money(m.sum.total)} reconciles to the dollar across the dashboard, the workspace, the briefs and the evidence. The value engine is provably unchanged — Procurement is a lens over it. Aligned definitions, a trustworthy forecast, a clear approval process, one source of truth, and real-time ownership. This is Phase One of EVRO.`,
+      solves: 'Today, numbers never tie out between teams. EVRO aligns every screen to the same record — one truth, ready for the board now.',
       metrics: [{ label: 'Reconciles', value: 'To the dollar' }, { label: 'Status', value: 'Board-ready' }],
     },
-  ], [m, dq, oppId, evAtStake, types])
+  ], [m, dq, oppId, evAtStake, defs])
 
   const [i, setI] = useState(0)
   const [rect, setRect] = useState(null)
@@ -193,7 +200,10 @@ export default function Onboarding({ db, navigate, onClose }) {
           ))}
         </div>
 
-        <div className="onb-point"><span className="onb-point-dot" /> {step.point}</div>
+        <div className="onb-solves" key={`s${i}`}>
+          <span className="onb-solves-l">Solves today's friction</span>
+          <span className="onb-solves-t">{step.solves}</span>
+        </div>
 
         <div className="onb-foot">
           <div className="onb-dots" aria-hidden="true">

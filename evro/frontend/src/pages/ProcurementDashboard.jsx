@@ -143,7 +143,7 @@ export default function ProcurementDashboard({ db, navigate }) {
           <PipelineFunnel pipeline={pipeline} navigate={navigate} />
           <p className="tiny muted" style={{ marginTop: 6 }}>Each opportunity counted once at its lifecycle stage; the eleven stages sum to {money(sum.total)} under management.</p>
         </div>
-        <div className="card pad">
+        <div className="card pad pdash-forecast">
           <div className="card-h"><h3>Forecast impact by period</h3></div>
           <LineChart xLabels={xLabels} series={series} />
           <p className="tiny muted">Realized run-rate to date, then risk-adjusted / committed projection for the remainder of FY{fy}.</p>

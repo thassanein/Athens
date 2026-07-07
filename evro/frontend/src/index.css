@@ -2299,3 +2299,10 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
   .onb-spot-anim, .onb-spot-anim::after { animation: none; transition: none; }
   .onb .onb-title, .onb .onb-body, .onb .onb-metrics { animation: none; }
 }
+
+/* Onboarding — "Solves today's friction" callout (replaces the plain pointer) */
+.onb-solves { display: flex; flex-direction: column; gap: 3px; border-left: 3px solid var(--green); background: color-mix(in srgb, var(--green) 8%, transparent); border-radius: 0 8px 8px 0; padding: 8px 12px; margin-bottom: 14px; }
+.onb-solves-l { font-size: 9px; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: var(--green); }
+.onb-solves-t { font-size: 12.5px; line-height: 1.5; color: var(--ink); }
+.onb .onb-solves { animation: onbRise .54s .13s cubic-bezier(.2,.7,.2,1) both; }
+@media (prefers-reduced-motion: reduce) { .onb .onb-solves { animation: none; } }

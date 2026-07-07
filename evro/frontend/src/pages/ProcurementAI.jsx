@@ -29,7 +29,7 @@ export default function ProcurementAI({ db, navigate }) {
       <p className="page-intro">
         <b>Enterprise AI</b> — decision intelligence for the procurement book, not a chatbot. Five executive briefs, each written as
         what happened, why it matters and what to decide next, every one carrying its confidence, evidence, assumptions, risks and
-        dependencies. Deterministic and rules-based — no language model, no fabricated numbers.
+        dependencies. Deterministic and rules-based — every figure aligned to the same validated source of truth.
       </p>
 
       <div className="pai-grid">
