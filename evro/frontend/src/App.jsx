@@ -6,6 +6,7 @@ import NavBar, { allowedKeys, navScreens } from './components/NavBar.jsx'
 import Drawer from './components/Drawer.jsx'
 import CommandPalette from './components/CommandPalette.jsx'
 import Copilot from './components/Copilot.jsx'
+import ProcurementCopilot from './components/ProcurementCopilot.jsx'
 import IntelligenceBar from './components/IntelligenceBar.jsx'
 import Briefing from './components/Briefing.jsx'
 import Landing from './components/Landing.jsx'
@@ -323,7 +324,9 @@ export default function App() {
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />
       <CommandPalette open={palette} onClose={() => setPalette(false)} screens={navScreens(user.role)} db={db} user={user} caps={caps} navigate={navigate} openDrawer={openDrawer} dispatch={dispatch} flash={flash} onCompanion={() => setCopilot(true)} onBriefing={() => setBriefing(true)} toggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} />
-      <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} navigate={navigate} />
+      {procurementFirst()
+        ? <ProcurementCopilot open={copilot} onClose={() => setCopilot(false)} db={db} navigate={navigate} />
+        : <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} navigate={navigate} />}
       <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} dispatch={dispatch} flash={flash} navigate={navigate} />
       {tour && <Onboarding db={db} navigate={navigate} onClose={() => setTour(false)} />}
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}

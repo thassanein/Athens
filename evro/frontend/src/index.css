@@ -2402,3 +2402,26 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .agx-ev-row { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--grey); }
 .agx-ev-row b { color: var(--ink); }
 @media (max-width: 560px) { .agx-item { grid-template-columns: 1fr; } .agx-side { text-align: left; align-items: flex-start; } .agx-actions { align-items: flex-start; } }
+
+/* Procurement copilot drawer */
+.pcp { position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100vw); z-index: 95; background: var(--card); border-left: 1px solid var(--line); box-shadow: -14px 0 50px rgba(0,0,0,0.4); display: flex; flex-direction: column; }
+.pcp-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.pcp-body { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 14px; }
+.pcp-empty { font-size: 13px; color: var(--grey); line-height: 1.55; }
+.pcp-turn { display: flex; flex-direction: column; gap: 8px; }
+.pcp-q { align-self: flex-end; max-width: 88%; background: var(--brand-value); color: #fff; font-size: 13px; font-weight: 600; padding: 8px 12px; border-radius: 12px 12px 3px 12px; }
+.pcp-a { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px 12px 12px 3px; padding: 11px 13px; display: flex; flex-direction: column; gap: 7px; }
+.pcp-a-t { font-size: 10px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--brand-ai-ink); }
+.pcp-a-body { font-size: 13px; line-height: 1.55; color: var(--ink); }
+.pcp-metrics { display: flex; gap: 16px; flex-wrap: wrap; }
+.pcp-metric b { display: block; font-size: 15px; color: var(--brand-value); }
+.pcp-metric span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; color: var(--grey); }
+.pcp-ev { display: flex; flex-direction: column; gap: 3px; border-top: 1px solid var(--line); padding-top: 6px; }
+.pcp-ev-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--grey); }
+.pcp-ev-row b { color: var(--ink); }
+.pcp-suggest { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; border-top: 1px solid var(--line); white-space: nowrap; }
+.pcp-suggest .chip { flex: none; font-size: 11.5px; padding: 5px 10px; }
+.pcp-input { display: flex; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--line); }
+.pcp-input input { flex: 1; padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); color: var(--ink); font: inherit; font-size: 13px; }
+.pcp-input input:focus-visible { outline: 2px solid var(--brand-value); outline-offset: 1px; }
+@media (max-width: 480px) { .pcp { width: 100vw; } }
