@@ -1874,3 +1874,40 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
   /* keep the bar from covering content */
   .content { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* ============================================================================
+   6D Wave 3 — executive narrative panel + evidence drawer
+   ============================================================================ */
+.enp .card-h h3 { display: inline-flex; align-items: center; gap: 7px; }
+.enp .card-h h3 svg { width: 17px; height: 17px; }
+.enp-headline { font-size: 12.5px; color: var(--grey); background: var(--panel-2); border-radius: var(--r); padding: 8px 12px; margin: 4px 0 12px; letter-spacing: 0.2px; }
+.enp-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; }
+@media (max-width: 760px) { .enp-sections { grid-template-columns: 1fr; } }
+.enp-sec { display: flex; flex-direction: column; gap: 8px; }
+.enp-q { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--brand-intelligence); border-bottom: 1px solid var(--line); padding-bottom: 5px; }
+.enp-claim { display: flex; flex-direction: column; gap: 4px; }
+.enp-text { margin: 0; font-size: 13px; line-height: 1.55; color: var(--ink); }
+.enp-claim-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.enp-ev { display: inline-flex; align-items: baseline; gap: 6px; background: none; border: none; padding: 2px 0; cursor: pointer; color: var(--grey); border-radius: 5px; }
+.enp-ev:hover .enp-ev-l, .enp-ev:focus-visible .enp-ev-l { color: var(--navy); text-decoration: underline; }
+.enp-ev-metric { font-size: 12.5px; font-weight: 800; color: var(--brand-value); }
+.enp-ev-l { font-size: 11px; color: var(--grey-2); }
+.enp-go { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 10.5px; font-weight: 700; color: var(--navy); cursor: pointer; }
+.enp-go:hover { border-color: var(--navy); }
+
+.drawer.evd { width: min(440px, 96vw); padding: 20px; overflow-y: auto; gap: 0; }
+.evd-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.evd-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 0.7px; color: var(--grey-2); }
+.evd-metric { font-size: 26px; font-weight: 800; color: var(--brand-value); line-height: 1.1; margin-top: 3px; }
+.evd-metric-l { font-size: 11.5px; color: var(--grey); }
+.evd-claim { font-size: 13.5px; line-height: 1.55; color: var(--ink); margin: 14px 0; }
+.evd-source { font-size: 11.5px; color: var(--grey); background: var(--panel-2); border-radius: 8px; padding: 8px 11px; }
+.evd-source-l { font-size: 9.5px; font-weight: 800; letter-spacing: 0.6px; color: var(--grey-2); margin-right: 6px; }
+.evd-rows { display: flex; flex-direction: column; gap: 1px; margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.evd-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 8px 11px; background: var(--card); font-size: 12px; }
+.evd-row:nth-child(even) { background: var(--panel-2); }
+.evd-row span { color: var(--grey); }
+.evd-row b { color: var(--ink); }
+.evd-empty { font-size: 12px; color: var(--grey-2); margin-top: 12px; font-style: italic; }
+.evd-go { margin-top: 16px; width: 100%; }
+.evd-foot { font-size: 10.5px; color: var(--grey-2); margin: 14px 0 0; line-height: 1.5; }
