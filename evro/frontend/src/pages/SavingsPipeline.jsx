@@ -30,7 +30,7 @@ export default function SavingsPipeline({ db, navigate }) {
       </div>
 
       {byStage.map(({ stage, rows }) => (
-        <div key={stage.key} className="card pad section-gap">
+        <div key={stage.key} className="card pad section-gap svp-stage">
           <div className="card-h">
             <h3>{stage.label}</h3>
             <span className="tiny muted" style={{ marginLeft: 8 }}>{stage.gloss}</span>

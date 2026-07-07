@@ -20,6 +20,12 @@ export default function Onboarding({ db, navigate, onClose }) {
   const oppId = (dq[0] && dq[0].id) || (m.opportunities[0] && m.opportunities[0].id)
   const evAtStake = dq.reduce((s, o) => s + o.nextDecision.expectedValue, 0)
   const defs = SAVINGS_TYPES.length
+  const redCount = m.opportunities.filter((o) => o.ragStatus === 'red').length
+  const blockers = m.blockers.length
+  const populatedStages = m.pipeline.filter((s) => s.count > 0).length
+  const topOpp = m.opportunities.find((o) => o.id === oppId) || m.opportunities[0]
+  const oppRisks = topOpp && topOpp.risks ? topOpp.risks.length : 0
+  const oppWorst = (topOpp && topOpp.worstRisk) || 0
 
   const STEPS = useMemo(() => [
     {
@@ -51,6 +57,13 @@ export default function Onboarding({ db, navigate, onClose }) {
       metrics: [{ label: 'Realized YTD', value: money(m.sum.lenses.realized) }, { label: 'Basis', value: 'Risk-adjusted' }],
     },
     {
+      page: 'procurement', target: '.pdash-atrisk', eyebrow: 'RISK, IN THE OPEN',
+      title: `${money(m.sum.atRisk)} at risk — seen now, not at year-end.`,
+      body: `${num(redCount)} opportunities are red right now — ${money(m.sum.atRisk)} of value exposed — each with a worst-risk score and whether a countermeasure is logged. The Top blockers panel names the ${num(blockers)} opportunities that gate the most downstream value, so you clear the right ones first.`,
+      solves: 'Today, risk shows up at year-end when the savings miss, and nobody knows which item to unblock first. EVRO scores and ranks risk continuously, so the exposure — and the fix order — is visible now.',
+      metrics: [{ label: 'At-risk value', value: money(m.sum.atRisk) }, { label: 'Red · blockers', value: `${num(redCount)} · ${num(blockers)}` }],
+    },
+    {
       page: 'savingspipeline', target: '.svp-filters', eyebrow: 'THE SAVINGS BOOK',
       title: 'The whole pipeline, in one place.',
       body: `Every opportunity across Athens' fourteen sourcing groups — Fleet Capital, Facilities, Benefits & Insurance and the rest of the $437.4M addressable base — grouped by stage, filterable by savings type. One book, not fourteen spreadsheets.`,
@@ -58,11 +71,32 @@ export default function Onboarding({ db, navigate, onClose }) {
       metrics: [{ label: 'Opportunities', value: num(m.sum.count) }, { label: 'Addressable spend', value: '$437.4M' }],
     },
     {
+      page: 'savingspipeline', target: '.svp-stage', eyebrow: 'PIPELINE OF PROJECTS',
+      title: 'Every project, at the exact stage it is in.',
+      body: `The book is grouped across ${populatedStages} live stages — Potential, Qualified, Business Case, Approved, Negotiation, Awarded, Implementation, Realized, Sustained. Each group shows its count and its value; each project its owner, savings type, confidence and a risk flag. This is the real pipeline, stage by stage.`,
+      solves: 'Today, "the pipeline" is a static number in a monthly deck with no idea what sits where. EVRO shows every project at its live stage, with the value and the owner behind each one.',
+      metrics: [{ label: 'Live stages', value: String(populatedStages) }, { label: 'Projects', value: num(m.sum.count) }],
+    },
+    {
       page: 'opportunity', id: oppId, target: '.ows-head', eyebrow: 'ONE SCREEN, ONE OWNER',
       title: 'The whole story — and who owns it.',
       body: 'Business case, financial and operational impact, supplier and category, dependencies and risks, the decision trail, and an AI recommendation — all on one screen, with a named owner and sponsor at the top. Press "View evidence" and every number drills to its source record.',
       solves: 'Today, the story is scattered across decks, emails and DMs, and no one can say who owns the full picture. EVRO puts it on one screen with one accountable owner — a single source of truth per opportunity.',
       metrics: [{ label: 'Owner', value: 'Named' }, { label: 'Evidence', value: 'Traceable' }],
+    },
+    {
+      page: 'opportunity', id: oppId, target: '.ows-track', eyebrow: 'THE PHASES',
+      title: 'Eleven phases, one clear path to value.',
+      body: 'Every project walks the same eleven-phase lifecycle — Potential through Closed — grouped into Source-to-Contract, Contract-to-Value and Value Realization. The current phase is lit and completed phases sit behind it. Value is committed as a project advances, and only booked as realized once FP&A validates.',
+      solves: 'Today, every category runs its own informal process, so no two projects are comparable. EVRO puts every project on the same phased path — you always know exactly how far along it is.',
+      metrics: [{ label: 'Phases', value: '11' }, { label: 'Value-chain steps', value: '3' }],
+    },
+    {
+      page: 'opportunity', id: oppId, target: '.ows-risks', eyebrow: 'RISKS & DEPENDENCIES',
+      title: 'Risks scored, dependencies mapped.',
+      body: `Each project carries a risk register — category, status, and a likelihood-by-impact score from 1 to 25 — with high risks flagged when no countermeasure is logged, plus the upstream projects that must land first. This one is carrying ${oppRisks} risk${oppRisks === 1 ? '' : 's'}${oppWorst ? ` (worst score ${oppWorst})` : ''}.`,
+      solves: 'Today, risks live in someone’s head or a side spreadsheet, and dependencies are discovered too late. EVRO scores every risk and maps every dependency on the record, so nothing blindsides the plan.',
+      metrics: [{ label: 'Risk scoring', value: '1–25' }, { label: 'This project', value: `${oppRisks} risk${oppRisks === 1 ? '' : 's'}` }],
     },
     {
       page: 'decisioncenter', target: '.dc-ladder', eyebrow: 'CLEAR APPROVALS · WHO DOES WHAT',
@@ -92,7 +126,7 @@ export default function Onboarding({ db, navigate, onClose }) {
       solves: 'Today, numbers never tie out between teams. EVRO aligns every screen to the same record — one truth, ready for the board now.',
       metrics: [{ label: 'Reconciles', value: 'To the dollar' }, { label: 'Status', value: 'Board-ready' }],
     },
-  ], [m, dq, oppId, evAtStake, defs])
+  ], [m, dq, oppId, evAtStake, defs, redCount, blockers, populatedStages, oppRisks, oppWorst])
 
   const [i, setI] = useState(0)
   const [rect, setRect] = useState(null)

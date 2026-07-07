@@ -172,7 +172,7 @@ export default function ProcurementDashboard({ db, navigate }) {
             </div>
           )}
         </div>
-        <div className="card pad">
+        <div className="card pad pdash-atrisk">
           <div className="card-h"><h3>Opportunities at risk</h3><span className="badge b-red">{num(redCount)}</span></div>
           {atRisk.length === 0 ? (
             <p className="muted" style={{ padding: '10px 2px' }}>No red opportunities — the book is on track.</p>

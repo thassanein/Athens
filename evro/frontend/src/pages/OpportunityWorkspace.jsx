@@ -182,7 +182,7 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
 
       <div className="grid cols-2 section-gap">
         {/* dependencies & risks */}
-        <div className="card pad">
+        <div className="card pad ows-risks">
           <div className="card-h"><h3>Dependencies &amp; risks</h3></div>
           <div className="ows-deps">
             <div className="ows-deps-l">Blocked by</div>
