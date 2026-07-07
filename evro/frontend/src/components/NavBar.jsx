@@ -71,6 +71,7 @@ export const NAV = [
     ['brand', 'Brand', IconOpportunity, ALL],
     ['identity', 'Identity', IconOpportunity, ALL],
     ['identitylab', 'Identity Lab', IconOpportunity, ALL],
+    ['studio', 'EVRO Studio', IconBolt, ENT],
     ['settings', 'Settings', IconCockpit, ENT],
   ] },
 ]

@@ -1,0 +1,85 @@
+// EVRO Studio — the configuration layer. It lets an administrator adjust how the
+// platform reads and routes value WITHOUT editing code. Two classes of setting,
+// kept honestly separate:
+//
+//   • PRESENTATION overrides (savings-type + lifecycle-stage + approver labels
+//     and definitions) apply LIVE across every screen. They change wording, never
+//     a number — so the book still reconciles to the dollar.
+//
+//   • ENGINE-GOVERNED parameters (stage confidence weights, the materiality
+//     threshold, gate requirements) are owned by the deterministic engine, which
+//     is the single source of truth. Studio lets you edit and PREVIEW them, and
+//     stages the change — it never silently rewrites the engine. Promoting a
+//     staged change to runtime is a governed, separate step.
+//
+// This mirrors real enterprise software: config is edited in a console, versioned,
+// and promoted — not hot-patched into the calculation core.
+import { STAGE_CONFIDENCE, MATERIALITY } from './engine.js'
+
+const KEY = 'evro.studio.v1'
+
+// Engine values, surfaced read-only as the baseline every staged edit starts from.
+export const ENGINE_BASELINE = {
+  weights: { ...STAGE_CONFIDENCE },
+  materiality: MATERIALITY,
+}
+
+const EMPTY = { types: {}, stages: {}, approvers: {}, staged: {} }
+let _cache = null
+
+function read() {
+  if (_cache) return _cache
+  if (typeof localStorage === 'undefined') { _cache = { ...EMPTY }; return _cache }
+  try {
+    const raw = JSON.parse(localStorage.getItem(KEY) || '{}')
+    _cache = { ...EMPTY, ...(raw && typeof raw === 'object' ? raw : {}), types: { ...(raw.types || {}) }, stages: { ...(raw.stages || {}) }, approvers: { ...(raw.approvers || {}) }, staged: { ...(raw.staged || {}) } }
+  } catch { _cache = { ...EMPTY } }
+  return _cache
+}
+function write(cfg) {
+  _cache = cfg
+  if (typeof localStorage === 'undefined') return
+  try { localStorage.setItem(KEY, JSON.stringify(cfg)) } catch { /* private mode */ }
+}
+
+export function studioConfig() { return read() }
+
+// ── Live presentation overrides (merged by the procurement accessors).
+export const typeOverride = (key) => read().types[key] || null
+export const stageOverride = (key) => read().stages[key] || null
+export const approverOverride = (role) => read().approvers[role] || null
+
+export function setTypeField(key, field, value) {
+  const c = read(); c.types = { ...c.types, [key]: { ...(c.types[key] || {}), [field]: value } }; write({ ...c }); return c
+}
+export function setStageField(key, field, value) {
+  const c = read(); c.stages = { ...c.stages, [key]: { ...(c.stages[key] || {}), [field]: value } }; write({ ...c }); return c
+}
+export function setApproverLabel(role, value) {
+  const c = read(); c.approvers = { ...c.approvers, [role]: value }; write({ ...c }); return c
+}
+
+// ── Staged engine-governed edits (previewed, never applied to the engine).
+export function stagedWeights() { return { ...ENGINE_BASELINE.weights, ...(read().staged.weights || {}) } }
+export function stagedMateriality() { const s = read().staged.materiality; return s == null ? ENGINE_BASELINE.materiality : s }
+export function setStagedWeight(stage, value) {
+  const c = read(); const w = { ...(c.staged.weights || {}), [stage]: value }; c.staged = { ...c.staged, weights: w }; write({ ...c }); return c
+}
+export function setStagedMateriality(value) {
+  const c = read(); c.staged = { ...c.staged, materiality: value }; write({ ...c }); return c
+}
+
+// Is anything different from the engine baseline / defaults?
+export function hasStagedChanges() {
+  const s = read().staged
+  const wChanged = s.weights && Object.entries(s.weights).some(([k, v]) => v !== ENGINE_BASELINE.weights[k])
+  const mChanged = s.materiality != null && s.materiality !== ENGINE_BASELINE.materiality
+  return !!(wChanged || mChanged)
+}
+export function hasLiveOverrides() {
+  const c = read()
+  return Object.keys(c.types).length > 0 || Object.keys(c.stages).length > 0 || Object.keys(c.approvers).length > 0
+}
+
+export function resetStudio() { write({ ...EMPTY, types: {}, stages: {}, approvers: {}, staged: {} }); return read() }
+export function resetStaged() { const c = read(); c.staged = {}; write({ ...c }); return c }

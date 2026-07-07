@@ -18,6 +18,7 @@ import {
   forecastCurve, leakageBreakdown,
 } from './engine.js'
 import { money, pct } from './format.js'
+import { typeOverride, stageOverride, approverOverride } from './studio.js'
 
 // ── Savings governance — the standardized savings taxonomy Athens Procurement,
 // FP&A, Operations and Leadership share, so a dollar means the same thing in
@@ -34,7 +35,13 @@ export const SAVINGS_TYPES = [
   { key: 'sustainability', label: 'Sustainability Value', short: 'Sustainability', accent: 'var(--brand-sustain, var(--green))', pnl: false, definition: 'Quantified emissions, waste or ESG improvement from a sourcing or specification decision, valued in enterprise terms.', example: 'Route & fuel redesign lowers fleet emissions.' },
   { key: 'strategic', label: 'Strategic Value', short: 'Strategic', accent: 'var(--brand-intelligence)', pnl: false, definition: 'Capability, resilience or optionality beyond the immediate dollar — make-vs-buy, insourcing or supplier consolidation that strengthens the enterprise.', example: 'Insourcing subcontract labor builds an in-house capability.' },
 ]
-export const savingsType = (key) => SAVINGS_TYPES.find((t) => t.key === key) || SAVINGS_TYPES[SAVINGS_TYPES.length - 1]
+// savingsType merges any live EVRO Studio label/definition override (presentation
+// only — accent, pnl and math never change, so the book still reconciles).
+export const savingsType = (key) => {
+  const base = SAVINGS_TYPES.find((t) => t.key === key) || SAVINGS_TYPES[SAVINGS_TYPES.length - 1]
+  const o = typeOverride(base.key)
+  return o ? { ...base, ...o } : base
+}
 
 // ── Procurement governance — the approval ladder mapped onto the engine's
 // existing gate roles, in procurement language. The engine still enforces
@@ -43,7 +50,7 @@ export const savingsType = (key) => SAVINGS_TYPES.find((t) => t.key === key) || 
 // escalating to the CPO / Steering Committee for material awards. Presentation
 // only — the entitlement logic is unchanged.
 export const PROC_APPROVER_LABEL = { line_manager: 'Category Manager', fpna: 'FP&A Validation', steering: 'CPO / Steering Committee' }
-export const apprLabel = (r) => PROC_APPROVER_LABEL[r] || ROLE_APPROVE_LABEL[r] || r
+export const apprLabel = (r) => approverOverride(r) || PROC_APPROVER_LABEL[r] || ROLE_APPROVE_LABEL[r] || r
 export const GOVERNANCE_LADDER = [
   { role: 'line_manager', label: 'Category Manager', gate: 'Owns the category; signs off the sourcing case and award.' },
   { role: 'fpna', label: 'FP&A Validation', gate: 'Validates the baseline and the delivered savings against the AP register.' },
@@ -98,7 +105,13 @@ export const SAVINGS_LIFECYCLE = [
   { key: 'sustained', label: 'Sustained', phase: 'realized', chain: 'realize', bucket: 'sustained', gloss: 'Run-rate protected against erosion and leakage.' },
   { key: 'closed', label: 'Closed', phase: 'closed', chain: 'realize', bucket: 'sustained', gloss: 'Booked and retired from the active savings book.' },
 ]
-export const lifecycleMeta = (key) => SAVINGS_LIFECYCLE.find((s) => s.key === key) || SAVINGS_LIFECYCLE[0]
+// lifecycleMeta merges any live EVRO Studio stage label/gloss override
+// (presentation only — bucket, phase and stage index are untouched).
+export const lifecycleMeta = (key) => {
+  const base = SAVINGS_LIFECYCLE.find((s) => s.key === key) || SAVINGS_LIFECYCLE[0]
+  const o = stageOverride(base.key)
+  return o ? { ...base, ...o } : base
+}
 export const lifecycleIndex = (key) => SAVINGS_LIFECYCLE.findIndex((s) => s.key === key)
 
 const hasNegotiated = (i) => i.negotiated_value != null

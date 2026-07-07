@@ -124,6 +124,7 @@ export const PROCUREMENT_NAV = [
   ] },
   { group: 'Control', items: [
     ['glossary', 'Definitions & Phases', IconBook, ALL],
+    ['studio', 'EVRO Studio', IconBolt, ENT],
     ['knowledge', 'Knowledge Layer', IconBook, ALL],
     ['sustainability', 'Sustainability', IconLeaf, ALL],
     ['movement', 'Value Movement', IconTeam, ALL],
