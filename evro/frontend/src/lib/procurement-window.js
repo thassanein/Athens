@@ -78,6 +78,33 @@ export const PIPELINE_PHASES = [
   { key: 'closed', label: 'Banked', gloss: 'Window complete — protected run-rate', tone: 'var(--grey)' },
 ]
 
+// Impact phased by calendar year. Each opportunity's annualized run-rate is
+// spread month-by-month across its 12-month measurement window (from launch if it
+// is reporting, else its planned start), so the value lands in the actual years
+// 2025 / 2026 / 2027 / … it is active. A cut for phasing, not the book total.
+export function impactByYear(db) {
+  const opps = savingsOpportunities(db)
+  const years = {}
+  for (const o of opps) {
+    const annual = o.value.committed || 0 // risk-adjusted annual run-rate
+    if (annual <= 0) continue
+    const w = savingsWindow(db, o)
+    // Launched → its actual window; not yet reporting → the window opens at
+    // expected go-live (target close), which is when savings start to land.
+    const start = w.launched ? w.launchPeriod : (o._raw?.target_close ? o._raw.target_close.slice(0, 7) : (o._raw?.start_date ? o._raw.start_date.slice(0, 7) : null))
+    if (!start) continue
+    const [sy, sm] = start.split('-').map(Number)
+    for (let k = 0; k < MEASUREMENT_MONTHS; k++) {
+      const idx = sm - 1 + k
+      const y = sy + Math.floor(idx / 12)
+      years[y] = (years[y] || 0) + annual / MEASUREMENT_MONTHS
+    }
+  }
+  const now = ym(db.meta.now).y
+  return Object.keys(years).map(Number).sort((a, b) => a - b)
+    .map((year) => ({ year, value: years[year], current: year === now }))
+}
+
 export function pipelineBoard(db) {
   const opps = savingsOpportunities(db)
   return PIPELINE_PHASES.map((ph) => {

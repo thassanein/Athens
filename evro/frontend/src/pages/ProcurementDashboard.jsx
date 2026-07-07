@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { procurementModel, lifecycleMeta } from '../lib/procurement.js'
+import { impactByYear } from '../lib/procurement-window.js'
 import { forecastCurve } from '../lib/engine.js'
 import { money, pct, num, monthLabel, dateLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
@@ -16,6 +17,32 @@ import AgentActions from '../components/AgentActions.jsx'
 // to the dollar. Deterministic; no fabricated numbers.
 
 const BUCKET_TONE = { potential: 'var(--opp)', committed: 'var(--amber)', realized: 'var(--green)', sustained: 'var(--navy)' }
+
+// Annualized run-rate phased into the calendar years it lands in — each saving's
+// 12-month window from launch (or expected go-live) spread across 2025/2026/…
+function ImpactByYear({ db }) {
+  const years = useMemo(() => impactByYear(db), [db])
+  if (!years.length) return null
+  const max = Math.max(...years.map((y) => y.value), 1)
+  return (
+    <div className="pyr card pad section-gap">
+      <div className="card-h">
+        <h3>Impact by year</h3>
+        <span className="tiny muted" style={{ marginLeft: 8 }}>annualized run-rate phased into the year each 12-month window lands</span>
+      </div>
+      <div className="pyr-bars">
+        {years.map((y) => (
+          <div key={y.year} className={`pyr-col ${y.current ? 'current' : ''}`}>
+            <div className="pyr-v mono">{money(y.value)}</div>
+            <div className="pyr-bar" style={{ height: `${Math.max(4, (y.value / max) * 100)}%` }} />
+            <div className="pyr-yr">{y.year}{y.current ? ' ·' : ''}</div>
+          </div>
+        ))}
+      </div>
+      <p className="tiny muted" style={{ marginTop: 8 }}>A phasing cut, not the book total — risk-adjusted annual run-rate allocated month-by-month across its measurement window.</p>
+    </div>
+  )
+}
 
 function PipelineFunnel({ pipeline, navigate }) {
   const max = Math.max(1, ...pipeline.map((s) => s.value))
@@ -124,6 +151,8 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
           ))}
         </div>
       </div>
+
+      <ImpactByYear db={db} />
 
       <div className="tiles">
         <Tile tone="green" label="Realized YTD" value={money(sum.lenses.realized)} sub="validated actuals only" />

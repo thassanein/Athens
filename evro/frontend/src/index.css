@@ -2606,3 +2606,12 @@ html.evro-tour .content { padding-bottom: 72vh; }
 
 /* Per-year (annual impact) suffix — small, muted, consistent everywhere */
 .pboard-yr, .pdash-sum-yr { font-size: 0.62em; font-weight: 700; color: var(--grey); margin-left: 1px; }
+
+/* Impact by year — multi-year run-rate phasing bars */
+.pyr-bars { display: flex; align-items: flex-end; gap: 14px; height: 160px; padding-top: 8px; }
+.pyr-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+.pyr-v { font-size: 13px; font-weight: 800; color: var(--ink); }
+.pyr-bar { width: 100%; max-width: 90px; border-radius: 8px 8px 0 0; background: linear-gradient(180deg, var(--brand-value), color-mix(in srgb, var(--brand-value) 55%, transparent)); transition: height 0.4s cubic-bezier(0.2,0.7,0.3,1); }
+.pyr-col.current .pyr-bar { background: linear-gradient(180deg, var(--green), color-mix(in srgb, var(--green) 55%, transparent)); }
+.pyr-yr { font-size: 12px; font-weight: 700; color: var(--grey); }
+.pyr-col.current .pyr-yr { color: var(--green); }
