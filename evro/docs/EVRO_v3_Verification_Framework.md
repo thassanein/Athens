@@ -386,6 +386,28 @@ with it the engine's empty diff spans Phase 3A through 6C.1B.
 | **V-6CB-motion** | Motion identity — verbs per layer, reduced-motion rests. | `MOTION_IDENTITY`/`MOTION_LAWS` render with live demos; under `prefers-reduced-motion: reduce` every animation computes to `none` (emulated check). | Four layers × verbs; reduce → none. |
 | **V-6CB-docs** | The architecture record is authoritative and honest. | `EVRO_Identity_Architecture.md`: lineage 6C.1 → 6C.1A verdict → 6C.1B; layer specs match the shipped components; guidelines preface declares the supersession. | Doc ↔ code agree; preface present. |
 
+## 9L. Phase 6D — production experience implementation (S2/S3)
+
+The implementation bridge: identity/behaviour/trust systems became production
+executive experiences, entirely view/component/orchestration-layer.
+`V-6D-nologic` is the guardrail — and with it the engine's empty diff now spans
+Phase 3A through 6D. Full record: `docs/EVRO_6D_Implementation_Report.md`.
+
+| ID | Criterion | How to verify | Expected |
+|---|---|---|---|
+| **V-6D-nologic** (S1) | No engine/mutations/server/data change across all seven waves. | `git diff 4482788..HEAD -- evro/frontend/src/lib/engine.js evro/server/src/engine.js evro/frontend/src/lib/mutations.js evro/server/src/mutations.js evro/data` is empty. | Empty diff. |
+| **V-6D-weather** | Executive weather states are monotone over the deterministic engine. | `execWeather(db)` maps the weather key (clear→Opportunity … storm→Critical) so the exec state never disagrees with the signal; the underlying condition + recommendation remain accessible. | Seed → **Volatile** (overcast, energy 56). |
+| **V-6D-landing** | Status-first landing hierarchy. | The landing status band renders Energy · exec Weather · Momentum · Mission Queue · AI Confidence ABOVE the value hero; every figure live; the landing pins its palette (theme-proof). | Band: **56 Stable · Volatile · ▲0 ▼3 · 32 missions · 79%**, then the $23M hero. |
+| **V-6D-vitals** | Persistent status layer completed. | `EnterpriseVitals` carries the six status metrics — Energy, exec Weather state, Velocity, Pulse index, AI Confidence, Momentum/Season — each with a hover explanation; distils on mobile (`.vit-deep` hides). | Pulse **51**, AI confidence **79%** present. |
+| **V-6D-mobilebar** | Mobile executive command bar. | `MobileCommandBar` (Home/Decisions/Brief/AI/Missions/More) shows only ≤760px, filters tabs by `allowedKeys(role)` (owner → Home/Brief/AI/More), unmounts under any overlay, count badges are live; inactive label `var(--grey)` (AA). | Owner sees 4 tabs; bar gone when a drawer opens. |
+| **V-6D-narrative** | Executive narrative + evidence drill. | `execNarrative(db,user,mode)` — 4 questions, 3 audience modes reorder without changing facts; every claim carries metric/source/evidence via the `EvidenceDrawer`; the chosen mode persists to Executive Memory. | Modes reorder; drawer grounds to live rows; "board" round-trips to memory. |
+| **V-6D-trust** | AI transparency contract on every recommendation. | `recTrust(db,rec)` exposes confidence, evidence, assumptions, dependencies, risks, expected value (= value_impact × confidence); opportunity-linked recs (`o-*`) render the true linked opportunity (not "enterprise-level"); dependencies filter `type==='blocks'`; Shadow Mode demotes agents to monitoring and HOLDS recs. | Top rec shows **Linked opportunity**; expected **$1.98M**; shadow holds. |
+| **V-6D-memory** | Executive Memory v1 — transparent, editable, respectful. | `lib/memory.js` stores only usage (views, focus, narrative) in localStorage; each fact shows "EVRO remembered this because…", is forgettable one-at-a-time, resettable; no PII, no portfolio value, deterministic stamp; provenance copy device-scoped (not "this session"). | Forget 1→0; reset works; focus + narrative recorded. |
+| **V-6D-focus** | Executive focus modes reorder, never fork. | `orderMissions(db,mode)` reorders the SAME queue per seat (CEO decisions-first, CFO risk-first, COO in-motion, Program critical-path); `FocusModeSwitcher` states what changes; the seat persists to Memory. | Each seat reorders distinctly; "program" remembered. |
+| **V-6D-lifecycle** | Mission lifecycle, value-anchored. | `missionLifecycle(db,m)` maps to create→plan→activate→monitor→complete→retrospect from the linked initiative's stage, risk as an overlay; completion celebrates enterprise value unlocked, never a click. | Stepper current-phase correct; completion states the dollar. |
+| **V-6D-moments** | Signature moments grounded; health-recovered new. | `SIGNATURE_MOMENTS` (8) each map to a real trigger + owning code; no confetti/points; `detectCelebrations` fires "health recovered" ONLY on a grade-band step-up. | 8 moments render; health fires **CCC→BBB**, silent on no-change. |
+| **V-6D-a11y-theme** | Both themes AA, reduced-motion, keyboard, no dup ids. | Post-review: `--brand-ai-ink` (dark 6.1–6.6:1), light `--brand-energy` #8a5f08 (5.35:1); every animation `none` under reduce; EvidenceDrawer traps Tab + restores focus; no duplicate DOM ids across the 6D pages, both themes. | All pass; adversarial review (15 agents) 8 findings fixed. |
+
 ## 10. Pass/fail summary template
 
 | Section | Checks | Pass | Fail | N/A |
@@ -409,12 +431,14 @@ with it the engine's empty diff spans Phase 3A through 6C.1B.
 | Phase 6C.1 brand identity | 6 | | | |
 | Phase 6C.1A identity exploration | 7 | | | |
 | Phase 6C.1B identity convergence | 10 | | | |
-| **Total** | **152** | | | |
+| Phase 6D production experience | 12 | | | |
+| **Total** | **164** | | | |
 
 A release is **verified** when every **S1** check passes and no **S2** check fails.
 The experience guardrails — `V-3A-nologic`, `V-3B-nologic`, `V-4A-nologic`,
 `V-55-nologic`, `V-57-nologic`, `V-6B-nologic`, `V-6C1-nologic`, `V-6CA-nologic`,
-`V-6CB-nologic` (empty-diff) and `V-5B-additive`, `V-56-additive` (additive-only,
+`V-6CB-nologic`, `V-6D-nologic` (empty-diff) and `V-5B-additive`, `V-56-additive` (additive-only,
 mirrored) — must all pass. The strongest single invariant in the repo:
-**`engine.js` has an empty diff from Phase 3A through Phase 6C.1B** — nine
-sprints of experience, brand and identity work, zero change to the value math.
+**`engine.js` has an empty diff from Phase 3A through Phase 6D** — the entire
+experience, brand, identity and production-experience programme, zero change to
+the value math.
