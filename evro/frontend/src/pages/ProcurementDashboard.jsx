@@ -4,6 +4,7 @@ import { forecastCurve } from '../lib/engine.js'
 import { money, pct, num, monthLabel, dateLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { LineChart } from '../components/Charts.jsx'
+import Term from '../components/Term.jsx'
 
 // Procurement Executive Dashboard (Phase One W3) — the five-second read: how
 // much value is under management, where it is in the lifecycle, how confident
@@ -99,9 +100,9 @@ export default function ProcurementDashboard({ db, navigate }) {
       {/* Savings Under Management — the headline + the four progress lenses */}
       <div className="pdash-sum card pad">
         <div className="pdash-sum-hero">
-          <div className="pdash-sum-label">Enterprise Savings Under Management · FY{fy}</div>
+          <div className="pdash-sum-label"><Term name="Savings Under Management">Enterprise Savings Under Management</Term> · FY{fy}</div>
           <div className="pdash-sum-big mono">{money(sum.total)}</div>
-          <div className="pdash-sum-sub">{num(sum.count)} opportunities · {pct(sum.confidence)} value-weighted confidence · {money(velocity.perMonth)}/mo velocity</div>
+          <div className="pdash-sum-sub">{num(sum.count)} opportunities · {pct(sum.confidence)} value-weighted <Term name="Confidence">confidence</Term> · {money(velocity.perMonth)}/mo <Term name="Velocity">velocity</Term></div>
         </div>
         <div className="pdash-lenses">
           {[

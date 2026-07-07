@@ -2342,3 +2342,34 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .onb-collapsed-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; }
 .onb-collapsed-row b { font-size: 13px; line-height: 1.25; }
 .onb.onb-collapsed { max-height: none; }
+
+/* Procurement definitions — <Term> hover tooltip + Glossary page */
+.term { position: relative; border-bottom: 1px dotted currentColor; cursor: help; }
+.term:focus-visible { outline: 2px solid var(--brand-value); outline-offset: 2px; border-radius: 3px; }
+.term-pop { position: absolute; bottom: calc(100% + 8px); left: 0; z-index: 200; width: min(280px, 78vw);
+  display: none; flex-direction: column; gap: 5px; padding: 11px 13px; border-radius: 12px;
+  background: var(--card); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+  font-weight: 400; text-align: left; white-space: normal; cursor: default; }
+.term:hover .term-pop, .term:focus .term-pop, .term:focus-within .term-pop { display: flex; }
+.term-pop-t { font-size: 12.5px; color: var(--brand-value); }
+.term-pop-d { font-size: 12px; line-height: 1.5; color: var(--ink); }
+.term-pop-e { font-size: 11.5px; color: var(--grey); }
+.term-pop-e i { color: var(--grey-2); font-style: normal; font-weight: 700; margin-right: 3px; }
+/* glossary page */
+.glo-phases { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.glo-phase { border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; }
+.glo-phase-h { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.glo-phase-n { width: 20px; height: 20px; border-radius: 50%; background: var(--panel-2); display: grid; place-items: center; font-size: 11px; font-weight: 800; color: var(--grey); flex: none; }
+.glo-phase-def { font-size: 12px; color: var(--ink); line-height: 1.45; }
+.glo-phase-io { display: flex; flex-direction: column; gap: 2px; font-size: 11px; color: var(--grey); margin: 6px 0; }
+.glo-risks { margin: 0; padding-left: 15px; font-size: 11.5px; color: var(--grey); line-height: 1.5; }
+.glo-risks li { margin-bottom: 3px; }
+.glo-types, .glo-exprs { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.glo-type, .glo-expr { border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; }
+.glo-type-h { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.glo-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.glo-type-d, .glo-expr-d { font-size: 12px; line-height: 1.5; color: var(--ink); }
+.glo-type-e, .glo-expr-e { font-size: 11.5px; color: var(--grey); margin-top: 4px; }
+.glo-type-e i, .glo-expr-e i { color: var(--grey-2); font-style: normal; font-weight: 700; margin-right: 3px; }
+.glo-expr-t { margin-bottom: 3px; }
+@media (max-width: 560px) { .term-pop { left: auto; right: 0; } }

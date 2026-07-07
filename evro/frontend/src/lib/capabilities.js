@@ -120,6 +120,7 @@ export const PROCUREMENT_NAV = [
     ['reporting', 'Analytics', IconGraph, ENT],
   ] },
   { group: 'Control', items: [
+    ['glossary', 'Definitions & Phases', IconBook, ALL],
     ['knowledge', 'Knowledge Layer', IconBook, ALL],
     ['sustainability', 'Sustainability', IconLeaf, ALL],
     ['movement', 'Value Movement', IconTeam, ALL],

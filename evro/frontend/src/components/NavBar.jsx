@@ -64,6 +64,7 @@ export const NAV = [
   ] },
   { group: 'Reference', items: [
     ['knowledge', 'Knowledge Layer', IconBook, ALL],
+    ['glossary', 'Definitions & Phases', IconBook, ALL],
     ['methodology', 'Methodology', IconBook, ALL],
     ['brand', 'Brand', IconOpportunity, ALL],
     ['identity', 'Identity', IconOpportunity, ALL],
