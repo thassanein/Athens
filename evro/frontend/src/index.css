@@ -2252,7 +2252,9 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 
 /* Onboarding walkthrough — the ~5-minute guided pitch (bottom-docked, non-modal) */
 .onb-veil { position: fixed; inset: 0; z-index: 120; background: rgba(2,4,10,0.30); backdrop-filter: blur(0.5px); }
-.onb { position: fixed; z-index: 121; left: 50%; bottom: 22px; transform: translateX(-50%); width: min(760px, calc(100vw - 28px)); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); padding: 18px 20px 16px; }
+.onb { position: fixed; z-index: 121; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(600px, calc(100vw - 28px)); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); padding: 14px 18px 14px; display: flex; flex-direction: column; max-height: 42vh; }
+.onb-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; min-height: 0; }
+.onb-foot { flex: none; }
 .onb-in { animation: onbUp 0.34s cubic-bezier(0.2,0.7,0.2,1); }
 @keyframes onbUp { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .onb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -2310,8 +2312,7 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 /* Onboarding — phone optimization (compact bottom sheet, target stays clear) */
 @media (max-width: 640px) {
   .onb { left: 8px; right: 8px; bottom: 8px; width: auto; transform: none;
-    max-height: 50vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
-    border-radius: 16px; padding: 13px 14px 14px; }
+    max-height: 46vh; border-radius: 16px; padding: 12px 13px 12px; }
   .onb.onb-in { animation: onbUpMobile .34s cubic-bezier(.2,.7,.2,1); }
   @keyframes onbUpMobile { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   .onb-prog { position: sticky; top: 0; z-index: 1; }
@@ -2610,15 +2611,23 @@ html.evro-tour .content { padding-bottom: 72vh; }
 /* Impact by year — focus year emphasised, others muted fillers */
 .pyr-toggle { display: flex; gap: 5px; }
 .chip.sm { font-size: 11.5px; padding: 4px 10px; }
+.pyr-legend { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 4px 0 12px; font-size: 12.5px; }
+.pyr-key { display: inline-flex; align-items: center; gap: 6px; color: var(--grey); }
+.pyr-key b { color: var(--ink); }
+.pyr-sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.pyr-sw.hard { background: var(--green); }
+.pyr-sw.soft { background: var(--navy); }
 .pyr-bars { display: flex; align-items: flex-end; gap: 18px; height: 172px; padding-top: 8px; }
 .pyr-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
 .pyr-v { font-size: 13px; font-weight: 800; color: var(--ink); }
-.pyr-bar { width: 100%; max-width: 100px; border-radius: 9px 9px 0 0; transition: height 0.45s cubic-bezier(0.2,0.7,0.3,1); }
+.pyr-stack { width: 100%; max-width: 100px; border-radius: 9px 9px 0 0; overflow: hidden; display: flex; flex-direction: column; transition: height 0.45s cubic-bezier(0.2,0.7,0.3,1); }
+.pyr-seg.hard { background: linear-gradient(180deg, var(--green), color-mix(in srgb, var(--green) 60%, transparent)); }
+.pyr-seg.soft { background: linear-gradient(180deg, var(--navy), color-mix(in srgb, var(--navy) 60%, transparent)); }
 .pyr-yr { font-size: 12px; font-weight: 700; color: var(--grey); }
-.pyr-col.focus .pyr-bar { background: linear-gradient(180deg, var(--green), color-mix(in srgb, var(--green) 45%, transparent)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 40%, transparent); }
-.pyr-col.focus .pyr-v { color: var(--green); font-size: 15px; }
-.pyr-col.focus .pyr-yr { color: var(--green); }
-.pyr-col.filler .pyr-bar { background: linear-gradient(180deg, color-mix(in srgb, var(--grey) 50%, transparent), color-mix(in srgb, var(--grey) 20%, transparent)); }
+.pyr-col.focus .pyr-stack { box-shadow: 0 0 0 2px color-mix(in srgb, var(--green) 45%, transparent); }
+.pyr-col.focus .pyr-v { font-size: 15px; }
+.pyr-col.focus .pyr-yr { color: var(--ink); font-weight: 800; }
+.pyr-col.filler .pyr-stack { opacity: 0.62; }
 .pyr-col.filler .pyr-v { color: var(--grey); font-weight: 700; }
 
 /* Savings-type toggle bar (also the funnel colour legend) */
@@ -2694,3 +2703,7 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .glo-ledger li { font-size: 12.5px; line-height: 1.5; color: var(--ink); }
 .glo-lineage td { vertical-align: top; }
 @media (max-width: 640px) { .glo-ledgers { grid-template-columns: 1fr; } }
+
+/* Dashboard KPI header (year + scope context) */
+.pdash-kpihdr { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin: 4px 2px 8px; }
+.pdash-kpihdr h3 { margin: 0; font-size: 15px; }

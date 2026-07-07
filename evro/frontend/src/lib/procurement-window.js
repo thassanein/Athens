@@ -9,7 +9,7 @@
 // validated monthly actuals). It never rewrites the engine's reconciled dollar
 // totals — it frames WHEN a saving is inside its measurement window, so the
 // pipeline, dashboard, workspace and briefs all speak about it the same way.
-import { savingsOpportunities, lifecycleMeta } from './procurement.js'
+import { savingsOpportunities, lifecycleMeta, savingsType } from './procurement.js'
 import { rav } from './engine.js'
 
 export const MEASUREMENT_MONTHS = 12
@@ -99,16 +99,19 @@ export function impactByYear(db, mode = 'rav') {
       || (w.launched ? w.launchPeriod : null)
       || (o._raw?.target_close ? o._raw.target_close.slice(0, 7) : null)
     if (!start) continue
+    // Split by ledger: hard savings (P&L) vs cost avoidance (soft / non-P&L).
+    const bucket = savingsType(o.savingsType).pnl ? 'hard' : 'soft'
     const [sy, sm] = start.split('-').map(Number)
     for (let k = 0; k < MEASUREMENT_MONTHS; k++) {
       const idx = sm - 1 + k
       const y = sy + Math.floor(idx / 12)
-      years[y] = (years[y] || 0) + annual / MEASUREMENT_MONTHS
+      years[y] = years[y] || { hard: 0, soft: 0 }
+      years[y][bucket] += annual / MEASUREMENT_MONTHS
     }
   }
   const now = ym(db.meta.now).y
   return Object.keys(years).map(Number).sort((a, b) => a - b)
-    .map((year) => ({ year, value: years[year], current: year === now }))
+    .map((year) => ({ year, hard: years[year].hard, soft: years[year].soft, value: years[year].hard + years[year].soft, current: year === now }))
 }
 
 // The month the phasing window opens for an opportunity — start date if set,

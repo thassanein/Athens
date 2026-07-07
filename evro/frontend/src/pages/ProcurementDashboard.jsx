@@ -19,14 +19,16 @@ import AgentActions from '../components/AgentActions.jsx'
 const BUCKET_TONE = { potential: 'var(--opp)', committed: 'var(--amber)', realized: 'var(--green)', sustained: 'var(--navy)' }
 
 // Impact by year — risk-adjusted savings phased into the calendar years they
-// land in. 2026 is the focus year; the others are context/fillers. Toggle to
-// gross (un-adjusted) value.
+// land in, each bar split into cost savings (hard, hits the P&L) and cost
+// avoidance (soft). 2026 is the focus year. Toggle to gross (un-adjusted).
 function ImpactByYear({ db, focusYear }) {
   const [mode, setMode] = useState('rav')
   const years = useMemo(() => impactByYear(db, mode), [db, mode])
   if (!years.length) return null
   const max = Math.max(...years.map((y) => y.value), 1)
-  const focus = years.find((y) => y.year === focusYear)
+  const focus = years.find((y) => y.year === focusYear) || { hard: 0, soft: 0, value: 0 }
+  const totHard = years.reduce((s, y) => s + y.hard, 0)
+  const totSoft = years.reduce((s, y) => s + y.soft, 0)
   return (
     <div className="pyr card pad section-gap">
       <div className="card-h">
@@ -38,19 +40,29 @@ function ImpactByYear({ db, focusYear }) {
           <button role="tab" aria-selected={mode === 'gross'} className={`chip sm ${mode === 'gross' ? 'on' : ''}`} onClick={() => setMode('gross')}>Gross</button>
         </div>
       </div>
+      {/* header — the split, stated in numbers */}
+      <div className="pyr-legend">
+        <span className="pyr-key"><span className="pyr-sw hard" /> Cost savings (hard, hits P&amp;L) · <b className="mono">{money(totHard)}</b></span>
+        <span className="pyr-key"><span className="pyr-sw soft" /> Cost avoidance (soft) · <b className="mono">{money(totSoft)}</b></span>
+        <span className="spacer" />
+        <span className="tiny muted"><b>{focusYear}:</b> <span className="mono">{money(focus.hard)}</span> savings + <span className="mono">{money(focus.soft)}</span> avoidance = <b className="mono">{money(focus.value)}</b></span>
+      </div>
       <div className="pyr-bars">
         {years.map((y) => {
           const isFocus = y.year === focusYear
           return (
             <div key={y.year} className={`pyr-col ${isFocus ? 'focus' : 'filler'}`}>
               <div className="pyr-v mono">{money(y.value)}</div>
-              <div className="pyr-bar" style={{ height: `${Math.max(4, (y.value / max) * 100)}%` }} />
+              <div className="pyr-stack" style={{ height: `${Math.max(4, (y.value / max) * 100)}%` }}>
+                {y.soft > 0 && <div className="pyr-seg soft" style={{ flex: y.soft }} title={`Cost avoidance ${money(y.soft)}`} />}
+                {y.hard > 0 && <div className="pyr-seg hard" style={{ flex: y.hard }} title={`Cost savings ${money(y.hard)}`} />}
+              </div>
               <div className="pyr-yr">{y.year}{isFocus ? ' · focus' : ''}</div>
             </div>
           )
         })}
       </div>
-      <p className="tiny muted" style={{ marginTop: 8 }}>{focus ? `${focusYear} carries ${money(focus.value)} of ${mode === 'rav' ? 'risk-adjusted' : 'gross'} impact` : ''} — a phasing cut, not the book total. Each saving's annual run-rate is allocated month-by-month across its measurement window.</p>
+      <p className="tiny muted" style={{ marginTop: 8 }}>A phasing cut, not the book total — each saving’s {mode === 'rav' ? 'risk-adjusted' : 'gross'} annual run-rate allocated month-by-month across its 12-month window, split by ledger.</p>
     </div>
   )
 }
@@ -169,11 +181,15 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
 
       <ImpactByYear db={db} focusYear={focusYear} />
 
+      <div className="pdash-kpihdr">
+        <h3>Portfolio KPIs</h3>
+        <span className="tiny muted">FY{fy} · all savings types (hard + avoidance) · annual run-rate at full delivery, only validated value counts as realized</span>
+      </div>
       <div className="tiles">
-        <Tile tone="green" label="Realized YTD" value={money(sum.lenses.realized)} sub="validated actuals only" />
-        <Tile tone="amber" label="Committed to plan" value={money(sum.lenses.committed)} sub="approved & beyond" />
+        <Tile tone="green" label={`Realized · FY${fy} YTD`} value={money(sum.lenses.realized)} sub={`validated actuals · ${velocity.elapsedMonths} mo elapsed`} />
+        <Tile tone="amber" label="Committed to plan" value={money(sum.lenses.committed)} sub="approved & beyond · /yr run-rate" />
         <Tile tone="red" label="At-risk value" value={money(sum.atRisk)} sub={`${num(redCount)} red opportunit${redCount === 1 ? 'y' : 'ies'}`} />
-        <Tile tone="navy" label="Savings confidence" value={pct(sum.confidence)} sub="value-weighted across the book" />
+        <Tile tone="navy" label="Savings confidence" value={pct(sum.confidence)} sub="value-weighted · 25/50/75/100 ladder" />
       </div>
 
       {/* Proactive agents — always-on next best actions */}

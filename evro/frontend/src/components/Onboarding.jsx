@@ -192,7 +192,7 @@ export default function Onboarding({ db, navigate, onClose }) {
         // Park the target a fixed distance below the top of the viewport (clear
         // of the topbar) by scrolling the window directly — reliable on the
         // phone where the bottom sheet occupies the lower half of the screen.
-        const offset = mobile ? 80 : 130
+        const offset = mobile ? 68 : 96
         const r0 = el.getBoundingClientRect()
         const y = Math.max(0, window.scrollY + r0.top - offset)
         window.scrollTo({ top: y, behavior: reduced() ? 'auto' : 'smooth' })
@@ -269,22 +269,26 @@ export default function Onboarding({ db, navigate, onClose }) {
         </div>
         {collapsed && <div className="onb-collapsed-row"><b>{step.title}</b><button className="btn accent sm" onClick={() => { setPlaying(false); next() }}>{step.last ? 'Enter →' : 'Next →'}</button></div>}
 
-        <h2 className="onb-title" key={`t${i}`}>{step.title}</h2>
-        <p className="onb-body" key={`b${i}`}>{step.body}</p>
+        {!collapsed && (
+        <div className="onb-scroll">
+          <h2 className="onb-title" key={`t${i}`}>{step.title}</h2>
+          <p className="onb-body" key={`b${i}`}>{step.body}</p>
 
-        <div className="onb-metrics" key={`m${i}`}>
-          {step.metrics.map((mt) => (
-            <div key={mt.label} className="onb-metric">
-              <div className="onb-metric-v mono">{/\d/.test(mt.value) ? <AnimatedValue value={mt.value} duration={900} /> : mt.value}</div>
-              <div className="onb-metric-l">{mt.label}</div>
-            </div>
-          ))}
-        </div>
+          <div className="onb-metrics" key={`m${i}`}>
+            {step.metrics.map((mt) => (
+              <div key={mt.label} className="onb-metric">
+                <div className="onb-metric-v mono">{/\d/.test(mt.value) ? <AnimatedValue value={mt.value} duration={900} /> : mt.value}</div>
+                <div className="onb-metric-l">{mt.label}</div>
+              </div>
+            ))}
+          </div>
 
-        <div className="onb-solves" key={`s${i}`}>
-          <span className="onb-solves-l">Solves today's friction</span>
-          <span className="onb-solves-t">{step.solves}</span>
+          <div className="onb-solves" key={`s${i}`}>
+            <span className="onb-solves-l">Solves today's friction</span>
+            <span className="onb-solves-t">{step.solves}</span>
+          </div>
         </div>
+        )}
 
         <div className="onb-foot">
           <div className="onb-dots" aria-hidden="true">
