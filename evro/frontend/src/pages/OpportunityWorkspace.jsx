@@ -93,7 +93,7 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
           </div>
           <h2 className="ows-title">{o.name}</h2>
           <div className="ows-head-facts">
-            <Field label="Annual impact"><span className="mono" style={{ color: 'var(--green)', fontSize: 18 }}>{money(o.value.headline)}<span className="pboard-yr">/yr</span></span></Field>
+            <Field label={o.value.bucket === 'realized' ? 'Realized YTD' : 'Annual run-rate'}><span className="mono" style={{ color: 'var(--green)', fontSize: 18 }}>{money(o.value.headline)}{o.value.bucket !== 'realized' && <span className="pboard-yr">/yr</span>}</span></Field>
             <Field label="Confidence"><span className="mono">{pct(o.confidence)}</span></Field>
             <Field label={`Measurement (${MEASUREMENT_MONTHS}-mo)`}>{(() => {
               const w = savingsWindow(db, o)

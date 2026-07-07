@@ -47,8 +47,8 @@ export default function SavingsPipeline({ db, navigate, flash }) {
           is an annual (per-year) impact — one saving = one 12-month run-rate. */}
       <div className="swin-summary card pad">
         <div className="swin-sum-h">
-          <b>12-month measurement window · annual impact</b>
-          <span className="tiny muted">Each saving counts for {MEASUREMENT_MONTHS} months from launch (first FP&amp;A-validated reporting) — one year of impact — then banks to protected run-rate.</span>
+          <b>12-month measurement window · annualized run-rate</b>
+          <span className="tiny muted">Values are each saving's annual run-rate (one 12-month window from launch, then banked). Totals are run-rate at full delivery — only FP&amp;A-validated actuals count as realized.</span>
         </div>
         <div className="swin-sum-grid">
           <div className="swin-sum-cell"><b className="mono">{num(win.inWindow.count)}</b><span>in window · {money(win.inWindow.value)}/yr</span></div>
@@ -96,7 +96,7 @@ export default function SavingsPipeline({ db, navigate, flash }) {
                           <span className="badge" style={{ background: 'color-mix(in srgb, ' + st.accent + ' 20%, transparent)', color: st.accent }}>{st.short}</span>
                           <span className="tiny muted">{o.owner}</span>
                           <span className="spacer" />
-                          <b className="mono">{money(o.value.headline)}<span className="pboard-yr">/yr</span></b>
+                          <b className="mono">{money(o.value.headline)}{o.value.bucket !== 'realized' && <span className="pboard-yr">/yr</span>}</b>
                         </div>
                         {(col.key === 'realized' || col.key === 'execute' || col.key === 'closed') && <WindowMeter w={o.window} compact />}
                       </button>

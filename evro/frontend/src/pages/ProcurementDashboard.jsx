@@ -104,9 +104,9 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
       {/* Savings Under Management — the headline + the four progress lenses */}
       <div className="pdash-sum card pad">
         <div className="pdash-sum-hero">
-          <div className="pdash-sum-label"><Term name="Savings Under Management">Enterprise Savings Under Management</Term> · annual impact · FY{fy}</div>
+          <div className="pdash-sum-label"><Term name="Savings Under Management">Enterprise Savings Under Management</Term> · annualized run-rate · FY{fy}</div>
           <div className="pdash-sum-big mono">{money(sum.total)}<span className="pdash-sum-yr">/yr</span></div>
-          <div className="pdash-sum-sub">{num(sum.count)} opportunities · {pct(sum.confidence)} value-weighted <Term name="Confidence">confidence</Term> · {money(velocity.perMonth)}/mo <Term name="Velocity">velocity</Term> · each saving measured over a 12-month window</div>
+          <div className="pdash-sum-sub">{num(sum.count)} opportunities at full delivery · <b>{money(sum.lenses.realized)} validated YTD</b> · {pct(sum.confidence)} value-weighted <Term name="Confidence">confidence</Term> · {money(velocity.perMonth)}/mo <Term name="Velocity">velocity</Term></div>
         </div>
         <div className="pdash-lenses">
           {[
