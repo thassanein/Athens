@@ -130,6 +130,13 @@ export default function Onboarding({ db, navigate, onClose }) {
 
   const [i, setI] = useState(0)
   const [rect, setRect] = useState(null)
+
+  // extend the page (bottom padding) while the tour runs, so even the last
+  // content on a short mobile page can scroll up clear of the bottom sheet.
+  useEffect(() => {
+    document.documentElement.classList.add('evro-tour')
+    return () => document.documentElement.classList.remove('evro-tour')
+  }, [])
   const [playing, setPlaying] = useState(true)
   const [prog, setProg] = useState(0)
   const step = STEPS[i]

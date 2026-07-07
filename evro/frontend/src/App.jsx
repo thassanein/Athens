@@ -136,6 +136,13 @@ export default function App() {
     selectModule(key)
     try { sessionStorage.setItem('evro.module', key) } catch { /* ignore */ }
     setModuleKey(key); setShellRev((n) => n + 1)
+    // launch straight into the guided walkthrough after picking Procurement
+    // (inline the enter logic to avoid depending on `enter`, declared below)
+    if (key === 'procurement') {
+      setWelcome(false)
+      setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ }
+      setTour(true)
+    }
   }, [])
   const changeModule = useCallback(() => {
     try { sessionStorage.removeItem('evro.module'); sessionStorage.removeItem('evro.entered') } catch { /* ignore */ }

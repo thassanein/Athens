@@ -2224,7 +2224,7 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .mc-h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.05; letter-spacing: -0.5px; margin: 0 0 12px; }
 .mc-lede { font-size: 15px; line-height: 1.6; color: var(--grey); max-width: 640px; }
 .mc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-.mc-card { text-align: left; display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 16px; border: 1px solid var(--line); background: var(--panel, rgba(127,127,127,0.05)); cursor: pointer; transition: transform 0.18s cubic-bezier(0.2,0.7,0.2,1), border-color 0.18s, box-shadow 0.18s; }
+.mc-card { text-align: left; display: flex; flex-direction: column; gap: 8px; padding: 20px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); cursor: pointer; transition: transform 0.18s cubic-bezier(0.2,0.7,0.2,1), border-color 0.18s, box-shadow 0.18s; }
 .mc-card:hover:not(:disabled) { transform: translateY(-3px); border-color: color-mix(in srgb, var(--brand-value) 45%, var(--line)); box-shadow: 0 12px 34px rgba(0,0,0,0.28); }
 .mc-card:focus-visible { outline: 2px solid var(--brand-value); outline-offset: 2px; }
 .mc-card.mc-active { border-color: color-mix(in srgb, var(--green) 55%, var(--line)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--green) 30%, transparent); }
@@ -2252,7 +2252,7 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 
 /* Onboarding walkthrough — the ~5-minute guided pitch (bottom-docked, non-modal) */
 .onb-veil { position: fixed; inset: 0; z-index: 120; background: rgba(2,4,10,0.30); backdrop-filter: blur(0.5px); }
-.onb { position: fixed; z-index: 121; left: 50%; bottom: 22px; transform: translateX(-50%); width: min(760px, calc(100vw - 28px)); background: var(--panel, #14141a); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); padding: 18px 20px 16px; }
+.onb { position: fixed; z-index: 121; left: 50%; bottom: 22px; transform: translateX(-50%); width: min(760px, calc(100vw - 28px)); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); padding: 18px 20px 16px; }
 .onb-in { animation: onbUp 0.34s cubic-bezier(0.2,0.7,0.2,1); }
 @keyframes onbUp { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .onb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -2329,3 +2329,6 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
   .onb-spot { box-shadow: 0 0 0 9999px rgba(2,4,10,0.66), 0 0 0 2px var(--brand-value), 0 0 22px 4px color-mix(in srgb, var(--brand-value) 55%, transparent); }
 }
 @media (max-width: 640px) and (prefers-reduced-motion: reduce) { .onb.onb-in { animation: none; } }
+
+/* Onboarding — extra scroll room so the spotlight target clears the bottom sheet */
+html.evro-tour .content { padding-bottom: 72vh; }
