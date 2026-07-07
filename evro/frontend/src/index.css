@@ -1839,3 +1839,38 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
   .fx-collapse-in { animation: fx-collapse-in 0.24s ease; }
   @keyframes fx-collapse-in { from { opacity: 0; transform: translateY(-4px) scaleY(0.96); } to { opacity: 1; transform: none; } }
 }
+
+/* ============================================================================
+   6D Wave 2 — mobile executive command bar (bottom nav), mobile-only
+   ============================================================================ */
+.mcbar { display: none; }
+@media (max-width: 760px) {
+  .mcbar {
+    /* below every overlay (drawer 60/61, copilot 62/63, brief 66, palette 80),
+       above page content. App also unmounts it while an overlay is open, so it
+       can never paint over a modal or the mobile sidebar. */
+    display: grid; grid-template-columns: repeat(var(--mcbar-cols, 6), 1fr);
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: var(--card); border-top: 1px solid var(--line);
+    padding: 4px 2px calc(4px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.28);
+  }
+  .mcbar-tab {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    background: none; border: none; padding: 6px 2px; cursor: pointer;
+    color: var(--grey); font-size: 9.5px; font-weight: 700; border-radius: 8px;
+  }
+  .mcbar-tab.active { color: var(--navy); }
+  .mcbar-tab.active .mcbar-ic { color: var(--navy); }
+  .mcbar-ic { position: relative; display: inline-flex; color: var(--grey); }
+  .mcbar-tab.active .mcbar-ic { color: var(--navy); }
+  .mcbar-ic svg { width: 20px; height: 20px; }
+  .mcbar-l { line-height: 1; }
+  .mcbar-badge {
+    position: absolute; top: -5px; right: -7px; min-width: 14px; height: 14px;
+    padding: 0 3px; border-radius: 999px; background: var(--red); color: #fff;
+    font-size: 8.5px; font-weight: 800; display: grid; place-items: center;
+  }
+  /* keep the bar from covering content */
+  .content { padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+}

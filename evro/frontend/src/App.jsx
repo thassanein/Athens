@@ -9,8 +9,10 @@ import Copilot from './components/Copilot.jsx'
 import IntelligenceBar from './components/IntelligenceBar.jsx'
 import Briefing from './components/Briefing.jsx'
 import Landing from './components/Landing.jsx'
+import MobileCommandBar from './components/MobileCommandBar.jsx'
 import { BrandMark } from './components/Brand.jsx'
 import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
+import { missionQueue } from './lib/mission.js'
 
 import Morning from './pages/Morning.jsx'
 import Cockpit from './pages/Cockpit.jsx'
@@ -222,6 +224,8 @@ export default function App() {
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
   const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, onCompanion: () => setCopilot(true), home: HOME[user.role] || 'morning' }
   const effLevel = level || defaultLevelFor(user.role)
+  const mq = missionQueue(db, user)
+  const barCounts = { decisions: mq.counts?.decision || 0, missions: mq.missions.length }
 
   return (
    <KnowledgeProvider value={{ db, level: effLevel, setLevel }}>
@@ -254,6 +258,9 @@ export default function App() {
         <AIPresence db={db} user={user} page={page} navigate={navigate} />
         <Celebration queue={celebrations} onDismiss={() => setCelebrations((q) => q.slice(1))} />
         {welcome && <SignatureWelcome db={db} user={user} onDone={() => setWelcome(false)} />}
+        <MobileCommandBar page={page} homeKey={HOME[user.role] || 'morning'} role={user.role} counts={barCounts}
+          hidden={drawer || !!drawerId || palette || copilot || briefing || welcome || celebrations.length > 0}
+          onNavigate={navigate} onBrief={() => setBriefing(true)} onMore={() => setDrawer(true)} />
       </div>
 
       <Drawer id={drawerId} ctx={ctx} onClose={() => setDrawerId(null)} />

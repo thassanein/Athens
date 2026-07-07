@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { strategicSummary, strategicNarratives } from '../lib/companion.js'
-import { enterpriseEnergy, enterpriseWeather, valueVelocity } from '../lib/experience.js'
+import { enterpriseEnergy, execWeather, valueVelocity } from '../lib/experience.js'
 import { pulseIdentity } from '../lib/identity-systems.js'
+import { momentum } from '../lib/momentum.js'
+import { missionHealth, missionQueue } from '../lib/mission.js'
 import { money, num } from '../lib/format.js'
 import { AnimatedValue } from './ui.jsx'
 import { EvroMark, BrandLockup, JOURNEY } from './Brand.jsx'
 import { PulseCompact } from './IdentitySystems.jsx'
 import { IconAI } from './Icons.jsx'
+
+const TIER_COLOR = { good: 'var(--green)', calm: 'var(--navy)', watch: 'var(--brand-momentum)', warn: 'var(--amber)', crit: 'var(--red)' }
 
 // EVRO landing experience — the premium "enterprise operating system" front
 // door. Presents the strategic state of the enterprise (value under management
@@ -23,11 +27,16 @@ const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia &
 export default function Landing({ db, user, onEnter }) {
   const s = useMemo(() => strategicSummary(db), [db])
   const narratives = useMemo(() => strategicNarratives(db), [db])
-  // the status layer (6C.1B convergence: Value First + Enterprise Status)
+  // the status layer (6C.1B convergence + 6D status-first hierarchy:
+  // Energy · Weather · Momentum · Mission Queue · AI Confidence, before value)
   const energy = useMemo(() => enterpriseEnergy(db), [db])
-  const weather = useMemo(() => enterpriseWeather(db), [db])
+  const weather = useMemo(() => execWeather(db), [db])
   const vel = useMemo(() => valueVelocity(db), [db])
   const pulse = useMemo(() => pulseIdentity(db), [db])
+  const mom = useMemo(() => momentum(db, 'business_unit'), [db])
+  const mq = useMemo(() => missionQueue(db, user), [db, user])
+  const aiConf = useMemo(() => Math.round(missionHealth(db).aiConfidence * 100), [db])
+  const wTone = TIER_COLOR[weather.tier] || weather.accent
   const [ni, setNi] = useState(0)
   const [leaving, setLeaving] = useState(false)
   const fy = db.meta.fiscalYear
@@ -72,7 +81,8 @@ export default function Landing({ db, user, onEnter }) {
             <span key={ni} className="landing-narrative-text">{narratives[ni]}</span>
           </div>
 
-          {/* the status band — how the enterprise is, before how much (L3 + L1 converged) */}
+          {/* status-first band (6D workstream A): state before value.
+              Energy · Weather · Momentum · Mission Queue · AI Confidence. */}
           <div className="landing-status" role="group" aria-label="Enterprise status, live">
             <PulseCompact dims={pulse.dims} size={54} id="lps" />
             <div className="landing-status-t">
@@ -80,14 +90,26 @@ export default function Landing({ db, user, onEnter }) {
               <span>Enterprise Energy</span>
             </div>
             <span className="landing-status-div" aria-hidden="true" />
-            <div className="landing-status-t">
-              <b style={{ color: weather.accent }}>{weather.icon} {weather.label}</b>
-              <span>this week</span>
+            <div className="landing-status-t" title={`${weather.gloss} ${weather.why}.`}>
+              <b style={{ color: wTone }}>{weather.icon} {weather.execState}</b>
+              <span>enterprise state</span>
             </div>
             <span className="landing-status-div" aria-hidden="true" />
             <div className="landing-status-t">
-              <b className="mono">{money(Math.round(vel.netPerDay))}/day</b>
-              <span>net momentum</span>
+              <b className="mono" style={{ color: mom.counts.decelerating > mom.counts.accelerating ? 'var(--amber)' : 'var(--green)' }}>
+                ▲{mom.counts.accelerating} ▼{mom.counts.decelerating}
+              </b>
+              <span>momentum · {money(Math.round(vel.netPerDay))}/day net</span>
+            </div>
+            <span className="landing-status-div" aria-hidden="true" />
+            <div className="landing-status-t">
+              <b className="mono">{mq.missions.length}{mq.counts?.decision ? ` · ${mq.counts.decision}` : ''}</b>
+              <span>missions{mq.counts?.decision ? ' · decisions' : ' queued'}</span>
+            </div>
+            <span className="landing-status-div" aria-hidden="true" />
+            <div className="landing-status-t">
+              <b className="mono" style={{ color: 'var(--brand-ai)' }}>{aiConf}%</b>
+              <span>AI confidence</span>
             </div>
             <span className="landing-status-note">the enterprise, live — before you even enter</span>
           </div>
