@@ -19,7 +19,11 @@ export const STAGES = ['proposed', 'idea', 'feasibility', 'capability', 'launch'
 export const GATE_STAGES = ['idea', 'feasibility', 'capability', 'launch'] // the four value gates (funnel)
 export const LIFECYCLE_STAGES = ['idea', 'feasibility', 'capability', 'launch', 'realization', 'sustainment', 'retired']
 export const STAGE_LABEL = { proposed: 'Proposed', idea: 'Idea', feasibility: 'Feasibility', capability: 'Capability', launch: 'Launch', realization: 'Realization', sustainment: 'Sustainment', retired: 'Retired' }
-export const STAGE_CONFIDENCE = { proposed: 0, idea: 0.25, feasibility: 0.5, capability: 0.75, launch: 1.0, realization: 1.0, sustainment: 1.0, retired: 0 }
+// Phase-based confidence ladder (the sourcing-funnel curve): pipeline 25% ·
+// commit 50% · execute 75% · realizing & sustained 100%. Keyed to the stage that
+// carries each phase — idea/feasibility are pipeline (25%), capability is commit
+// (50%), launch is execute (75%), realization/sustainment are realizing (100%).
+export const STAGE_CONFIDENCE = { proposed: 0.25, idea: 0.25, feasibility: 0.25, capability: 0.5, launch: 0.75, realization: 1.0, sustainment: 1.0, retired: 0 }
 export const REALIZING_STAGES = ['launch', 'realization', 'sustainment']
 export const PILLAR_LABEL = { savings: 'Cost Savings', avoidance: 'Cost Avoidance' }
 export const BENEFIT_LABEL = { reduction: 'Cost Reduction', savings: 'Cost Savings', avoidance: 'Cost Avoidance' }

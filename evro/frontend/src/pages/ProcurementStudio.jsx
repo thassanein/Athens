@@ -167,11 +167,11 @@ function WeightsTab({ opps, onChange, flash }) {
     <>
     <div className="card pad section-gap">
       <div className="card-h">
-        <h3>Phase confidence ladder</h3><span className="badge b-amber" style={{ marginLeft: 8 }}>proposed · staged & previewed</span>
+        <h3>Phase confidence ladder</h3><span className="badge b-green" style={{ marginLeft: 8 }}>live</span>
         <span className="spacer" />
         <button className="linkbtn tiny" onClick={() => { PIPELINE_PHASES.forEach((p) => setStagedPhaseLadder(p.key, PHASE_LADDER_DEFAULT[p.key])); tick((n) => n + 1); onChange(); flash?.('Phase ladder set to 25 / 50 / 75 / 100') }}>Reset to 25/50/75/100</button>
       </div>
-      <p className="tiny muted" style={{ marginTop: -4, marginBottom: 10 }}>Confidence keyed to the five lifecycle phases instead of the eight engine stages — the sourcing-funnel curve (pipeline 25% · commit 50% · execute 75% · realizing & banked 100%). Preview only; the engine keeps scoring by stage until this is promoted.</p>
+      <p className="tiny muted" style={{ marginTop: -4, marginBottom: 10 }}>The sourcing-funnel curve (pipeline 25% · commit 50% · execute 75% · realizing & sustained 100%) is <b>now the live scoring model</b> — the engine risk-adjusts every figure on this ladder. The sliders below let you model an alternative and see the book-confidence effect before proposing a change.</p>
       <div className="stu-preview">
         <div className="stu-prev-box"><div className="tiny muted">Engine (live, by stage)</div><div className="stu-prev-v mono">{pct(phasePreview.engine)}</div></div>
         <div className="stu-prev-arrow">→</div>

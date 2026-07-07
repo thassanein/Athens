@@ -16,8 +16,9 @@ screen. Demo user acts as **EVRO Lead (admin)**.
 > *"An executive opens EVRO and understands enterprise savings state, confidence, risk and
 > the next decision in under five seconds."*
 
-- **Savings Under Management: $12.3M** across **43 opportunities** · **55% value-weighted
-  confidence** · **$272K/month** velocity.
+- **Savings Under Management: $12.2M** across **43 opportunities** · **45% value-weighted
+  confidence** (phase ladder: pipeline 25% · commit 50% · execute 75% · realizing 100%) ·
+  **$272K/month** velocity.
 - Four progress lenses: **Identified $13.6M → Committed $6.0M → Realized $1.5M → Sustained
   $1.6M** (a funnel, not a sum).
 - Executive narrative — *what happened / why it matters / what next* — and the last line
@@ -71,10 +72,11 @@ value is ranked by return.
 
 ## If asked "is this real?"
 
-- **Deterministic engine, provably unchanged.** The value engine has an *empty diff* across
-  the entire procurement programme — Procurement is a lens over it, not a rewrite.
+- **Deterministic engine.** Procurement is a lens over the value engine, not a rewrite. The
+  one deliberate, signed-off change to the calculation core is the confidence ladder —
+  re-based to the phase curve (pipeline 25% · commit 50% · execute 75% · realizing 100%).
 - **Everything reconciles.** The dashboard headline, the pipeline, the workspace, the
-  briefs and the evidence drawer all read the same value objects. $12,339,922, to the dollar.
+  briefs and the evidence drawer all read the same value objects. $12,178,735, to the dollar.
 - **No fabrication.** Every figure traces to a validated record; the "AI" is rules-based;
   dates come from the operating record, not the wall clock.
 
