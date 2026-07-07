@@ -4,16 +4,18 @@ import { canApproveRoles, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money } from '../lib/format.js'
 import { IconBolt } from './Icons.jsx'
 
-// Next Best Action engine (5B.6 item 7) — a persistent "what should I do
-// next?" rail on the operating screens. Top missions for this user, ranked by
-// value impact, each with a one-click action. Collapsed state persists.
+// Next Best Action engine (5B.6 item 7) — the mission queue: a "what should I
+// do next?" rail on the operating screens. Top missions for this user, ranked by
+// value impact, each with a one-click action. It opens on every page load, can
+// be minimized out of the way, and re-opens when its pill is clicked.
 
 const CLS = Object.fromEntries(MISSION_CLASSES.map((c) => [c.key, c]))
-const LS = 'evro.nextrail'
 
 export default function NextBestRail({ db, user, dispatch, navigate, flash }) {
-  const [open, setOpen] = useState(() => { try { return localStorage.getItem(LS) !== 'closed' } catch { return true } })
-  const toggle = () => setOpen((o) => { try { localStorage.setItem(LS, o ? 'closed' : 'open') } catch { /* ignore */ } return !o })
+  // Always start OPEN on load; minimizing collapses to the pill for this session
+  // only (not remembered across loads) so it's on again next time the page opens.
+  const [open, setOpen] = useState(true)
+  const toggle = () => setOpen((o) => !o)
   const q = useMemo(() => missionQueue(db, user), [db, user])
   const top = q.missions.slice(0, 3)
 
@@ -31,10 +33,12 @@ export default function NextBestRail({ db, user, dispatch, navigate, flash }) {
   if (!top.length) return null
   return (
     <aside className={`nbr ${open ? 'open' : ''}`} aria-label="Next best actions">
-      <button className="nbr-head" onClick={toggle} aria-expanded={open}>
+      <button className="nbr-head" onClick={toggle} aria-expanded={open}
+        title={open ? 'Minimize the mission queue' : 'Open the mission queue'}
+        aria-label={open ? 'Minimize the mission queue' : `Open the mission queue, ${q.missions.length} items`}>
         <IconBolt /> <span className="nbr-title">Do next</span>
         <span className="nbr-count">{q.missions.length}</span>
-        <span className="nbr-chev">{open ? '›' : '‹'}</span>
+        <span className="nbr-chev" aria-hidden="true">{open ? '–' : '⌃'}</span>
       </button>
       {open && (
         <div className="nbr-body">
