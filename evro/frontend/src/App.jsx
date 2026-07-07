@@ -9,12 +9,13 @@ import Copilot from './components/Copilot.jsx'
 import IntelligenceBar from './components/IntelligenceBar.jsx'
 import Briefing from './components/Briefing.jsx'
 import Landing from './components/Landing.jsx'
+import ModuleChooser from './components/ModuleChooser.jsx'
 import MobileCommandBar from './components/MobileCommandBar.jsx'
 import { BrandMark } from './components/Brand.jsx'
 import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
 import { missionQueue } from './lib/mission.js'
 import { recordView } from './lib/memory.js'
-import { procurementFirst } from './lib/capabilities.js'
+import { procurementFirst, selectModule } from './lib/capabilities.js'
 import { decisionQueue } from './lib/procurement.js'
 
 import Morning from './pages/Morning.jsx'
@@ -124,6 +125,18 @@ export default function App() {
   // (NavBar reads capabilities at render) re-evaluates its procurement-first mode.
   const [shellRev, setShellRev] = useState(0)
   const refreshShell = useCallback(() => setShellRev((n) => n + 1), [])
+  // module chooser (front door): the operator picks a capability before the
+  // landing. The choice sets the capability state; persists for the session.
+  const [moduleKey, setModuleKey] = useState(() => { try { return sessionStorage.getItem('evro.module') || null } catch { return null } })
+  const pickModule = useCallback((key) => {
+    selectModule(key)
+    try { sessionStorage.setItem('evro.module', key) } catch { /* ignore */ }
+    setModuleKey(key); setShellRev((n) => n + 1)
+  }, [])
+  const changeModule = useCallback(() => {
+    try { sessionStorage.removeItem('evro.module'); sessionStorage.removeItem('evro.entered') } catch { /* ignore */ }
+    setModuleKey(null); setEntered(false)
+  }, [])
   const enter = useCallback(() => { setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ } }, [])
 
   useEffect(() => {
@@ -239,7 +252,8 @@ export default function App() {
       <div className="tiny muted">Loading the operating system…</div>
     </div>
   )
-  if (!entered) return <Landing db={db} user={user} onEnter={enter} />
+  if (!moduleKey) return <ModuleChooser onPick={pickModule} />
+  if (!entered) return <Landing db={db} user={user} onEnter={enter} onBack={changeModule} />
 
   const Page = PAGES[page] || Cockpit
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db

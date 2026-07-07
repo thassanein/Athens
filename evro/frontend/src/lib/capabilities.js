@@ -64,6 +64,33 @@ export function procurementFirst() {
   return !!s.procurement && CAPABILITIES.filter((c) => s[c.key]).length === 1
 }
 
+// ── Module chooser — the front door. The operator picks which EVRO capability
+// they are entering before the landing. Procurement is the active Phase One
+// module; the others are on the roadmap. "Enterprise" opens the full platform
+// (every capability on → the complete enterprise navigation). Picking a module
+// simply sets the capability state below, so the chooser and Settings agree.
+export const MODULES = [
+  { key: 'procurement', label: 'EVRO Procurement', tagline: 'Savings realization across every dollar of addressable spend.', status: 'active', caps: ['procurement'] },
+  { key: 'cx', label: 'EVRO Customer Experience', tagline: 'Retention, satisfaction and revenue value.', status: 'soon' },
+  { key: 'fleet', label: 'EVRO Fleet & Maintenance', tagline: 'Vehicle, maintenance and utilization value.', status: 'soon' },
+  { key: 'operations', label: 'EVRO Operations', tagline: 'Route, throughput and facility efficiency.', status: 'soon' },
+  { key: 'enterprise', label: 'EVRO Enterprise', tagline: 'The full platform — every capability, one operating system.', status: 'platform', caps: 'all' },
+]
+export const moduleMeta = (key) => MODULES.find((m) => m.key === key) || null
+
+// Apply a module choice to the capability state. Returns the new state, or null
+// if the module is not yet available (status 'soon').
+export function selectModule(key) {
+  const m = MODULES.find((x) => x.key === key)
+  if (!m || m.status === 'soon') return null
+  const state = {}
+  if (m.caps === 'all') CAPABILITIES.forEach((c) => { state[c.key] = true })
+  else CAPABILITIES.forEach((c) => { state[c.key] = (m.caps || []).includes(c.key) })
+  if (!CAPABILITIES.some((c) => state[c.key])) state.procurement = true
+  write(state)
+  return state
+}
+
 const ALL = ['exec', 'admin', 'fpna', 'leader', 'owner', 'procurement']
 const ENT = ['exec', 'admin', 'fpna']
 const ENTL = ['exec', 'admin', 'fpna', 'leader']

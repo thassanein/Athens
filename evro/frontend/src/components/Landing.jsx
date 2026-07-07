@@ -24,7 +24,7 @@ const PILLARS = [
 const ROLE_TAG = { exec: 'Executive Command', admin: 'EVRO Command', fpna: 'Financial Control', leader: 'Function Leadership', owner: 'Initiative Owner', procurement: 'Procurement' }
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-export default function Landing({ db, user, onEnter }) {
+export default function Landing({ db, user, onEnter, onBack }) {
   const s = useMemo(() => strategicSummary(db), [db])
   const narratives = useMemo(() => strategicNarratives(db), [db])
   // the status layer (6C.1B convergence + 6D status-first hierarchy:
@@ -67,8 +67,11 @@ export default function Landing({ db, user, onEnter }) {
     <div className={`landing ${leaving ? 'leaving' : ''}`}>
       <div className="landing-inner">
         <header className="landing-top">
-          <BrandLockup size={40} sub="Enterprise Value Realization OS" />
-          <button className="btn accent landing-enter-sm" onClick={go}>Enter →</button>
+          <BrandLockup size={40} sub="Procurement · Enterprise Value Realization OS" />
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            {onBack && <button className="btn ghost sm" onClick={onBack}>← Capabilities</button>}
+            <button className="btn accent landing-enter-sm" onClick={go}>Enter →</button>
+          </div>
         </header>
 
         <section className="landing-hero">
