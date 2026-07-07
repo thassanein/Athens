@@ -1,14 +1,14 @@
-import { IconExec, IconCockpit, IconReport, IconAI, IconBolt, IconMenu } from './Icons.jsx'
+import { IconExec, IconCockpit, IconReport, IconAI, IconBolt, IconMenu, IconPortfolio } from './Icons.jsx'
 import { allowedKeys } from './NavBar.jsx'
+import { procurementFirst } from '../lib/capabilities.js'
 
-// Mobile Executive Command Bar (6D Wave 2) — the bottom command surface for
-// the executive command DEVICE, not desktop-lite. Six one-handed targets in
-// the brief's order: Home, Decisions, Brief, AI, Missions, More. Renders only
-// at mobile widths (CSS), and only when no overlay is open (App passes
-// `hidden`, so the fixed bar never paints over a drawer/modal). Page tabs are
-// filtered by the same role gate every other nav surface uses — the bar can
-// never reach a screen the sidebar and palette hide. Badges are live counts.
-const TABS = [
+// Mobile Executive Command Bar (6D Wave 2; procurement-aware Phase One W7) —
+// the bottom command surface for the executive command DEVICE, not desktop-lite.
+// In Phase One (procurement-first) the five one-handed targets route to the
+// procurement surfaces — Home (dashboard), Decisions, Pipeline, AI, More — with
+// live decision + approval badges; otherwise the original enterprise tabs.
+// Renders only at mobile widths (CSS), and only when no overlay is open.
+const ENTERPRISE_TABS = [
   { key: 'home', label: 'Home', Icon: IconExec, always: true },
   { key: 'decisions', label: 'Decisions', Icon: IconCockpit, badge: 'decisions' },
   { key: 'brief', label: 'Brief', Icon: IconReport, always: true },
@@ -16,11 +16,19 @@ const TABS = [
   { key: 'missions', label: 'Missions', Icon: IconBolt, badge: 'missions' },
   { key: 'more', label: 'More', Icon: IconMenu, always: true },
 ]
+const PROCUREMENT_TABS = [
+  { key: 'procurement', label: 'Home', Icon: IconExec, always: true },
+  { key: 'decisioncenter', label: 'Decisions', Icon: IconCockpit, badge: 'decisions', always: true },
+  { key: 'savingspipeline', label: 'Pipeline', Icon: IconPortfolio, always: true },
+  { key: 'procai', label: 'AI', Icon: IconAI, badge: 'approvals', always: true },
+  { key: 'more', label: 'More', Icon: IconMenu, always: true },
+]
 
 export default function MobileCommandBar({ page, homeKey, role, counts = {}, hidden = false, onNavigate, onBrief, onMore }) {
   if (hidden) return null
+  const proc = procurementFirst()
   const allowed = new Set(allowedKeys(role))
-  const tabs = TABS.filter((t) => t.always || allowed.has(t.key))
+  const tabs = (proc ? PROCUREMENT_TABS : ENTERPRISE_TABS).filter((t) => t.always || allowed.has(t.key))
   const activeFor = (k) => (k === 'home' ? page === homeKey : page === k)
   const go = (t) => {
     if (t.key === 'brief') return onBrief()

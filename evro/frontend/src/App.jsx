@@ -14,6 +14,8 @@ import { BrandMark } from './components/Brand.jsx'
 import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
 import { missionQueue } from './lib/mission.js'
 import { recordView } from './lib/memory.js'
+import { procurementFirst } from './lib/capabilities.js'
+import { decisionQueue } from './lib/procurement.js'
 
 import Morning from './pages/Morning.jsx'
 import Cockpit from './pages/Cockpit.jsx'
@@ -247,7 +249,14 @@ export default function App() {
   // plain call (not useMemo): this is below the early returns, so a hook here
   // would violate hook ordering. missionQueue is cheap enough at this scale.
   const mq = missionQueue(db, user)
-  const barCounts = { decisions: mq.counts?.decision || 0, missions: mq.missions.length }
+  // procurement-first mobile bar shows live decision + approval badges; the
+  // queue is cheap at this scale (both are plain calls below the early returns).
+  const pdq = decisionQueue(db)
+  const barCounts = {
+    decisions: procurementFirst() ? pdq.length : (mq.counts?.decision || 0),
+    missions: mq.missions.length,
+    approvals: pdq.filter((o) => o._raw.request).length,
+  }
 
   return (
    <KnowledgeProvider value={{ db, level: effLevel, setLevel }}>

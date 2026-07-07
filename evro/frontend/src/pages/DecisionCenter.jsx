@@ -15,6 +15,7 @@ import { IconAI, IconCheck } from '../components/Icons.jsx'
 export default function DecisionCenter({ db, user, caps, dispatch, navigate, flash }) {
   const queue = useMemo(() => decisionQueue(db), [db])
   const [selId, setSelId] = useState(null)
+  const [comment, setComment] = useState('')
   const sel = queue.find((o) => o.id === selId) || queue[0] || null
   const raw = sel ? (db.initiatives || []).find((i) => i.id === sel.id) : null
   const intel = useMemo(() => (raw ? decisionIntel(db, raw) : null), [db, raw])
@@ -33,6 +34,11 @@ export default function DecisionCenter({ db, user, caps, dispatch, navigate, fla
   const onApprove = () => act('approveRequest', [sel.id, user.id], `Approved as ${approveRoles.map((r) => ROLE_APPROVE_LABEL[r]).join(', ')}`)
   const onReturn = () => act('rejectRequest', [sel.id, user.id, 'Returned for rework from the Decision Center'], 'Returned for rework')
   const onRequest = () => act('requestGate', [sel.id, user.id], 'Advancement requested — approvals opened')
+  const onComment = async () => {
+    if (!comment.trim()) return
+    const r = await dispatch('addComment', sel.id, comment, user.id)
+    if (!r?.error) { setComment(''); flash?.('Comment added to the record') }
+  }
 
   return (
     <>
@@ -103,6 +109,13 @@ export default function DecisionCenter({ db, user, caps, dispatch, navigate, fla
               {!intel.pending && reqAdvance.ok && <button className="btn accent" onClick={onRequest}>Request advance to {reqAdvance.to}</button>}
               {!intel.pending && !reqAdvance.ok && !canApprove && <span className="tiny muted">{reqAdvance.reason || 'This decision is owned elsewhere — open the workspace to progress it.'}</span>}
               {intel.pending && !canApprove && <span className="tiny muted">Awaiting {intel.approvalState?.remaining.map((r) => ROLE_APPROVE_LABEL[r]).join(' + ')} — you are not entitled to sign this off.</span>}
+            </div>
+
+            {/* comment for the record (approve / reject / comment trio) */}
+            <div className="dc-comment">
+              <input className="dc-comment-in" value={comment} onChange={(e) => setComment(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && onComment()} placeholder="Add a comment for the record…" aria-label="Add a comment" />
+              <button className="btn sm ghost" disabled={!comment.trim()} onClick={onComment}>Comment</button>
             </div>
           </div>
 

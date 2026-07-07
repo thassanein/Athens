@@ -37,7 +37,8 @@ export default function SavingsPipeline({ db, navigate }) {
             <span className="spacer" />
             <span className="badge b-grey">{rows.length} · {money(rows.reduce((s, o) => s + o.value.headline, 0))}</span>
           </div>
-          <div className="table-wrap">
+          {/* desktop: dense table */}
+          <div className="table-wrap svp-tablewrap">
             <table className="tbl">
               <thead><tr><th>Opportunity</th><th>Type</th><th>Owner</th><th className="num">Confidence</th><th className="num">Value</th></tr></thead>
               <tbody>
@@ -55,6 +56,27 @@ export default function SavingsPipeline({ db, navigate }) {
                 })}
               </tbody>
             </table>
+          </div>
+          {/* mobile: thumb-friendly opportunity summary cards */}
+          <div className="svp-cards">
+            {rows.map((o) => {
+              const st = savingsType(o.savingsType)
+              return (
+                <button key={o.id} className="svp-card" onClick={() => navigate('opportunity', { id: o.id })}>
+                  <div className="svp-card-top">
+                    <b>{o.name}</b>
+                    {o.ragStatus === 'red' && <span className="badge b-red">risk</span>}
+                  </div>
+                  <div className="svp-card-meta">
+                    <span className="badge" style={{ background: 'color-mix(in srgb, ' + st.accent + ' 20%, transparent)', color: st.accent }}>{st.short}</span>
+                    <span className="tiny muted">{o.owner}</span>
+                    <span className="spacer" />
+                    <span className="mono tiny">{pct(o.confidence)}</span>
+                    <b className="mono svp-card-v">{money(o.value.headline)}</b>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </div>
       ))}
