@@ -79,7 +79,7 @@ export const PROCUREMENT_NAV = [
     ['procurement', 'Executive Dashboard', IconExec, ENTL],
   ] },
   { group: 'Procurement', items: [
-    ['portfolio', 'Savings Pipeline', IconPortfolio, ENTL],
+    ['savingspipeline', 'Savings Pipeline', IconPortfolio, ENTL],
     ['opportunities', 'Opportunities', IconOpportunity, ENT],
     ['decisions', 'Decision Center', IconCockpit, ENTL],
     ['governance', 'Business Cases', IconReport, ENTL],

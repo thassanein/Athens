@@ -44,6 +44,7 @@ export const NAV = [
     ['valuemap', 'Value Map', IconMap, ENTL],
     ['scenarios', 'Scenarios', IconScenarios, ENT],
     ['optimize', 'Capital Allocation', IconOptimize, ENT],
+    ['savingspipeline', 'Savings Pipeline', IconPortfolio, ENTL],
     ['realization', 'Value Realization', IconReport, ENTL],
     ['sustainment', 'Sustainment', IconForecast, ENTL],
     ['dependencies', 'Dependencies', IconGraph, ENTL],

@@ -294,6 +294,54 @@ export function topBlockers(db) {
     .filter((b) => byId[b.id]).sort((a, b) => b.blocks - a.blocks || b.value - a.value).slice(0, 6)
 }
 
+// Decision history & approval trail for one opportunity — journal entries,
+// validation sign-offs and the live approval request, in one chronological list.
+export function decisionHistory(db, i) {
+  const rows = []
+  for (const e of db.decision_journal || []) {
+    if (e.linked_initiative_id === i.id) rows.push({ at: e.at, kind: 'decision', title: e.title, detail: e.decision, by: e.decided_by ? personName(db, e.decided_by) : '—', rationale: e.rationale })
+  }
+  for (const v of i.validations || []) rows.push({ at: v.decided_at, kind: 'validation', title: `${v.type} validation`, detail: v.decision, by: v.actor_id ? personName(db, v.actor_id) : 'FP&A', rationale: v.note })
+  for (const a of i.request?.approvals || []) rows.push({ at: a.at, kind: 'approval', title: `${ROLE_APPROVE_LABEL[a.role] || a.role} sign-off`, detail: 'Approved', by: a.by ? personName(db, a.by) : '—' })
+  return rows.filter((r) => r.at).sort((a, b) => String(b.at).localeCompare(String(a.at)))
+}
+
+// Deterministic AI insight for one opportunity — the EVRO trust contract
+// (recommendation + confidence + evidence + assumptions + dependencies + risks
+// + expected value), computed from the opportunity's own state. Rules-based;
+// no language model, no fabricated numbers.
+export function opportunityInsight(db, i) {
+  const dec = nextDecision(db, i)
+  const conf = confidence(i.stage)
+  const ev = opportunityEvidence(db, i)
+  const deps = opportunityDependencies(db, i.id)
+  const risks = (i.risks || []).filter((r) => r.score >= 8).sort((a, b) => b.score - a.score)
+  const gaps = dec?.missing || []
+  const pending = !!i.request
+  const recommendation = pending
+    ? `${dec.label} — chase the sign-off to move it off the bench and into the pipeline.`
+    : gaps.length
+      ? `Close ${gaps.length} evidence gap${gaps.length === 1 ? '' : 's'} to unblock the next gate, then advance.`
+      : dec ? `${dec.label} — the case is complete and the value justifies the move.` : 'Protect the run-rate; no further gate action required.'
+  return {
+    recommendation,
+    confidence: conf,
+    rulesBased: true,
+    expected: { value: rav(i), note: `${(i.gross_annual_value || 0).toLocaleString()} gross × ${Math.round(conf * 100)}% stage confidence × realization factor` },
+    evidence: ev.map((e) => ({ label: e.label, value: e.ref })),
+    assumptions: [
+      'Rules-based signal — deterministic, no language model.',
+      'Baseline and savings logic assumed current as of the last FP&A sync.',
+      i.negotiated_value != null ? 'Assumes negotiated volume actually flows through as run-rate.' : 'Assumes the risk-adjusted estimate holds as scoped.',
+    ],
+    dependencies: deps.blockedBy.length ? deps.blockedBy.map((id) => ({ label: 'Blocked by', value: id })) : [{ label: 'Blocking dependencies', value: 'none on the graph' }],
+    risks: [
+      `${Math.round((1 - conf) * 100)}% residual — the estimate could move as the gate closes.`,
+      ...risks.slice(0, 2).map((r) => `${r.category} risk (score ${r.score})${r.countermeasure ? ' — countermeasure logged' : ' — no countermeasure yet'}.`),
+    ],
+  }
+}
+
 // The full model in one call — what every Procurement surface consumes.
 export function procurementModel(db) {
   return {
