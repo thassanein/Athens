@@ -2252,31 +2252,36 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 
 /* Onboarding walkthrough — the ~5-minute guided pitch (bottom-docked, non-modal) */
 .onb-veil { position: fixed; inset: 0; z-index: 120; background: rgba(2,4,10,0.30); backdrop-filter: blur(0.5px); }
-.onb { position: fixed; z-index: 121; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(600px, calc(100vw - 28px)); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); padding: 14px 18px 14px; display: flex; flex-direction: column; max-height: 42vh; }
-.onb-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; min-height: 0; }
+.onb { position: fixed; z-index: 121; left: 50%; bottom: 18px; transform: translateX(-50%); width: min(560px, calc(100vw - 28px)); background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 24px 70px rgba(0,0,0,0.55); padding: 15px 20px 14px; display: flex; flex-direction: column; max-height: 46vh; }
+.onb-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; min-height: 0; padding-right: 2px; }
+.onb-scroll::-webkit-scrollbar { width: 4px; }
+.onb-scroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 .onb-foot { flex: none; }
 .onb-in { animation: onbUp 0.34s cubic-bezier(0.2,0.7,0.2,1); }
 @keyframes onbUp { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
-.onb-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.onb-head { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
 .onb-mark { display: inline-flex; }
-.onb-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: 0.6px; color: var(--brand-value); }
-.onb-count { margin-left: auto; font-size: 12px; color: var(--grey); }
-.onb-title { margin: 0 0 8px; font-size: 20px; line-height: 1.2; letter-spacing: -0.3px; }
-.onb-body { margin: 0 0 12px; font-size: 13.5px; line-height: 1.6; color: var(--ink); }
-.onb-metrics { display: flex; gap: 22px; flex-wrap: wrap; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 10px; }
-.onb-metric-v { font-size: 17px; font-weight: 800; color: var(--brand-value); }
-.onb-metric-l { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; color: var(--grey); }
+.onb-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; letter-spacing: 0.7px; color: var(--brand-value); }
+.onb-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--brand-value); box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand-value) 60%, transparent); animation: onbDot 2s ease-out infinite; }
+@keyframes onbDot { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand-value) 55%, transparent); } 70% { box-shadow: 0 0 0 7px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.onb-count { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--grey); font-variant-numeric: tabular-nums; }
+.onb-title { margin: 0 0 7px; font-size: 21px; line-height: 1.18; letter-spacing: -0.4px; font-weight: 800; }
+.onb-body { margin: 0 0 12px; font-size: 14px; line-height: 1.62; color: color-mix(in srgb, var(--ink) 90%, var(--grey)); }
+.onb-metrics { display: flex; gap: 24px; flex-wrap: wrap; padding: 11px 0 3px; border-top: 1px solid var(--line); margin-bottom: 11px; }
+.onb-metric-v { font-size: 18px; font-weight: 800; color: var(--brand-value); letter-spacing: -0.3px; }
+.onb-metric-l { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--grey); margin-top: 1px; }
+@media (prefers-reduced-motion: reduce) { .onb-eyebrow::before { animation: none; } }
 .onb-point { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--grey); margin-bottom: 14px; }
 .onb-point-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex: none; }
 .onb-foot { display: flex; align-items: center; gap: 10px; }
-.onb-dots { display: flex; gap: 6px; }
-.onb-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); cursor: pointer; transition: background 0.2s, transform 0.2s; }
-.onb-dot.on { background: var(--brand-value); transform: scale(1.25); }
-.onb-dot.done { background: color-mix(in srgb, var(--brand-value) 45%, var(--line)); }
+.onb-dots { display: flex; gap: 5px; align-items: center; }
+.onb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); cursor: pointer; transition: background 0.25s, width 0.25s; }
+.onb-dot.on { background: var(--brand-value); width: 20px; border-radius: 4px; }
+.onb-dot.done { background: color-mix(in srgb, var(--brand-value) 55%, var(--line)); }
 .onb-time { color: var(--grey); }
 .landing-tour-btn { background: transparent; border: 1px solid var(--line); color: var(--ink); }
 @media (prefers-reduced-motion: reduce) { .onb-in { animation: none; } .onb-dot { transition: none; } }
-@media (max-width: 560px) { .onb { bottom: 12px; padding: 15px 16px; } .onb-metrics { gap: 16px; } .onb-title { font-size: 17px; } }
+@media (max-width: 560px) { .onb { bottom: 12px; padding: 14px 15px; } .onb-metrics { gap: 18px; } .onb-title { font-size: 18px; } }
 
 
 /* Onboarding — spotlight + animation upgrade (visual-learner mode) */
@@ -2312,7 +2317,7 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 /* Onboarding — phone optimization (compact bottom sheet, target stays clear) */
 @media (max-width: 640px) {
   .onb { left: 8px; right: 8px; bottom: 8px; width: auto; transform: none;
-    max-height: 46vh; border-radius: 16px; padding: 12px 13px 12px; }
+    max-height: 52vh; border-radius: 16px; padding: 13px 14px 12px; }
   .onb.onb-in { animation: onbUpMobile .34s cubic-bezier(.2,.7,.2,1); }
   @keyframes onbUpMobile { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
   .onb-prog { position: sticky; top: 0; z-index: 1; }
