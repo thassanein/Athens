@@ -77,6 +77,7 @@ import ProcurementBrief from './pages/ProcurementBrief.jsx'
 import ProcurementStudio from './pages/ProcurementStudio.jsx'
 import NextBestRail from './components/NextBestRail.jsx'
 import AIPresence from './components/AIPresence.jsx'
+import AskEvro from './components/AskEvro.jsx'
 import Celebration from './components/Celebration.jsx'
 import { detectCelebrations } from './lib/celebrations.js'
 import { SignatureWelcome } from './components/Signature.jsx'
@@ -318,6 +319,8 @@ export default function App() {
         </main>
         {RAIL_PAGES.has(page) && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
         <AIPresence db={db} user={user} page={page} navigate={navigate} />
+        <AskEvro onClick={() => setCopilot(true)} railPage={RAIL_PAGES.has(page)}
+          hidden={copilot || briefing || palette || welcome || tour || drawer || !!drawerId || celebrations.length > 0} />
         <Celebration queue={celebrations} onDismiss={() => setCelebrations((q) => q.slice(1))} />
         {welcome && !tour && <SignatureWelcome db={db} user={user} onDone={() => setWelcome(false)} />}
         <MobileCommandBar page={page} homeKey={HOME[user.role] || 'morning'} role={user.role} counts={barCounts}

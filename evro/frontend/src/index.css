@@ -2534,3 +2534,38 @@ html.evro-tour .content { padding-bottom: 72vh; }
   .stu-banner { flex-wrap: wrap; }
   .stu-flags { align-items: flex-start; flex-direction: row; }
 }
+
+/* Ask EVRO — persistent floating action button (rides the viewport on scroll) */
+.ask-evro {
+  position: fixed; right: 20px; bottom: 20px; z-index: 46;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border: none; border-radius: 999px; cursor: pointer;
+  background: linear-gradient(135deg, var(--brand-value), var(--brand-ai, var(--brand-value)));
+  color: #fff; font: inherit; font-size: 14px; font-weight: 800; letter-spacing: 0.2px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.34), 0 0 0 0 color-mix(in srgb, var(--brand-value) 55%, transparent);
+  animation: ask-evro-pulse 2.6s ease-out infinite;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+.ask-evro:hover { transform: translateY(-2px); }
+.ask-evro:focus-visible { outline: 2px solid var(--brand-value); outline-offset: 3px; }
+.ask-evro-ic { display: inline-flex; }
+.ask-evro-ic svg { width: 18px; height: 18px; }
+/* Raised above the "Do next" rail on rail pages (desktop). */
+.ask-evro.raised { bottom: 88px; }
+@keyframes ask-evro-pulse {
+  0% { box-shadow: 0 8px 26px rgba(0,0,0,0.34), 0 0 0 0 color-mix(in srgb, var(--brand-value) 50%, transparent); }
+  70% { box-shadow: 0 8px 26px rgba(0,0,0,0.34), 0 0 0 14px transparent; }
+  100% { box-shadow: 0 8px 26px rgba(0,0,0,0.34), 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .ask-evro { animation: none; } }
+/* Phones: raise above the mobile command bar; keep the label (compact). */
+@media (max-width: 900px) {
+  .ask-evro { right: 14px; bottom: calc(70px + env(safe-area-inset-bottom, 0px)); padding: 11px 16px; font-size: 13px; }
+  .ask-evro.raised { bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 380px) {
+  .ask-evro-t { display: none; }
+  .ask-evro { padding: 13px; }
+  .ask-evro-ic svg { width: 20px; height: 20px; }
+}
+@media print { .ask-evro { display: none; } }
