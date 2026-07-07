@@ -15,7 +15,7 @@ import {
   implementedRunRate, forecastRemainderFY, netAnnual, worstRisk, requiredRoles,
   approvalState, nextStage, gateCheck, personName, categoryName, groupName,
   index, frame, depEdges, ROLE_APPROVE_LABEL,
-  enterpriseRollup, forecastCurve, leakageBreakdown,
+  forecastCurve, leakageBreakdown,
 } from './engine.js'
 import { money, pct } from './format.js'
 
@@ -320,11 +320,14 @@ export function opportunityInsight(db, i) {
   const risks = (i.risks || []).filter((r) => r.score >= 8).sort((a, b) => b.score - a.score)
   const gaps = dec?.missing || []
   const pending = !!i.request
-  const recommendation = pending
-    ? `${dec.label} — chase the sign-off to move it off the bench and into the pipeline.`
-    : gaps.length
-      ? `Close ${gaps.length} evidence gap${gaps.length === 1 ? '' : 's'} to unblock the next gate, then advance.`
-      : dec ? `${dec.label} — the case is complete and the value justifies the move.` : 'Protect the run-rate; no further gate action required.'
+  const sustained = lifecycleStage(db, i) === 'sustained'
+  const recommendation = sustained
+    ? 'Protect the run-rate against erosion — no further gate action required.'
+    : pending
+      ? `${dec.label} — chase the sign-off to move it off the bench and into the pipeline.`
+      : gaps.length
+        ? `Close ${gaps.length} evidence gap${gaps.length === 1 ? '' : 's'} to unblock the next gate, then advance.`
+        : dec ? `${dec.label} — the case is complete and the value justifies the move.` : 'Protect the run-rate; no further gate action required.'
   return {
     recommendation,
     confidence: conf,
@@ -403,7 +406,6 @@ export function procurementBriefs(db) {
   const vel = savingsVelocity(db)
   const queue = decisionQueue(db)
   const blockers = topBlockers(db)
-  const r = enterpriseRollup(db)
   const leak = leakageBreakdown(db)
   const opps = savingsOpportunities(db)
   const reds = opps.filter((o) => o.ragStatus === 'red').sort((a, b) => b.value.headline - a.value.headline)
@@ -457,7 +459,7 @@ export function procurementBriefs(db) {
     },
     {
       key: 'forecast', title: 'Forecast variance brief', tone: 'var(--navy)',
-      headline: money(r.forecastRA ?? fExpected), sub: 'risk-adjusted, rest of FY',
+      headline: money(fExpected), sub: 'risk-adjusted, rest of FY',
       claims: [
         { label: 'What', text: `Risk-adjusted forecast for the rest of the year is ${money(fExpected)}, against ${money(fCommitted)} committed — a ${variance >= 0 ? 'positive' : 'negative'} spread of ${money(Math.abs(variance))}.` },
         { label: 'Why', text: `${money(sum.lenses.realized)} is already validated; the remainder depends on ${queue.length} decisions clearing on schedule.` },
@@ -501,7 +503,7 @@ export function procurementBriefs(db) {
       headline: money(sum.lenses.realized), sub: 'validated YTD',
       claims: [
         { label: 'What', text: `${money(sum.lenses.realized)} of savings is FP&A-validated year-to-date, with ${money(sum.lenses.sustained)} of run-rate now in sustainment.` },
-        { label: 'Why', text: `Value is landing at ${money(vel.perMonth)}/month over ${vel.elapsedMonths} elapsed months; ${money(r.leakage ?? leak.total)} of negotiated value is not yet flowing.` },
+        { label: 'Why', text: `Value is landing at ${money(vel.perMonth)}/month over ${vel.elapsedMonths} elapsed months; ${money(leak.total)} of negotiated value is not yet flowing.` },
         { label: 'Next', text: `Convert committed deals to validated run-rate and recover ${money(leak.timing)} of timing leakage.` },
       ],
       trust: {

@@ -16,10 +16,15 @@ const ENTERPRISE_TABS = [
   { key: 'missions', label: 'Missions', Icon: IconBolt, badge: 'missions' },
   { key: 'more', label: 'More', Icon: IconMenu, always: true },
 ]
+// The role-scoped procurement tabs (decisioncenter / savingspipeline) are NOT
+// `always` — they fall through to the same allowedKeys(role) gate the enterprise
+// tabs use, so the bar can never reach an ENTL screen an owner/procurement
+// persona is not entitled to. `home` resolves to the procurement dashboard when
+// the role can see it, otherwise the role's normal home.
 const PROCUREMENT_TABS = [
-  { key: 'procurement', label: 'Home', Icon: IconExec, always: true },
-  { key: 'decisioncenter', label: 'Decisions', Icon: IconCockpit, badge: 'decisions', always: true },
-  { key: 'savingspipeline', label: 'Pipeline', Icon: IconPortfolio, always: true },
+  { key: 'home', label: 'Home', Icon: IconExec, always: true },
+  { key: 'decisioncenter', label: 'Decisions', Icon: IconCockpit, badge: 'decisions' },
+  { key: 'savingspipeline', label: 'Pipeline', Icon: IconPortfolio },
   { key: 'procai', label: 'AI', Icon: IconAI, badge: 'approvals', always: true },
   { key: 'more', label: 'More', Icon: IconMenu, always: true },
 ]
@@ -29,11 +34,13 @@ export default function MobileCommandBar({ page, homeKey, role, counts = {}, hid
   const proc = procurementFirst()
   const allowed = new Set(allowedKeys(role))
   const tabs = (proc ? PROCUREMENT_TABS : ENTERPRISE_TABS).filter((t) => t.always || allowed.has(t.key))
-  const activeFor = (k) => (k === 'home' ? page === homeKey : page === k)
+  // in procurement mode Home leads with the Executive Dashboard when entitled
+  const homeTarget = proc && allowed.has('procurement') ? 'procurement' : homeKey
+  const activeFor = (k) => (k === 'home' ? page === homeTarget : page === k)
   const go = (t) => {
     if (t.key === 'brief') return onBrief()
     if (t.key === 'more') return onMore()
-    onNavigate(t.key === 'home' ? homeKey : t.key)
+    onNavigate(t.key === 'home' ? homeTarget : t.key)
   }
   return (
     <nav className="mcbar" aria-label="Executive command bar" style={{ '--mcbar-cols': tabs.length }}>

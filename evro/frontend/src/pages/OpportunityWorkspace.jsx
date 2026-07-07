@@ -186,7 +186,7 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
               <thead><tr><th>Risk</th><th>Status</th><th className="num">Score</th></tr></thead>
               <tbody>
                 {(o.risks || []).length === 0 ? <tr><td colSpan={3} className="muted">No risks logged.</td></tr> :
-                  o.risks.sort((a, b) => b.score - a.score).map((r, i) => (
+                  [...o.risks].sort((a, b) => b.score - a.score).map((r, i) => (
                     <tr key={i}>
                       <td style={{ textTransform: 'capitalize' }}>{r.category}{!r.countermeasure && r.score >= 15 && <span className="tiny" style={{ color: 'var(--red)' }}> · no countermeasure</span>}</td>
                       <td style={{ textTransform: 'capitalize' }}>{r.status}</td>

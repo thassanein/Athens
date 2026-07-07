@@ -44,8 +44,10 @@ export default function SavingsPipeline({ db, navigate }) {
               <tbody>
                 {rows.map((o) => {
                   const st = savingsType(o.savingsType)
+                  const open = () => navigate('opportunity', { id: o.id })
                   return (
-                    <tr key={o.id} className="clickable" onClick={() => navigate('opportunity', { id: o.id })}>
+                    <tr key={o.id} className="clickable" role="button" tabIndex={0} onClick={open}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open() } }}>
                       <td><b>{o.name}</b> {o.ragStatus === 'red' && <span className="badge b-red" style={{ marginLeft: 4 }}>risk</span>}<div className="tiny muted">{o.supplier}</div></td>
                       <td><span className="badge" style={{ background: 'color-mix(in srgb, ' + st.accent + ' 20%, transparent)', color: st.accent }}>{st.short}</span></td>
                       <td>{o.owner}</td>

@@ -81,6 +81,12 @@ export default function ProcurementDashboard({ db, navigate }) {
 
   const top = decisionQueue[0]
   const redCount = opportunities.filter((o) => o.ragStatus === 'red').length
+  // keyboard-operable table rows (WCAG 2.1.1) — Enter/Space open the workspace
+  const rowNav = (id) => ({
+    className: 'clickable', role: 'button', tabIndex: 0,
+    onClick: () => navigate('opportunity', { id }),
+    onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('opportunity', { id }) } },
+  })
 
   return (
     <>
@@ -125,7 +131,7 @@ export default function ProcurementDashboard({ db, navigate }) {
       <div className="pdash-narr card pad section-gap">
         <div className="pdash-narr-tag">Executive narrative · deterministic</div>
         <div className="pdash-narr-row"><b>What happened.</b> {money(sum.lenses.realized)} of validated savings landed year-to-date at {money(velocity.perMonth)}/month, with {money(sum.total)} now under active management across {num(sum.count)} opportunities.</div>
-        <div className="pdash-narr-row"><b>Why it matters.</b> {money(sum.committed)} is committed to the plan and {money(sum.atRisk)} sits at risk across {num(redCount)} red opportunit{redCount === 1 ? 'y' : 'ies'}; the book is running at {pct(sum.confidence)} value-weighted confidence.</div>
+        <div className="pdash-narr-row"><b>Why it matters.</b> {money(sum.lenses.committed)} is committed to the plan and {money(sum.atRisk)} sits at risk across {num(redCount)} red opportunit{redCount === 1 ? 'y' : 'ies'}; the book is running at {pct(sum.confidence)} value-weighted confidence.</div>
         <div className="pdash-narr-row"><b>What next.</b> {top
           ? <>The highest-value decision waiting is <button className="linkbtn" onClick={() => navigate('opportunity', { id: top.id })}>{top.name}</button> — {top.nextDecision.label.toLowerCase()} ({money(top.nextDecision.expectedValue)} expected value{top.nextDecision.dueBy ? `, due ${dateLabel(top.nextDecision.dueBy)}` : ''}).</>
           : 'No decisions are blocked — every opportunity has what it needs to advance.'}</div>
@@ -155,9 +161,9 @@ export default function ProcurementDashboard({ db, navigate }) {
                 <thead><tr><th>Opportunity</th><th>Next decision</th><th className="num">Expected</th></tr></thead>
                 <tbody>
                   {decisionQueue.map((o) => (
-                    <tr key={o.id} className="clickable" onClick={() => navigate('opportunity', { id: o.id })}>
+                    <tr key={o.id} {...rowNav(o.id)}>
                       <td><b>{o.name}</b><div className="tiny muted">{o.owner} · {o.stageLabel}</div></td>
-                      <td>{o.nextDecision.label}{o.nextDecision.missing.length > 0 && <div className="tiny" style={{ color: 'var(--amber)' }}>{o.nextDecision.missing.length} evidence gap{o.nextDecision.missing.length === 1 ? '' : 's'}</div>}</td>
+                      <td>{o.nextDecision.label}{o.nextDecision.missing.length > 0 && <div className="tiny" style={{ color: 'var(--brand-energy)' }}>{o.nextDecision.missing.length} evidence gap{o.nextDecision.missing.length === 1 ? '' : 's'}</div>}</td>
                       <td className="num mono">{money(o.nextDecision.expectedValue)}</td>
                     </tr>
                   ))}
@@ -176,7 +182,7 @@ export default function ProcurementDashboard({ db, navigate }) {
                 <thead><tr><th>Opportunity</th><th>Stage</th><th className="num">Value</th></tr></thead>
                 <tbody>
                   {atRisk.map((o) => (
-                    <tr key={o.id} className="clickable" onClick={() => navigate('opportunity', { id: o.id })}>
+                    <tr key={o.id} {...rowNav(o.id)}>
                       <td><b>{o.name}</b><div className="tiny muted">{o.owner} · worst risk {o.worstRisk}</div></td>
                       <td>{o.stageLabel}</td>
                       <td className="num mono">{money(o.value.headline)}</td>
@@ -205,7 +211,7 @@ export default function ProcurementDashboard({ db, navigate }) {
                 <thead><tr><th>Opportunity</th><th className="num">Blocks</th><th className="num">Value</th></tr></thead>
                 <tbody>
                   {blockers.map((b) => (
-                    <tr key={b.id} className="clickable" onClick={() => navigate('opportunity', { id: b.id })}>
+                    <tr key={b.id} {...rowNav(b.id)}>
                       <td><b>{b.name}</b></td>
                       <td className="num"><span className="badge b-amber">{b.blocks}</span></td>
                       <td className="num mono">{money(b.value)}</td>
