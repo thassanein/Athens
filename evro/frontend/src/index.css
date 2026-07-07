@@ -2672,3 +2672,25 @@ html.evro-tour .content { padding-bottom: 72vh; }
 
 /* Pipeline year scope toggle */
 .svp-yeartoggle { display: flex; gap: 5px; flex-wrap: wrap; }
+
+/* Glossary — confidence ladder, forecast ledgers, data lineage */
+.glo-ladder { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.glo-rung { display: flex; flex-direction: column; gap: 5px; }
+.glo-rung-h { display: flex; align-items: center; gap: 9px; }
+.glo-rung-h b { font-size: 13.5px; }
+.glo-rung-pct { margin-left: auto; font-size: 14px; font-weight: 800; color: var(--brand-value); }
+.glo-rung-bar { height: 7px; border-radius: 4px; background: var(--panel-2); overflow: hidden; }
+.glo-rung-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--brand-value), var(--green)); }
+.glo-ledgers { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+.glo-ledger { border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; }
+.glo-ledger.pnl { border-left: 4px solid var(--green); }
+.glo-ledger.soft { border-left: 4px solid var(--navy); }
+.glo-ledger-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.glo-ledger-h b { font-size: 13.5px; }
+.glo-ledger-h .mono { font-size: 17px; font-weight: 800; }
+.glo-ledger.pnl .glo-ledger-h .mono { color: var(--green); }
+.glo-ledger.soft .glo-ledger-h .mono { color: var(--navy); }
+.glo-ledger ul { margin: 0; padding-left: 17px; display: flex; flex-direction: column; gap: 5px; }
+.glo-ledger li { font-size: 12.5px; line-height: 1.5; color: var(--ink); }
+.glo-lineage td { vertical-align: top; }
+@media (max-width: 640px) { .glo-ledgers { grid-template-columns: 1fr; } }
