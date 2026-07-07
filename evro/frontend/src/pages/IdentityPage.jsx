@@ -3,6 +3,7 @@ import { MasterMark } from '../components/Identity.jsx'
 import { CompassSymbol, PulseRings, PulseCompact, SignalGlyph } from '../components/IdentitySystems.jsx'
 import { pulseIdentity, compassIdentity, signalIdentity, COMPASS_STATES, SIGNAL_STATES, HIERARCHY, COEXISTENCE, TRANSITIONS } from '../lib/identity-systems.js'
 import { MOTION_IDENTITY, MOTION_LAWS } from '../lib/brand.js'
+import { SIGNATURE_MOMENTS, MOTION_CATALOG } from '../lib/signature-moments.js'
 
 // The Identity Architecture page (6C.1B Wave 2) — the four coordinated
 // identity layers, live. Every mark on this page is the production component
@@ -201,6 +202,37 @@ export default function IdentityPage({ db, user }) {
         </div>
         <div className="idp-laws">
           {MOTION_LAWS.map((l, i) => <div key={i} className="idp-co">◈ {l}</div>)}
+        </div>
+      </div>
+
+      {/* the micro-interaction verb catalog (6D Wave 6) */}
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>Motion verbs — the catalog</h3><span className="spacer" /><span className="badge b-grey">ten verbs · each maps to meaning · reduced-motion safe</span></div>
+        <div className="idp-mcat">
+          {MOTION_CATALOG.map((m) => (
+            <div key={m.verb} className="idp-mrow">
+              <span className="idp-mverb mono">{m.verb}</span>
+              <span className="idp-mmeans">{m.means}</span>
+              <span className="idp-mwhere mono">{m.where}</span>
+              <span className="idp-mreduced">reduce → {m.reduced}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* signature moments audit (6D Wave 6) */}
+      <div className="card pad section-gap">
+        <div className="card-h"><h3>Signature moments</h3><span className="spacer" /><span className="badge b-grey">eight · all live · grounded in real events</span></div>
+        <p className="muted vwf-sub">No confetti, no points. Each moment fires only on a real event or threshold, and says which code owns it — elegant motion, honest language, value evidence.</p>
+        <div className="idp-moments">
+          {SIGNATURE_MOMENTS.map((s) => (
+            <div key={s.key} className="idp-moment">
+              <div className="idp-moment-h"><b>{s.name}</b><span className="idp-moment-motion">{s.motion}</span></div>
+              <div className="idp-moment-trig"><span className="idp-moment-l">FIRES WHEN</span> {s.trigger}</div>
+              <div className="idp-moment-exp">{s.expression}</div>
+              <div className="idp-moment-src mono">{s.source}</div>
+            </div>
+          ))}
         </div>
       </div>
 

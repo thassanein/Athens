@@ -1995,3 +1995,25 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .mlc-link { color: var(--navy); }
 .mlc-complete { font-size: 11.5px; color: var(--grey); line-height: 1.5; background: color-mix(in srgb, var(--green) 8%, transparent); border-left: 3px solid var(--green); border-radius: 0 var(--r) var(--r) 0; padding: 8px 11px; }
 .mlc-complete b { color: var(--ink); }
+
+/* ============================================================================
+   6D Wave 6 — motion verb catalog + signature moments audit
+   ============================================================================ */
+.idp-mcat { display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.idp-mrow { display: grid; grid-template-columns: 90px 1fr 1.3fr 1fr; gap: 12px; align-items: baseline; padding: 8px 12px; background: var(--card); font-size: 11.5px; }
+.idp-mrow:nth-child(even) { background: var(--panel-2); }
+@media (max-width: 760px) { .idp-mrow { grid-template-columns: 80px 1fr; } .idp-mwhere, .idp-mreduced { grid-column: 2; } }
+.idp-mverb { font-weight: 800; color: var(--brand-energy); }
+.idp-mmeans { color: var(--ink); }
+.idp-mwhere { color: var(--grey-2); font-size: 10.5px; }
+.idp-mreduced { color: var(--grey); font-size: 10.5px; }
+.idp-moments { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .idp-moments { grid-template-columns: 1fr; } }
+.idp-moment { border: 1px solid var(--line); border-radius: var(--r); padding: 12px; background: var(--panel-2); display: flex; flex-direction: column; gap: 5px; }
+.idp-moment-h { display: flex; align-items: baseline; gap: 8px; }
+.idp-moment-h b { font-size: 13px; }
+.idp-moment-motion { margin-left: auto; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: var(--brand-energy); }
+.idp-moment-trig { font-size: 11.5px; color: var(--grey); line-height: 1.45; }
+.idp-moment-l { font-size: 9px; font-weight: 800; letter-spacing: 0.5px; color: var(--grey-2); margin-right: 5px; }
+.idp-moment-exp { font-size: 11.5px; color: var(--ink); line-height: 1.5; }
+.idp-moment-src { font-size: 10px; color: var(--grey-2); margin-top: 2px; }

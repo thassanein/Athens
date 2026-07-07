@@ -5,6 +5,7 @@
 // milestone to one celebration per device; nothing is ever invented to
 // celebrate. View-layer only.
 import { orgMilestones, maturityModel } from './achievements.js'
+import { enterpriseHealth } from './intel.js'
 
 const LS = 'evro.celebrated'
 const seen = () => { try { return new Set(JSON.parse(localStorage.getItem(LS) || '[]')) } catch { return new Set() } }
@@ -27,6 +28,14 @@ export function detectCelebrations(before, after, action, extra = []) {
     const matA = maturityModel(after)
     if (matA.level > matB.level) {
       out.push({ key: `mat:${matA.level}`, kind: 'maturity', icon: '⬆', headline: 'Operating maturity gained', title: `Level ${matA.level} · ${matA.name}`, detail: 'Every criterion of the level now holds — computed, not declared.' })
+    }
+    // Health recovered (6D Wave 6) — the enterprise-health grade band steps UP.
+    // Threshold is the credit-style grade, so this fires only on a real
+    // recovery across a band boundary, never on noise within a band.
+    const hB = enterpriseHealth(before)
+    const hA = enterpriseHealth(after)
+    if (hA.score > hB.score && hA.grade !== hB.grade) {
+      out.push({ key: `health:${hA.grade}`, kind: 'health', icon: '❤', headline: 'Enterprise health recovered', title: `${hB.grade} → ${hA.grade} · ${hA.gradeLabel}`, detail: `Health stepped up a grade band to ${hA.score}. The rings breathe steadier — a recovery the record can prove.` })
     }
     if (action === 'journalOutcome') {
       const n = (after.decision_journal || []).filter((d) => d.outcome).length
