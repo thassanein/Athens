@@ -20,7 +20,7 @@ function PipelineFunnel({ pipeline, navigate }) {
   return (
     <div className="pdash-funnel">
       {pipeline.map((s) => (
-        <button key={s.key} className="pdash-stage" onClick={() => navigate('opportunities')} title={s.gloss}>
+        <button key={s.key} className="pdash-stage" onClick={() => navigate('savingspipeline')} title={s.gloss}>
           <span className="pdash-stage-l">{s.label}</span>
           <span className="pdash-stage-bar">
             <span className="pdash-stage-fill" style={{ width: `${Math.max(s.value ? 3 : 0, (s.value / max) * 100)}%`, background: phaseTone[s.phase] || 'var(--navy)' }} />
@@ -127,13 +127,13 @@ export default function ProcurementDashboard({ db, navigate }) {
         <div className="pdash-narr-row"><b>What happened.</b> {money(sum.lenses.realized)} of validated savings landed year-to-date at {money(velocity.perMonth)}/month, with {money(sum.total)} now under active management across {num(sum.count)} opportunities.</div>
         <div className="pdash-narr-row"><b>Why it matters.</b> {money(sum.committed)} is committed to the plan and {money(sum.atRisk)} sits at risk across {num(redCount)} red opportunit{redCount === 1 ? 'y' : 'ies'}; the book is running at {pct(sum.confidence)} value-weighted confidence.</div>
         <div className="pdash-narr-row"><b>What next.</b> {top
-          ? <>The highest-value decision waiting is <button className="linkbtn" onClick={() => navigate('initiative', { id: top.id })}>{top.name}</button> — {top.nextDecision.label.toLowerCase()} ({money(top.nextDecision.expectedValue)} expected value{top.nextDecision.dueBy ? `, due ${dateLabel(top.nextDecision.dueBy)}` : ''}).</>
+          ? <>The highest-value decision waiting is <button className="linkbtn" onClick={() => navigate('opportunity', { id: top.id })}>{top.name}</button> — {top.nextDecision.label.toLowerCase()} ({money(top.nextDecision.expectedValue)} expected value{top.nextDecision.dueBy ? `, due ${dateLabel(top.nextDecision.dueBy)}` : ''}).</>
           : 'No decisions are blocked — every opportunity has what it needs to advance.'}</div>
       </div>
 
       <div className="grid cols-2 section-gap">
         <div className="card pad">
-          <div className="card-h"><h3>Savings pipeline by stage</h3><span className="spacer" /><button className="btn sm" onClick={() => navigate('opportunities')}>Opportunities →</button></div>
+          <div className="card-h"><h3>Savings pipeline by stage</h3><span className="spacer" /><button className="btn sm" onClick={() => navigate('savingspipeline')}>Opportunities →</button></div>
           <PipelineFunnel pipeline={pipeline} navigate={navigate} />
           <p className="tiny muted" style={{ marginTop: 6 }}>Each opportunity counted once at its lifecycle stage; the eleven stages sum to {money(sum.total)} under management.</p>
         </div>
@@ -155,7 +155,7 @@ export default function ProcurementDashboard({ db, navigate }) {
                 <thead><tr><th>Opportunity</th><th>Next decision</th><th className="num">Expected</th></tr></thead>
                 <tbody>
                   {decisionQueue.map((o) => (
-                    <tr key={o.id} className="clickable" onClick={() => navigate('initiative', { id: o.id })}>
+                    <tr key={o.id} className="clickable" onClick={() => navigate('opportunity', { id: o.id })}>
                       <td><b>{o.name}</b><div className="tiny muted">{o.owner} · {o.stageLabel}</div></td>
                       <td>{o.nextDecision.label}{o.nextDecision.missing.length > 0 && <div className="tiny" style={{ color: 'var(--amber)' }}>{o.nextDecision.missing.length} evidence gap{o.nextDecision.missing.length === 1 ? '' : 's'}</div>}</td>
                       <td className="num mono">{money(o.nextDecision.expectedValue)}</td>
@@ -176,7 +176,7 @@ export default function ProcurementDashboard({ db, navigate }) {
                 <thead><tr><th>Opportunity</th><th>Stage</th><th className="num">Value</th></tr></thead>
                 <tbody>
                   {atRisk.map((o) => (
-                    <tr key={o.id} className="clickable" onClick={() => navigate('initiative', { id: o.id })}>
+                    <tr key={o.id} className="clickable" onClick={() => navigate('opportunity', { id: o.id })}>
                       <td><b>{o.name}</b><div className="tiny muted">{o.owner} · worst risk {o.worstRisk}</div></td>
                       <td>{o.stageLabel}</td>
                       <td className="num mono">{money(o.value.headline)}</td>
@@ -205,7 +205,7 @@ export default function ProcurementDashboard({ db, navigate }) {
                 <thead><tr><th>Opportunity</th><th className="num">Blocks</th><th className="num">Value</th></tr></thead>
                 <tbody>
                   {blockers.map((b) => (
-                    <tr key={b.id} className="clickable" onClick={() => navigate('initiative', { id: b.id })}>
+                    <tr key={b.id} className="clickable" onClick={() => navigate('opportunity', { id: b.id })}>
                       <td><b>{b.name}</b></td>
                       <td className="num"><span className="badge b-amber">{b.blocks}</span></td>
                       <td className="num mono">{money(b.value)}</td>
