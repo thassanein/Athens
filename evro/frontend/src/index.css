@@ -2177,3 +2177,24 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
   .dc-queue { position: static; }
   .dc-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Procurement Enterprise AI — briefs (Phase One W6) */
+.pai-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px; }
+.pai-brief { border-top: 3px solid var(--pai-tone, var(--navy)); display: flex; flex-direction: column; }
+.pai-brief-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.pai-brief-tag { font-size: 9.5px; font-weight: 800; letter-spacing: 0.5px; color: var(--grey-2); display: flex; align-items: center; gap: 4px; }
+.pai-brief-headline { font-size: 26px; font-weight: 800; line-height: 1.05; margin: 3px 0 1px; }
+.pai-claims { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
+.pai-claim { font-size: 12.5px; line-height: 1.5; color: var(--ink); }
+.pai-claim-l { font-weight: 800; color: var(--pai-tone, var(--navy)); }
+.pai-trust { border-top: 1px solid var(--line); padding-top: 10px; margin-top: auto; }
+.pai-trust-ev { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.pai-trust-k { font-size: 9.5px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--grey-2); }
+.pai-trust-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.pai-ul { margin: 3px 0 0; padding-left: 14px; font-size: 11px; color: var(--grey); line-height: 1.45; }
+.pai-ul li { margin-bottom: 3px; }
+.pai-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+@media (max-width: 560px) {
+  .pai-grid { grid-template-columns: 1fr; }
+  .pai-trust-cols { grid-template-columns: 1fr; gap: 8px; }
+}

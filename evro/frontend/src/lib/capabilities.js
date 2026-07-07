@@ -88,8 +88,8 @@ export const PROCUREMENT_NAV = [
     ['missions', 'Mission Rooms', IconBolt, ENTL],
   ] },
   { group: 'Intelligence', items: [
-    ['aitrust', 'Enterprise AI', IconAI, ALL],
-    ['narrative', 'Enterprise Memory', IconReport, ENTL],
+    ['procai', 'Enterprise AI', IconAI, ALL],
+    ['aitrust', 'Enterprise Memory', IconReport, ALL],
     ['reporting', 'Analytics', IconGraph, ENT],
   ] },
   { group: 'Control', items: [

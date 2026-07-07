@@ -15,8 +15,9 @@ import {
   implementedRunRate, forecastRemainderFY, netAnnual, worstRisk, requiredRoles,
   approvalState, nextStage, gateCheck, personName, categoryName, groupName,
   index, frame, depEdges, ROLE_APPROVE_LABEL,
+  enterpriseRollup, forecastCurve, leakageBreakdown,
 } from './engine.js'
-import { money } from './format.js'
+import { money, pct } from './format.js'
 
 // ── Savings governance — one shared language across Procurement / Finance /
 // Operations / Leadership. Definitions are the deliverable; the demo dataset
@@ -389,6 +390,136 @@ export function decisionIntel(db, i) {
     recommended: insight.recommendation, alternatives, lineage, rationale, pending, approvalState: state,
     ragStatus: o.ragStatus,
   }
+}
+
+// ── AI & Narrative (Phase One W6) — Enterprise Decision Intelligence, not a
+// chatbot. Five deterministic executive briefs (pipeline, risks, forecast
+// variance, approvals, realization). Each carries the full EVRO trust contract
+// (confidence + expected value + evidence + assumptions + risks + dependencies)
+// and drills to source through the shared Evidence Drawer. No fabricated values.
+export function procurementBriefs(db) {
+  const sum = savingsUnderManagement(db)
+  const pipeline = pipelineByStage(db)
+  const vel = savingsVelocity(db)
+  const queue = decisionQueue(db)
+  const blockers = topBlockers(db)
+  const r = enterpriseRollup(db)
+  const leak = leakageBreakdown(db)
+  const opps = savingsOpportunities(db)
+  const reds = opps.filter((o) => o.ragStatus === 'red').sort((a, b) => b.value.headline - a.value.headline)
+  const pendingSignoff = opps.filter((o) => o._raw.request)
+  const evAtStake = queue.reduce((s, o) => s + o.nextDecision.expectedValue, 0)
+
+  // forecast variance: committed vs risk-adjusted-expected over remaining FY
+  const curve = forecastCurve(db)
+  const fCommitted = curve.filter((c) => !c.past).reduce((s, c) => s + c.committed, 0)
+  const fExpected = curve.filter((c) => !c.past).reduce((s, c) => s + c.expected, 0)
+  const variance = fExpected - fCommitted
+
+  const busiest = [...pipeline].filter((s) => s.count > 0).sort((a, b) => b.value - a.value)[0]
+
+  return [
+    {
+      key: 'pipeline', title: 'Pipeline brief', tone: 'var(--opp)',
+      headline: money(sum.total), sub: 'savings under management',
+      claims: [
+        { label: 'What', text: `${money(sum.total)} is under active management across ${sum.count} opportunities — ${money(sum.lenses.identified)} identified, ${money(sum.lenses.committed)} committed, ${money(sum.lenses.realized)} realized.` },
+        { label: 'Why', text: `The book is running at ${pct(sum.confidence)} value-weighted confidence and landing value at ${money(vel.perMonth)}/month.` },
+        { label: 'Next', text: busiest ? `The ${busiest.label} stage holds the most value (${money(busiest.value)}, ${busiest.count} opportunities) — clear it to keep the funnel moving.` : 'The funnel is balanced across stages.' },
+      ],
+      trust: {
+        confidence: sum.confidence,
+        expected: { value: money(sum.lenses.committed), note: 'committed value in the plan' },
+        evidence: pipeline.filter((s) => s.count).map((s) => ({ label: s.label, value: `${s.count} · ${money(s.value)}` })),
+        assumptions: ['Every figure is Σ of per-opportunity value objects — reconciles to the dashboard.', 'Stage confidence follows the engine gate model.'],
+        risks: [`${money(sum.atRisk)} of the book carries a red status.`],
+        dependencies: [`${blockers.length} opportunit${blockers.length === 1 ? 'y gates' : 'ies gate'} downstream value.`],
+      },
+      nav: { page: 'savingspipeline', label: 'Open the Savings Pipeline' },
+    },
+    {
+      key: 'risks', title: 'Risk brief', tone: 'var(--amber)',
+      headline: money(sum.atRisk), sub: `at risk · ${reds.length} red`,
+      claims: [
+        { label: 'What', text: `${money(sum.atRisk)} of value sits across ${reds.length} red opportunit${reds.length === 1 ? 'y' : 'ies'}${reds[0] ? `, led by ${reds[0].name} (${money(reds[0].value.headline)})` : ''}.` },
+        { label: 'Why', text: `${money(leak.total)} of negotiated value is leaking — ${money(leak.timing)} timing (recoverable) and ${money(leak.contract)} contract.` },
+        { label: 'Next', text: reds[0] ? `Put a countermeasure on ${reds[0].name} and chase the ${money(leak.timing)} of recoverable timing leakage.` : 'No red opportunities — hold the line on leakage.' },
+      ],
+      trust: {
+        confidence: 0.8,
+        expected: { value: money(leak.timing), note: 'recoverable timing leakage' },
+        evidence: reds.slice(0, 5).map((o) => ({ label: o.name, value: `${money(o.value.headline)} · risk ${o.worstRisk}` })),
+        assumptions: ['Red status follows the engine RAG rules (missing item, failing finding, or overdue action).', 'Leakage = negotiated value not yet flowing as run-rate.'],
+        risks: ['Timing leakage compounds while un-implemented — the cost of waiting is real.'],
+        dependencies: leak.items.slice(0, 3).map((it) => ({ label: it.title, value: money(it.total) })),
+      },
+      nav: { page: 'decisioncenter', label: 'Open the Decision Center' },
+    },
+    {
+      key: 'forecast', title: 'Forecast variance brief', tone: 'var(--navy)',
+      headline: money(r.forecastRA ?? fExpected), sub: 'risk-adjusted, rest of FY',
+      claims: [
+        { label: 'What', text: `Risk-adjusted forecast for the rest of the year is ${money(fExpected)}, against ${money(fCommitted)} committed — a ${variance >= 0 ? 'positive' : 'negative'} spread of ${money(Math.abs(variance))}.` },
+        { label: 'Why', text: `${money(sum.lenses.realized)} is already validated; the remainder depends on ${queue.length} decisions clearing on schedule.` },
+        { label: 'Next', text: variance >= 0 ? 'Upside is available if committed initiatives convert — protect the schedule.' : 'The plan is ahead of committed run-rate; secure the gap with sign-offs.' },
+      ],
+      trust: {
+        confidence: sum.confidence,
+        expected: { value: money(fExpected), note: 'risk-adjusted remaining-FY forecast' },
+        evidence: [
+          { label: 'Committed (rest FY)', value: money(fCommitted) },
+          { label: 'Risk-adjusted (rest FY)', value: money(fExpected) },
+          { label: 'Realized YTD', value: money(sum.lenses.realized) },
+          { label: 'Velocity', value: `${money(vel.perMonth)}/mo` },
+        ],
+        assumptions: ['Forecast time-phases risk-adjusted value across remaining fiscal months (engine curve).', 'Only FP&A-validated actuals count as realized.'],
+        risks: [`${money(sum.atRisk)} at-risk value could haircut the forecast.`],
+        dependencies: [`${queue.length} open decisions gate the committed line.`],
+      },
+      nav: { page: 'procurement', label: 'Open the Executive Dashboard' },
+    },
+    {
+      key: 'approvals', title: 'Approvals brief', tone: 'var(--brand-value)',
+      headline: String(queue.length), sub: `decisions · ${money(evAtStake)} EV`,
+      claims: [
+        { label: 'What', text: `${queue.length} decisions are waiting, ${money(evAtStake)} of expected value at stake, including ${pendingSignoff.length} pending sign-off${pendingSignoff.length === 1 ? '' : 's'}.` },
+        { label: 'Why', text: queue[0] ? `The highest-value decision is ${queue[0].name} (${money(queue[0].nextDecision.expectedValue)}).` : 'No decisions are blocked.' },
+        { label: 'Next', text: queue[0] ? `${queue[0].nextDecision.missing.length ? `Close ${queue[0].nextDecision.missing.length} evidence gap${queue[0].nextDecision.missing.length === 1 ? '' : 's'} on it,` : 'Take'} the top decision to unlock the queue.` : 'Queue is clear.' },
+      ],
+      trust: {
+        confidence: 0.9,
+        expected: { value: money(evAtStake), note: 'expected value across the decision queue' },
+        evidence: queue.slice(0, 5).map((o) => ({ label: o.name, value: `${o.nextDecision.label} · ${money(o.nextDecision.expectedValue)}` })),
+        assumptions: ['A decision is queued when a sign-off is pending or a gate requirement is open.', 'Expected value is engine risk-adjusted value.'],
+        risks: ['Decisions left unmade delay realization and accrue opportunity cost.'],
+        dependencies: [`${blockers.length} opportunit${blockers.length === 1 ? 'y blocks' : 'ies block'} downstream gates.`],
+      },
+      nav: { page: 'decisioncenter', label: 'Open the Decision Center' },
+    },
+    {
+      key: 'realization', title: 'Realization brief', tone: 'var(--green)',
+      headline: money(sum.lenses.realized), sub: 'validated YTD',
+      claims: [
+        { label: 'What', text: `${money(sum.lenses.realized)} of savings is FP&A-validated year-to-date, with ${money(sum.lenses.sustained)} of run-rate now in sustainment.` },
+        { label: 'Why', text: `Value is landing at ${money(vel.perMonth)}/month over ${vel.elapsedMonths} elapsed months; ${money(r.leakage ?? leak.total)} of negotiated value is not yet flowing.` },
+        { label: 'Next', text: `Convert committed deals to validated run-rate and recover ${money(leak.timing)} of timing leakage.` },
+      ],
+      trust: {
+        confidence: 0.85,
+        expected: { value: money(sum.lenses.sustained), note: 'sustained run-rate protected' },
+        evidence: [
+          { label: 'Realized YTD', value: money(sum.lenses.realized) },
+          { label: 'Sustained run-rate', value: money(sum.lenses.sustained) },
+          { label: 'Velocity', value: `${money(vel.perMonth)}/mo` },
+          { label: 'Leakage', value: money(leak.total) },
+        ],
+        assumptions: ['Realized = Σ FP&A-validated monthly actuals this fiscal year.', 'Sustained = annualized validated run-rate for sustainment-stage opportunities.'],
+        risks: ['Un-recovered leakage erodes delivered value over time.'],
+        dependencies: leak.items.slice(0, 3).map((it) => ({ label: it.title, value: money(it.total) })),
+      },
+      nav: { page: 'savingspipeline', label: 'Open the Savings Pipeline' },
+    },
+  ]
 }
 
 // The full model in one call — what every Procurement surface consumes.
