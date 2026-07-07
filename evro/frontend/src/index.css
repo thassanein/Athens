@@ -2607,39 +2607,50 @@ html.evro-tour .content { padding-bottom: 72vh; }
 /* Per-year (annual impact) suffix — small, muted, consistent everywhere */
 .pboard-yr, .pdash-sum-yr { font-size: 0.62em; font-weight: 700; color: var(--grey); margin-left: 1px; }
 
-/* Impact by year — multi-year run-rate phasing bars */
-.pyr-bars { display: flex; align-items: flex-end; gap: 14px; height: 160px; padding-top: 8px; }
+/* Impact by year — focus year emphasised, others muted fillers */
+.pyr-toggle { display: flex; gap: 5px; }
+.chip.sm { font-size: 11.5px; padding: 4px 10px; }
+.pyr-bars { display: flex; align-items: flex-end; gap: 18px; height: 172px; padding-top: 8px; }
 .pyr-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
 .pyr-v { font-size: 13px; font-weight: 800; color: var(--ink); }
-.pyr-bar { width: 100%; max-width: 90px; border-radius: 8px 8px 0 0; background: linear-gradient(180deg, var(--brand-value), color-mix(in srgb, var(--brand-value) 55%, transparent)); transition: height 0.4s cubic-bezier(0.2,0.7,0.3,1); }
-.pyr-col.current .pyr-bar { background: linear-gradient(180deg, var(--green), color-mix(in srgb, var(--green) 55%, transparent)); }
+.pyr-bar { width: 100%; max-width: 100px; border-radius: 9px 9px 0 0; transition: height 0.45s cubic-bezier(0.2,0.7,0.3,1); }
 .pyr-yr { font-size: 12px; font-weight: 700; color: var(--grey); }
-.pyr-col.current .pyr-yr { color: var(--green); }
+.pyr-col.focus .pyr-bar { background: linear-gradient(180deg, var(--green), color-mix(in srgb, var(--green) 45%, transparent)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 40%, transparent); }
+.pyr-col.focus .pyr-v { color: var(--green); font-size: 15px; }
+.pyr-col.focus .pyr-yr { color: var(--green); }
+.pyr-col.filler .pyr-bar { background: linear-gradient(180deg, color-mix(in srgb, var(--grey) 50%, transparent), color-mix(in srgb, var(--grey) 20%, transparent)); }
+.pyr-col.filler .pyr-v { color: var(--grey); font-weight: 700; }
 
 /* Savings-type toggle bar (also the funnel colour legend) */
 .svp-typebar { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
 .svp-typechip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
 .svp-typechip.on { border-color: var(--brand-value); background: color-mix(in srgb, var(--brand-value) 12%, transparent); }
 .svp-typechip:focus-visible { outline: 2px solid var(--brand-value); outline-offset: 1px; }
-.svp-typedot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.svp-typedot { width: 10px; height: 10px; border-radius: 50%; flex: none; box-shadow: 0 0 0 2px color-mix(in srgb, var(--card) 60%, transparent); }
 .svp-typen { font-size: 11px; color: var(--grey); font-weight: 700; }
 
-/* Horizontal process funnel */
-.pfun { position: relative; padding: 8px 0 4px; }
-.pfun-bg { position: absolute; inset: 44px 0 58px; width: 100%; height: calc(100% - 102px); z-index: 0; }
-.pfun-cols { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(5, 1fr); min-height: 380px; }
-.pfun-col { display: flex; flex-direction: column; min-width: 0; padding: 0 6px; }
-.pfun-head { display: flex; align-items: center; gap: 7px; justify-content: center; border-top: 3px solid var(--grey); padding: 8px 4px 6px; }
-.pfun-head b { font-size: 12.5px; text-align: center; }
-.pfun-mid { flex: 1; display: flex; align-items: center; justify-content: center; }
-.pfun-band { width: 100%; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 5px; overflow: hidden; }
-.pfun-dot { border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; transition: transform 0.12s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
-.pfun-dot:hover { transform: scale(1.18); z-index: 2; }
-.pfun-dot:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
-.pfun-foot { text-align: center; padding-top: 6px; border-top: 1px dashed var(--line); }
-.pfun-foot-v { font-size: 14px; font-weight: 800; }
+/* Horizontal process funnel — clean, premium */
+.pfun { position: relative; padding: 4px 0; }
+.pfun-bg { position: absolute; inset: 46px 0 62px; width: 100%; height: calc(100% - 108px); z-index: 0; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.12)); }
+.pfun-cols { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(5, 1fr); min-height: 400px; }
+.pfun-col { display: flex; flex-direction: column; min-width: 0; }
+.pfun-col + .pfun-col { border-left: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.pfun-head { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 4px 6px 12px; }
+.pfun-head b { font-size: 12px; font-weight: 800; letter-spacing: 0.2px; text-transform: uppercase; color: var(--ink); text-align: center; }
+.pfun-mid { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 8px; }
+.pfun-band { width: 100%; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 7px; overflow: hidden; }
+.pfun-dot { border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.14); cursor: pointer; padding: 0; transition: transform 0.14s ease, box-shadow 0.14s ease; box-shadow: inset 0 2px 5px rgba(255,255,255,0.22), 0 2px 6px rgba(0,0,0,0.28); }
+.pfun-dot:hover { transform: scale(1.22); box-shadow: inset 0 2px 5px rgba(255,255,255,0.28), 0 5px 14px rgba(0,0,0,0.4); z-index: 3; }
+.pfun-dot:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.pfun-foot { text-align: center; padding: 12px 6px 4px; }
+.pfun-foot-v { font-size: 15px; font-weight: 800; }
 @media (max-width: 720px) {
   .pfun-cols { min-height: 300px; }
-  .pfun-head b { font-size: 10.5px; }
+  .pfun-head b { font-size: 9.5px; }
   .pfun-foot .tiny { display: none; }
+  .pfun-band { gap: 4px; }
 }
+
+/* funnel header tick + count */
+.pfun-tick { width: 30px; height: 4px; border-radius: 3px; }
+.pfun-count { font-size: 18px; font-weight: 800; line-height: 1; }

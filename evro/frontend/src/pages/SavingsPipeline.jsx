@@ -45,9 +45,10 @@ function FunnelView({ board, match, navigate }) {
       <div className="pfun-cols">
         {cols.map((col) => (
           <div key={col.key} className="pfun-col">
-            <div className="pfun-head" style={{ borderTopColor: col.tone }}>
+            <div className="pfun-head">
+              <span className="pfun-tick" style={{ background: col.tone }} />
               <b>{col.label}</b>
-              <span className="badge b-grey">{col.cards.length}</span>
+              <span className="pfun-count" style={{ color: col.tone }}>{col.cards.length}</span>
             </div>
             <div className="pfun-mid">
               <div className="pfun-band" style={{ height: `${FUNNEL_TAPER[cols.indexOf(col)] || 30}%` }}>

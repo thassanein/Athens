@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { procurementModel, lifecycleMeta } from '../lib/procurement.js'
 import { impactByYear } from '../lib/procurement-window.js'
 import { forecastCurve } from '../lib/engine.js'
@@ -18,28 +18,39 @@ import AgentActions from '../components/AgentActions.jsx'
 
 const BUCKET_TONE = { potential: 'var(--opp)', committed: 'var(--amber)', realized: 'var(--green)', sustained: 'var(--navy)' }
 
-// Annualized run-rate phased into the calendar years it lands in — each saving's
-// 12-month window from launch (or expected go-live) spread across 2025/2026/…
-function ImpactByYear({ db }) {
-  const years = useMemo(() => impactByYear(db), [db])
+// Impact by year — risk-adjusted savings phased into the calendar years they
+// land in. 2026 is the focus year; the others are context/fillers. Toggle to
+// gross (un-adjusted) value.
+function ImpactByYear({ db, focusYear }) {
+  const [mode, setMode] = useState('rav')
+  const years = useMemo(() => impactByYear(db, mode), [db, mode])
   if (!years.length) return null
   const max = Math.max(...years.map((y) => y.value), 1)
+  const focus = years.find((y) => y.year === focusYear)
   return (
     <div className="pyr card pad section-gap">
       <div className="card-h">
         <h3>Impact by year</h3>
-        <span className="tiny muted" style={{ marginLeft: 8 }}>annualized run-rate phased into the year each 12-month window lands</span>
+        <span className="tiny muted" style={{ marginLeft: 8 }}>{mode === 'rav' ? 'risk-adjusted' : 'gross'} run-rate, phased into the year it lands</span>
+        <span className="spacer" />
+        <div className="pyr-toggle" role="tablist" aria-label="Value basis">
+          <button role="tab" aria-selected={mode === 'rav'} className={`chip sm ${mode === 'rav' ? 'on' : ''}`} onClick={() => setMode('rav')}>Risk-adjusted</button>
+          <button role="tab" aria-selected={mode === 'gross'} className={`chip sm ${mode === 'gross' ? 'on' : ''}`} onClick={() => setMode('gross')}>Gross</button>
+        </div>
       </div>
       <div className="pyr-bars">
-        {years.map((y) => (
-          <div key={y.year} className={`pyr-col ${y.current ? 'current' : ''}`}>
-            <div className="pyr-v mono">{money(y.value)}</div>
-            <div className="pyr-bar" style={{ height: `${Math.max(4, (y.value / max) * 100)}%` }} />
-            <div className="pyr-yr">{y.year}{y.current ? ' ·' : ''}</div>
-          </div>
-        ))}
+        {years.map((y) => {
+          const isFocus = y.year === focusYear
+          return (
+            <div key={y.year} className={`pyr-col ${isFocus ? 'focus' : 'filler'}`}>
+              <div className="pyr-v mono">{money(y.value)}</div>
+              <div className="pyr-bar" style={{ height: `${Math.max(4, (y.value / max) * 100)}%` }} />
+              <div className="pyr-yr">{y.year}{isFocus ? ' · focus' : ''}</div>
+            </div>
+          )
+        })}
       </div>
-      <p className="tiny muted" style={{ marginTop: 8 }}>A phasing cut, not the book total — risk-adjusted annual run-rate allocated month-by-month across its measurement window.</p>
+      <p className="tiny muted" style={{ marginTop: 8 }}>{focus ? `${focusYear} carries ${money(focus.value)} of ${mode === 'rav' ? 'risk-adjusted' : 'gross'} impact` : ''} — a phasing cut, not the book total. Each saving's annual run-rate is allocated month-by-month across its measurement window.</p>
     </div>
   )
 }
@@ -83,6 +94,10 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
   const m = useMemo(() => procurementModel(db), [db])
   const { sum, pipeline, byType, velocity, blockers, opportunities } = m
   const fy = db.meta.fiscalYear
+  // The home page focuses on the current year's risk-adjusted impact.
+  const focusYear = Number(String(db.meta.now).slice(0, 4))
+  const yearImpact = useMemo(() => impactByYear(db, 'rav'), [db])
+  const impactFocus = yearImpact.find((y) => y.year === focusYear)?.value || 0
 
   // Decision queue — opportunities whose next move needs a human decision
   // (pending sign-off or missing gate evidence), ranked by expected value.
@@ -128,12 +143,12 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
         <ExportMenu db={db} flash={flash} label="Export board pack" />
       </div>
 
-      {/* Savings Under Management — the headline + the four progress lenses */}
+      {/* Headline — this year's risk-adjusted impact + the four progress lenses */}
       <div className="pdash-sum card pad">
         <div className="pdash-sum-hero">
-          <div className="pdash-sum-label"><Term name="Savings Under Management">Enterprise Savings Under Management</Term> · annualized run-rate · FY{fy}</div>
-          <div className="pdash-sum-big mono">{money(sum.total)}<span className="pdash-sum-yr">/yr</span></div>
-          <div className="pdash-sum-sub">{num(sum.count)} opportunities at full delivery · <b>{money(sum.lenses.realized)} validated YTD</b> · {pct(sum.confidence)} value-weighted <Term name="Confidence">confidence</Term> · {money(velocity.perMonth)}/mo <Term name="Velocity">velocity</Term></div>
+          <div className="pdash-sum-label">{focusYear} procurement impact · <Term name="Risk-adjusted value">risk-adjusted</Term></div>
+          <div className="pdash-sum-big mono">{money(impactFocus)}</div>
+          <div className="pdash-sum-sub"><b>{money(sum.lenses.realized)} validated YTD</b> · {pct(sum.confidence)} value-weighted <Term name="Confidence">confidence</Term> · {money(velocity.perMonth)}/mo <Term name="Velocity">velocity</Term> · {money(sum.total)} <Term name="Savings Under Management">book under management</Term> across {num(sum.count)} opportunities</div>
         </div>
         <div className="pdash-lenses">
           {[
@@ -152,7 +167,7 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
         </div>
       </div>
 
-      <ImpactByYear db={db} />
+      <ImpactByYear db={db} focusYear={focusYear} />
 
       <div className="tiles">
         <Tile tone="green" label="Realized YTD" value={money(sum.lenses.realized)} sub="validated actuals only" />

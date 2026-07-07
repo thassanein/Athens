@@ -10,6 +10,7 @@
 // totals — it frames WHEN a saving is inside its measurement window, so the
 // pipeline, dashboard, workspace and briefs all speak about it the same way.
 import { savingsOpportunities, lifecycleMeta } from './procurement.js'
+import { rav } from './engine.js'
 
 export const MEASUREMENT_MONTHS = 12
 
@@ -82,11 +83,13 @@ export const PIPELINE_PHASES = [
 // spread month-by-month across its 12-month measurement window (from launch if it
 // is reporting, else its planned start), so the value lands in the actual years
 // 2025 / 2026 / 2027 / … it is active. A cut for phasing, not the book total.
-export function impactByYear(db) {
+export function impactByYear(db, mode = 'rav') {
   const opps = savingsOpportunities(db)
   const years = {}
   for (const o of opps) {
-    const annual = o.value.committed || 0 // risk-adjusted annual run-rate
+    // risk-adjusted (default) = gross × stage confidence × realization factor;
+    // gross = full un-adjusted annual value.
+    const annual = mode === 'gross' ? (o.value.potential || 0) : rav(o._raw)
     if (annual <= 0) continue
     // Phase from when the initiative STARTS — its lifecycle window opens at the
     // start date, so value is attributed to the years the work spans (2025 on).
