@@ -2468,3 +2468,29 @@ html.evro-tour .content { padding-bottom: 72vh; }
   .wf-cards { grid-template-columns: 1fr; }
   .wf-gain { font-size: 32px; }
 }
+
+/* Auto-drafted briefs & narratives */
+.brf-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brf-scope { display: flex; gap: 6px; flex-wrap: wrap; }
+.brf-select { padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); color: var(--ink); font: inherit; font-size: 13px; max-width: 260px; }
+.brf-select:focus-visible { outline: 2px solid var(--brand-value); outline-offset: 1px; }
+.brf-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.brf-memo { max-width: 760px; }
+.brf-kind { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--brand-ai-ink); }
+.brf-title { font-size: 22px; font-weight: 800; margin: 8px 0 4px; line-height: 1.2; }
+.brf-dateline { font-size: 11px; letter-spacing: 0.4px; text-transform: uppercase; color: var(--grey); margin-bottom: 18px; }
+.brf-figs { display: flex; gap: 24px; flex-wrap: wrap; border-top: 2px solid var(--ink); border-bottom: 1px solid var(--line); padding: 12px 0; margin-bottom: 22px; }
+.brf-fig b { display: block; font-size: 20px; font-weight: 800; color: var(--brand-value); }
+.brf-fig span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; color: var(--grey); }
+.brf-sec { margin-bottom: 18px; }
+.brf-sec h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--grey); margin: 0 0 6px; }
+.brf-sec p { font-size: 14.5px; line-height: 1.62; color: var(--ink); margin: 0 0 9px; }
+.brf-footer { margin-top: 22px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 11.5px; font-style: italic; color: var(--grey); line-height: 1.5; }
+.brf-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+@media (max-width: 560px) {
+  .brf-controls { align-items: stretch; }
+  .brf-select { max-width: none; }
+  .brf-actions { width: 100%; }
+  .brf-actions .btn { flex: 1; }
+  .brf-title { font-size: 19px; }
+}

@@ -118,6 +118,7 @@ export const PROCUREMENT_NAV = [
   { group: 'Intelligence', items: [
     ['procai', 'Enterprise AI', IconAI, ALL],
     ['whatif', 'What-If Simulation', IconScenarios, ENTL],
+    ['brief', 'Auto-Drafted Briefs', IconReport, ALL],
     ['aitrust', 'Enterprise Memory', IconReport, ALL],
     ['reporting', 'Analytics', IconGraph, ENT],
   ] },
