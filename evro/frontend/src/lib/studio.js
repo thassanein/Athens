@@ -69,12 +69,24 @@ export function setStagedMateriality(value) {
   const c = read(); c.staged = { ...c.staged, materiality: value }; write({ ...c }); return c
 }
 
+// A proposed PHASE-based confidence ladder — the sourcing-funnel curve keyed to
+// the five lifecycle phases (not the eight engine stages). Default is the
+// 25 / 50 / 75 / 100 structure: pipeline 25%, commit 50%, execute 75%, and the
+// rest (realizing, banked) at 100%. Staged and previewed; never applied to the
+// engine (which stays keyed by stage and remains the source of truth).
+export const PHASE_LADDER_DEFAULT = { pipeline: 0.25, commit: 0.5, execute: 0.75, realized: 1.0, closed: 1.0 }
+export function stagedPhaseLadder() { return { ...PHASE_LADDER_DEFAULT, ...(read().staged.phaseLadder || {}) } }
+export function setStagedPhaseLadder(phase, value) {
+  const c = read(); const pl = { ...(c.staged.phaseLadder || {}), [phase]: value }; c.staged = { ...c.staged, phaseLadder: pl }; write({ ...c }); return c
+}
+
 // Is anything different from the engine baseline / defaults?
 export function hasStagedChanges() {
   const s = read().staged
   const wChanged = s.weights && Object.entries(s.weights).some(([k, v]) => v !== ENGINE_BASELINE.weights[k])
   const mChanged = s.materiality != null && s.materiality !== ENGINE_BASELINE.materiality
-  return !!(wChanged || mChanged)
+  const plChanged = s.phaseLadder && Object.entries(s.phaseLadder).some(([k, v]) => v !== PHASE_LADDER_DEFAULT[k])
+  return !!(wChanged || mChanged || plChanged)
 }
 export function hasLiveOverrides() {
   const c = read()

@@ -4,9 +4,11 @@ import {
   savingsType, lifecycleMeta, apprLabel, savingsOpportunities,
 } from '../lib/procurement.js'
 import { STAGE_LABEL } from '../lib/engine.js'
+import { PIPELINE_PHASES } from '../lib/procurement-window.js'
 import {
   ENGINE_BASELINE, setTypeField, setStageField, setApproverLabel,
   stagedWeights, stagedMateriality, setStagedWeight, setStagedMateriality,
+  PHASE_LADDER_DEFAULT, stagedPhaseLadder, setStagedPhaseLadder,
   hasStagedChanges, hasLiveOverrides, resetStudio, resetStaged,
 } from '../lib/studio.js'
 import { money, pct } from '../lib/format.js'
@@ -148,7 +150,48 @@ function WeightsTab({ opps, onChange, flash }) {
   }, [opps, w])
   const changed = hasStagedChanges()
 
+  // The proposed PHASE-based ladder (25/50/75/100), previewed against the engine.
+  const ladder = stagedPhaseLadder()
+  const phasePreview = useMemo(() => {
+    let wv = 0, ev = 0, sv = 0
+    for (const o of opps) {
+      const ph = lifecycleMeta(o.stage).phase
+      wv += (ladder[ph] ?? 1) * o.value.headline
+      ev += o.confidence * o.value.headline
+      sv += o.value.headline
+    }
+    return { ladder: sv ? wv / sv : 0, engine: sv ? ev / sv : 0 }
+  }, [opps, ladder])
+
   return (
+    <>
+    <div className="card pad section-gap">
+      <div className="card-h">
+        <h3>Phase confidence ladder</h3><span className="badge b-amber" style={{ marginLeft: 8 }}>proposed · staged & previewed</span>
+        <span className="spacer" />
+        <button className="linkbtn tiny" onClick={() => { PIPELINE_PHASES.forEach((p) => setStagedPhaseLadder(p.key, PHASE_LADDER_DEFAULT[p.key])); tick((n) => n + 1); onChange(); flash?.('Phase ladder set to 25 / 50 / 75 / 100') }}>Reset to 25/50/75/100</button>
+      </div>
+      <p className="tiny muted" style={{ marginTop: -4, marginBottom: 10 }}>Confidence keyed to the five lifecycle phases instead of the eight engine stages — the sourcing-funnel curve (pipeline 25% · commit 50% · execute 75% · realizing & banked 100%). Preview only; the engine keeps scoring by stage until this is promoted.</p>
+      <div className="stu-preview">
+        <div className="stu-prev-box"><div className="tiny muted">Engine (live, by stage)</div><div className="stu-prev-v mono">{pct(phasePreview.engine)}</div></div>
+        <div className="stu-prev-arrow">→</div>
+        <div className="stu-prev-box"><div className="tiny muted">Under this phase ladder</div><div className="stu-prev-v mono" style={{ color: 'var(--brand-value)' }}>{pct(phasePreview.ladder)}</div></div>
+        <div className="tiny muted stu-prev-note">Value-weighted book confidence. Lowering commit and execute makes the book read more conservatively until value is actually realizing.</div>
+      </div>
+      <div className="stu-weights">
+        {PIPELINE_PHASES.map((p) => {
+          const val = ladder[p.key] ?? 1
+          return (
+            <div key={p.key} className="stu-weight">
+              <div className="stu-weight-h"><label htmlFor={`pl-${p.key}`}>{p.label}</label><b className="mono stu-diff">{pct(val)}</b></div>
+              <input id={`pl-${p.key}`} type="range" min="0" max="100" step="5" value={Math.round(val * 100)} onChange={(e) => { setStagedPhaseLadder(p.key, Number(e.target.value) / 100); tick((n) => n + 1); onChange() }} aria-label={`${p.label} phase confidence`} />
+              <span className="tiny muted">{p.gloss}</span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+
     <div className="card pad section-gap">
       <div className="card-h">
         <h3>Stage confidence weights</h3><span className="badge b-amber" style={{ marginLeft: 8 }}>staged & previewed</span>
@@ -177,5 +220,6 @@ function WeightsTab({ opps, onChange, flash }) {
       </div>
       <div className="stu-note tiny muted">These weights drive how much each lifecycle stage counts toward confidence and risk-adjusted value. In production, promoting them is a governed change to the engine config service — Studio lets leadership size the impact first.</div>
     </div>
+    </>
   )
 }
