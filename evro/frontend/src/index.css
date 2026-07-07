@@ -2615,3 +2615,31 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .pyr-col.current .pyr-bar { background: linear-gradient(180deg, var(--green), color-mix(in srgb, var(--green) 55%, transparent)); }
 .pyr-yr { font-size: 12px; font-weight: 700; color: var(--grey); }
 .pyr-col.current .pyr-yr { color: var(--green); }
+
+/* Savings-type toggle bar (also the funnel colour legend) */
+.svp-typebar { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+.svp-typechip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); color: var(--ink); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.svp-typechip.on { border-color: var(--brand-value); background: color-mix(in srgb, var(--brand-value) 12%, transparent); }
+.svp-typechip:focus-visible { outline: 2px solid var(--brand-value); outline-offset: 1px; }
+.svp-typedot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.svp-typen { font-size: 11px; color: var(--grey); font-weight: 700; }
+
+/* Horizontal process funnel */
+.pfun { position: relative; padding: 8px 0 4px; }
+.pfun-bg { position: absolute; inset: 44px 0 58px; width: 100%; height: calc(100% - 102px); z-index: 0; }
+.pfun-cols { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(5, 1fr); min-height: 380px; }
+.pfun-col { display: flex; flex-direction: column; min-width: 0; padding: 0 6px; }
+.pfun-head { display: flex; align-items: center; gap: 7px; justify-content: center; border-top: 3px solid var(--grey); padding: 8px 4px 6px; }
+.pfun-head b { font-size: 12.5px; text-align: center; }
+.pfun-mid { flex: 1; display: flex; align-items: center; justify-content: center; }
+.pfun-band { width: 100%; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 5px; overflow: hidden; }
+.pfun-dot { border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; transition: transform 0.12s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+.pfun-dot:hover { transform: scale(1.18); z-index: 2; }
+.pfun-dot:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.pfun-foot { text-align: center; padding-top: 6px; border-top: 1px dashed var(--line); }
+.pfun-foot-v { font-size: 14px; font-weight: 800; }
+@media (max-width: 720px) {
+  .pfun-cols { min-height: 300px; }
+  .pfun-head b { font-size: 10.5px; }
+  .pfun-foot .tiny { display: none; }
+}

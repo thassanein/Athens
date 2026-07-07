@@ -22,13 +22,64 @@ function WindowMeter({ w, compact = false }) {
   )
 }
 
+// Horizontal process funnel — the five phases taper left→right, opportunities
+// are bubbles (sized by annual run-rate, coloured by savings type) that thin out
+// as they progress. Click a bubble to open its workspace.
+const FUNNEL_TAPER = [96, 78, 60, 44, 30] // band height % per phase (the taper)
+function FunnelView({ board, match, navigate }) {
+  const cols = board.map((c) => ({ ...c, cards: c.cards.filter(match) }))
+  const maxV = Math.max(1, ...cols.flatMap((c) => c.cards.map((o) => o.value.headline)))
+  const dot = (v) => Math.round(11 + 30 * Math.sqrt(Math.min(v, maxV) / maxV)) // px
+  return (
+    <div className="pfun">
+      <svg className="pfun-bg" viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="pfunG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="var(--brand-value)" stopOpacity="0.16" />
+            <stop offset="1" stopColor="var(--green)" stopOpacity="0.10" />
+          </linearGradient>
+        </defs>
+        <polygon points="0,8 1000,140 1000,260 0,392" fill="url(#pfunG)" />
+        {[200, 400, 600, 800].map((x) => <line key={x} x1={x} y1="0" x2={x} y2="400" stroke="var(--line)" strokeDasharray="4 6" />)}
+      </svg>
+      <div className="pfun-cols">
+        {cols.map((col) => (
+          <div key={col.key} className="pfun-col">
+            <div className="pfun-head" style={{ borderTopColor: col.tone }}>
+              <b>{col.label}</b>
+              <span className="badge b-grey">{col.cards.length}</span>
+            </div>
+            <div className="pfun-mid">
+              <div className="pfun-band" style={{ height: `${FUNNEL_TAPER[cols.indexOf(col)] || 30}%` }}>
+                {col.cards.map((o) => {
+                  const st = savingsType(o.savingsType)
+                  const d = dot(o.value.headline)
+                  return (
+                    <button key={o.id} className="pfun-dot" onClick={() => navigate('opportunity', { id: o.id })}
+                      style={{ width: d, height: d, background: st.accent, borderColor: o.ragStatus === 'red' ? 'var(--red)' : 'transparent' }}
+                      title={`${o.name} · ${st.label} · ${money(o.value.headline)}/yr · ${o.stageLabel}`} aria-label={`${o.name}, ${money(o.value.headline)} per year`} />
+                  )
+                })}
+              </div>
+            </div>
+            <div className="pfun-foot">
+              <div className="mono pfun-foot-v" style={{ color: col.tone }}>{money(col.cards.reduce((s, o) => s + o.value.headline, 0))}<span className="pboard-yr">/yr</span></div>
+              <div className="tiny muted">{col.gloss}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function SavingsPipeline({ db, navigate, flash }) {
   const opps = useMemo(() => savingsOpportunities(db), [db])
   const sum = useMemo(() => savingsUnderManagement(db), [db])
   const board = useMemo(() => pipelineBoard(db), [db])
   const win = useMemo(() => windowSummary(db), [db])
   const [type, setType] = useState('all')
-  const [view, setView] = useState('board')
+  const [view, setView] = useState('funnel')
 
   const match = (o) => type === 'all' || o.savingsType === type
   const shown = opps.filter(match)
@@ -60,18 +111,33 @@ export default function SavingsPipeline({ db, navigate, flash }) {
 
       <div className="svp-filters">
         <div className="svp-viewtoggle" role="tablist" aria-label="Pipeline view">
-          <button role="tab" aria-selected={view === 'board'} className={`chip ${view === 'board' ? 'on' : ''}`} onClick={() => setView('board')}>Pipeline board</button>
+          <button role="tab" aria-selected={view === 'funnel'} className={`chip ${view === 'funnel' ? 'on' : ''}`} onClick={() => setView('funnel')}>Funnel</button>
+          <button role="tab" aria-selected={view === 'board'} className={`chip ${view === 'board' ? 'on' : ''}`} onClick={() => setView('board')}>Board</button>
           <button role="tab" aria-selected={view === 'list'} className={`chip ${view === 'list' ? 'on' : ''}`} onClick={() => setView('list')}>List</button>
         </div>
-        <span className="svp-sep" />
-        {types.map((t) => (
-          <button key={t.key} className={`chip ${type === t.key ? 'on' : ''}`} onClick={() => setType(t.key)}>{t.label}</button>
-        ))}
         <span className="spacer" />
         <ExportMenu db={db} flash={flash} label="Export book" />
       </div>
 
-      {view === 'board' ? (
+      {/* Savings-type toggle — doubles as the colour legend for the funnel/board */}
+      <div className="svp-typebar" role="tablist" aria-label="Filter by savings type">
+        {types.map((t) => {
+          const st = t.key === 'all' ? null : savingsType(t.key)
+          return (
+            <button key={t.key} role="tab" aria-selected={type === t.key} className={`svp-typechip ${type === t.key ? 'on' : ''}`} onClick={() => setType(t.key)}>
+              <span className="svp-typedot" style={{ background: st ? st.accent : 'var(--grey)' }} />
+              {t.label}
+              {t.key !== 'all' && <span className="svp-typen">{opps.filter((o) => o.savingsType === t.key).length}</span>}
+            </button>
+          )
+        })}
+      </div>
+
+      {view === 'funnel' ? (
+        <div className="card pad section-gap">
+          <FunnelView board={board} match={match} navigate={navigate} />
+        </div>
+      ) : view === 'board' ? (
         <div className="pboard">
           {board.map((col) => {
             const cards = col.cards.filter(match)

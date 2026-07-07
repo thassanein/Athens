@@ -88,10 +88,13 @@ export function impactByYear(db) {
   for (const o of opps) {
     const annual = o.value.committed || 0 // risk-adjusted annual run-rate
     if (annual <= 0) continue
+    // Phase from when the initiative STARTS — its lifecycle window opens at the
+    // start date, so value is attributed to the years the work spans (2025 on).
+    // Fall back to first reporting, then expected go-live.
     const w = savingsWindow(db, o)
-    // Launched → its actual window; not yet reporting → the window opens at
-    // expected go-live (target close), which is when savings start to land.
-    const start = w.launched ? w.launchPeriod : (o._raw?.target_close ? o._raw.target_close.slice(0, 7) : (o._raw?.start_date ? o._raw.start_date.slice(0, 7) : null))
+    const start = (o._raw?.start_date ? o._raw.start_date.slice(0, 7) : null)
+      || (w.launched ? w.launchPeriod : null)
+      || (o._raw?.target_close ? o._raw.target_close.slice(0, 7) : null)
     if (!start) continue
     const [sy, sm] = start.split('-').map(Number)
     for (let k = 0; k < MEASUREMENT_MONTHS; k++) {
