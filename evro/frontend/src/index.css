@@ -2425,3 +2425,46 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .pcp-input input { flex: 1; padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2); color: var(--ink); font: inherit; font-size: 13px; }
 .pcp-input input:focus-visible { outline: 2px solid var(--brand-value); outline-offset: 1px; }
 @media (max-width: 480px) { .pcp { width: 100vw; } }
+
+/* What-If scenario projection */
+.wf-grid { display: grid; grid-template-columns: 320px 1fr; gap: 16px; align-items: start; }
+.wf-levers { position: sticky; top: 12px; }
+.wf-lever { padding: 12px 0; border-top: 1px solid var(--line); }
+.wf-lever:first-of-type { border-top: none; }
+.wf-lever-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.wf-lever-h label { font-size: 13px; font-weight: 700; color: var(--ink); }
+.wf-lever-h b { font-size: 15px; color: var(--brand-value); }
+.wf-lever input[type=range] { width: 100%; accent-color: var(--brand-value); height: 22px; }
+.wf-lever-help { margin-top: 6px; line-height: 1.45; }
+.wf-out { display: flex; flex-direction: column; gap: 14px; }
+.wf-headline { text-align: center; }
+.wf-gain { font-size: 40px; font-weight: 800; line-height: 1.1; margin: 4px 0; }
+.wf-gain.up { color: var(--green); }
+.wf-gain.down { color: var(--red); }
+.wf-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.wf-card { display: flex; flex-direction: column; gap: 8px; }
+.wf-card-l { font-size: 13px; font-weight: 700; color: var(--ink); }
+.wf-bars { display: flex; flex-direction: column; gap: 6px; }
+.wf-bar-row { display: grid; grid-template-columns: 62px 1fr auto; align-items: center; gap: 8px; }
+.wf-track { height: 8px; border-radius: 5px; background: var(--panel-2); overflow: hidden; }
+.wf-fill { height: 100%; border-radius: 5px; transition: width 0.35s cubic-bezier(0.2,0.7,0.3,1); }
+.wf-fill.base { background: var(--grey); }
+.wf-fill.proj { background: var(--brand-value); }
+.wf-fill.proj.inv { background: var(--brand-energy); }
+.wf-bar-row b { font-size: 13px; }
+.wf-card-d { text-align: right; }
+.wf-d { font-size: 12px; font-weight: 700; }
+.wf-d.up { color: var(--green); }
+.wf-d.down { color: var(--red); }
+.wf-d.flat { color: var(--grey); font-weight: 600; }
+.wf-conf { grid-column: 1 / -1; }
+.wf-conf-row { display: flex; align-items: baseline; gap: 10px; }
+.wf-conf-v { font-size: 24px; font-weight: 800; color: var(--brand-value); }
+.wf-note { line-height: 1.55; border-top: 1px solid var(--line); padding-top: 10px; }
+.wf-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+@media (max-width: 720px) {
+  .wf-grid { grid-template-columns: 1fr; }
+  .wf-levers { position: static; }
+  .wf-cards { grid-template-columns: 1fr; }
+  .wf-gain { font-size: 32px; }
+}

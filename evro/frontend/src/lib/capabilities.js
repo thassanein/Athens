@@ -16,6 +16,7 @@
 import {
   IconCockpit, IconExec, IconPortfolio, IconOpportunity, IconReport,
   IconForecast, IconBolt, IconAI, IconBook, IconTeam, IconGraph, IconLeaf,
+  IconScenarios,
 } from '../components/Icons.jsx'
 
 const KEY = 'evro.capabilities.v1'
@@ -116,6 +117,7 @@ export const PROCUREMENT_NAV = [
   ] },
   { group: 'Intelligence', items: [
     ['procai', 'Enterprise AI', IconAI, ALL],
+    ['whatif', 'What-If Simulation', IconScenarios, ENTL],
     ['aitrust', 'Enterprise Memory', IconReport, ALL],
     ['reporting', 'Analytics', IconGraph, ENT],
   ] },
