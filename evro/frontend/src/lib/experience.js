@@ -136,3 +136,19 @@ export function enterpriseWeather(db) {
   }
   return { key, ...WEATHER[key], why, recommendation: rec, energy: e.score, alert: key === 'storm' ? 'Executive alert: exposed value exceeds healthy pipeline — intervention required.' : null }
 }
+
+// 6D — executive-grade condition labels over the same deterministic weather.
+// Monotone by health (clear best → storm worst), so the exec state never
+// disagrees with the underlying signal. tier drives the accent + severity.
+export const EXEC_WEATHER = {
+  clear: { state: 'Opportunity', tier: 'good', gloss: 'Conditions favour pulling value forward.' },
+  fair: { state: 'Stable', tier: 'calm', gloss: 'Normal operating conditions — hold the rhythm.' },
+  clearing: { state: 'Watch', tier: 'watch', gloss: 'Recovering — worth watching until it holds.' },
+  overcast: { state: 'Volatile', tier: 'warn', gloss: 'Red book and exposed value — choppy.' },
+  storm: { state: 'Critical', tier: 'crit', gloss: 'Exposed value exceeds the healthy book — act now.' },
+}
+export function execWeather(db) {
+  const w = enterpriseWeather(db)
+  const x = EXEC_WEATHER[w.key] || EXEC_WEATHER.fair
+  return { ...w, execState: x.state, tier: x.tier, gloss: x.gloss }
+}

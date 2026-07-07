@@ -1806,3 +1806,36 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .bp-emotion b { font-size: 12px; }
 .bp-emotion span { font-size: 10.5px; color: var(--grey-2); line-height: 1.45; }
 .bp-close { margin: 14px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--ink); border-left: 3px solid var(--brand-energy); padding-left: 14px; }
+
+/* ============================================================================
+   6D Wave 1 — foundation: motion verbs, executive weather tiers, a11y utils
+   ============================================================================ */
+
+/* a11y — screen-reader-only text + skip link (semantic, keyboard-first) */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; left: 8px; top: -40px; z-index: 200; background: var(--navy); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; transition: top 0.15s; }
+.skip-link:focus { top: 8px; }
+
+/* executive weather tiers — the 5 exec states, both themes via tokens.
+   tint tokens exist; these bind an accent + a soft wash per severity. */
+.exw { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; }
+.exw-good { color: var(--green); } .exw-calm { color: var(--navy); }
+.exw-watch { color: var(--brand-momentum); } .exw-warn { color: var(--amber); } .exw-crit { color: var(--red); }
+.exw-dot { width: 8px; height: 8px; border-radius: 999px; background: currentColor; flex: 0 0 auto; }
+.exw-pill { border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.3px; border: 1px solid currentColor; }
+
+/* reusable motion verbs — reduced-motion safe (only inside no-preference).
+   Meaning map: drift = ambient settle, collapse = leaving, orbit = process,
+   signal = AI sensing pulse, orient = decision direction seek. */
+@media (prefers-reduced-motion: no-preference) {
+  .fx-drift { animation: fx-drift 7s ease-in-out infinite; }
+  @keyframes fx-drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  .fx-orbit { transform-origin: 50% 50%; animation: fx-orbit 9s linear infinite; }
+  @keyframes fx-orbit { to { transform: rotate(360deg); } }
+  .fx-signal { animation: fx-signal 2.4s ease-in-out infinite; }
+  @keyframes fx-signal { 0%, 100% { opacity: 0.4; } 45% { opacity: 1; } }
+  .fx-orient { transform-origin: 50% 50%; animation: fx-orient 2.8s ease-in-out infinite; }
+  @keyframes fx-orient { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+  .fx-collapse-in { animation: fx-collapse-in 0.24s ease; }
+  @keyframes fx-collapse-in { from { opacity: 0; transform: translateY(-4px) scaleY(0.96); } to { opacity: 1; transform: none; } }
+}
