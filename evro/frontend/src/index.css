@@ -2275,3 +2275,27 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .landing-tour-btn { background: transparent; border: 1px solid var(--line); color: var(--ink); }
 @media (prefers-reduced-motion: reduce) { .onb-in { animation: none; } .onb-dot { transition: none; } }
 @media (max-width: 560px) { .onb { bottom: 12px; padding: 15px 16px; } .onb-metrics { gap: 16px; } .onb-title { font-size: 17px; } }
+
+
+/* Onboarding — spotlight + animation upgrade (visual-learner mode) */
+.onb-spot { position: fixed; z-index: 120; border-radius: 14px; pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(2,4,10,0.62), 0 0 0 2px var(--brand-value), 0 0 26px 5px color-mix(in srgb, var(--brand-value) 55%, transparent); }
+.onb-spot-anim { transition: top .5s cubic-bezier(.2,.7,.2,1), left .5s cubic-bezier(.2,.7,.2,1), width .5s cubic-bezier(.2,.7,.2,1), height .5s cubic-bezier(.2,.7,.2,1); }
+.onb-spot::after { content: ''; position: absolute; inset: -3px; border-radius: 16px; border: 2px solid var(--brand-value); }
+.onb-spot-anim::after { animation: onbPulse 1.9s ease-out infinite; }
+@keyframes onbPulse { 0% { transform: scale(1); opacity: .85; } 100% { transform: scale(1.05); opacity: 0; } }
+.onb-prog { height: 3px; border-radius: 3px; background: var(--line); overflow: hidden; margin: -4px 0 12px; }
+.onb-prog i { display: block; height: 100%; background: var(--brand-value); border-radius: 3px; transition: width .12s linear; }
+.onb-play { background: none; border: 1px solid var(--line); border-radius: 7px; color: var(--brand-value); font-size: 10px; width: 26px; height: 24px; cursor: pointer; display: grid; place-items: center; line-height: 1; }
+.onb-play:hover { background: color-mix(in srgb, var(--brand-value) 10%, transparent); }
+.onb-metric-v .av, .onb-metric-v { transition: none; }
+/* per-step content fade/slide so each beat feels alive */
+.onb-in .onb-title, .onb .onb-title { animation: onbRise .38s cubic-bezier(.2,.7,.2,1) both; }
+.onb .onb-body { animation: onbRise .44s .04s cubic-bezier(.2,.7,.2,1) both; }
+.onb .onb-metrics { animation: onbRise .5s .09s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes onbRise { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+.onb-metric-v { position: relative; }
+@media (prefers-reduced-motion: reduce) {
+  .onb-spot-anim, .onb-spot-anim::after { animation: none; transition: none; }
+  .onb .onb-title, .onb .onb-body, .onb .onb-metrics { animation: none; }
+}
