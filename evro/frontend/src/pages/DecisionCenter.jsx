@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { decisionQueue, decisionIntel } from '../lib/procurement.js'
+import { decisionQueue, decisionIntel, GOVERNANCE_LADDER } from '../lib/procurement.js'
 import { canApproveRoles, canRequestAdvance, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money, pct, num, dateLabel } from '../lib/format.js'
 import { IconAI, IconCheck } from '../components/Icons.jsx'
@@ -120,6 +120,26 @@ export default function DecisionCenter({ db, user, caps, dispatch, navigate, fla
           </div>
 
           <div className="grid cols-2 section-gap">
+            {/* procurement governance ladder */}
+            <div className="card pad">
+              <div className="card-h"><h3>Governance ladder</h3><span className="tiny muted" style={{ marginLeft: 8 }}>procurement approval flow</span></div>
+              <div className="dc-ladder">
+                {GOVERNANCE_LADDER.map((g) => {
+                  const filled = (intel.approvalState?.filled || []).includes(g.role)
+                  const needed = (intel.approvers || []).some((a) => a.role === g.role)
+                  return (
+                    <div key={g.role} className={`dc-rung ${filled ? 'done' : needed ? 'needed' : ''}`}>
+                      <span className="dc-rung-dot" />
+                      <div>
+                        <div className="dc-rung-t"><b>{g.label}</b>{filled && <span className="badge b-green" style={{ marginLeft: 6 }}>signed</span>}{!filled && needed && <span className="badge b-amber" style={{ marginLeft: 6 }}>required</span>}</div>
+                        <div className="tiny muted">{g.gate}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
             {/* alternatives */}
             <div className="card pad">
               <div className="card-h"><h3>Alternatives</h3></div>

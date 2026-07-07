@@ -16,7 +16,7 @@ import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
 import { missionQueue } from './lib/mission.js'
 import { recordView } from './lib/memory.js'
 import { procurementFirst, selectModule } from './lib/capabilities.js'
-import { decisionQueue } from './lib/procurement.js'
+import { decisionQueue, PROCUREMENT_ROLE_LABEL } from './lib/procurement.js'
 
 import Morning from './pages/Morning.jsx'
 import Cockpit from './pages/Cockpit.jsx'
@@ -91,6 +91,8 @@ const SCOPED_PAGES = new Set(['portfolio', 'forecast', 'sustainability', 'sustai
 // Operating screens that carry the persistent "Do next" rail (5B.6 item 7).
 const RAIL_PAGES = new Set(['mission', 'intelligence', 'valueoffice', 'pulse', 'wall', 'chief', 'governance'])
 const ROLE_LABEL = { admin: 'EVRO Lead', fpna: 'FP&A', leader: 'Function leader', owner: 'Initiative owner', procurement: 'Procurement', exec: 'Executive' }
+// In the Procurement module the same six roles read in procurement language.
+const roleLabelOf = (r) => (procurementFirst() ? (PROCUREMENT_ROLE_LABEL[r] || ROLE_LABEL[r]) : ROLE_LABEL[r]) || 'EVRO'
 
 function capsFor(role) {
   switch (role) {
@@ -276,7 +278,7 @@ export default function App() {
    <KnowledgeProvider value={{ db, level: effLevel, setLevel }}>
     <div className="layout">
       <aside className={`sidebar ${drawer ? 'open' : ''}`}>
-        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={ROLE_LABEL[user.role] || 'EVRO'} onBrand={() => setEntered(false)} disabled={disabledNavKeys(db)} />
+        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={roleLabelOf(user.role)} onBrand={() => setEntered(false)} disabled={disabledNavKeys(db)} />
       </aside>
       <div className={`scrim ${drawer ? 'show' : ''}`} onClick={() => setDrawer(false)} />
 
@@ -323,7 +325,7 @@ function PersonaSwitch({ db, userId, setUserId }) {
     <label style={{ display: 'flex', alignItems: 'center', gap: 7 }} title="Switch persona (RBAC + scope demo)">
       <span className="label hide-sm" style={{ marginBottom: 0 }}>Acting as</span>
       <select value={userId} onChange={(e) => setUserId(e.target.value)} style={{ padding: '6px 8px', border: '1px solid var(--line)', borderRadius: 8, maxWidth: 200 }}>
-        {db.people.map((p) => <option key={p.id} value={p.id}>{p.name} · {ROLE_LABEL[p.role] || p.role}</option>)}
+        {db.people.map((p) => <option key={p.id} value={p.id}>{p.name} · {roleLabelOf(p.role)}</option>)}
       </select>
     </label>
   )

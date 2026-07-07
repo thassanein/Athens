@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import {
   savingsOpportunity, savingsOpportunities, savingsType, SAVINGS_LIFECYCLE, lifecycleIndex,
-  decisionHistory, opportunityInsight,
+  lifecycleMeta, VALUE_CHAIN, decisionHistory, opportunityInsight,
 } from '../lib/procurement.js'
 import { categoryName, groupName, index } from '../lib/engine.js'
 import { money, pct, num, dateLabel } from '../lib/format.js'
@@ -18,17 +18,26 @@ import EvidenceDrawer from '../components/EvidenceDrawer.jsx'
 
 function LifecycleTrack({ stage }) {
   const cur = lifecycleIndex(stage)
+  const curChain = lifecycleMeta(stage).chain
   return (
-    <div className="ows-track" role="list" aria-label="Savings lifecycle">
-      {SAVINGS_LIFECYCLE.map((s, i) => {
-        const state = i < cur ? 'done' : i === cur ? 'current' : 'todo'
-        return (
-          <div key={s.key} className={`ows-step ${state}`} role="listitem" title={s.gloss}>
-            <span className="ows-step-dot" />
-            <span className="ows-step-l">{s.label}</span>
-          </div>
-        )
-      })}
+    <div>
+      {/* procurement value chain — the three phases the eleven stages roll into */}
+      <div className="ows-chain" role="list" aria-label="Procurement value chain">
+        {VALUE_CHAIN.map((c) => (
+          <div key={c.key} className={`ows-chain-ph ${c.key === curChain ? 'active' : ''}`} role="listitem" title={c.gloss}>{c.label}</div>
+        ))}
+      </div>
+      <div className="ows-track" role="list" aria-label="Savings lifecycle">
+        {SAVINGS_LIFECYCLE.map((s, i) => {
+          const state = i < cur ? 'done' : i === cur ? 'current' : 'todo'
+          return (
+            <div key={s.key} className={`ows-step ${state}`} role="listitem" title={s.gloss}>
+              <span className="ows-step-dot" />
+              <span className="ows-step-l">{s.label}</span>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

@@ -2237,3 +2237,15 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .mc-soon-l { color: var(--grey); font-weight: 600; }
 .mc-foot { margin-top: 32px; font-size: 11.5px; color: var(--grey); }
 @media (prefers-reduced-motion: reduce) { .mc-card { transition: none; } .mc-card:hover:not(:disabled) { transform: none; } }
+
+/* Procurement value chain (workspace) + governance ladder (decision center) */
+.ows-chain { display: flex; gap: 8px; margin: 12px 0 2px; }
+.ows-chain-ph { flex: 1; text-align: center; font-size: 10.5px; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase; color: var(--grey); padding: 6px 4px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2, transparent); }
+.ows-chain-ph.active { color: var(--brand-value); border-color: color-mix(in srgb, var(--brand-value) 45%, var(--line)); background: color-mix(in srgb, var(--brand-value) 8%, transparent); }
+.dc-ladder { display: flex; flex-direction: column; gap: 10px; }
+.dc-rung { display: flex; gap: 10px; align-items: flex-start; opacity: 0.65; }
+.dc-rung.done, .dc-rung.needed { opacity: 1; }
+.dc-rung-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; background: var(--line); }
+.dc-rung.done .dc-rung-dot { background: var(--green); }
+.dc-rung.needed .dc-rung-dot { background: var(--amber); }
+.dc-rung-t { font-size: 13px; }

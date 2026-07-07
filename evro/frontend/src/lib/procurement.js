@@ -19,20 +19,43 @@ import {
 } from './engine.js'
 import { money, pct } from './format.js'
 
-// ── Savings governance — one shared language across Procurement / Finance /
-// Operations / Leadership. Definitions are the deliverable; the demo dataset
-// populates the types that genuinely exist in Athens' spend.
+// ── Savings governance — the standardized savings taxonomy Athens Procurement,
+// FP&A, Operations and Leadership share, so a dollar means the same thing in
+// every review. Measured against the FP&A-validated baseline off the 2025 AP
+// register; only Hard Savings and Productivity move the P&L run-rate — the rest
+// are tracked and reported separately so the number stays credible.
 export const SAVINGS_TYPES = [
-  { key: 'hard', label: 'Hard Savings', short: 'Hard', accent: 'var(--green)', pnl: true, definition: 'A validated reduction in unit price or total cost that flows through the P&L as a lower run-rate.', example: 'Renegotiated rate cuts the annual bill.' },
-  { key: 'avoidance', label: 'Cost Avoidance', short: 'Avoidance', accent: 'var(--navy)', pnl: false, definition: 'A cost the enterprise would otherwise have incurred that is prevented — measured against a credible would-have baseline.', example: 'Index cap holds price below quoted inflation.' },
-  { key: 'productivity', label: 'Productivity', short: 'Productivity', accent: 'var(--brand-value)', pnl: true, definition: 'More output or throughput from the same resource base — value delivered without headcount cuts.', example: 'Automation lifts lines processed per shift.' },
-  { key: 'working_capital', label: 'Working Capital', short: 'Working cap.', accent: 'var(--brand-momentum)', pnl: false, definition: 'Cash freed by better payment terms, inventory or receivables — a balance-sheet gain, not a P&L line.', example: 'Extended terms release trapped cash.' },
-  { key: 'risk_reduction', label: 'Risk Reduction', short: 'Risk', accent: 'var(--amber)', pnl: false, definition: 'Reduced exposure to failure, supply disruption or compliance loss — value protected rather than added.', example: 'Reliability program cuts unplanned downtime.' },
-  { key: 'revenue', label: 'Revenue Enhancement', short: 'Revenue', accent: 'var(--opp)', pnl: true, definition: 'Supplier-enabled uplift in revenue or margin — a top-line contribution attributable to sourcing.', example: 'Supplier co-innovation opens a new lane.' },
-  { key: 'sustainability', label: 'Sustainability Value', short: 'Sustainability', accent: 'var(--brand-sustain, var(--green))', pnl: false, definition: 'Emissions, waste or ESG improvement with quantified enterprise value.', example: 'Route redesign lowers fleet emissions.' },
-  { key: 'strategic', label: 'Strategic Value', short: 'Strategic', accent: 'var(--brand-intelligence)', pnl: false, definition: 'Capability, resilience or optionality that positions the enterprise beyond the immediate dollar.', example: 'Make-vs-buy builds an in-house capability.' },
+  { key: 'hard', label: 'Hard Savings', short: 'Hard', accent: 'var(--green)', pnl: true, definition: 'A validated unit-price or total-cost reduction versus the FP&A baseline that flows through the P&L as a lower run-rate (negotiated rate, cleansheet, specification change).', example: 'Renegotiated Fleet Capital rate cuts the annual bill.' },
+  { key: 'avoidance', label: 'Cost Avoidance', short: 'Avoidance', accent: 'var(--navy)', pnl: false, definition: 'A cost increase that would otherwise have hit the P&L but is prevented — priced against a credible would-have baseline (quoted escalation, index movement). Reported apart from Hard Savings.', example: 'Index cap holds price below quoted CNG inflation.' },
+  { key: 'productivity', label: 'Productivity', short: 'Productivity', accent: 'var(--brand-value)', pnl: true, definition: 'Lower total cost of ownership from more output per resource — throughput, automation or process redesign — delivered without headcount cuts.', example: 'MRF automation lifts lines processed per shift.' },
+  { key: 'working_capital', label: 'Working Capital', short: 'Working cap.', accent: 'var(--brand-momentum)', pnl: false, definition: 'Cash released by better payment terms, consignment or inventory — a balance-sheet gain scored at the cost of capital, not a P&L line.', example: 'Extended supplier terms release trapped cash.' },
+  { key: 'risk_reduction', label: 'Risk Reduction', short: 'Risk', accent: 'var(--amber)', pnl: false, definition: 'Reduced exposure to supply disruption, equipment failure or compliance loss — value protected through assurance of supply and reliability, not added to the P&L.', example: 'Preventive-maintenance program cuts unplanned downtime.' },
+  { key: 'revenue', label: 'Revenue Enhancement', short: 'Revenue', accent: 'var(--opp)', pnl: true, definition: 'Supplier-enabled uplift in revenue or margin attributable to sourcing — rebates, co-innovation or service expansion.', example: 'Supplier rebate program returns volume dollars.' },
+  { key: 'sustainability', label: 'Sustainability Value', short: 'Sustainability', accent: 'var(--brand-sustain, var(--green))', pnl: false, definition: 'Quantified emissions, waste or ESG improvement from a sourcing or specification decision, valued in enterprise terms.', example: 'Route & fuel redesign lowers fleet emissions.' },
+  { key: 'strategic', label: 'Strategic Value', short: 'Strategic', accent: 'var(--brand-intelligence)', pnl: false, definition: 'Capability, resilience or optionality beyond the immediate dollar — make-vs-buy, insourcing or supplier consolidation that strengthens the enterprise.', example: 'Insourcing subcontract labor builds an in-house capability.' },
 ]
 export const savingsType = (key) => SAVINGS_TYPES.find((t) => t.key === key) || SAVINGS_TYPES[SAVINGS_TYPES.length - 1]
+
+// ── Procurement governance — the approval ladder mapped onto the engine's
+// existing gate roles, in procurement language. The engine still enforces
+// line-manager + FP&A sign-off (plus Steering at the $100K materiality
+// threshold); Procurement reads that as Category Manager + FP&A Validation,
+// escalating to the CPO / Steering Committee for material awards. Presentation
+// only — the entitlement logic is unchanged.
+export const PROC_APPROVER_LABEL = { line_manager: 'Category Manager', fpna: 'FP&A Validation', steering: 'CPO / Steering Committee' }
+export const apprLabel = (r) => PROC_APPROVER_LABEL[r] || ROLE_APPROVE_LABEL[r] || r
+export const GOVERNANCE_LADDER = [
+  { role: 'line_manager', label: 'Category Manager', gate: 'Owns the category; signs off the sourcing case and award.' },
+  { role: 'fpna', label: 'FP&A Validation', gate: 'Validates the baseline and the delivered savings against the AP register.' },
+  { role: 'steering', label: 'CPO / Steering Committee', gate: 'Approves material awards (≥ $100K annual value) before Launch.' },
+]
+
+// Procurement persona labels — the same six roles, framed for the procurement
+// module (used only when Procurement is the active capability).
+export const PROCUREMENT_ROLE_LABEL = {
+  exec: 'Executive Sponsor', admin: 'Procurement Excellence', fpna: 'FP&A Validation',
+  leader: 'Category Lead', owner: 'Initiative Owner', procurement: 'Sourcing Manager',
+}
 
 // Deterministic classifier: which savings type an initiative delivers, from the
 // engine's own benefit_type + approach signals. Rule-based, never per-record.
@@ -49,21 +72,31 @@ export function classifySavingsType(i) {
   return 'productivity'
 }
 
-// ── Enterprise Savings Lifecycle — the one visible journey every opportunity
-// moves through. Mapped from the engine's 8-stage gate model + approval /
-// negotiation / validation state, so it is a lens, not a parallel state machine.
+// ── The procurement value chain — the source-to-contract → contract-to-value
+// → sustain journey Athens runs, expressed as one visible lifecycle. Every
+// stage is a lens over the engine's 8-stage gate model + approval / negotiation
+// / validation state, so it is presentation, not a parallel state machine. The
+// `chain` field groups the eleven stages into the four value-chain phases the
+// category teams work in.
+export const VALUE_CHAIN = [
+  { key: 'source', label: 'Source-to-Contract', gloss: 'Identify, qualify, build the case, negotiate and award the deal.' },
+  { key: 'deliver', label: 'Contract-to-Value', gloss: 'Implement the change and validate the delivered value with FP&A.' },
+  { key: 'realize', label: 'Value Realization', gloss: 'Book validated savings into the P&L and protect the run-rate.' },
+]
+export const valueChainMeta = (key) => VALUE_CHAIN.find((c) => c.key === key) || VALUE_CHAIN[0]
+
 export const SAVINGS_LIFECYCLE = [
-  { key: 'potential', label: 'Potential', phase: 'pipeline', bucket: 'potential', gloss: 'Identified, not yet qualified.' },
-  { key: 'qualified', label: 'Qualified', phase: 'pipeline', bucket: 'potential', gloss: 'Sized and owned; worth pursuing.' },
-  { key: 'business_case', label: 'Business Case', phase: 'pipeline', bucket: 'potential', gloss: 'Baseline and savings logic being built.' },
-  { key: 'approved', label: 'Approved', phase: 'commit', bucket: 'committed', gloss: 'Case signed off; committed to the plan.' },
-  { key: 'negotiation', label: 'Negotiation', phase: 'commit', bucket: 'committed', gloss: 'In the win-room with the supplier.' },
-  { key: 'awarded', label: 'Awarded', phase: 'commit', bucket: 'committed', gloss: 'Deal closed; value contracted.' },
-  { key: 'implementation', label: 'Implementation', phase: 'execute', bucket: 'committed', gloss: 'Rolling the change into operations.' },
-  { key: 'validation', label: 'Validation', phase: 'execute', bucket: 'realized', gloss: 'FP&A validating delivered value.' },
-  { key: 'realized', label: 'Realized', phase: 'realized', bucket: 'realized', gloss: 'Validated value flowing through the P&L.' },
-  { key: 'sustained', label: 'Sustained', phase: 'realized', bucket: 'sustained', gloss: 'Run-rate protected against erosion.' },
-  { key: 'closed', label: 'Closed', phase: 'closed', bucket: 'sustained', gloss: 'Booked and retired from the active book.' },
+  { key: 'potential', label: 'Potential', phase: 'pipeline', chain: 'source', bucket: 'potential', gloss: 'Opportunity identified from spend analytics; not yet qualified.' },
+  { key: 'qualified', label: 'Qualified', phase: 'pipeline', chain: 'source', bucket: 'potential', gloss: 'Sized against the AP-register baseline and owned by a category lead.' },
+  { key: 'business_case', label: 'Business Case', phase: 'pipeline', chain: 'source', bucket: 'potential', gloss: 'Baseline and savings logic built for FP&A validation.' },
+  { key: 'approved', label: 'Approved', phase: 'commit', chain: 'source', bucket: 'committed', gloss: 'Business case signed off; committed to the sourcing plan.' },
+  { key: 'negotiation', label: 'Negotiation', phase: 'commit', chain: 'source', bucket: 'committed', gloss: 'In the win-room with the supplier on rate and terms.' },
+  { key: 'awarded', label: 'Awarded', phase: 'commit', chain: 'source', bucket: 'committed', gloss: 'Supplier awarded; value contracted.' },
+  { key: 'implementation', label: 'Implementation', phase: 'execute', chain: 'deliver', bucket: 'committed', gloss: 'Rolling the new contract into operations and spend.' },
+  { key: 'validation', label: 'Validation', phase: 'execute', chain: 'deliver', bucket: 'realized', gloss: 'FP&A validating delivered value against the baseline.' },
+  { key: 'realized', label: 'Realized', phase: 'realized', chain: 'realize', bucket: 'realized', gloss: 'Validated savings flowing through the P&L run-rate.' },
+  { key: 'sustained', label: 'Sustained', phase: 'realized', chain: 'realize', bucket: 'sustained', gloss: 'Run-rate protected against erosion and leakage.' },
+  { key: 'closed', label: 'Closed', phase: 'closed', chain: 'realize', bucket: 'sustained', gloss: 'Booked and retired from the active savings book.' },
 ]
 export const lifecycleMeta = (key) => SAVINGS_LIFECYCLE.find((s) => s.key === key) || SAVINGS_LIFECYCLE[0]
 export const lifecycleIndex = (key) => SAVINGS_LIFECYCLE.findIndex((s) => s.key === key)
@@ -113,7 +146,7 @@ export function sponsorFor(db, i) {
 export function approverRoles(i) {
   const to = nextStage(i)
   if (!to) return []
-  return (requiredRoles(i, to) || []).map((r) => ({ role: r, label: ROLE_APPROVE_LABEL[r] || r }))
+  return (requiredRoles(i, to) || []).map((r) => ({ role: r, label: apprLabel(r) }))
 }
 
 // Evidence items backing an opportunity — baseline source, validation sign-offs,
@@ -124,7 +157,7 @@ export function opportunityEvidence(db, i) {
   for (const v of i.validations || []) ev.push({ kind: 'validation', label: `${v.type || 'Validation'} — ${v.decision || 'pending'}`, ref: v.by ? personName(db, v.by) : 'FP&A', validated: v.decision === 'approved' })
   const va = (i.actuals || []).filter((a) => a.validated)
   if (va.length) ev.push({ kind: 'actuals', label: `${va.length} FP&A-validated actual${va.length === 1 ? '' : 's'}`, ref: `Realized ${realizedYTD(i, db) ? 'to date' : ''}`.trim(), validated: true })
-  for (const ap of i.request?.approvals || []) ev.push({ kind: 'approval', label: `${ROLE_APPROVE_LABEL[ap.role] || ap.role} sign-off`, ref: ap.by ? personName(db, ap.by) : '—', validated: true })
+  for (const ap of i.request?.approvals || []) ev.push({ kind: 'approval', label: `${apprLabel(ap.role)} sign-off`, ref: ap.by ? personName(db, ap.by) : '—', validated: true })
   if (i.opportunity_id) ev.push({ kind: 'origin', label: 'Sourced opportunity', ref: i.opportunity_id, validated: true })
   return ev
 }
@@ -136,7 +169,7 @@ export function nextDecision(db, i) {
   const to = nextStage(i)
   const life = lifecycleStage(db, i)
   if (i.stage === 'retired') return null
-  const pending = i.request ? `Awaiting ${(i.request.need || []).filter((r) => !(i.request.approvals || []).some((a) => a.role === r)).map((r) => ROLE_APPROVE_LABEL[r] || r).join(' + ') || 'sign-off'}` : null
+  const pending = i.request ? `Awaiting ${(i.request.need || []).filter((r) => !(i.request.approvals || []).some((a) => a.role === r)).map((r) => apprLabel(r)).join(' + ') || 'sign-off'}` : null
   const label = pending || (to ? `Advance to ${lifecycleMeta(life).label === 'Realized' ? 'Sustained' : 'next gate'}` : 'Sustain & protect')
   return {
     label,
@@ -304,7 +337,7 @@ export function decisionHistory(db, i) {
     if (e.linked_initiative_id === i.id) rows.push({ at: e.at, kind: 'decision', title: e.title, detail: e.decision, by: e.decided_by ? personName(db, e.decided_by) : '—', rationale: e.rationale })
   }
   for (const v of i.validations || []) rows.push({ at: v.decided_at, kind: 'validation', title: `${v.type} validation`, detail: v.decision, by: v.actor_id ? personName(db, v.actor_id) : 'FP&A', rationale: v.note })
-  for (const a of i.request?.approvals || []) rows.push({ at: a.at, kind: 'approval', title: `${ROLE_APPROVE_LABEL[a.role] || a.role} sign-off`, detail: 'Approved', by: a.by ? personName(db, a.by) : '—' })
+  for (const a of i.request?.approvals || []) rows.push({ at: a.at, kind: 'approval', title: `${apprLabel(a.role)} sign-off`, detail: 'Approved', by: a.by ? personName(db, a.by) : '—' })
   return rows.filter((r) => r.at).sort((a, b) => String(b.at).localeCompare(String(a.at)))
 }
 
