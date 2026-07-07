@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { execNarrative } from '../lib/exec-narrative.js'
+import { getPref, setPref } from '../lib/memory.js'
 import EvidenceDrawer from './EvidenceDrawer.jsx'
 import { IconAI } from './Icons.jsx'
 
@@ -9,9 +10,10 @@ import { IconAI } from './Icons.jsx'
 // source and underlying rows via the EvidenceDrawer. Reduces cognitive load:
 // prose first, numbers on demand. All deterministic; motion reduced-safe.
 export default function ExecutiveNarrativePanel({ db, user, navigate }) {
-  const [mode, setMode] = useState('executive')
+  const [mode, setMode] = useState(() => getPref('narrative') || 'executive')
   const n = useMemo(() => execNarrative(db, user, mode), [db, user, mode])
   const [evidence, setEvidence] = useState(null)
+  const pickMode = (k) => { setMode(k); setPref('narrative', k, db.meta.now) } // remembered by Executive Memory
 
   return (
     <div className="card pad enp">
@@ -21,7 +23,7 @@ export default function ExecutiveNarrativePanel({ db, user, navigate }) {
         <div className="seg enp-modes" role="group" aria-label="Narrative audience">
           {n.modes.map((m) => (
             <button key={m.key} className={mode === m.key ? 'active' : ''} aria-pressed={mode === m.key}
-              onClick={() => setMode(m.key)} title={m.gloss}>{m.label}</button>
+              onClick={() => pickMode(m.key)} title={m.gloss}>{m.label}</button>
           ))}
         </div>
       </div>

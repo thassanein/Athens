@@ -19,8 +19,8 @@ export default function ExecutiveMemoryPanel({ labelFor }) {
         <span className="badge b-grey">transparent · editable · local to this browser</span>
       </div>
       {entries.length === 0 ? (
-        <p className="emp-empty">Nothing remembered yet. As you use EVRO, it will note which views you open,
-        your explanation depth and your preferred modes — always shown here, always editable.</p>
+        <p className="emp-empty">Nothing remembered yet. As you use EVRO, it will note which views you open
+        and your preferred modes — always shown here, always editable.</p>
       ) : (
         <div className="emp-rows">
           {entries.map((e) => (

@@ -108,7 +108,7 @@ export default function Landing({ db, user, onEnter }) {
             </div>
             <span className="landing-status-div" aria-hidden="true" />
             <div className="landing-status-t">
-              <b className="mono" style={{ color: 'var(--brand-ai)' }}>{aiConf}%</b>
+              <b className="mono" style={{ color: 'var(--brand-ai-ink)' }}>{aiConf}%</b>
               <span>AI confidence</span>
             </div>
             <span className="landing-status-note">the enterprise, live — before you even enter</span>

@@ -10,10 +10,21 @@ export default function EvidenceDrawer({ claim, onClose, navigate }) {
   const ref = useRef(null)
   useEffect(() => {
     if (!claim) return undefined
-    const onKey = (e) => { if (e.key === 'Escape') onClose() }
+    const opener = document.activeElement // restore focus to the trigger on close
+    const focusables = () => [...(ref.current?.querySelectorAll('button, [href], a') || [])].filter((el) => !el.disabled)
+    const onKey = (e) => {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'Tab') { // trap focus inside the dialog
+        const f = focusables()
+        if (!f.length) return
+        const first = f[0], last = f[f.length - 1]
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
     window.addEventListener('keydown', onKey)
     ref.current?.focus()
-    return () => window.removeEventListener('keydown', onKey)
+    return () => { window.removeEventListener('keydown', onKey); if (opener && opener.focus) opener.focus() }
   }, [claim, onClose])
   if (!claim) return null
 

@@ -233,6 +233,8 @@ export default function App() {
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
   const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, onCompanion: () => setCopilot(true), home: HOME[user.role] || 'morning' }
   const effLevel = level || defaultLevelFor(user.role)
+  // plain call (not useMemo): this is below the early returns, so a hook here
+  // would violate hook ordering. missionQueue is cheap enough at this scale.
   const mq = missionQueue(db, user)
   const barCounts = { decisions: mq.counts?.decision || 0, missions: mq.missions.length }
 

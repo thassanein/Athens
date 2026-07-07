@@ -67,10 +67,9 @@ export function memoryEntries(labelFor = (k) => k) {
     out.push({
       id: 'views', label: 'Frequently opened views',
       value: top.map((v) => `${labelFor(v.key)} (${v.count})`).join(' · '),
-      because: 'You have opened these views most often this session — EVRO surfaces them first.',
+      because: 'You open these views most often on this device — EVRO surfaces them first.',
     })
   }
-  if (m.prefs.depth) out.push({ id: 'pref:depth', label: 'Explanation depth', value: String(m.prefs.depth), because: 'You set this depth on the Knowledge Layer; EVRO keeps it across screens.' })
   if (m.prefs.focus) out.push({ id: 'pref:focus', label: 'Preferred focus mode', value: String(m.prefs.focus), because: 'You last read the enterprise in this focus mode.' })
   if (m.prefs.narrative) out.push({ id: 'pref:narrative', label: 'Narrative audience', value: String(m.prefs.narrative), because: 'You last read the executive narrative in this mode.' })
   if (m.dismissed.length) out.push({ id: 'dismissed', label: 'Hidden widgets', value: `${m.dismissed.length} hidden`, because: 'You dismissed these — EVRO keeps them out of the way until you restore them.' })

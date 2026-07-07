@@ -1518,12 +1518,14 @@ html[data-theme='light'] .mr-console { background: #101722; }
   --brand-intelligence: var(--navy);
   --brand-momentum: #2FB6E0;
   --brand-ai: #8B5CF6;
+  --brand-ai-ink: #A78BFA;   /* AA-safe AI violet for <18px text on dark (fill stays #8B5CF6) */
   --brand-energy: #F5A524;
 }
 html[data-theme='light'] {
   --brand-momentum: #0b7ba6;
   --brand-ai: #7c3aed;
-  --brand-energy: #9a6b0a;
+  --brand-ai-ink: #7c3aed;
+  --brand-energy: #8a5f08;   /* darkened from #9a6b0a for AA on panel-2 (4.44→5.35:1) */
 }
 .t-display { font-size: 34px; font-weight: 800; letter-spacing: -0.6px; line-height: 1.1; }
 .t-headline { font-size: 21px; font-weight: 800; letter-spacing: -0.2px; line-height: 1.2; }
@@ -1769,7 +1771,7 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
    toggle can't flip its ink dark-on-dark (same convention as the comp
    artboards and the SVG tile fields). Covers the pre-existing stat tones
    and the new status band alike. */
-.landing { --ink: #F4F4F6; --grey: #9A9AA2; --grey-2: #8b93a0; --line: rgba(255, 255, 255, 0.09); --green: #3FC97F; --navy: #4F8DF2; --amber: #F2B23E; --red: #E5243B; --opp: #A874F5; --brand-energy: #F5A524; --brand-momentum: #2FB6E0; --brand-value: #3FC97F; --brand-risk: #E5243B; --brand-ai: #8B5CF6; }
+.landing { --ink: #F4F4F6; --grey: #9A9AA2; --grey-2: #8b93a0; --line: rgba(255, 255, 255, 0.09); --green: #3FC97F; --navy: #4F8DF2; --amber: #F2B23E; --red: #E5243B; --opp: #A874F5; --brand-energy: #F5A524; --brand-momentum: #2FB6E0; --brand-value: #3FC97F; --brand-risk: #E5243B; --brand-ai: #8B5CF6; --brand-ai-ink: #A78BFA; }
 .landing-status { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 18px; padding: 10px 14px; border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 12px; background: rgba(255, 255, 255, 0.03); width: fit-content; max-width: 100%; }
 .landing-status-t { display: flex; flex-direction: column; gap: 1px; }
 .landing-status-t b { font-size: 13.5px; }
@@ -1936,7 +1938,7 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .acep.open { border-color: var(--brand-ai); }
 .acep-head { display: flex; align-items: center; gap: 10px; width: 100%; background: var(--card); border: none; padding: 11px 13px; cursor: pointer; text-align: left; }
 .acep-head:hover { background: var(--panel-2); }
-.acep-agent { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--brand-ai); white-space: nowrap; }
+.acep-agent { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--brand-ai-ink); white-space: nowrap; }
 .acep-rb { font-size: 8.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: var(--grey-2); border: 1px solid var(--line); border-radius: 999px; padding: 1px 6px; }
 .acep-title { font-size: 12.5px; color: var(--ink); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .acep-conf { font-size: 13px; font-weight: 800; flex: 0 0 auto; }

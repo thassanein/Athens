@@ -98,7 +98,7 @@ export default function EnterpriseVitals({ db, compact = false }) {
 
       <div className="vit-vel" role="group" aria-label="Pulse and AI confidence">
         <span className="vit-v" title={`Enterprise Pulse — six-axis value radar · ${pulse.band}`}><b className="mono" style={{ color: 'var(--brand-intelligence)' }}>{pulse.index}</b><span>pulse index</span></span>
-        <span className="vit-v" title={`Mean confidence across ${aiSignals} deterministic agent signal${aiSignals === 1 ? '' : 's'}`}><b className="mono" style={{ color: 'var(--brand-ai)' }}>{aiConf}%</b><span>AI confidence</span></span>
+        <span className="vit-v" title={`Mean confidence across ${aiSignals} deterministic agent signal${aiSignals === 1 ? '' : 's'}`}><b className="mono" style={{ color: 'var(--brand-ai-ink)' }}>{aiConf}%</b><span>AI confidence</span></span>
       </div>
 
       <span className="vit-div" aria-hidden="true" />

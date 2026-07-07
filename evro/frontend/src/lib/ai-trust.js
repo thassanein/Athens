@@ -72,13 +72,20 @@ export function recTrust(db, rec) {
 
   const dependencies = []
   const linked = rec.linked_id ? db.initiatives.find((i) => i.id === rec.linked_id) : null
+  // linked_id may name an opportunity (o-*) rather than an initiative (i-*) —
+  // resolve that honestly instead of claiming "enterprise-level".
+  const linkedOpp = !linked && rec.linked_id ? (db.opportunities || []).find((o) => o.id === rec.linked_id) : null
   if (linked) {
     const g = dependencyGraph(db)
-    const upstream = g.edges.filter((e) => e.to === linked.id)
+    // only true 'blocks' edges are blockers — 'enables' edges are not.
+    const upstream = g.edges.filter((e) => e.to === linked.id && e.type === 'blocks')
       .map((e) => g.nodes.find((n) => n.id === e.from)).filter(Boolean)
     dependencies.push({ label: 'Linked initiative', value: `${linked.title} (${linked.stage})` })
     if (upstream.length) upstream.forEach((u) => dependencies.push({ label: 'Blocked by', value: `${u.title} (${u.rag})` }))
     else dependencies.push({ label: 'Blocking dependencies', value: 'none on the graph' })
+  } else if (linkedOpp) {
+    dependencies.push({ label: 'Linked opportunity', value: `${linkedOpp.title || rec.linked_id}` })
+    dependencies.push({ label: 'Blocking dependencies', value: 'Not yet an initiative — no committed graph edges.' })
   } else {
     dependencies.push({ label: 'Scope', value: 'Enterprise-level — not gated on a single initiative.' })
   }
