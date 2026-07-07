@@ -2654,3 +2654,21 @@ html.evro-tour .content { padding-bottom: 72vh; }
 /* funnel header tick + count */
 .pfun-tick { width: 30px; height: 4px; border-radius: 3px; }
 .pfun-count { font-size: 18px; font-weight: 800; line-height: 1; }
+
+/* Funnel bubble hover popover + highlight */
+.pfun-dot.active { transform: scale(1.35); box-shadow: inset 0 2px 5px rgba(255,255,255,0.3), 0 6px 18px rgba(0,0,0,0.5), 0 0 0 2px var(--ink); z-index: 4; }
+.pfun-dot.dim { opacity: 0.32; }
+.pfun-tip { position: absolute; z-index: 20; transform: translate(-50%, calc(-100% - 12px)); width: 250px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 40px rgba(0,0,0,0.45); padding: 11px 13px; pointer-events: none; animation: fade-in 0.12s ease; }
+.pfun-tip::after { content: ''; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%) rotate(45deg); width: 12px; height: 12px; background: var(--card); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.pfun-tip-h { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
+.pfun-tip-h b { font-size: 13px; line-height: 1.25; }
+.pfun-tip-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.pfun-tip-v { font-size: 19px; font-weight: 800; color: var(--green); margin-bottom: 7px; }
+.pfun-tip-rows { display: flex; flex-direction: column; gap: 3px; border-top: 1px solid var(--line); padding-top: 7px; }
+.pfun-tip-rows > div { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; }
+.pfun-tip-rows span { color: var(--grey); }
+.pfun-tip-rows b { color: var(--ink); font-weight: 700; }
+.pfun-tip-cta { margin-top: 7px; color: var(--brand-value); font-weight: 700; }
+
+/* Pipeline year scope toggle */
+.svp-yeartoggle { display: flex; gap: 5px; flex-wrap: wrap; }

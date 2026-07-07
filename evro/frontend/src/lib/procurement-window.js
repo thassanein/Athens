@@ -111,6 +111,35 @@ export function impactByYear(db, mode = 'rav') {
     .map((year) => ({ year, value: years[year], current: year === now }))
 }
 
+// The month the phasing window opens for an opportunity — start date if set,
+// else first reporting, else expected go-live. Shared by the year cuts below.
+export function phaseStart(db, o) {
+  const w = savingsWindow(db, o)
+  return (o?._raw?.start_date ? o._raw.start_date.slice(0, 7) : null)
+    || (w.launched ? w.launchPeriod : null)
+    || (o?._raw?.target_close ? o._raw.target_close.slice(0, 7) : null)
+}
+
+// One opportunity's phased value that lands in a given calendar year — its annual
+// run-rate spread month-by-month across its 12-month window. mode: 'rav'
+// (risk-adjusted, default) or 'gross'. This is the per-view "impact this year".
+export function opportunityYearValue(db, o, year, mode = 'rav') {
+  const annual = mode === 'gross' ? (o.value.potential || 0) : rav(o._raw)
+  if (annual <= 0) return 0
+  const start = phaseStart(db, o)
+  if (!start) return 0
+  const [sy, sm] = start.split('-').map(Number)
+  let v = 0
+  for (let k = 0; k < MEASUREMENT_MONTHS; k++) {
+    const idx = sm - 1 + k
+    if (sy + Math.floor(idx / 12) === year) v += annual / MEASUREMENT_MONTHS
+  }
+  return v
+}
+
+// The calendar years the book's impact spans (for the year scope selector).
+export function pipelineYears(db) { return impactByYear(db).map((y) => y.year) }
+
 export function pipelineBoard(db) {
   const opps = savingsOpportunities(db)
   return PIPELINE_PHASES.map((ph) => {

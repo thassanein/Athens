@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { savingsOpportunities, SAVINGS_LIFECYCLE, savingsType, savingsUnderManagement } from '../lib/procurement.js'
-import { pipelineBoard, windowSummary, savingsWindow, MEASUREMENT_MONTHS } from '../lib/procurement-window.js'
+import { pipelineBoard, windowSummary, savingsWindow, opportunityYearValue, pipelineYears, MEASUREMENT_MONTHS } from '../lib/procurement-window.js'
 import { money, pct, num } from '../lib/format.js'
 import ExportMenu from '../components/ExportMenu.jsx'
 
@@ -26,12 +26,18 @@ function WindowMeter({ w, compact = false }) {
 // are bubbles (sized by annual run-rate, coloured by savings type) that thin out
 // as they progress. Click a bubble to open its workspace.
 const FUNNEL_TAPER = [96, 78, 60, 44, 30] // band height % per phase (the taper)
-function FunnelView({ board, match, navigate }) {
-  const cols = board.map((c) => ({ ...c, cards: c.cards.filter(match) }))
-  const maxV = Math.max(1, ...cols.flatMap((c) => c.cards.map((o) => o.value.headline)))
+function FunnelView({ board, match, navigate, valueOf, valueLabel = '/yr' }) {
+  const cols = board.map((c) => ({ ...c, cards: c.cards.filter((o) => match(o) && valueOf(o) > 0) }))
+  const maxV = Math.max(1, ...cols.flatMap((c) => c.cards.map((o) => valueOf(o))))
   const dot = (v) => Math.round(11 + 30 * Math.sqrt(Math.min(v, maxV) / maxV)) // px
+  const [hover, setHover] = useState(null) // { o, x, y }
+  const show = (o) => (e) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    const p = e.currentTarget.closest('.pfun').getBoundingClientRect()
+    setHover({ o, x: r.left - p.left + r.width / 2, y: r.top - p.top })
+  }
   return (
-    <div className="pfun">
+    <div className="pfun" onMouseLeave={() => setHover(null)}>
       <svg className="pfun-bg" viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true">
         <defs>
           <linearGradient id="pfunG" x1="0" y1="0" x2="1" y2="0">
@@ -54,22 +60,41 @@ function FunnelView({ board, match, navigate }) {
               <div className="pfun-band" style={{ height: `${FUNNEL_TAPER[cols.indexOf(col)] || 30}%` }}>
                 {col.cards.map((o) => {
                   const st = savingsType(o.savingsType)
-                  const d = dot(o.value.headline)
+                  const d = dot(valueOf(o))
+                  const active = hover && hover.o.id === o.id
                   return (
-                    <button key={o.id} className="pfun-dot" onClick={() => navigate('opportunity', { id: o.id })}
+                    <button key={o.id} className={`pfun-dot ${active ? 'active' : ''} ${hover && !active ? 'dim' : ''}`} onClick={() => navigate('opportunity', { id: o.id })}
+                      onMouseEnter={show(o)} onFocus={show(o)} onMouseLeave={() => setHover(null)} onBlur={() => setHover(null)}
                       style={{ width: d, height: d, background: st.accent, borderColor: o.ragStatus === 'red' ? 'var(--red)' : 'transparent' }}
-                      title={`${o.name} · ${st.label} · ${money(o.value.headline)}/yr · ${o.stageLabel}`} aria-label={`${o.name}, ${money(o.value.headline)} per year`} />
+                      aria-label={`${o.name}, ${money(o.value.headline)} per year`} />
                   )
                 })}
               </div>
             </div>
             <div className="pfun-foot">
-              <div className="mono pfun-foot-v" style={{ color: col.tone }}>{money(col.cards.reduce((s, o) => s + o.value.headline, 0))}<span className="pboard-yr">/yr</span></div>
+              <div className="mono pfun-foot-v" style={{ color: col.tone }}>{money(col.cards.reduce((s, o) => s + valueOf(o), 0))}<span className="pboard-yr">{valueLabel}</span></div>
               <div className="tiny muted">{col.gloss}</div>
             </div>
           </div>
         ))}
       </div>
+      {hover && (() => {
+        const o = hover.o; const st = savingsType(o.savingsType)
+        return (
+          <div className="pfun-tip" style={{ left: hover.x, top: hover.y }} role="tooltip">
+            <div className="pfun-tip-h"><span className="pfun-tip-dot" style={{ background: st.accent }} /><b>{o.name}</b>{o.ragStatus === 'red' && <span className="badge b-red">at risk</span>}</div>
+            <div className="pfun-tip-v mono">{money(valueOf(o))}<span className="pboard-yr">{valueLabel}</span></div>
+            <div className="pfun-tip-rows">
+              <div><span>Type</span><b style={{ color: st.accent }}>{st.label}</b></div>
+              <div><span>Stage</span><b>{o.stageLabel}</b></div>
+              <div><span>Confidence</span><b className="mono">{pct(o.confidence)}</b></div>
+              <div><span>Owner</span><b>{o.owner}</b></div>
+              {o.window && <div><span>Window</span><b>{o.window.launched ? (o.window.graduated ? 'banked' : `mo ${o.window.monthsElapsed}/${MEASUREMENT_MONTHS}`) : 'pre-launch'}</b></div>}
+            </div>
+            <div className="pfun-tip-cta tiny">Click to open workspace →</div>
+          </div>
+        )
+      })()}
     </div>
   )
 }
@@ -81,9 +106,16 @@ export default function SavingsPipeline({ db, navigate, flash }) {
   const win = useMemo(() => windowSummary(db), [db])
   const [type, setType] = useState('all')
   const [view, setView] = useState('funnel')
+  const [year, setYear] = useState('all')
+  const years = useMemo(() => pipelineYears(db), [db])
 
-  const match = (o) => type === 'all' || o.savingsType === type
-  const shown = opps.filter(match)
+  // Time phasing: 'all years' shows each saving's annual run-rate (headline);
+  // a specific year shows the risk-adjusted impact that lands in that year.
+  const valueOf = (o) => (year === 'all' ? o.value.headline : opportunityYearValue(db, o, year, 'rav'))
+  const valueLabel = year === 'all' ? '/yr' : ` ${year}`
+  const match = (o) => (type === 'all' || o.savingsType === type)
+  const inScope = (o) => match(o) && valueOf(o) > 0
+  const shown = opps.filter(inScope)
   const byStage = SAVINGS_LIFECYCLE.map((s) => ({ stage: s, rows: shown.filter((o) => o.stage === s.key) })).filter((g) => g.rows.length)
   const types = [{ key: 'all', label: 'All types' }, ...[...new Set(opps.map((o) => o.savingsType))].map((k) => ({ key: k, label: savingsType(k).label }))]
 
@@ -116,9 +148,19 @@ export default function SavingsPipeline({ db, navigate, flash }) {
           <button role="tab" aria-selected={view === 'board'} className={`chip ${view === 'board' ? 'on' : ''}`} onClick={() => setView('board')}>Board</button>
           <button role="tab" aria-selected={view === 'list'} className={`chip ${view === 'list' ? 'on' : ''}`} onClick={() => setView('list')}>List</button>
         </div>
+        <span className="svp-sep" />
+        <div className="svp-yeartoggle" role="tablist" aria-label="Impact year">
+          <button role="tab" aria-selected={year === 'all'} className={`chip ${year === 'all' ? 'on' : ''}`} onClick={() => setYear('all')}>All yrs</button>
+          {years.map((y) => (
+            <button key={y} role="tab" aria-selected={year === y} className={`chip ${year === y ? 'on' : ''}`} onClick={() => setYear(y)}>{y}</button>
+          ))}
+        </div>
         <span className="spacer" />
         <ExportMenu db={db} flash={flash} label="Export book" />
       </div>
+      {year !== 'all' && (
+        <p className="tiny muted" style={{ margin: '-6px 0 12px' }}>Showing <b>{year} risk-adjusted impact</b> — each saving's annual run-rate phased into {year}. Switch to “All yrs” for full annual run-rate.</p>
+      )}
 
       {/* Savings-type toggle — doubles as the colour legend for the funnel/board */}
       <div className="svp-typebar" role="tablist" aria-label="Filter by savings type">
@@ -136,18 +178,18 @@ export default function SavingsPipeline({ db, navigate, flash }) {
 
       {view === 'funnel' ? (
         <div className="card pad section-gap">
-          <FunnelView board={board} match={match} navigate={navigate} />
+          <FunnelView board={board} match={match} navigate={navigate} valueOf={valueOf} valueLabel={valueLabel} />
         </div>
       ) : view === 'board' ? (
         <div className="pboard">
           {board.map((col) => {
-            const cards = col.cards.filter(match)
+            const cards = col.cards.filter(inScope)
             return (
               <div key={col.key} className="pboard-col">
                 <div className="pboard-h" style={{ borderTopColor: col.tone }}>
                   <div className="pboard-h-t"><b>{col.label}</b><span className="badge b-grey">{cards.length}</span></div>
                   <div className="tiny muted">{col.gloss}</div>
-                  <div className="mono pboard-val" style={{ color: col.tone }}>{money(cards.reduce((s, o) => s + o.value.headline, 0))}<span className="pboard-yr">/yr</span></div>
+                  <div className="mono pboard-val" style={{ color: col.tone }}>{money(cards.reduce((s, o) => s + valueOf(o), 0))}<span className="pboard-yr">{valueLabel}</span></div>
                 </div>
                 <div className="pboard-cards">
                   {cards.length === 0 && <div className="pboard-empty tiny muted">—</div>}
@@ -163,7 +205,7 @@ export default function SavingsPipeline({ db, navigate, flash }) {
                           <span className="badge" style={{ background: 'color-mix(in srgb, ' + st.accent + ' 20%, transparent)', color: st.accent }}>{st.short}</span>
                           <span className="tiny muted">{o.owner}</span>
                           <span className="spacer" />
-                          <b className="mono">{money(o.value.headline)}{o.value.bucket !== 'realized' && <span className="pboard-yr">/yr</span>}</b>
+                          <b className="mono">{money(valueOf(o))}{(year !== 'all' || o.value.bucket !== 'realized') && <span className="pboard-yr">{valueLabel}</span>}</b>
                         </div>
                         {(col.key === 'realized' || col.key === 'execute' || col.key === 'closed') && <WindowMeter w={o.window} compact />}
                       </button>
@@ -181,12 +223,12 @@ export default function SavingsPipeline({ db, navigate, flash }) {
               <h3>{stage.label}</h3>
               <span className="tiny muted" style={{ marginLeft: 8 }}>{stage.gloss}</span>
               <span className="spacer" />
-              <span className="badge b-grey">{rows.length} · {money(rows.reduce((s, o) => s + o.value.headline, 0))}</span>
+              <span className="badge b-grey">{rows.length} · {money(rows.reduce((s, o) => s + valueOf(o), 0))}{year !== 'all' ? ` (${year})` : ''}</span>
             </div>
             {/* desktop: dense table */}
             <div className="table-wrap svp-tablewrap">
               <table className="tbl">
-                <thead><tr><th>Opportunity</th><th>Type</th><th>Owner</th><th>12-mo window</th><th className="num">Confidence</th><th className="num">Value</th></tr></thead>
+                <thead><tr><th>Opportunity</th><th>Type</th><th>Owner</th><th>12-mo window</th><th className="num">Confidence</th><th className="num">{year === 'all' ? 'Annual value' : `${year} impact`}</th></tr></thead>
                 <tbody>
                   {rows.map((o) => {
                     const st = savingsType(o.savingsType)
@@ -199,7 +241,7 @@ export default function SavingsPipeline({ db, navigate, flash }) {
                         <td>{o.owner}</td>
                         <td style={{ minWidth: 120 }}><WindowMeter w={savingsWindow(db, o)} compact /></td>
                         <td className="num mono">{pct(o.confidence)}</td>
-                        <td className="num mono">{money(o.value.headline)}</td>
+                        <td className="num mono">{money(valueOf(o))}</td>
                       </tr>
                     )
                   })}
@@ -221,7 +263,7 @@ export default function SavingsPipeline({ db, navigate, flash }) {
                       <span className="tiny muted">{o.owner}</span>
                       <span className="spacer" />
                       <span className="mono tiny">{pct(o.confidence)}</span>
-                      <b className="mono svp-card-v">{money(o.value.headline)}</b>
+                      <b className="mono svp-card-v">{money(valueOf(o))}</b>
                     </div>
                     <WindowMeter w={savingsWindow(db, o)} compact />
                   </button>
