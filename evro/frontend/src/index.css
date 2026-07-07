@@ -2384,3 +2384,21 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .expm-menu button:hover { background: color-mix(in srgb, var(--brand-value) 12%, transparent); }
 .expm-menu button span { font-size: 10.5px; color: var(--grey); font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
 @media (max-width: 560px) { .pdash-toolbar { flex-direction: column; } }
+
+/* Procurement proactive agents — next best actions */
+.agx { border-left: 3px solid var(--brand-ai-ink); }
+.agx-ic { display: inline-flex; vertical-align: -3px; margin-right: 5px; color: var(--brand-ai-ink); }
+.agx-list { display: flex; flex-direction: column; gap: 8px; }
+.agx-item { display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; align-items: start; border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; }
+.agx-item.open { border-color: color-mix(in srgb, var(--brand-ai-ink) 45%, var(--line)); }
+.agx-agent { font-size: 10px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--brand-ai-ink); display: flex; align-items: center; gap: 8px; }
+.agx-conf { color: var(--grey); font-weight: 700; }
+.agx-title { font-size: 14px; font-weight: 700; margin: 3px 0 2px; }
+.agx-detail { font-size: 12px; color: var(--grey); line-height: 1.45; }
+.agx-side { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.agx-val { font-size: 17px; font-weight: 800; color: var(--green); }
+.agx-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.agx-ev { grid-column: 1 / -1; border-top: 1px solid var(--line); margin-top: 2px; padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.agx-ev-row { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--grey); }
+.agx-ev-row b { color: var(--ink); }
+@media (max-width: 560px) { .agx-item { grid-template-columns: 1fr; } .agx-side { text-align: left; align-items: flex-start; } .agx-actions { align-items: flex-start; } }

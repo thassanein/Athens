@@ -557,6 +557,54 @@ export function procurementBriefs(db) {
   ]
 }
 
+// ── Proactive agents — the always-on next-best-action layer. Each EVRO agent
+// watches one failure mode across the book and proposes the highest-value move,
+// with its confidence and the evidence behind it. Deterministic and rules-based;
+// ranked by value at stake. This is decision intelligence pushing to the exec,
+// not waiting to be asked.
+export function procurementActions(db) {
+  const opps = savingsOpportunities(db)
+  const leak = leakageBreakdown(db)
+  const queue = decisionQueue(db)
+  const reds = opps.filter((o) => o.ragStatus === 'red')
+  const pending = opps.filter((o) => o._raw.request)
+  const gaps = opps.filter((o) => o.nextDecision && o.nextDecision.missing.length > 0)
+  const unmitig = reds.filter((o) => (o._raw.risks || []).some((r) => r.score >= 15 && !r.countermeasure))
+    .sort((a, b) => b.value.headline - a.value.headline)
+  const actions = []
+  if (leak.timing > 10000) actions.push({
+    key: 'leakage', agent: 'Leakage agent', title: `Recover ${money(leak.timing)} of timing leakage`,
+    detail: 'Negotiated value that is not yet flowing as a run-rate — recoverable by driving on-contract compliance.',
+    cta: 'Review leaking deals', value: leak.timing, confidence: 0.8,
+    evidence: leak.items.slice(0, 3).map((it) => ({ label: it.title, value: money(it.total) })), nav: { page: 'savingspipeline' },
+  })
+  if (queue[0]) { const o = queue[0]; actions.push({
+    key: 'decision', agent: 'Decision agent', title: `Decide: ${o.name}`,
+    detail: `${o.nextDecision.label} — ${o.nextDecision.missing.length ? `${o.nextDecision.missing.length} evidence gap${o.nextDecision.missing.length === 1 ? '' : 's'} to close` : 'ready to take'}.`,
+    cta: 'Open Decision Center', value: o.nextDecision.expectedValue, confidence: o.confidence,
+    evidence: [{ label: 'Owner', value: o.owner }, { label: 'Expected value', value: money(o.nextDecision.expectedValue) }], nav: { page: 'decisioncenter' },
+  }) }
+  if (unmitig[0]) { const o = unmitig[0]; actions.push({
+    key: 'risk', agent: 'Risk agent', title: `Mitigate ${o.name}`,
+    detail: `Red status with a High risk (score ${o.worstRisk}) and no logged countermeasure — the value is haircut until mitigated.`,
+    cta: 'Open workspace', value: o.value.headline, confidence: 0.75,
+    evidence: [{ label: 'Worst risk', value: String(o.worstRisk) }, { label: 'Value exposed', value: money(o.value.headline) }], nav: { page: 'opportunity', id: o.id },
+  }) }
+  if (pending.length) { const v = pending.reduce((s, o) => s + o.value.committed, 0); actions.push({
+    key: 'approvals', agent: 'Approvals agent', title: `Chase ${pending.length} pending sign-off${pending.length === 1 ? '' : 's'}`,
+    detail: 'Sign-offs waiting in the governance ladder are holding committed value on the bench.',
+    cta: 'Open Decision Center', value: v, confidence: 0.9,
+    evidence: pending.slice(0, 3).map((o) => ({ label: o.name, value: money(o.value.committed) })), nav: { page: 'decisioncenter' },
+  }) }
+  if (gaps.length) { const v = gaps.reduce((s, o) => s + o.nextDecision.expectedValue, 0); actions.push({
+    key: 'gaps', agent: 'Evidence agent', title: `Close ${gaps.length} evidence gap${gaps.length === 1 ? '' : 's'}`,
+    detail: 'Gate requirements outstanding across the book — closing them unblocks the next gates.',
+    cta: 'Open Decision Center', value: v, confidence: 0.85,
+    evidence: gaps.slice(0, 3).map((o) => ({ label: o.name, value: (o.nextDecision.missing[0] || 'gate requirement') })), nav: { page: 'decisioncenter' },
+  }) }
+  return actions.sort((a, b) => b.value - a.value)
+}
+
 // The full model in one call — what every Procurement surface consumes.
 export function procurementModel(db) {
   return {

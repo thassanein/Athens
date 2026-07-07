@@ -6,6 +6,7 @@ import { Tile } from '../components/ui.jsx'
 import { LineChart } from '../components/Charts.jsx'
 import Term from '../components/Term.jsx'
 import ExportMenu from '../components/ExportMenu.jsx'
+import AgentActions from '../components/AgentActions.jsx'
 
 // Procurement Executive Dashboard (Phase One W3) — the five-second read: how
 // much value is under management, where it is in the lifecycle, how confident
@@ -130,6 +131,9 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
         <Tile tone="red" label="At-risk value" value={money(sum.atRisk)} sub={`${num(redCount)} red opportunit${redCount === 1 ? 'y' : 'ies'}`} />
         <Tile tone="navy" label="Savings confidence" value={pct(sum.confidence)} sub="value-weighted across the book" />
       </div>
+
+      {/* Proactive agents — always-on next best actions */}
+      <AgentActions db={db} navigate={navigate} />
 
       {/* Executive narrative — what happened, why it matters, what next */}
       <div className="pdash-narr card pad section-gap">
