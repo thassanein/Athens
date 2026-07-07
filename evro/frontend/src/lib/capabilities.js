@@ -76,7 +76,7 @@ const ENTL = ['exec', 'admin', 'fpna', 'leader']
 export const PROCUREMENT_NAV = [
   { group: 'Command', items: [
     ['mission', 'Home', IconCockpit, ALL],
-    ['exec', 'Executive Dashboard', IconExec, ENT],
+    ['procurement', 'Executive Dashboard', IconExec, ENTL],
   ] },
   { group: 'Procurement', items: [
     ['portfolio', 'Savings Pipeline', IconPortfolio, ENTL],
