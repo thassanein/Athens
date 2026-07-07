@@ -4,6 +4,7 @@ import {
   lifecycleMeta, VALUE_CHAIN, decisionHistory, opportunityInsight,
 } from '../lib/procurement.js'
 import { categoryName, groupName, index } from '../lib/engine.js'
+import { savingsWindow, MEASUREMENT_MONTHS } from '../lib/procurement-window.js'
 import { money, pct, num, dateLabel } from '../lib/format.js'
 import { IconBack, IconAI } from '../components/Icons.jsx'
 import EvidenceDrawer from '../components/EvidenceDrawer.jsx'
@@ -92,11 +93,16 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
           </div>
           <h2 className="ows-title">{o.name}</h2>
           <div className="ows-head-facts">
-            <Field label="Value"><span className="mono" style={{ color: 'var(--green)', fontSize: 18 }}>{money(o.value.headline)}</span></Field>
+            <Field label="Annual impact"><span className="mono" style={{ color: 'var(--green)', fontSize: 18 }}>{money(o.value.headline)}<span className="pboard-yr">/yr</span></span></Field>
             <Field label="Confidence"><span className="mono">{pct(o.confidence)}</span></Field>
+            <Field label={`Measurement (${MEASUREMENT_MONTHS}-mo)`}>{(() => {
+              const w = savingsWindow(db, o)
+              if (!w.launched) return <span className="tiny muted">pre-launch</span>
+              if (w.graduated) return <span className="mono">banked</span>
+              return <span className="mono">mo {w.monthsElapsed}/{MEASUREMENT_MONTHS}</span>
+            })()}</Field>
             <Field label="Owner">{o.owner}</Field>
             <Field label="Sponsor">{o.sponsor}</Field>
-            <Field label="Supplier">{o.supplier}</Field>
           </div>
         </div>
         {o.nextDecision && (

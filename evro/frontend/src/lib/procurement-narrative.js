@@ -44,14 +44,14 @@ function bookNarrative(db) {
     title: 'Procurement value — executive brief',
     dateline: dateline(db),
     figures: [
-      { label: 'Under management', value: money(sum.total) },
+      { label: 'Annual impact', value: `${money(sum.total)}/yr` },
       { label: 'Realized YTD', value: money(sum.lenses.realized) },
       { label: 'At risk', value: money(sum.atRisk) },
       { label: 'Confidence', value: pct(sum.confidence) },
     ],
     sections: [
       { heading: 'Position', paragraphs: [
-        `Procurement is managing ${money(sum.total)} of value across ${num(sum.count)} opportunities at ${pct(sum.confidence)} value-weighted confidence. Of that book, ${money(sum.lenses.identified)} is identified, ${money(sum.lenses.committed)} is committed into the plan, and ${money(sum.lenses.realized)} has been FP&A-validated year-to-date. Validated value is landing at ${money(vel.perMonth)} a month over ${num(vel.elapsedMonths)} elapsed months.`,
+        `Procurement is managing ${money(sum.total)} of annual impact across ${num(sum.count)} opportunities at ${pct(sum.confidence)} value-weighted confidence — each saving measured over a 12-month window from first financial reporting. Of that book, ${money(sum.lenses.identified)} is identified, ${money(sum.lenses.committed)} is committed into the plan, and ${money(sum.lenses.realized)} has been FP&A-validated year-to-date. Validated value is landing at ${money(vel.perMonth)} a month over ${num(vel.elapsedMonths)} elapsed months.`,
         `The value concentrates in ${list(topTypes)}. Read left to right, the funnel is healthy: the constraint is conversion of committed value into realized run-rate, not a shortage of pipeline.`,
       ] },
       { heading: 'Risk & leakage', paragraphs: [
