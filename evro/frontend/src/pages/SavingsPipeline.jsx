@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react'
 import { savingsOpportunities, SAVINGS_LIFECYCLE, savingsType, savingsUnderManagement } from '../lib/procurement.js'
 import { money, pct, num } from '../lib/format.js'
+import ExportMenu from '../components/ExportMenu.jsx'
 
 // Savings Pipeline (Phase One W4) — the whole procurement book in one list,
 // grouped by lifecycle stage, every row opening the Opportunity Workspace.
 // The nav entry point that the dashboard, decision queue and blockers all drill
 // into. One reusable value object (savingsOpportunity) behind every figure.
 
-export default function SavingsPipeline({ db, navigate }) {
+export default function SavingsPipeline({ db, navigate, flash }) {
   const opps = useMemo(() => savingsOpportunities(db), [db])
   const sum = useMemo(() => savingsUnderManagement(db), [db])
   const [type, setType] = useState('all')
@@ -27,6 +28,8 @@ export default function SavingsPipeline({ db, navigate }) {
         {types.map((t) => (
           <button key={t.key} className={`chip ${type === t.key ? 'on' : ''}`} onClick={() => setType(t.key)}>{t.label}</button>
         ))}
+        <span className="spacer" />
+        <ExportMenu db={db} flash={flash} label="Export book" />
       </div>
 
       {byStage.map(({ stage, rows }) => (

@@ -5,6 +5,7 @@ import { money, pct, num, monthLabel, dateLabel } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
 import { LineChart } from '../components/Charts.jsx'
 import Term from '../components/Term.jsx'
+import ExportMenu from '../components/ExportMenu.jsx'
 
 // Procurement Executive Dashboard (Phase One W3) — the five-second read: how
 // much value is under management, where it is in the lifecycle, how confident
@@ -50,7 +51,7 @@ function TypeBars({ byType }) {
   )
 }
 
-export default function ProcurementDashboard({ db, navigate }) {
+export default function ProcurementDashboard({ db, navigate, flash }) {
   const m = useMemo(() => procurementModel(db), [db])
   const { sum, pipeline, byType, velocity, blockers, opportunities } = m
   const fy = db.meta.fiscalYear
@@ -91,11 +92,13 @@ export default function ProcurementDashboard({ db, navigate }) {
 
   return (
     <>
-      <p className="page-intro">
-        <b>Procurement</b> — the first active capability of EVRO. Enterprise savings under management across {num(sum.count)} opportunities,
-        staged through one shared lifecycle. Every figure is deterministic and reconciles across the workspace, narrative and evidence views —
-        no savings target, value ranked by return.
-      </p>
+      <div className="pdash-toolbar">
+        <p className="page-intro" style={{ margin: 0 }}>
+          <b>Procurement</b> — the first active capability of EVRO. Enterprise savings under management across {num(sum.count)} opportunities,
+          staged through one shared lifecycle. Every figure is deterministic and reconciles across the workspace, narrative and evidence views.
+        </p>
+        <ExportMenu db={db} flash={flash} label="Export board pack" />
+      </div>
 
       {/* Savings Under Management — the headline + the four progress lenses */}
       <div className="pdash-sum card pad">
