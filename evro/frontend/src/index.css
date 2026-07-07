@@ -1966,3 +1966,32 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .emp-empty { font-size: 12.5px; color: var(--grey-2); line-height: 1.55; }
 .emp-foot { display: flex; align-items: flex-start; gap: 14px; margin-top: 14px; flex-wrap: wrap; }
 .emp-privacy { flex: 1; min-width: 240px; font-size: 11px; color: var(--grey-2); line-height: 1.5; margin: 0; }
+
+/* ============================================================================
+   6D Wave 5 — executive focus modes + mission lifecycle
+   ============================================================================ */
+.fms { margin: 4px 0 12px; }
+.fms-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fms-l { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey-2); }
+.fms-seg { flex-wrap: wrap; }
+.fms-what { font-size: 11.5px; color: var(--grey); line-height: 1.5; margin-top: 8px; background: var(--panel-2); border-radius: var(--r); padding: 7px 11px; }
+.fms-what b { color: var(--ink); }
+.fms-note { color: var(--grey-2); font-style: italic; }
+
+.mlc { display: flex; flex-direction: column; gap: 12px; }
+.mlc-track { display: flex; flex-wrap: wrap; align-items: center; gap: 0; list-style: none; margin: 0; padding: 0; }
+.mlc-phase { display: flex; align-items: center; gap: 6px; padding-right: 10px; position: relative; }
+.mlc-phase:not(:last-child)::after { content: '→'; color: var(--grey-2); margin-left: 4px; }
+.mlc-dot { width: 9px; height: 9px; border-radius: 999px; background: var(--line); border: 1px solid var(--grey-2); flex: 0 0 auto; }
+.mlc-phase.done .mlc-dot { background: var(--green); border-color: var(--green); }
+.mlc-phase.current .mlc-dot { background: var(--navy); border-color: var(--navy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--navy) 22%, transparent); }
+.mlc-plabel { font-size: 11px; font-weight: 700; color: var(--grey-2); }
+.mlc-phase.done .mlc-plabel { color: var(--grey); }
+.mlc-phase.current .mlc-plabel { color: var(--ink); }
+.mlc-risk { font-size: 10.5px; font-weight: 800; color: var(--red); margin-left: 6px; }
+.mlc-profile { display: flex; flex-wrap: wrap; gap: 6px; }
+.mlc-chip { font-size: 10.5px; font-weight: 700; color: var(--grey); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.mlc-star-off { opacity: 0.28; }
+.mlc-link { color: var(--navy); }
+.mlc-complete { font-size: 11.5px; color: var(--grey); line-height: 1.5; background: color-mix(in srgb, var(--green) 8%, transparent); border-left: 3px solid var(--green); border-radius: 0 var(--r) var(--r) 0; padding: 8px 11px; }
+.mlc-complete b { color: var(--ink); }

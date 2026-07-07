@@ -1,9 +1,13 @@
 import { useMemo, useState } from 'react'
 import { missionQueue, missionWhy, MISSION_CLASSES } from '../lib/mission.js'
 import { missionProfile, missionCeremony } from '../lib/mission-engine.js'
+import { orderMissions, focusLead } from '../lib/mission-focus.js'
+import { getPref, setPref } from '../lib/memory.js'
 import { canApproveRoles, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money, pct } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
+import FocusModeSwitcher from '../components/FocusModeSwitcher.jsx'
+import MissionLifecycle from '../components/MissionLifecycle.jsx'
 import { SymMission } from '../components/Symbols.jsx'
 import { IconAI } from '../components/Icons.jsx'
 
@@ -19,9 +23,14 @@ const URG_TONE = { Now: 'var(--red)', 'This week': 'var(--amber)', 'This month':
 export default function MissionQueue({ db, user, caps, dispatch, navigate, flash }) {
   const [view, setView] = useState('ranked') // ranked | class
   const [whyKey, setWhyKey] = useState(null)
+  const [lifeKey, setLifeKey] = useState(null) // mission lifecycle expand (6D W5)
   const [delKey, setDelKey] = useState(null)
   const [ceremony, setCeremony] = useState(null) // completion ceremony (6B item 5)
+  const [focus, setFocusState] = useState(() => getPref('focus') || 'ceo') // executive focus mode (6D W5)
   const q = useMemo(() => missionQueue(db, user), [db, user])
+  const ranked = useMemo(() => orderMissions(q.missions, db, focus), [q.missions, db, focus])
+  const lead = useMemo(() => focusLead(q.missions, db, focus), [q.missions, db, focus])
+  const setFocus = (k) => { setFocusState(k); setPref('focus', k, db.meta.now) } // remembered by Executive Memory
   const assignables = db.people.filter((p) => ['owner', 'procurement', 'leader', 'admin'].includes(p.role))
 
   const act = async (m) => {
@@ -73,10 +82,12 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
             {m.cls === 'ai' && <IconAI />} {c.label}
           </span>
           {m.value > 0 && <span className="mq-val mono">{money(m.value)}</span>}
-          <button className="mq-whybtn" onClick={() => { setWhyKey(open ? null : m.key); setDelKey(null) }} aria-expanded={open} title="Why is this ranked here?">why?</button>
-          {canDelegate && <button className="btn sm ghost" onClick={() => { setDelKey(delKey === m.key ? null : m.key); setWhyKey(null) }}>Delegate</button>}
+          <button className="mq-whybtn" onClick={() => { setWhyKey(open ? null : m.key); setLifeKey(null); setDelKey(null) }} aria-expanded={open} title="Why is this ranked here?">why?</button>
+          <button className="mq-whybtn" onClick={() => { setLifeKey(lifeKey === m.key ? null : m.key); setWhyKey(null); setDelKey(null) }} aria-expanded={lifeKey === m.key} title="Mission lifecycle">lifecycle</button>
+          {canDelegate && <button className="btn sm ghost" onClick={() => { setDelKey(delKey === m.key ? null : m.key); setWhyKey(null); setLifeKey(null) }}>Delegate</button>}
           <button className="btn sm" onClick={() => act(m)}>{m.action === 'approve' ? 'Approve' : m.action === 'navigate' ? 'View' : 'Open'}</button>
         </div>
+        {lifeKey === m.key && <div className="mq-explain"><MissionLifecycle db={db} m={m} /></div>}
         {open && (
           <div className="mq-explain">
             <b>Why {rank != null ? `#${rank}` : 'here'}?</b>
@@ -143,9 +154,13 @@ export default function MissionQueue({ db, user, caps, dispatch, navigate, flash
 
         {q.missions.length === 0 && <div className="muted" style={{ padding: 8 }}>Queue is clear — nothing needs a human right now.</div>}
 
+        {view === 'ranked' && q.missions.length > 0 && (
+          <FocusModeSwitcher value={focus} onChange={setFocus} lead={lead} />
+        )}
+
         {view === 'ranked' && (
           <div className="mq-list">
-            {q.missions.map((m, k) => <MissionRow key={m.key} m={m} rank={k + 1} />)}
+            {ranked.map((m, k) => <MissionRow key={m.key} m={m} rank={k + 1} />)}
           </div>
         )}
 
