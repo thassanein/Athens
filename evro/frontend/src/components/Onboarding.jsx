@@ -144,17 +144,20 @@ export default function Onboarding({ db, navigate, onClose }) {
   }, [i])
 
   // spotlight: find the target, scroll it into view, measure it (with retries
-  // while the freshly-navigated page mounts).
+  // while the freshly-navigated page mounts). On phones the panel is a bottom
+  // sheet, so the target is scrolled to the TOP of the screen (block:'start')
+  // to keep it clear of the sheet; on desktop it's centered.
   useEffect(() => {
     let timer, tries = 0
+    const mobile = typeof window !== 'undefined' && window.innerWidth <= 640
     const measure = () => {
       const el = step.target ? document.querySelector(step.target) : null
       if (el) {
-        el.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'center' })
+        el.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: mobile ? 'start' : 'center' })
         timer = setTimeout(() => {
           const r = el.getBoundingClientRect()
           setRect({ top: r.top, left: r.left, width: r.width, height: r.height })
-        }, reduced() ? 0 : 300)
+        }, reduced() ? 0 : 320)
       } else if (tries++ < 10) { timer = setTimeout(measure, 110) } else setRect(null)
     }
     setRect(null); measure()

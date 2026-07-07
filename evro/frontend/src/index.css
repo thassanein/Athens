@@ -2306,3 +2306,26 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .onb-solves-t { font-size: 12.5px; line-height: 1.5; color: var(--ink); }
 .onb .onb-solves { animation: onbRise .54s .13s cubic-bezier(.2,.7,.2,1) both; }
 @media (prefers-reduced-motion: reduce) { .onb .onb-solves { animation: none; } }
+
+/* Onboarding — phone optimization (compact bottom sheet, target stays clear) */
+@media (max-width: 640px) {
+  .onb { left: 8px; right: 8px; bottom: 8px; width: auto; transform: none;
+    max-height: 58vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    border-radius: 16px; padding: 13px 14px 14px; }
+  .onb.onb-in { animation: onbUpMobile .34s cubic-bezier(.2,.7,.2,1); }
+  @keyframes onbUpMobile { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .onb-prog { position: sticky; top: 0; z-index: 1; }
+  .onb-title { font-size: 16px; line-height: 1.22; margin-bottom: 6px; }
+  .onb-body { font-size: 12.5px; line-height: 1.5; margin-bottom: 10px; }
+  .onb-metrics { gap: 14px 18px; padding: 8px 0; margin-bottom: 8px; }
+  .onb-metric-v { font-size: 15px; }
+  .onb-solves { padding: 7px 10px; margin-bottom: 10px; }
+  .onb-solves-t { font-size: 12px; }
+  .onb-eyebrow { font-size: 9px; }
+  .onb-foot { flex-wrap: wrap; gap: 8px 10px; }
+  .onb-dots { order: -1; flex: 1 1 100%; justify-content: center; flex-wrap: wrap; }
+  .onb-time { display: none; }
+  .onb-foot .btn { flex: 1 1 auto; justify-content: center; }
+  .onb-spot { box-shadow: 0 0 0 9999px rgba(2,4,10,0.66), 0 0 0 2px var(--brand-value), 0 0 22px 4px color-mix(in srgb, var(--brand-value) 55%, transparent); }
+}
+@media (max-width: 640px) and (prefers-reduced-motion: reduce) { .onb.onb-in { animation: none; } }
