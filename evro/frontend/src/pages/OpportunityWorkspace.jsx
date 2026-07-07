@@ -67,7 +67,7 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
     text: `Evidence backing ${o.name}: baseline source, validation sign-offs and the approval trail behind ${money(o.value.headline)} at ${pct(o.confidence)} confidence.`,
     source: b.source_ref || 'Operating record',
     evidence: o.evidence.map((e) => ({ label: e.label, value: e.ref })),
-    nav: { page: 'decisions', label: 'Open the Decision Center' },
+    nav: { page: 'decisioncenter', label: 'Open the Decision Center' },
   })
 
   return (
@@ -95,7 +95,7 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
             <div className="ows-nextdec-l">NEXT DECISION</div>
             <div className="ows-nextdec-t">{o.nextDecision.label}</div>
             <div className="tiny muted">{o.nextDecision.dueBy ? `due ${dateLabel(o.nextDecision.dueBy)}` : 'no date set'} · {money(o.nextDecision.expectedValue)} EV</div>
-            <button className="btn accent sm" onClick={() => navigate('decisions')}>Decide →</button>
+            <button className="btn accent sm" onClick={() => navigate('decisioncenter')}>Decide →</button>
           </div>
         )}
       </div>

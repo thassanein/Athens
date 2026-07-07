@@ -146,7 +146,7 @@ export default function ProcurementDashboard({ db, navigate }) {
 
       <div className="grid cols-2 section-gap">
         <div className="card pad">
-          <div className="card-h"><h3>Decision queue</h3><span className="spacer" /><button className="btn sm" onClick={() => navigate('decisions')}>Decision Center →</button></div>
+          <div className="card-h"><h3>Decision queue</h3><span className="spacer" /><button className="btn sm" onClick={() => navigate('decisioncenter')}>Decision Center →</button></div>
           {decisionQueue.length === 0 ? (
             <p className="muted" style={{ padding: '10px 2px' }}>Clear — no opportunity is waiting on a decision.</p>
           ) : (

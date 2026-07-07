@@ -16,6 +16,7 @@ import {
   approvalState, nextStage, gateCheck, personName, categoryName, groupName,
   index, frame, depEdges, ROLE_APPROVE_LABEL,
 } from './engine.js'
+import { money } from './format.js'
 
 // ── Savings governance — one shared language across Procurement / Finance /
 // Operations / Leadership. Definitions are the deliverable; the demo dataset
@@ -339,6 +340,54 @@ export function opportunityInsight(db, i) {
       `${Math.round((1 - conf) * 100)}% residual — the estimate could move as the gate closes.`,
       ...risks.slice(0, 2).map((r) => `${r.category} risk (score ${r.score})${r.countermeasure ? ' — countermeasure logged' : ' — no countermeasure yet'}.`),
     ],
+  }
+}
+
+// ── Decision Intelligence (Phase One W5) — make the next decision obvious for
+// every opportunity. The queue is the same set the dashboard surfaces; the
+// intel object is the full §11 contract for one decision.
+export function decisionQueue(db) {
+  return savingsOpportunities(db)
+    .filter((o) => o.nextDecision && (o._raw.request || o.nextDecision.missing.length > 0))
+    .sort((a, b) => b.nextDecision.expectedValue - a.nextDecision.expectedValue)
+}
+
+export function decisionIntel(db, i) {
+  const o = savingsOpportunity(db, i)
+  const dec = o.nextDecision
+  const insight = opportunityInsight(db, i)
+  const lineage = decisionHistory(db, i)
+  const appr = approverRoles(i)
+  const pending = !!i.request
+  const state = approvalState(i)
+  // Alternatives — deterministic option set framed by the decision type.
+  let alternatives
+  if (pending) {
+    alternatives = [
+      { label: 'Approve', effect: `Commit the sign-off; unlocks ${lifecycleMeta(o.stage).label.toLowerCase()} and books ${money(dec.expectedValue)} of expected value into the plan.`, recommended: dec.missing.length === 0 },
+      { label: 'Return for rework', effect: 'Send it back to the owner; protects gate integrity but delays the value.', recommended: dec.missing.length > 0 },
+      { label: 'Defer', effect: 'Hold in the queue for the next review; no change, but the opportunity cost accrues.', recommended: false },
+    ]
+  } else {
+    alternatives = [
+      { label: 'Advance the gate', effect: `Open the approval to move to the next stage; ${money(dec.expectedValue)} at stake.`, recommended: dec.missing.length === 0 },
+      { label: 'Hold for evidence', effect: `Close ${dec.missing.length || 'the remaining'} gap${dec.missing.length === 1 ? '' : 's'} first; de-risks the decision.`, recommended: dec.missing.length > 0 },
+      { label: 'Descope', effect: 'Split the opportunity and take the certain portion now; lower value, faster realization.', recommended: false },
+    ]
+  }
+  // Explanation — why the recommendation, in one deterministic sentence.
+  const rationale = dec.missing.length
+    ? `Recommended because ${dec.missing.length} gate requirement${dec.missing.length === 1 ? ' is' : 's are'} still open — closing ${dec.missing.length === 1 ? 'it' : 'them'} is the fastest path to ${money(dec.expectedValue)} of risk-adjusted value at ${Math.round(o.confidence * 100)}% confidence.`
+    : pending
+      ? `Recommended because the case is complete and the sign-off is the only thing between here and ${money(dec.expectedValue)} committed at ${Math.round(o.confidence * 100)}% confidence.`
+      : `Recommended because the evidence is in place and the ${money(dec.expectedValue)} expected value at ${Math.round(o.confidence * 100)}% confidence justifies advancing now.`
+  return {
+    id: o.id, name: o.name, stage: o.stage, stageLabel: o.stageLabel, savingsType: o.savingsType,
+    decision: dec.label, owner: o.owner, sponsor: o.sponsor, approvers: appr,
+    due: dec.dueBy, missing: dec.missing, confidence: o.confidence, expectedValue: dec.expectedValue,
+    requiresSteering: dec.requiresSteering, risks: insight.risks, dependencies: insight.dependencies,
+    recommended: insight.recommendation, alternatives, lineage, rationale, pending, approvalState: state,
+    ragStatus: o.ragStatus,
   }
 }
 

@@ -17,6 +17,7 @@ export const NAV = [
     ['intelligence', 'Intelligence', IconAI, ENTL],
     ['missions', 'Mission Queue', IconBolt, ENTL],
     ['decisions', 'Decisions', IconCockpit, ENTL],
+    ['decisioncenter', 'Decision Center', IconCockpit, ENTL],
     ['narrative', 'Narrative', IconReport, ENTL],
     ['aitrust', 'AI Trust', IconAI, ALL],
     ['wall', 'The Wall', IconOpportunity, ENTL],
