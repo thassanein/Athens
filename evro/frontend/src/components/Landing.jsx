@@ -24,7 +24,7 @@ const PILLARS = [
 const ROLE_TAG = { exec: 'Executive Command', admin: 'EVRO Command', fpna: 'Financial Control', leader: 'Function Leadership', owner: 'Initiative Owner', procurement: 'Procurement' }
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-export default function Landing({ db, user, onEnter, onBack }) {
+export default function Landing({ db, user, onEnter, onBack, onTour }) {
   const s = useMemo(() => strategicSummary(db), [db])
   const narratives = useMemo(() => strategicNarratives(db), [db])
   // the status layer (6C.1B convergence + 6D status-first hierarchy:
@@ -138,6 +138,7 @@ export default function Landing({ db, user, onEnter, onBack }) {
 
           <div className="landing-cta">
             <button className="btn accent lg" onClick={go}>Enter the operating system →</button>
+            {onTour && <button className="btn lg landing-tour-btn" onClick={onTour}>▶ 5-minute guided tour</button>}
             <span className="landing-stat"><b className="mono">{money(s.pipeline)}</b> risk-adjusted pipeline</span>
             <span className="landing-stat"><b className="mono">{num(s.millionClub)}</b> in the Million Dollar Club</span>
           </div>

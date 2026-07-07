@@ -10,6 +10,7 @@ import IntelligenceBar from './components/IntelligenceBar.jsx'
 import Briefing from './components/Briefing.jsx'
 import Landing from './components/Landing.jsx'
 import ModuleChooser from './components/ModuleChooser.jsx'
+import Onboarding from './components/Onboarding.jsx'
 import MobileCommandBar from './components/MobileCommandBar.jsx'
 import { BrandMark } from './components/Brand.jsx'
 import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
@@ -114,6 +115,7 @@ export default function App() {
   const [palette, setPalette] = useState(false)
   const [copilot, setCopilot] = useState(false)
   const [briefing, setBriefing] = useState(false)
+  const [tour, setTour] = useState(false)
   const [celebrations, setCelebrations] = useState([])
   const [welcome, setWelcome] = useState(() => !signatureSeen('welcomed'))
   const [intelHidden, setIntelHidden] = useState(false)
@@ -255,7 +257,7 @@ export default function App() {
     </div>
   )
   if (!moduleKey) return <ModuleChooser onPick={pickModule} />
-  if (!entered) return <Landing db={db} user={user} onEnter={enter} onBack={changeModule} />
+  if (!entered) return <Landing db={db} user={user} onEnter={enter} onBack={changeModule} onTour={() => { enter(); setWelcome(false); setTour(true) }} />
 
   const Page = PAGES[page] || Cockpit
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
@@ -287,6 +289,7 @@ export default function App() {
           <button className="hamburger" onClick={() => setDrawer((d) => !d)} aria-label="Menu"><IconMenu /></button>
           <div className="page-title">{TITLES[page]}</div>
           <div className="spacer" />
+          <button className="copilot-btn hide-md" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
           <button className="copilot-btn hide-md" onClick={() => setCopilot(true)} title="EVRO Companion (executive intelligence)"><IconAI /> Companion</button>
           <button className="cmdk" onClick={() => setPalette(true)} title="Command palette (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
           <span className="hide-md" title="Explanation depth (Knowledge Layer)"><LevelToggle compact /></span>
@@ -304,7 +307,7 @@ export default function App() {
         {RAIL_PAGES.has(page) && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
         <AIPresence db={db} user={user} page={page} navigate={navigate} />
         <Celebration queue={celebrations} onDismiss={() => setCelebrations((q) => q.slice(1))} />
-        {welcome && <SignatureWelcome db={db} user={user} onDone={() => setWelcome(false)} />}
+        {welcome && !tour && <SignatureWelcome db={db} user={user} onDone={() => setWelcome(false)} />}
         <MobileCommandBar page={page} homeKey={HOME[user.role] || 'morning'} role={user.role} counts={barCounts}
           hidden={drawer || !!drawerId || palette || copilot || briefing || welcome || celebrations.length > 0}
           onNavigate={navigate} onBrief={() => setBriefing(true)} onMore={() => setDrawer(true)} />
@@ -314,6 +317,7 @@ export default function App() {
       <CommandPalette open={palette} onClose={() => setPalette(false)} screens={navScreens(user.role)} db={db} user={user} caps={caps} navigate={navigate} openDrawer={openDrawer} dispatch={dispatch} flash={flash} onCompanion={() => setCopilot(true)} onBriefing={() => setBriefing(true)} toggleTheme={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} />
       <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} navigate={navigate} />
       <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} dispatch={dispatch} flash={flash} navigate={navigate} />
+      {tour && <Onboarding db={db} navigate={navigate} onClose={() => setTour(false)} />}
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>
    </KnowledgeProvider>
