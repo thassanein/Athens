@@ -139,6 +139,7 @@ export default function Onboarding({ db, navigate, onClose }) {
   }, [])
   const [playing, setPlaying] = useState(true)
   const [prog, setProg] = useState(0)
+  const [collapsed, setCollapsed] = useState(false)
   const step = STEPS[i]
   const goto = (n) => { setProg(0); setI(n) }
   const next = () => (i === STEPS.length - 1 ? onClose() : goto(i + 1))
@@ -160,11 +161,17 @@ export default function Onboarding({ db, navigate, onClose }) {
     const measure = () => {
       const el = step.target ? document.querySelector(step.target) : null
       if (el) {
-        el.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: mobile ? 'start' : 'center' })
+        // Park the target a fixed distance below the top of the viewport (clear
+        // of the topbar) by scrolling the window directly — reliable on the
+        // phone where the bottom sheet occupies the lower half of the screen.
+        const offset = mobile ? 80 : 130
+        const r0 = el.getBoundingClientRect()
+        const y = Math.max(0, window.scrollY + r0.top - offset)
+        window.scrollTo({ top: y, behavior: reduced() ? 'auto' : 'smooth' })
         timer = setTimeout(() => {
           const r = el.getBoundingClientRect()
           setRect({ top: r.top, left: r.left, width: r.width, height: r.height })
-        }, reduced() ? 0 : 320)
+        }, reduced() ? 0 : 360)
       } else if (tries++ < 10) { timer = setTimeout(measure, 110) } else setRect(null)
     }
     setRect(null); measure()
@@ -222,15 +229,17 @@ export default function Onboarding({ db, navigate, onClose }) {
         <div className="onb-veil" onClick={onClose} aria-hidden="true" />
       )}
 
-      <section className={`onb ${rm ? '' : 'onb-in'}`} role="dialog" aria-modal="true" aria-label="EVRO Procurement walkthrough">
+      <section className={`onb ${rm ? '' : 'onb-in'} ${collapsed ? 'onb-collapsed' : ''}`} role="dialog" aria-modal="true" aria-label="EVRO Procurement walkthrough">
         <div className="onb-prog" aria-hidden="true"><i style={{ width: `${Math.round(prog * 100)}%` }} /></div>
         <div className="onb-head">
           <span className="onb-mark"><EvroMark size={26} id="onb" /></span>
           <div className="onb-eyebrow">{step.eyebrow} · EVRO PROCUREMENT</div>
+          <button className="onb-play" onClick={() => setCollapsed((c) => !c)} aria-label={collapsed ? 'Expand walkthrough' : 'Minimize to see the highlight'} title={collapsed ? 'Expand' : 'Minimize'}>{collapsed ? '▴' : '▾'}</button>
           <button className="onb-play" onClick={() => setPlaying((p) => !p)} aria-label={playing ? 'Pause tour' : 'Play tour'} title={playing ? 'Pause' : 'Play'}>{playing ? '❚❚' : '▶'}</button>
           <span className="onb-count mono">{i + 1}/{STEPS.length}</span>
           <button className="iconbtn" onClick={onClose} aria-label="Close walkthrough"><IconClose /></button>
         </div>
+        {collapsed && <div className="onb-collapsed-row"><b>{step.title}</b><button className="btn accent sm" onClick={() => { setPlaying(false); next() }}>{step.last ? 'Enter →' : 'Next →'}</button></div>}
 
         <h2 className="onb-title" key={`t${i}`}>{step.title}</h2>
         <p className="onb-body" key={`b${i}`}>{step.body}</p>

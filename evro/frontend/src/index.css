@@ -2310,7 +2310,7 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 /* Onboarding — phone optimization (compact bottom sheet, target stays clear) */
 @media (max-width: 640px) {
   .onb { left: 8px; right: 8px; bottom: 8px; width: auto; transform: none;
-    max-height: 58vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    max-height: 50vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
     border-radius: 16px; padding: 13px 14px 14px; }
   .onb.onb-in { animation: onbUpMobile .34s cubic-bezier(.2,.7,.2,1); }
   @keyframes onbUpMobile { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
@@ -2332,3 +2332,13 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 
 /* Onboarding — extra scroll room so the spotlight target clears the bottom sheet */
 html.evro-tour .content { padding-bottom: 72vh; }
+
+/* Onboarding — collapse the sheet to reveal the full highlighted area */
+.onb.onb-collapsed > .onb-title,
+.onb.onb-collapsed > .onb-body,
+.onb.onb-collapsed > .onb-metrics,
+.onb.onb-collapsed > .onb-solves,
+.onb.onb-collapsed > .onb-foot { display: none; }
+.onb-collapsed-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; }
+.onb-collapsed-row b { font-size: 13px; line-height: 1.25; }
+.onb.onb-collapsed { max-height: none; }
