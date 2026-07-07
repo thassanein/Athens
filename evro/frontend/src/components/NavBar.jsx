@@ -4,6 +4,7 @@ import {
   IconOptimize, IconScenarios, IconGraph, IconAI, IconHierarchy, IconBolt,
 } from './Icons.jsx'
 import { BrandMark } from './Brand.jsx'
+import { PROCUREMENT_NAV, procurementFirst } from '../lib/capabilities.js'
 
 const ALL = ['exec', 'admin', 'fpna', 'leader', 'owner', 'procurement']
 const ENT = ['exec', 'admin', 'fpna']           // enterprise
@@ -63,14 +64,22 @@ export const NAV = [
     ['brand', 'Brand', IconOpportunity, ALL],
     ['identity', 'Identity', IconOpportunity, ALL],
     ['identitylab', 'Identity Lab', IconOpportunity, ALL],
+    ['settings', 'Settings', IconCockpit, ENT],
   ] },
 ]
 
+// allowedKeys / navScreens intentionally span the FULL nav (never the curated
+// procurement front door): route guards and the command palette must keep
+// every page reachable even when the sidebar leads with procurement only.
 export const allowedKeys = (role) => NAV.flatMap((s) => s.items).filter(([, , , roles]) => roles.includes(role)).map(([k]) => k)
 export const navScreens = (role) => NAV.flatMap((s) => s.items).filter(([, , , roles]) => roles.includes(role)).map(([key, label]) => ({ key, label }))
 
 export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel, onBrand, disabled }) {
   const off = disabled || new Set()
+  // Phase One: lead with the curated procurement front door. When a second
+  // capability is switched on in Settings, fall back to the full enterprise nav.
+  const procFirst = procurementFirst()
+  const sections = procFirst ? PROCUREMENT_NAV : NAV
   return (
     <>
       <div className="brand">
@@ -78,13 +87,13 @@ export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel
           <BrandMark size={38} id="nvb" />
           <div>
             <div className="name">Athens EVRO</div>
-            <div className="sub">Enterprise Intelligence OS</div>
+            <div className="sub">{procFirst ? 'Procurement · first active capability' : 'Enterprise Intelligence OS'}</div>
           </div>
         </button>
       </div>
       <nav className="nav">
         {showNew && <button className="new-btn" onClick={onNew}><IconPlus /> New initiative</button>}
-        {NAV.map((sec) => {
+        {sections.map((sec) => {
           const items = sec.items.filter(([key, , , roles]) => roles.includes(role) && !off.has(key))
           if (!items.length) return null
           return (

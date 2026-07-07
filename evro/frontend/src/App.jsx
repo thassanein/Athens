@@ -60,6 +60,7 @@ import IdentityLab from './pages/IdentityLab.jsx'
 import IdentityPage from './pages/IdentityPage.jsx'
 import Narrative from './pages/Narrative.jsx'
 import AITrust from './pages/AITrust.jsx'
+import Settings from './pages/Settings.jsx'
 import NextBestRail from './components/NextBestRail.jsx'
 import AIPresence from './components/AIPresence.jsx'
 import Celebration from './components/Celebration.jsx'
@@ -71,8 +72,8 @@ import { track } from './lib/telemetry.js'
 import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
 import { disabledNavKeys } from './lib/model.js'
 
-const PAGES = { morning: Morning, mission: MissionControl, missions: MissionQueue, wall: Wall, accountability: Accountability, intelligence: Intelligence, decisions: Decisions, narrative: Narrative, aitrust: AITrust, brand: BrandPage, identity: IdentityPage, identitylab: IdentityLab, valueoffice: ValueOffice, pulse: Pulse, chief: ChiefOfStaff, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, timeline: Timeline, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, valuegraph: ValueGraph, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, summit: Summit, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, knowledge: Knowledge, governance: Governance, integrations: Integrations, intake: Intake, initiative: Initiative }
-const TITLES = { morning: 'Morning operating screen', mission: 'Enterprise Mission Control', missions: 'Mission Queue', wall: 'Opportunity & Risk Wall', accountability: 'Ownership & Accountability', intelligence: 'Enterprise Intelligence', decisions: 'Executive Decision Workspace', narrative: 'Executive Narrative', aitrust: 'AI Trust & Memory', brand: 'EVRO Brand', identity: 'Identity Architecture', identitylab: 'Identity Lab — 6C.1A Exploration', valueoffice: 'Athens Value Office', pulse: 'Enterprise Pulse', chief: 'Chief of Staff', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', timeline: 'Enterprise timeline', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', valuegraph: 'Enterprise value graph', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', summit: 'AVCM Value Summit', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', knowledge: 'Knowledge Layer', governance: 'Workflow & Governance', integrations: 'Integration & Assembly Readiness', intake: 'New initiative', initiative: 'Initiative' }
+const PAGES = { morning: Morning, mission: MissionControl, missions: MissionQueue, wall: Wall, accountability: Accountability, intelligence: Intelligence, decisions: Decisions, narrative: Narrative, aitrust: AITrust, brand: BrandPage, identity: IdentityPage, identitylab: IdentityLab, valueoffice: ValueOffice, pulse: Pulse, chief: ChiefOfStaff, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, timeline: Timeline, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, valuegraph: ValueGraph, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, summit: Summit, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, knowledge: Knowledge, governance: Governance, integrations: Integrations, intake: Intake, initiative: Initiative, settings: Settings }
+const TITLES = { morning: 'Morning operating screen', mission: 'Enterprise Mission Control', missions: 'Mission Queue', wall: 'Opportunity & Risk Wall', accountability: 'Ownership & Accountability', intelligence: 'Enterprise Intelligence', decisions: 'Executive Decision Workspace', narrative: 'Executive Narrative', aitrust: 'AI Trust & Memory', brand: 'EVRO Brand', identity: 'Identity Architecture', identitylab: 'Identity Lab — 6C.1A Exploration', valueoffice: 'Athens Value Office', pulse: 'Enterprise Pulse', chief: 'Chief of Staff', cockpit: 'Decision cockpit', exec: 'Executive dashboard', mywork: 'My initiatives', department: 'My department', hierarchy: 'Portfolio hierarchy', portfolio: 'Initiatives', forecast: 'Forecast workbench', timeline: 'Enterprise timeline', scenarios: 'Forecast simulator', optimize: 'Capital allocation', realization: 'Value realization', sustainment: 'Sustainment command center', dependencies: 'Dependency network', valuemap: 'Value map', valuegraph: 'Enterprise value graph', mining: 'AI opportunity mining', opportunities: 'Opportunity board', spend: 'Spend explorer', leaderboard: 'Savings leaderboard', movement: 'Value movement', summit: 'AVCM Value Summit', recognition: 'Recognition center', reporting: 'Reporting workspace', sustainability: 'Sustainability', methodology: 'Methodology', knowledge: 'Knowledge Layer', governance: 'Workflow & Governance', integrations: 'Integration & Assembly Readiness', intake: 'New initiative', initiative: 'Initiative', settings: 'Settings — capabilities & experience' }
 
 // Executives / leadership land on Enterprise Mission Control; operators
 // (owner / procurement) keep the Morning operating screen.
@@ -112,6 +113,10 @@ export default function App() {
   const [theme, setTheme] = useState(() => (typeof localStorage !== 'undefined' && localStorage.getItem('evro.theme')) || 'dark')
   const [level, setLevel] = useState(() => (typeof localStorage !== 'undefined' && localStorage.getItem('evro.explain')) || null)
   const [entered, setEntered] = useState(() => { try { return sessionStorage.getItem('evro.entered') === '1' } catch { return false } })
+  // bumped when Settings toggles a capability/experience flag, so the sidebar
+  // (NavBar reads capabilities at render) re-evaluates its procurement-first mode.
+  const [shellRev, setShellRev] = useState(0)
+  const refreshShell = useCallback(() => setShellRev((n) => n + 1), [])
   const enter = useCallback(() => { setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ } }, [])
 
   useEffect(() => {
@@ -231,7 +236,8 @@ export default function App() {
 
   const Page = PAGES[page] || Cockpit
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
-  const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, onCompanion: () => setCopilot(true), home: HOME[user.role] || 'morning' }
+  const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, onCompanion: () => setCopilot(true), home: HOME[user.role] || 'morning', refreshShell }
+  void shellRev // referenced so a capability toggle re-renders the shell/NavBar
   const effLevel = level || defaultLevelFor(user.role)
   // plain call (not useMemo): this is below the early returns, so a hook here
   // would violate hook ordering. missionQueue is cheap enough at this scale.
