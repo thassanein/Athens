@@ -142,12 +142,12 @@ export default function App() {
     selectModule(key)
     try { sessionStorage.setItem('evro.module', key) } catch { /* ignore */ }
     setModuleKey(key); setShellRev((n) => n + 1)
-    // launch straight into the guided walkthrough after picking Procurement
+    // enter straight into Procurement — the guided walkthrough does NOT auto-open;
+    // the user starts it from the "▶ Tour" button in the top bar when ready.
     // (inline the enter logic to avoid depending on `enter`, declared below)
     if (key === 'procurement') {
       setWelcome(false)
       setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ }
-      setTour(true)
     }
   }, [])
   const changeModule = useCallback(() => {
@@ -302,7 +302,7 @@ export default function App() {
           <button className="hamburger" onClick={() => setDrawer((d) => !d)} aria-label="Menu"><IconMenu /></button>
           <div className="page-title">{TITLES[page]}</div>
           <div className="spacer" />
-          <button className="copilot-btn hide-md" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
+          <button className="copilot-btn" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
           <button className="copilot-btn hide-md" onClick={() => setCopilot(true)} title="EVRO Companion (executive intelligence)"><IconAI /> Companion</button>
           <button className="cmdk" onClick={() => setPalette(true)} title="Command palette (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
           <span className="hide-md" title="Explanation depth (Knowledge Layer)"><LevelToggle compact /></span>
