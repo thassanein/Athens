@@ -78,6 +78,7 @@ import ProcurementStudio from './pages/ProcurementStudio.jsx'
 import NextBestRail from './components/NextBestRail.jsx'
 import AIPresence from './components/AIPresence.jsx'
 import AskEvro from './components/AskEvro.jsx'
+import WhyEvro from './components/WhyEvro.jsx'
 import Celebration from './components/Celebration.jsx'
 import { detectCelebrations } from './lib/celebrations.js'
 import { SignatureWelcome } from './components/Signature.jsx'
@@ -122,6 +123,7 @@ export default function App() {
   const [copilot, setCopilot] = useState(false)
   const [briefing, setBriefing] = useState(false)
   const [tour, setTour] = useState(false)
+  const [why, setWhy] = useState(false)
   const [celebrations, setCelebrations] = useState([])
   const [welcome, setWelcome] = useState(() => !signatureSeen('welcomed'))
   const [intelHidden, setIntelHidden] = useState(false)
@@ -148,6 +150,8 @@ export default function App() {
     if (key === 'procurement') {
       setWelcome(false)
       setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ }
+      // First time in, show the plain-English "Why EVRO" once (not the tour).
+      try { if (!localStorage.getItem('evro.why.seen')) setWhy(true) } catch { setWhy(true) }
     }
   }, [])
   const changeModule = useCallback(() => {
@@ -302,7 +306,8 @@ export default function App() {
           <button className="hamburger" onClick={() => setDrawer((d) => !d)} aria-label="Menu"><IconMenu /></button>
           <div className="page-title">{TITLES[page]}</div>
           <div className="spacer" />
-          <button className="copilot-btn" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
+          <button className="copilot-btn why-btn" onClick={() => setWhy(true)} title="Why EVRO? — the plain-English overview">Why EVRO?</button>
+          <button className="copilot-btn hide-sm" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
           <button className="copilot-btn hide-md" onClick={() => setCopilot(true)} title="EVRO Companion (executive intelligence)"><IconAI /> Companion</button>
           <button className="cmdk" onClick={() => setPalette(true)} title="Command palette (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
           <span className="hide-md" title="Explanation depth (Knowledge Layer)"><LevelToggle compact /></span>
@@ -334,6 +339,7 @@ export default function App() {
         ? <ProcurementCopilot open={copilot} onClose={() => setCopilot(false)} db={db} navigate={navigate} />
         : <Copilot open={copilot} onClose={() => setCopilot(false)} db={db} user={user} openDrawer={openDrawer} navigate={navigate} />}
       <Briefing open={briefing} onClose={() => setBriefing(false)} db={db} user={user} openDrawer={openDrawer} dispatch={dispatch} flash={flash} navigate={navigate} />
+      {why && <WhyEvro onClose={() => { setWhy(false); try { localStorage.setItem('evro.why.seen', '1') } catch { /* ignore */ } }} onTour={() => setTour(true)} />}
       {tour && <Onboarding db={db} navigate={navigate} onClose={() => setTour(false)} />}
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>

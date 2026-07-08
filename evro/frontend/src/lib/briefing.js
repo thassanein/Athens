@@ -20,7 +20,7 @@ export function intelSummary(db, user) {
   const risk = dec.filter((d) => d.kind === 'risk')
   const parts = []
   if (appr.length) parts.push({ tone: 'amber', text: `${appr.length} approval${appr.length > 1 ? 's' : ''} await you` })
-  if (leak.length) parts.push({ tone: 'red', text: `${money(leak.reduce((s, d) => s + d.value, 0))} leaking vs plan` })
+  if (leak.length) parts.push({ tone: 'red', text: `${money(leak.reduce((s, d) => s + d.value, 0))} agreed but not landing yet` })
   if (risk.length) parts.push({ tone: 'red', text: `${risk.length} at risk` })
   if (!parts.length) parts.push({ tone: 'green', text: 'Portfolio is clear — nothing needs a decision' })
   return { parts, count: dec.length, top: dec[0] || null }
@@ -109,8 +109,8 @@ export function executiveBriefing(db, user) {
       sub: driver ? `"${driver.title}"` : 'no active initiatives', id: driver?.id },
     { key: 'risk', icon: '⚠️', title: 'Biggest risk', tone: 'red', value: money(ct.valueAtRisk),
       sub: topRisk ? `"${topRisk.title}" — ${topRisk.countermeasure || 'no countermeasure yet'} (score ${topRisk.score})` : 'nothing at risk', id: topRisk?.initiative },
-    { key: 'leakage', icon: '💧', title: 'Value leakage', tone: 'amber', value: money(leak.total),
-      sub: leak.items[0] ? `biggest: "${leak.items[0].title}" at ${money(leak.items[0].total)} vs plan` : 'no leakage', id: leak.items[0]?.id },
+    { key: 'leakage', icon: '💧', title: 'Savings not landing yet', tone: 'amber', value: money(leak.total),
+      sub: leak.items[0] ? `biggest: "${leak.items[0].title}" at ${money(leak.items[0].total)}` : 'all landing on plan', id: leak.items[0]?.id },
   ]
 
   return {

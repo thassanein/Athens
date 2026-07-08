@@ -149,8 +149,8 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
     <>
       <div className="pdash-toolbar">
         <p className="page-intro" style={{ margin: 0 }}>
-          <b>Procurement</b> — the first active capability of EVRO. Enterprise savings under management across {num(sum.count)} opportunities,
-          staged through one shared lifecycle. Every figure is deterministic and reconciles across the workspace, narrative and evidence views.
+          <b>Athens savings, in one place.</b> What we’re on track to save this year, what’s already confirmed, and what needs a
+          decision — across {num(sum.count)} live deals. Every number opens to the real deal behind it.
         </p>
         <ExportMenu db={db} flash={flash} label="Export board pack" />
       </div>
@@ -158,9 +158,12 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
       {/* Headline — this year's risk-adjusted impact + the four progress lenses */}
       <div className="pdash-sum card pad">
         <div className="pdash-sum-hero">
-          <div className="pdash-sum-label">{focusYear} procurement impact · <Term name="Risk-adjusted value">risk-adjusted</Term></div>
+          <div className="pdash-sum-label">The one number to watch · what we’re on track to save in {focusYear}</div>
           <div className="pdash-sum-big mono">{money(impactFocus)}</div>
-          <div className="pdash-sum-sub"><b>{money(sum.lenses.realized)} validated YTD</b> · {pct(sum.confidence)} value-weighted <Term name="Confidence">confidence</Term> · {money(velocity.perMonth)}/mo <Term name="Velocity">velocity</Term> · {money(sum.total)} <Term name="Savings Under Management">book under management</Term> across {num(sum.count)} opportunities</div>
+          <div className="pdash-sum-sub">
+            <b style={{ color: 'var(--green)' }}>{money(sum.lenses.realized)} is already confirmed</b> and banked this year.
+            The headline is adjusted for how likely each deal is to actually land (what we call <Term name="Risk-adjusted value">risk-adjusted</Term>).
+          </div>
         </div>
         <div className="pdash-lenses">
           {[
@@ -182,14 +185,14 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
       <ImpactByYear db={db} focusYear={focusYear} />
 
       <div className="pdash-kpihdr">
-        <h3>Portfolio KPIs</h3>
-        <span className="tiny muted">FY{fy} · all savings types (hard + avoidance) · annual run-rate at full delivery, only validated value counts as realized</span>
+        <h3>The four numbers that matter</h3>
+        <span className="tiny muted">FY{fy}, all savings — money we’ve confirmed, money we’ve committed to, money at risk, and how sure we are.</span>
       </div>
       <div className="tiles">
-        <Tile tone="green" label={`Realized · FY${fy} YTD`} value={money(sum.lenses.realized)} sub={`validated actuals · ${velocity.elapsedMonths} mo elapsed`} />
-        <Tile tone="amber" label="Committed to plan" value={money(sum.lenses.committed)} sub="approved & beyond · /yr run-rate" />
-        <Tile tone="red" label="At-risk value" value={money(sum.atRisk)} sub={`${num(redCount)} red opportunit${redCount === 1 ? 'y' : 'ies'}`} />
-        <Tile tone="navy" label="Savings confidence" value={pct(sum.confidence)} sub="value-weighted · 25/50/75/100 ladder" />
+        <Tile tone="green" label={`Confirmed & banked (FY${fy})`} value={money(sum.lenses.realized)} sub={`checked by Finance · ${velocity.elapsedMonths} months in`} />
+        <Tile tone="amber" label="Committed, not yet all delivered" value={money(sum.lenses.committed)} sub="deals we’ve approved and are working" />
+        <Tile tone="red" label="At risk" value={money(sum.atRisk)} sub={`${num(redCount)} deal${redCount === 1 ? '' : 's'} flagged red — need attention`} />
+        <Tile tone="navy" label="How likely the plan is to land" value={pct(sum.confidence)} sub="higher = more of it is nearly done" />
       </div>
 
       {/* Proactive agents — always-on next best actions */}
@@ -231,7 +234,7 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
                   {decisionQueue.map((o) => (
                     <tr key={o.id} {...rowNav(o.id)}>
                       <td><b>{o.name}</b><div className="tiny muted">{o.owner} · {o.stageLabel}</div></td>
-                      <td>{o.nextDecision.label}{o.nextDecision.missing.length > 0 && <div className="tiny" style={{ color: 'var(--brand-energy)' }}>{o.nextDecision.missing.length} evidence gap{o.nextDecision.missing.length === 1 ? '' : 's'}</div>}</td>
+                      <td>{o.nextDecision.label}{o.nextDecision.missing.length > 0 && <div className="tiny" style={{ color: 'var(--brand-energy)' }}>{o.nextDecision.missing.length} thing{o.nextDecision.missing.length === 1 ? '' : 's'} missing to approve</div>}</td>
                       <td className="num mono">{money(o.nextDecision.expectedValue)}</td>
                     </tr>
                   ))}
