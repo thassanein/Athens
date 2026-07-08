@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { savingsOpportunities, SAVINGS_LIFECYCLE, savingsType, savingsUnderManagement } from '../lib/procurement.js'
 import { pipelineBoard, windowSummary, savingsWindow, opportunityYearValue, pipelineYears, MEASUREMENT_MONTHS } from '../lib/procurement-window.js'
 import { money, pct, num } from '../lib/format.js'
+import Term from '../components/Term.jsx'
 import ExportMenu from '../components/ExportMenu.jsx'
 
 // Savings Pipeline (Phase One W4) — the whole procurement book in one view. Two
@@ -131,7 +132,7 @@ export default function SavingsPipeline({ db, navigate, flash }) {
           is an annual (per-year) impact — one saving = one 12-month run-rate. */}
       <div className="swin-summary card pad">
         <div className="swin-sum-h">
-          <b>12-month measurement window · annualized run-rate</b>
+          <b><Term name="Measurement window">12-month measurement window</Term> · <Term name="Annual impact">annualized run-rate</Term></b>
           <span className="tiny muted">Values are each saving's annual run-rate (one 12-month window from launch, then banked). Totals are run-rate at full delivery — only FP&amp;A-validated actuals count as realized.</span>
         </div>
         <div className="swin-sum-grid">

@@ -42,8 +42,8 @@ function ImpactByYear({ db, focusYear }) {
       </div>
       {/* header — the split, stated in numbers */}
       <div className="pyr-legend">
-        <span className="pyr-key"><span className="pyr-sw hard" /> Cost savings (hard, hits P&amp;L) · <b className="mono">{money(totHard)}</b></span>
-        <span className="pyr-key"><span className="pyr-sw soft" /> Cost avoidance (soft) · <b className="mono">{money(totSoft)}</b></span>
+        <span className="pyr-key"><span className="pyr-sw hard" /> <Term name="Cost savings">Cost savings</Term> · <b className="mono">{money(totHard)}</b></span>
+        <span className="pyr-key"><span className="pyr-sw soft" /> <Term name="Cost avoidance">Cost avoidance</Term> · <b className="mono">{money(totSoft)}</b></span>
         <span className="spacer" />
         <span className="tiny muted"><b>{focusYear}:</b> <span className="mono">{money(focus.hard)}</span> savings + <span className="mono">{money(focus.soft)}</span> avoidance = <b className="mono">{money(focus.value)}</b></span>
       </div>
@@ -167,15 +167,15 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
         </div>
         <div className="pdash-lenses">
           {[
-            { k: 'potential', label: 'Identified', v: sum.lenses.identified, note: 'not yet committed' },
-            { k: 'committed', label: 'Committed', v: sum.lenses.committed, note: 'in the plan' },
-            { k: 'realized', label: 'Realized YTD', v: sum.lenses.realized, note: 'FP&A-validated' },
-            { k: 'sustained', label: 'Sustained', v: sum.lenses.sustained, note: 'run-rate protected' },
+            { k: 'potential', term: 'Identified', label: 'Identified', v: sum.lenses.identified, note: 'ideas we’ve found' },
+            { k: 'committed', term: 'Committed', label: 'Committed', v: sum.lenses.committed, note: 'approved, being worked' },
+            { k: 'realized', term: 'Realized', label: 'Realized', v: sum.lenses.realized, note: 'confirmed & banked' },
+            { k: 'sustained', term: 'Sustained', label: 'Sustained', v: sum.lenses.sustained, note: 'locked in, protected' },
           ].map((l) => (
             <div key={l.k} className="pdash-lens">
               <span className="pdash-lens-bar" style={{ background: BUCKET_TONE[l.k] }} />
               <div className="pdash-lens-v mono">{money(l.v)}</div>
-              <div className="pdash-lens-l">{l.label}</div>
+              <div className="pdash-lens-l"><Term name={l.term}>{l.label}</Term></div>
               <div className="pdash-lens-n tiny muted">{l.note}</div>
             </div>
           ))}

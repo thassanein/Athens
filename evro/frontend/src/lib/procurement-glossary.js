@@ -7,25 +7,29 @@ import { SAVINGS_TYPES, SAVINGS_LIFECYCLE, VALUE_CHAIN, savingsType, lifecycleMe
 
 // ── Key expressions — definition + a concrete Athens example. Keyed by a lower-
 // case term so <Term> can look them up.
+// Plain-English first. Every definition leads with what it means to someone new
+// to procurement, so a legacy Athens user is never stuck on a word.
 export const EXPRESSIONS = [
-  { term: 'Savings Under Management', definition: 'The total value in the active savings book — every non-retired opportunity counted once at its lifecycle stage. It reconciles, to the dollar, with the pipeline and the by-type totals.', example: '$12.18M across 43 opportunities.' },
-  { term: 'Addressable spend', definition: 'The part of third-party spend Procurement can realistically influence — excludes pass-through like franchise fees, disposal, taxes and pension. Savings ambition is measured against this base, not headline spend.', example: '$437.4M across 116 categories / 14 sourcing groups.' },
-  { term: 'Baseline', definition: 'The FP&A-validated reference cost a saving is measured against — usually the 2025 AP-register run-rate for the category. Without a validated baseline a saving cannot advance.', example: 'Original run-rate for Capex Light Vehicles.' },
-  { term: 'Risk-adjusted value', aka: 'RAV', definition: 'Gross annual value discounted by the phase confidence and the realization factor — value weighted by how likely it is to actually land.', example: '$2.64M gross × 50% confidence = $1.32M RAV.' },
-  { term: 'Confidence', definition: 'How likely the value is to be realized, driven by the lifecycle phase — the sourcing-funnel ladder (pipeline 25% · commit 50% · execute 75% · realizing 100%). The book-level figure is value-weighted across every opportunity.', example: '45% value-weighted across the book.' },
-  { term: 'Velocity', definition: 'The rate validated savings are landing — annualized validated value added per month, from the same actuals FP&A validates.', example: '$272K/month over 6 elapsed months.' },
-  { term: 'Leakage', definition: 'Negotiated value that is not yet flowing through as a run-rate — a discount only saves money once real volume goes through the deal. Timing leakage is recoverable; contract leakage is structural.', example: '$1.15M leaking — $216K timing, $935K contract.' },
-  { term: 'Hard Savings', definition: 'A validated price or total-cost reduction that lowers the P&L run-rate. One of the eight savings types.', example: 'A renegotiated Fleet Capital rate.' },
-  { term: 'Cost Avoidance', definition: 'A cost increase that would otherwise have hit the P&L but is prevented, priced against a credible would-have baseline. Reported apart from Hard Savings.', example: 'An index cap holding price below quoted inflation.' },
-  { term: 'Materiality', definition: 'The $100K annual-value threshold above which a saving needs CPO / Steering Committee approval before Launch.', example: 'A $430K award escalates to Steering.' },
-  { term: 'Run-rate', definition: 'The annualized cost or saving as it is currently flowing — what the P&L will show over a full year at the current rate.', example: 'Annualized validated actuals to date.' },
-  { term: 'Measurement window', aka: '12-month window', definition: 'Athens counts each saving for exactly 12 months from its first financial reporting (launch — the earliest FP&A-validated actual). After the window the year-one value is banked and the initiative becomes protected run-rate, not a saving re-claimed forever. This keeps the annual-impact number credible.', example: 'A saving launched Feb 2026 is measured through Jan 2027, then banks.' },
-  { term: 'Annual impact', aka: 'annualized run-rate', definition: 'The per-year run-rate value of a saving — one 12-month window. Book totals are annualized run-rate at full delivery, NOT value banked this year; only FP&A-validated realized value counts as delivered. Stated per year so a dollar means the same thing on every screen.', example: '$12.18M/yr run-rate under management; $1.54M validated YTD.' },
-  { term: 'Realized', definition: 'Value that FP&A has validated from monthly actuals this fiscal year. Only realized value counts as delivered.', example: '$1.54M validated year-to-date.' },
-  { term: 'Committed', definition: 'Value locked into the plan — opportunities that are approved or beyond, at their negotiated or risk-adjusted value.', example: '$5.88M committed and beyond.' },
-  { term: 'Sustained', definition: 'Delivered run-rate that is now being protected against erosion and leakage in the sustainment phase.', example: '$1.60M of run-rate protected.' },
-  { term: 'Expected value', definition: 'The risk-adjusted value at stake in a decision — what advancing the opportunity is worth, weighted by confidence.', example: '$2.32M across the decision queue.' },
-  { term: 'Governance ladder', definition: 'The approval chain a saving climbs: Category Manager → FP&A Validation → CPO / Steering Committee (for material awards).', example: 'Category Manager + FP&A on a $171K case.' },
+  { term: 'Savings Under Management', aka: 'the book', definition: 'Every saving we’re working, added up into one number for the whole book. It ties, to the dollar, with the pipeline and the by-type totals.', example: '$12.18M across 43 deals.' },
+  { term: 'Addressable spend', definition: 'The spend Procurement can actually influence — it leaves out pass-throughs like taxes, disposal, franchise fees and pension. It’s the base we measure savings against.', example: '$437.4M across 14 sourcing groups.' },
+  { term: 'Baseline', definition: 'The “before” price a saving is measured against — the Finance-checked cost we were paying, usually last year’s.', example: 'Last year’s rate for light vehicles.' },
+  { term: 'Risk-adjusted', aka: 'Risk-adjusted value', definition: 'The value adjusted for how likely the deal is to actually happen. An early idea counts for less than a signed, delivering deal.', example: '$2.64M idea × 50% likely = $1.32M.' },
+  { term: 'Confidence', definition: 'How likely the plan is to land. Early ideas count 25%, signed & delivering deals count 100%; the book figure is the value-weighted average.', example: '45% across the book — higher means more of it is nearly done.' },
+  { term: 'Velocity', definition: 'How fast confirmed savings are landing — roughly the dollars banked per month.', example: '$272K a month so far.' },
+  { term: 'Leakage', aka: 'not landing yet', definition: 'Savings we’ve agreed but aren’t collecting yet — a discount only saves money once the volume actually flows through the deal. Some is just timing (recoverable); some is structural.', example: '$1.15M agreed but not landing yet.' },
+  { term: 'Hard Savings', aka: 'Cost savings', definition: 'A real price cut that lowers what we pay — it shows up in the P&L.', example: 'A renegotiated fleet rate.' },
+  { term: 'Cost Avoidance', aka: 'Cost avoidance', definition: 'A price increase we stopped before it hit us. Real value, but it doesn’t lower the P&L, so we track it separately.', example: 'A cap that held price below a quoted hike.' },
+  { term: 'Materiality', definition: 'The $100K mark. Deals bigger than this need CPO / Steering sign-off before they launch.', example: 'A $430K award goes to Steering.' },
+  { term: 'Run-rate', definition: 'What a cost or saving is worth over a full year at today’s rate.', example: 'This month’s savings × 12.' },
+  { term: 'Measurement window', aka: '12-month window', definition: 'We count each saving for 12 months from when it first shows up in the numbers, then it’s “banked” — we don’t keep re-counting it year after year. That keeps the number honest.', example: 'A saving that starts in Feb is counted through the next Jan.' },
+  { term: 'Annual impact', aka: 'annualized run-rate', definition: 'The value of a saving over one year. Book totals are “what we’d save in a full year if every deal lands” — only confirmed savings count as banked.', example: '$12.18M/yr in the book; $1.54M confirmed so far.' },
+  { term: 'Realized', aka: 'Confirmed & banked', definition: 'Confirmed and banked — Finance has checked it against the actual invoices. Only this counts as delivered.', example: '$1.54M confirmed this year.' },
+  { term: 'Committed', definition: 'Approved and being worked — locked into the plan, but not all delivered yet.', example: '$5.88M approved and in progress.' },
+  { term: 'Sustained', definition: 'Delivered savings we’re now protecting so they don’t erode over time.', example: '$1.60M locked in and protected.' },
+  { term: 'Identified', definition: 'Ideas we’ve found but haven’t committed to yet — the top of the funnel.', example: 'Spend analytics flagged a category to re-source.' },
+  { term: 'At risk', definition: 'Deals flagged red — something’s blocking them or they may miss, so they need attention now.', example: '19 deals flagged red.' },
+  { term: 'Expected value', definition: 'What a pending decision is worth — the value at stake, adjusted for how likely it is.', example: '$2.32M across the decisions waiting.' },
+  { term: 'Governance ladder', aka: 'approvals', definition: 'Who signs off, in order: Category Manager → Finance → CPO / Steering for the big deals.', example: 'Category Manager + Finance on a $171K case.' },
 ]
 export const expressionOf = (term) => {
   const k = String(term || '').trim().toLowerCase()
