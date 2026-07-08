@@ -7,6 +7,7 @@ import { categoryName, groupName, index } from '../lib/engine.js'
 import { savingsWindow, MEASUREMENT_MONTHS } from '../lib/procurement-window.js'
 import { money, pct, num, dateLabel } from '../lib/format.js'
 import { IconBack, IconAI } from '../components/Icons.jsx'
+import Term from '../components/Term.jsx'
 import EvidenceDrawer from '../components/EvidenceDrawer.jsx'
 
 // Opportunity Workspace (Phase One W4) — the single surface an executive opens
@@ -93,8 +94,8 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
           </div>
           <h2 className="ows-title">{o.name}</h2>
           <div className="ows-head-facts">
-            <Field label={o.value.bucket === 'realized' ? 'Realized YTD' : 'Annual run-rate'}><span className="mono" style={{ color: 'var(--green)', fontSize: 18 }}>{money(o.value.headline)}{o.value.bucket !== 'realized' && <span className="pboard-yr">/yr</span>}</span></Field>
-            <Field label="Confidence"><span className="mono">{pct(o.confidence)}</span></Field>
+            <Field label={o.value.bucket === 'realized' ? <Term name="Realized">Realized</Term> : <Term name="Run-rate">Annual run-rate</Term>}><span className="mono" style={{ color: 'var(--green)', fontSize: 18 }}>{money(o.value.headline)}{o.value.bucket !== 'realized' && <span className="pboard-yr">/yr</span>}</span></Field>
+            <Field label={<Term name="Confidence">Confidence</Term>}><span className="mono">{pct(o.confidence)}</span></Field>
             <Field label={`Measurement (${MEASUREMENT_MONTHS}-mo)`}>{(() => {
               const w = savingsWindow(db, o)
               if (!w.launched) return <span className="tiny muted">pre-launch</span>
@@ -122,7 +123,7 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
         <div className="ows-tag">Board-ready summary · deterministic</div>
         <p>{o.name} is a <b>{st.label.toLowerCase()}</b> opportunity of <b>{money(o.value.potential)}</b> gross, currently <b>{o.stageLabel.toLowerCase()}</b> at {pct(o.confidence)} confidence under {o.owner} (sponsor {o.sponsor}).
         {o.value.realized > 0 ? <> {money(o.value.realized)} is already validated as realized.</> : o.contractValue ? <> A deal is contracted at {money(o.contractValue)}.</> : <> The value is identified and moving through the gates.</>}
-        {' '}{o.nextDecision ? <>The next decision — <b>{o.nextDecision.label.toLowerCase()}</b>{o.nextDecision.missing.length ? ` — is blocked by ${o.nextDecision.missing.length} evidence gap${o.nextDecision.missing.length === 1 ? '' : 's'}.` : ' — is ready to take.'}</> : 'It is in sustainment; protect the run-rate.'}</p>
+        {' '}{o.nextDecision ? <>The next decision — <b>{o.nextDecision.label.toLowerCase()}</b>{o.nextDecision.missing.length ? ` — is waiting on ${o.nextDecision.missing.length} thing${o.nextDecision.missing.length === 1 ? '' : 's'} still to provide.` : ' — is ready to take.'}</> : 'It is in sustainment; protect the run-rate.'}</p>
         <button className="btn sm" onClick={openEvidence}>View evidence ({o.evidence.length}) →</button>
       </div>
 
@@ -135,7 +136,7 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
             <Field label="Formula">{b.formula || '—'}</Field>
             <Field label={b.reference_label || 'Reference'}><span className="mono">{b.reference != null ? money(b.reference) : '—'}</span></Field>
             <Field label={b.comparison_label || 'Comparison'}><span className="mono">{b.comparison != null ? money(b.comparison) : '—'}</span></Field>
-            <Field label="Baseline amount"><span className="mono">{b.amount != null ? money(b.amount) : '—'}</span></Field>
+            <Field label={<Term name="Baseline">Baseline amount</Term>}><span className="mono">{b.amount != null ? money(b.amount) : '—'}</span></Field>
             <Field label="Validated" tone={b.validated_by ? 'var(--green)' : 'var(--amber)'}>{b.validated_by ? `Yes · ${dateLabel(b.validated_at)}` : 'Pending FP&A'}</Field>
           </div>
           {b.source_ref && <div className="note section-gap"><span>📄</span><span>{b.source_ref}</span></div>}
@@ -145,9 +146,9 @@ export default function OpportunityWorkspace({ db, id, navigate }) {
         <div className="card pad">
           <div className="card-h"><h3>Financial impact &amp; forecast</h3></div>
           <div className="ows-fields">
-            <Field label="Potential (gross)"><span className="mono">{money(o.value.potential)}</span></Field>
-            <Field label="Committed"><span className="mono">{money(o.value.committed)}</span></Field>
-            <Field label="Realized YTD" tone="var(--green)"><span className="mono">{money(o.value.realized)}</span></Field>
+            <Field label={<Term name="Identified">Potential (gross)</Term>}><span className="mono">{money(o.value.potential)}</span></Field>
+            <Field label={<Term name="Committed">Committed</Term>}><span className="mono">{money(o.value.committed)}</span></Field>
+            <Field label={<Term name="Realized">Realized YTD</Term>} tone="var(--green)"><span className="mono">{money(o.value.realized)}</span></Field>
             <Field label="Net annual"><span className="mono">{money(o.netAnnual)}</span></Field>
             <Field label="RA forecast (rest FY)"><span className="mono">{money(o.forecastImpact)}</span></Field>
             <Field label="Pending validation"><span className="mono">{money(o.pending)}</span></Field>

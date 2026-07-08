@@ -3,6 +3,7 @@ import { decisionQueue, decisionIntel, GOVERNANCE_LADDER } from '../lib/procurem
 import { canApproveRoles, canRequestAdvance, ROLE_APPROVE_LABEL } from '../lib/engine.js'
 import { money, pct, num, dateLabel } from '../lib/format.js'
 import { IconAI, IconCheck } from '../components/Icons.jsx'
+import Term from '../components/Term.jsx'
 
 // Decision Center (Phase One W5) — every opportunity's next decision made
 // obvious, ranked by value, with the full decision-intelligence contract:
@@ -43,8 +44,8 @@ export default function DecisionCenter({ db, user, caps, dispatch, navigate, fla
   return (
     <>
       <p className="page-intro">
-        <b>{num(queue.length)}</b> decision{queue.length === 1 ? '' : 's'} waiting across the procurement book · <b className="mono">{money(totalEV)}</b> of
-        expected value at stake. Ranked by value; each carries its evidence, confidence, alternatives and lineage. Every figure is deterministic.
+        <b>{num(queue.length)}</b> decision{queue.length === 1 ? '' : 's'} waiting · <b className="mono">{money(totalEV)}</b> of
+        value riding on them. Ranked by how much is at stake; each shows who signs, what’s missing, and the options. Hover any term to see what it means.
       </p>
 
       <div className="dc-layout">
@@ -56,7 +57,7 @@ export default function DecisionCenter({ db, user, caps, dispatch, navigate, fla
               <div className="dc-qrow-t"><b>{o.name}</b></div>
               <div className="dc-qrow-m">
                 <span className="badge b-grey">{o.stageLabel}</span>
-                {o.nextDecision.missing.length > 0 && <span className="badge b-amber">{o.nextDecision.missing.length} gap{o.nextDecision.missing.length === 1 ? '' : 's'}</span>}
+                {o.nextDecision.missing.length > 0 && <span className="badge b-amber">{o.nextDecision.missing.length} to provide</span>}
                 {o._raw.request && <span className="badge b-navy">sign-off</span>}
                 <span className="spacer" />
                 <span className="mono dc-qrow-ev">{money(o.nextDecision.expectedValue)}</span>
@@ -89,16 +90,16 @@ export default function DecisionCenter({ db, user, caps, dispatch, navigate, fla
               <div><div className="dc-k">Owner</div><div className="dc-v">{intel.owner}</div></div>
               <div><div className="dc-k">Sponsor</div><div className="dc-v">{intel.sponsor}</div></div>
               <div><div className="dc-k">Due</div><div className="dc-v">{intel.due ? dateLabel(intel.due) : '—'}</div></div>
-              <div><div className="dc-k">Confidence</div><div className="dc-v mono">{pct(intel.confidence)}</div></div>
-              <div><div className="dc-k">Expected value</div><div className="dc-v mono" style={{ color: 'var(--green)' }}>{money(intel.expectedValue)}</div></div>
+              <div><div className="dc-k"><Term name="Confidence">Confidence</Term></div><div className="dc-v mono">{pct(intel.confidence)}</div></div>
+              <div><div className="dc-k"><Term name="Expected value">Expected value</Term></div><div className="dc-v mono" style={{ color: 'var(--green)' }}>{money(intel.expectedValue)}</div></div>
               <div><div className="dc-k">Approvers</div><div className="dc-v">{intel.approvers.length ? intel.approvers.map((a) => a.label).join(' + ') : '—'}{intel.requiresSteering && <span className="badge b-red" style={{ marginLeft: 6 }}>Steering</span>}</div></div>
               <div><div className="dc-k">Risk status</div><div className="dc-v"><span className={`badge ${intel.ragStatus === 'red' ? 'b-red' : intel.ragStatus === 'amber' ? 'b-amber' : 'b-green'}`}>{intel.ragStatus === 'red' ? 'At risk' : intel.ragStatus === 'amber' ? 'Watch' : 'On track'}</span></div></div>
             </div>
 
             {/* missing evidence */}
             <div className="dc-block">
-              <div className="dc-block-h">Missing evidence</div>
-              {intel.missing.length === 0 ? <p className="tiny" style={{ color: 'var(--green)' }}>✓ Nothing outstanding — the gate requirements are met.</p>
+              <div className="dc-block-h">What’s missing to approve</div>
+              {intel.missing.length === 0 ? <p className="tiny" style={{ color: 'var(--green)' }}>✓ Nothing outstanding — this is ready to sign off.</p>
                 : <ul className="dc-ul">{intel.missing.map((mm, i) => <li key={i}>{mm}</li>)}</ul>}
             </div>
 
@@ -122,7 +123,7 @@ export default function DecisionCenter({ db, user, caps, dispatch, navigate, fla
           <div className="grid cols-2 section-gap">
             {/* procurement governance ladder */}
             <div className="card pad">
-              <div className="card-h"><h3>Governance ladder</h3><span className="tiny muted" style={{ marginLeft: 8 }}>procurement approval flow</span></div>
+              <div className="card-h"><h3><Term name="Governance ladder">Governance ladder</Term></h3><span className="tiny muted" style={{ marginLeft: 8 }}>who signs off, in order</span></div>
               <div className="dc-ladder">
                 {GOVERNANCE_LADDER.map((g) => {
                   const filled = (intel.approvalState?.filled || []).includes(g.role)
