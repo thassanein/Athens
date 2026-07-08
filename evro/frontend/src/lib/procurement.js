@@ -289,6 +289,29 @@ export function savingsByType(db) {
   })
 }
 
+// Spend coverage — how much of Athens' third-party spend Procurement can
+// influence (addressable), how much we're actively working (addressed), and how
+// the savings on it split between cost savings (P&L) and cost avoidance.
+export function spendCoverage(db) {
+  const cats = db.spend_categories || []
+  const addr = (c) => (c.addressable ? (c.spend || 0) * ((c.addressable_pct ?? 100) / 100) : 0)
+  const totalSpend = cats.reduce((s, c) => s + (c.spend || 0), 0)
+  const addressable = cats.reduce((s, c) => s + addr(c), 0)
+  const worked = new Set()
+  for (const o of savingsOpportunities(db)) { if (o._raw.spend_category_id) worked.add(o._raw.spend_category_id) }
+  const addressed = cats.filter((c) => worked.has(c.id)).reduce((s, c) => s + addr(c), 0)
+  const byType = savingsByType(db)
+  const hard = byType.filter((t) => t.pnl).reduce((s, t) => s + t.value, 0)
+  const soft = byType.filter((t) => !t.pnl).reduce((s, t) => s + t.value, 0)
+  const savings = hard + soft
+  return {
+    totalSpend, addressable, addressablePct: totalSpend ? addressable / totalSpend : 0,
+    addressed, addressedPct: addressable ? addressed / addressable : 0,
+    categoriesWorked: worked.size, categoriesTotal: cats.length,
+    savings, hard, soft, hardPct: savings ? hard / savings : 0, softPct: savings ? soft / savings : 0,
+  }
+}
+
 // Savings velocity — validated value landing per month (annualized run-rate
 // added), from the same actuals the engine validates. No fabricated rate.
 export function savingsVelocity(db) {

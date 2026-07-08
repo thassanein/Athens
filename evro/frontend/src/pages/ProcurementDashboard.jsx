@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { procurementModel, lifecycleMeta } from '../lib/procurement.js'
+import { procurementModel, lifecycleMeta, spendCoverage } from '../lib/procurement.js'
 import { impactByYear } from '../lib/procurement-window.js'
 import { forecastCurve } from '../lib/engine.js'
 import { money, pct, num, monthLabel, dateLabel } from '../lib/format.js'
@@ -17,6 +17,43 @@ import AgentActions from '../components/AgentActions.jsx'
 // to the dollar. Deterministic; no fabricated numbers.
 
 const BUCKET_TONE = { potential: 'var(--opp)', committed: 'var(--amber)', realized: 'var(--green)', sustained: 'var(--navy)' }
+
+// Spend coverage — of everything Athens buys, how much Procurement can touch and
+// how much we're actually working, plus how the savings split hard vs avoidance.
+function SpendCoverage({ db }) {
+  const c = useMemo(() => spendCoverage(db), [db])
+  if (!c.totalSpend) return null
+  const bn = (n) => `$${(n / 1e6).toFixed(0)}M`
+  return (
+    <div className="spc card pad section-gap">
+      <div className="card-h">
+        <h3>How much of Athens’ spend we’re working</h3>
+        <span className="tiny muted" style={{ marginLeft: 8 }}>total buy → what we can influence → what we’re on</span>
+      </div>
+      <div className="spc-grid">
+        <div className="spc-stat"><div className="spc-v mono">{bn(c.totalSpend)}</div><div className="spc-l">Total we buy outside</div><div className="tiny muted">all third-party spend</div></div>
+        <div className="spc-stat"><div className="spc-v mono" style={{ color: 'var(--brand-value)' }}>{bn(c.addressable)}</div><div className="spc-l"><Term name="Addressable spend">Addressable</Term></div><div className="tiny muted">{pct(c.addressablePct)} of spend we can influence</div></div>
+        <div className="spc-stat"><div className="spc-v mono" style={{ color: 'var(--green)' }}>{bn(c.addressed)}</div><div className="spc-l">Actively addressed</div><div className="tiny muted">{pct(c.addressedPct)} of addressable · {c.categoriesWorked} of {c.categoriesTotal} categories</div></div>
+      </div>
+      {/* coverage bar: addressed within addressable within total */}
+      <div className="spc-bar" title={`${bn(c.addressed)} addressed of ${bn(c.addressable)} addressable of ${bn(c.totalSpend)} total`}>
+        <div className="spc-bar-addr" style={{ width: `${c.addressablePct * 100}%` }}>
+          <div className="spc-bar-done" style={{ width: `${c.addressedPct * 100}%` }} />
+        </div>
+      </div>
+      <div className="spc-barkey tiny muted"><span><i className="spc-sw total" /> total buy</span><span><i className="spc-sw addr" /> addressable ({pct(c.addressablePct)})</span><span><i className="spc-sw done" /> addressed ({pct(c.addressedPct)} of addressable)</span></div>
+      {/* savings split on what we've addressed */}
+      <div className="spc-split">
+        <div className="spc-split-h">Savings from what we’re working — <b className="mono">${(c.savings / 1e6).toFixed(1)}M/yr</b>, split by type</div>
+        <div className="spc-split-bar">
+          <div className="spc-seg hard" style={{ width: `${c.hardPct * 100}%` }} title={`Cost savings ${pct(c.hardPct)}`}>{c.hardPct > 0.12 ? pct(c.hardPct) : ''}</div>
+          <div className="spc-seg soft" style={{ width: `${c.softPct * 100}%` }} title={`Cost avoidance ${pct(c.softPct)}`}>{c.softPct > 0.12 ? pct(c.softPct) : ''}</div>
+        </div>
+        <div className="spc-split-key tiny"><span><i className="spc-sw hard" /> <Term name="Cost savings">Cost savings</Term> {pct(c.hardPct)} · ${(c.hard / 1e6).toFixed(1)}M</span><span><i className="spc-sw soft" /> <Term name="Cost avoidance">Cost avoidance</Term> {pct(c.softPct)} · ${(c.soft / 1e6).toFixed(1)}M</span></div>
+      </div>
+    </div>
+  )
+}
 
 // Impact by year — risk-adjusted savings phased into the calendar years they
 // land in, each bar split into cost savings (hard, hits the P&L) and cost
@@ -181,6 +218,8 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
           ))}
         </div>
       </div>
+
+      <SpendCoverage db={db} />
 
       <ImpactByYear db={db} focusYear={focusYear} />
 

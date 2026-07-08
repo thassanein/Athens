@@ -2742,3 +2742,27 @@ html.evro-tour .content { padding-bottom: 72vh; }
   .why-ba-arrow { display: none; }
   .why-foot .btn { flex: 1; justify-content: center; }
 }
+
+/* Spend coverage — addressable vs addressed + savings split */
+.spc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 6px 0 14px; }
+.spc-stat { display: flex; flex-direction: column; gap: 2px; }
+.spc-v { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+.spc-l { font-size: 13px; font-weight: 700; }
+.spc-bar { height: 26px; border-radius: 8px; background: var(--panel-2); overflow: hidden; position: relative; }
+.spc-bar-addr { height: 100%; background: color-mix(in srgb, var(--brand-value) 30%, transparent); position: relative; }
+.spc-bar-done { height: 100%; background: linear-gradient(90deg, var(--green), color-mix(in srgb, var(--green) 70%, transparent)); }
+.spc-barkey { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 7px; }
+.spc-barkey span, .spc-split-key span { display: inline-flex; align-items: center; gap: 6px; }
+.spc-sw { width: 11px; height: 11px; border-radius: 3px; display: inline-block; flex: none; }
+.spc-sw.total { background: var(--panel-2); border: 1px solid var(--line); }
+.spc-sw.addr { background: color-mix(in srgb, var(--brand-value) 40%, transparent); }
+.spc-sw.done, .spc-sw.hard { background: var(--green); }
+.spc-sw.soft { background: var(--navy); }
+.spc-split { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
+.spc-split-h { font-size: 13px; margin-bottom: 8px; }
+.spc-split-bar { display: flex; height: 22px; border-radius: 7px; overflow: hidden; }
+.spc-seg { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; }
+.spc-seg.hard { background: var(--green); }
+.spc-seg.soft { background: var(--navy); }
+.spc-split-key { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 7px; color: var(--grey); }
+@media (max-width: 640px) { .spc-grid { grid-template-columns: 1fr; gap: 10px; } .spc-v { font-size: 22px; } }

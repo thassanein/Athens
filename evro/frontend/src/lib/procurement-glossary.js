@@ -11,7 +11,7 @@ import { SAVINGS_TYPES, SAVINGS_LIFECYCLE, VALUE_CHAIN, savingsType, lifecycleMe
 // to procurement, so a legacy Athens user is never stuck on a word.
 export const EXPRESSIONS = [
   { term: 'Savings Under Management', aka: 'the book', definition: 'Every saving we’re working, added up into one number for the whole book. It ties, to the dollar, with the pipeline and the by-type totals.', example: '$12.18M across 43 deals.' },
-  { term: 'Addressable spend', definition: 'The spend Procurement can actually influence — it leaves out pass-throughs like taxes, disposal, franchise fees and pension. It’s the base we measure savings against.', example: '$437.4M across 14 sourcing groups.' },
+  { term: 'Addressable spend', definition: 'The spend Procurement can actually influence — it leaves out pass-throughs like taxes, disposal, franchise fees and pension. It’s the base we measure savings against.', example: '$421.7M — 61% of our $691.5M third-party spend.' },
   { term: 'Baseline', definition: 'The “before” price a saving is measured against — the Finance-checked cost we were paying, usually last year’s.', example: 'Last year’s rate for light vehicles.' },
   { term: 'Risk-adjusted', aka: 'Risk-adjusted value', definition: 'The value adjusted for how likely the deal is to actually happen. An early idea counts for less than a signed, delivering deal.', example: '$2.64M idea × 50% likely = $1.32M.' },
   { term: 'Confidence', definition: 'How likely the plan is to land. Early ideas count 25%, signed & delivering deals count 100%; the book figure is the value-weighted average.', example: '45% across the book — higher means more of it is nearly done.' },
