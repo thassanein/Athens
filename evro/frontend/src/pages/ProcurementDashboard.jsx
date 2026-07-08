@@ -32,7 +32,7 @@ function SpendCoverage({ db }) {
       </div>
       <div className="spc-grid">
         <div className="spc-stat"><div className="spc-v mono">{bn(c.totalSpend)}</div><div className="spc-l">Total we buy outside</div><div className="tiny muted">all third-party spend</div></div>
-        <div className="spc-stat"><div className="spc-v mono" style={{ color: 'var(--brand-value)' }}>{bn(c.addressable)}</div><div className="spc-l"><Term name="Addressable spend">Addressable</Term></div><div className="tiny muted">{pct(c.addressablePct)} of spend we can influence</div></div>
+        <div className="spc-stat"><div className="spc-v mono" style={{ color: 'var(--brand-value)' }}>{bn(c.addressable)}</div><div className="spc-l">Addressable</div><div className="tiny muted">{pct(c.addressablePct)} of spend we can influence</div></div>
         <div className="spc-stat"><div className="spc-v mono" style={{ color: 'var(--green)' }}>{bn(c.addressed)}</div><div className="spc-l">Actively addressed</div><div className="tiny muted">{pct(c.addressedPct)} of addressable · {c.categoriesWorked} of {c.categoriesTotal} categories</div></div>
       </div>
       {/* coverage bar: addressed within addressable within total */}
@@ -42,14 +42,18 @@ function SpendCoverage({ db }) {
         </div>
       </div>
       <div className="spc-barkey tiny muted"><span><i className="spc-sw total" /> total buy</span><span><i className="spc-sw addr" /> addressable ({pct(c.addressablePct)})</span><span><i className="spc-sw done" /> addressed ({pct(c.addressedPct)} of addressable)</span></div>
-      {/* savings split on what we've addressed */}
+      {/* savings split + savings rate */}
       <div className="spc-split">
-        <div className="spc-split-h">Savings from what we’re working — <b className="mono">${(c.savings / 1e6).toFixed(1)}M/yr</b>, split by type</div>
+        <div className="spc-split-h">
+          Savings we’re getting — <b className="mono">${(c.savings / 1e6).toFixed(1)}M/yr</b> ·
+          <b style={{ color: 'var(--brand-value)' }}> {pct(c.savings / c.addressable, 1)} of addressable spend</b>
+          <span className="tiny muted"> ({pct(c.savings / c.addressed, 1)} of what we’re actively on)</span>
+        </div>
         <div className="spc-split-bar">
           <div className="spc-seg hard" style={{ width: `${c.hardPct * 100}%` }} title={`Cost savings ${pct(c.hardPct)}`}>{c.hardPct > 0.12 ? pct(c.hardPct) : ''}</div>
           <div className="spc-seg soft" style={{ width: `${c.softPct * 100}%` }} title={`Cost avoidance ${pct(c.softPct)}`}>{c.softPct > 0.12 ? pct(c.softPct) : ''}</div>
         </div>
-        <div className="spc-split-key tiny"><span><i className="spc-sw hard" /> <Term name="Cost savings">Cost savings</Term> {pct(c.hardPct)} · ${(c.hard / 1e6).toFixed(1)}M</span><span><i className="spc-sw soft" /> <Term name="Cost avoidance">Cost avoidance</Term> {pct(c.softPct)} · ${(c.soft / 1e6).toFixed(1)}M</span></div>
+        <div className="spc-split-key tiny"><span><i className="spc-sw hard" /> Cost savings {pct(c.hardPct)} · ${(c.hard / 1e6).toFixed(1)}M · {pct(c.hard / c.addressable, 1)} of addressable</span><span><i className="spc-sw soft" /> Cost avoidance {pct(c.softPct)} · ${(c.soft / 1e6).toFixed(1)}M · {pct(c.soft / c.addressable, 1)} of addressable</span></div>
       </div>
     </div>
   )
