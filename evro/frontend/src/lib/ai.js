@@ -70,8 +70,14 @@ export async function askEvroAI(db, question) {
   const st = await aiStatus()
   if (!st.enabled) return { ok: false, reason: 'disabled' }
   try {
+    const headers = { 'Content-Type': 'application/json' }
+    // Optional shared token — only sent if the build defines one (server enforces
+    // it only when AI_ACCESS_TOKEN is set). The main guard is server-side
+    // origin-locking, which needs no client change.
+    const token = import.meta.env?.VITE_AI_ACCESS_TOKEN
+    if (token) headers['X-EVRO-AI-Token'] = token
     const r = await fetch('/api/ai/ask', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers,
       body: JSON.stringify({ question, context: buildAIContext(db) }),
     })
     const j = await r.json().catch(() => ({}))
