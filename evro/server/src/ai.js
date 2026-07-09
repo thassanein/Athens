@@ -84,9 +84,21 @@ Rules — follow exactly:
 - Money is in USD. Do the arithmetic only across numbers that are in the context.
 - You are a read-only analyst: explain, compare, rank, summarize. Don't claim to have changed anything.`
 
+// Verify the SDK actually loads (cached). "enabled" should mean "will work",
+// not just "a key is set" — otherwise the UI claims EVRO AI then silently falls
+// back when the package is missing. Checked once and remembered.
+let _sdkOk = null
+async function sdkLoadable() {
+  if (_sdkOk !== null) return _sdkOk
+  try { await import('@anthropic-ai/sdk'); _sdkOk = true }
+  catch { _sdkOk = false }
+  return _sdkOk
+}
+
 // GET /api/ai/status — the client uses this to decide AI vs deterministic.
-export function aiStatus(_req, res) {
-  res.json({ enabled: aiEnabled(), model: aiEnabled() ? MODEL() : null, ...meter() })
+export async function aiStatus(_req, res) {
+  const ready = aiEnabled() && (await sdkLoadable())
+  res.json({ enabled: ready, model: ready ? MODEL() : null, ...meter() })
 }
 
 // POST /api/ai/ask  { question, context }  →  { enabled, answer, model, usage }
