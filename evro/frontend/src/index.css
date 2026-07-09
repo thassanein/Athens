@@ -2532,13 +2532,40 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .stu-weights { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
 .stu-weight-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
 .stu-weight-h label { font-size: 13px; font-weight: 600; }
-.stu-weight input[type=range] { width: 100%; accent-color: var(--brand-value); }
+.stu-weight input[type=range] { width: 100%; accent-color: var(--brand-value); height: 22px; }
 .stu-diff { color: var(--brand-value); }
+
+/* ── Studio motion: tab panels fade/rise in, weight sliders and previews animate */
+.stu-tabs .chip { transition: background .18s ease, color .18s ease, transform .12s ease; }
+.stu-tabs .chip:active { transform: scale(0.96); }
+.stu-preview { animation: stu-rise .32s cubic-bezier(.2,.7,.2,1) both; }
+.stu-prev-v { transition: color .3s ease; }
+.stu-banner { animation: stu-rise .3s cubic-bezier(.2,.7,.2,1) both; }
+.stu-weight { animation: stu-rise .32s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes stu-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ── Drag-to-reorder savings taxonomy */
+.stu-def-drag { align-items: stretch; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card);
+  animation: stu-rise .3s cubic-bezier(.2,.7,.2,1) both;
+  transition: transform .16s cubic-bezier(.2,.7,.2,1), box-shadow .16s ease, border-color .16s ease, opacity .16s ease; }
+.stu-def-drag:hover { border-color: color-mix(in srgb, var(--brand-value) 40%, var(--line)); }
+.stu-def-drag.dragging { opacity: 0.55; transform: scale(1.015); box-shadow: 0 14px 32px rgba(0,0,0,0.4); border-color: var(--brand-value); cursor: grabbing; }
+.stu-def-drag.drag-over { border-color: var(--brand-value); box-shadow: inset 0 3px 0 -1px var(--brand-value); transform: translateY(2px); }
+.stu-def-drag.drag-over::before { content: ''; }
+.stu-drag-handle { flex: none; align-self: center; cursor: grab; color: var(--grey); font-size: 18px; line-height: 1; padding: 0 2px; user-select: none; transition: color .14s ease, transform .14s ease; }
+.stu-def-drag:hover .stu-drag-handle { color: var(--brand-value); }
+.stu-drag-handle:active { cursor: grabbing; transform: scale(1.2); }
+.stu-rank { flex: none; align-self: center; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 7px; background: var(--panel-2); color: var(--grey); font-size: 12px; font-weight: 800; }
+.stu-def-drag .stu-swatch { width: 6px; margin-top: 0; }
+
 @media (max-width: 640px) {
   .stu-stage { grid-template-columns: 1fr; }
   .stu-weights { grid-template-columns: 1fr; }
   .stu-banner { flex-wrap: wrap; }
   .stu-flags { align-items: flex-start; flex-direction: row; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stu-def-drag, .stu-preview, .stu-banner, .stu-weight { animation: none; }
 }
 
 /* Ask EVRO — persistent floating action button (rides the viewport on scroll) */

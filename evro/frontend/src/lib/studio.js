@@ -24,7 +24,7 @@ export const ENGINE_BASELINE = {
   materiality: MATERIALITY,
 }
 
-const EMPTY = { types: {}, stages: {}, approvers: {}, staged: {} }
+const EMPTY = { types: {}, stages: {}, approvers: {}, staged: {}, typeOrder: null }
 let _cache = null
 
 function read() {
@@ -59,6 +59,21 @@ export function setApproverLabel(role, value) {
   const c = read(); c.approvers = { ...c.approvers, [role]: value }; write({ ...c }); return c
 }
 
+// Savings-type display order — a presentation-only priority (drag-to-reorder in
+// Studio). It changes the ORDER types appear in the by-type view and legends,
+// never a value, so every total still reconciles. `orderTypes` sorts any list of
+// {key,…} by the saved order, appending any keys the saved order doesn't mention.
+export const typeOrder = () => read().typeOrder || null
+export function setTypeOrder(keys) {
+  const c = read(); c.typeOrder = Array.isArray(keys) ? [...keys] : null; write({ ...c }); return c
+}
+export function orderTypes(list) {
+  const ord = read().typeOrder
+  if (!ord || !ord.length) return list
+  const rank = new Map(ord.map((k, i) => [k, i]))
+  return [...list].sort((a, b) => (rank.has(a.key) ? rank.get(a.key) : 999) - (rank.has(b.key) ? rank.get(b.key) : 999))
+}
+
 // ── Staged engine-governed edits (previewed, never applied to the engine).
 export function stagedWeights() { return { ...ENGINE_BASELINE.weights, ...(read().staged.weights || {}) } }
 export function stagedMateriality() { const s = read().staged.materiality; return s == null ? ENGINE_BASELINE.materiality : s }
@@ -90,8 +105,8 @@ export function hasStagedChanges() {
 }
 export function hasLiveOverrides() {
   const c = read()
-  return Object.keys(c.types).length > 0 || Object.keys(c.stages).length > 0 || Object.keys(c.approvers).length > 0
+  return Object.keys(c.types).length > 0 || Object.keys(c.stages).length > 0 || Object.keys(c.approvers).length > 0 || (Array.isArray(c.typeOrder) && c.typeOrder.length > 0)
 }
 
-export function resetStudio() { write({ ...EMPTY, types: {}, stages: {}, approvers: {}, staged: {} }); return read() }
+export function resetStudio() { write({ ...EMPTY, types: {}, stages: {}, approvers: {}, staged: {}, typeOrder: null }); return read() }
 export function resetStaged() { const c = read(); c.staged = {}; write({ ...c }); return c }

@@ -18,7 +18,7 @@ import {
   forecastCurve, leakageBreakdown,
 } from './engine.js'
 import { money, pct } from './format.js'
-import { typeOverride, stageOverride, approverOverride } from './studio.js'
+import { typeOverride, stageOverride, approverOverride, orderTypes } from './studio.js'
 
 // ── Savings governance — the standardized savings taxonomy Athens Procurement,
 // FP&A, Operations and Leadership share, so a dollar means the same thing in
@@ -283,10 +283,12 @@ export function pipelineByStage(db) {
 
 export function savingsByType(db) {
   const opps = savingsOpportunities(db)
-  return SAVINGS_TYPES.map((t) => {
+  const rows = SAVINGS_TYPES.map((t) => {
     const inType = opps.filter((o) => o.savingsType === t.key)
     return { ...t, count: inType.length, value: inType.reduce((sum, o) => sum + o.value.headline, 0) }
   })
+  // Honour the Studio display order (presentation only — totals are unchanged).
+  return orderTypes(rows)
 }
 
 // Spend coverage — how much of Athens' third-party spend Procurement can

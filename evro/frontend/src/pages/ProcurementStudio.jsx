@@ -10,6 +10,7 @@ import {
   stagedWeights, stagedMateriality, setStagedWeight, setStagedMateriality,
   PHASE_LADDER_DEFAULT, stagedPhaseLadder, setStagedPhaseLadder,
   hasStagedChanges, hasLiveOverrides, resetStudio, resetStaged,
+  typeOrder, setTypeOrder, orderTypes,
 } from '../lib/studio.js'
 import { money, pct } from '../lib/format.js'
 import { IconAI } from '../components/Icons.jsx'
@@ -27,6 +28,19 @@ export default function ProcurementStudio({ db, flash, refreshShell }) {
   const [, force] = useState(0)
   const opps = useMemo(() => savingsOpportunities(db), [db])
   const bump = () => { force((n) => n + 1); refreshShell?.() }
+
+  // Drag-to-reorder the savings taxonomy (presentation-only display order).
+  const orderedTypes = orderTypes(SAVINGS_TYPES.map((t) => ({ ...t })))
+  const [drag, setDrag] = useState(null)   // key being dragged
+  const [over, setOver] = useState(null)   // key hovered as drop target
+  const commitOrder = (fromKey, toKey) => {
+    if (!fromKey || fromKey === toKey) return
+    const keys = orderedTypes.map((t) => t.key)
+    const from = keys.indexOf(fromKey), to = keys.indexOf(toKey)
+    if (from < 0 || to < 0) return
+    keys.splice(to, 0, keys.splice(from, 1)[0])
+    setTypeOrder(keys); bump()
+  }
 
   const tabs = [
     ['definitions', 'Definitions'],
@@ -66,12 +80,30 @@ export default function ProcurementStudio({ db, flash, refreshShell }) {
 
       {tab === 'definitions' && (
         <div className="card pad section-gap">
-          <div className="card-h"><h3>Savings taxonomy</h3><span className="tiny muted" style={{ marginLeft: 8 }}>Live · edits apply everywhere the type is named</span></div>
+          <div className="card-h">
+            <h3>Savings taxonomy</h3>
+            <span className="tiny muted" style={{ marginLeft: 8 }}>Live · edits apply everywhere the type is named · <b>drag to reorder</b></span>
+            <span className="spacer" />
+            {typeOrder() && <button className="linkbtn tiny" onClick={() => { setTypeOrder(null); bump(); flash?.('Type order reset to default') }}>Reset order</button>}
+          </div>
           <div className="stu-defs">
-            {SAVINGS_TYPES.map((t) => {
+            {orderedTypes.map((t, idx) => {
               const cur = savingsType(t.key)
+              const isDrag = drag === t.key
+              const isOver = over === t.key && drag && drag !== t.key
               return (
-                <div key={t.key} className="stu-def">
+                <div key={t.key}
+                  className={`stu-def stu-def-drag ${isDrag ? 'dragging' : ''} ${isOver ? 'drag-over' : ''}`}
+                  style={{ animationDelay: `${idx * 45}ms` }}
+                  draggable
+                  onDragStart={(e) => { setDrag(t.key); e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', t.key) } catch { /* ignore */ } }}
+                  onDragEnter={() => setOver(t.key)}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => { e.preventDefault(); commitOrder(drag, t.key); setDrag(null); setOver(null) }}
+                  onDragEnd={() => { setDrag(null); setOver(null) }}
+                >
+                  <span className="stu-drag-handle" aria-hidden="true" title="Drag to reorder">⠿</span>
+                  <span className="stu-rank mono">{idx + 1}</span>
                   <span className="stu-swatch" style={{ background: t.accent }} />
                   <div className="stu-def-body">
                     <input className="stu-in stu-in-lg" defaultValue={cur.label} onBlur={(e) => { if (e.target.value !== cur.label) { setTypeField(t.key, 'label', e.target.value); bump() } }} aria-label={`${t.label} label`} />
@@ -82,6 +114,7 @@ export default function ProcurementStudio({ db, flash, refreshShell }) {
               )
             })}
           </div>
+          <div className="stu-note tiny muted">Order is presentation only — it sets how types appear in the “Savings by type” view and legends. Every total still reconciles to the dollar.</div>
         </div>
       )}
 
