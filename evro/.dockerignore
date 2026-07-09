@@ -1,0 +1,7 @@
+# Keep the build context small and reproducible — never ship host node_modules
+# or prior build output; the image installs/builds fresh.
+**/node_modules
+frontend/dist
+**/.env
+**/.DS_Store
+**/*.log
