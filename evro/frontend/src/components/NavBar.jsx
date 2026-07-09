@@ -82,7 +82,7 @@ export const NAV = [
 export const allowedKeys = (role) => NAV.flatMap((s) => s.items).filter(([, , , roles]) => roles.includes(role)).map(([k]) => k)
 export const navScreens = (role) => NAV.flatMap((s) => s.items).filter(([, , , roles]) => roles.includes(role)).map(([key, label]) => ({ key, label }))
 
-export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel, onBrand, disabled, onSwitchRole }) {
+export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel, onBrand, disabled }) {
   const off = disabled || new Set()
   // Phase One: lead with the curated procurement front door. When a second
   // capability is switched on in Settings, fall back to the full enterprise nav.
@@ -121,8 +121,7 @@ export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel
         })}
         <div style={{ flex: 1, minHeight: 10 }} />
         <div style={{ padding: '0 11px 12px', color: 'var(--grey-2)', fontSize: 11, lineHeight: 1.5 }}>
-          <div>Signed in as <b style={{ color: '#cfd6e0' }}>{roleLabel}</b></div>
-          {onSwitchRole && procFirst && <button className="navrole-switch" onClick={onSwitchRole}>⇄ Switch role</button>}
+          <div>Signed in as <b style={{ color: '#cfd6e0' }}>{roleLabel}</b>{procFirst && ' · switch from the top bar'}</div>
         </div>
       </nav>
     </>

@@ -69,7 +69,7 @@ import Settings from './pages/Settings.jsx'
 import ProcurementDashboard from './pages/ProcurementDashboard.jsx'
 import ProcurementHome from './pages/ProcurementHome.jsx'
 import PhaseView from './pages/PhaseView.jsx'
-import ProcurementLogin, { rolePath } from './pages/ProcurementLogin.jsx'
+import ProcurementLogin, { rolePath, ROLE_PATHS } from './pages/ProcurementLogin.jsx'
 import OpportunityWorkspace from './pages/OpportunityWorkspace.jsx'
 import SavingsPipeline from './pages/SavingsPipeline.jsx'
 import DecisionCenter from './pages/DecisionCenter.jsx'
@@ -175,10 +175,6 @@ export default function App() {
   const changeModule = useCallback(() => {
     try { sessionStorage.removeItem('evro.module'); sessionStorage.removeItem('evro.entered'); sessionStorage.removeItem('evro.role') } catch { /* ignore */ }
     setModuleKey(null); setEntered(false); setRoleChosen(null)
-  }, [])
-  const changeRole = useCallback(() => {
-    try { sessionStorage.removeItem('evro.role') } catch { /* ignore */ }
-    setRoleChosen(null)
   }, [])
   const enter = useCallback(() => { setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ } }, [])
 
@@ -325,7 +321,7 @@ export default function App() {
    <KnowledgeProvider value={{ db, level: effLevel, setLevel }}>
     <div className="layout">
       <aside className={`sidebar ${drawer ? 'open' : ''}`}>
-        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={roleLabelOf(user.role)} onBrand={() => setEntered(false)} disabled={disabledNavKeys(db)} onSwitchRole={changeRole} />
+        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={roleLabelOf(user.role)} onBrand={() => setEntered(false)} disabled={disabledNavKeys(db)} />
       </aside>
       <div className={`scrim ${drawer ? 'show' : ''}`} onClick={() => setDrawer(false)} />
 
@@ -338,7 +334,9 @@ export default function App() {
           <button className="copilot-btn hide-sm" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
           <button className="cmdk" onClick={() => setPalette(true)} title="Search &amp; commands (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
           <button className="theme-btn" onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} aria-label="Toggle theme">{theme === 'dark' ? '☀' : '☾'}</button>
-          <PersonaSwitch db={db} userId={userId} setUserId={setUserId} />
+          {procurementFirst()
+            ? <RoleSwitch roleChosen={roleChosen} pickRole={pickRole} />
+            : <PersonaSwitch db={db} userId={userId} setUserId={setUserId} />}
           <DataBadge source={source} />
         </header>
         <IntelligenceBar db={db} user={user} collapsed={intelHidden} onToggle={() => setIntelHidden((h) => !h)}
@@ -371,6 +369,20 @@ export default function App() {
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </div>
    </KnowledgeProvider>
+  )
+}
+
+// In Procurement mode the top-bar identity control IS the role picker — the same
+// four roles as the login screen, so there's one way to be someone, not two.
+function RoleSwitch({ roleChosen, pickRole }) {
+  return (
+    <label className="roleswitch" title="Switch role — the same roles as the login">
+      <span className="label hide-sm" style={{ marginBottom: 0 }}>Signed in as</span>
+      <select value={roleChosen || ''} onChange={(e) => pickRole(e.target.value)}
+        style={{ padding: '6px 8px', border: '1px solid var(--line)', borderRadius: 8, maxWidth: 220, background: 'var(--card)', color: 'var(--ink)', fontWeight: 700 }}>
+        {ROLE_PATHS.map((r) => <option key={r.key} value={r.key}>{r.title}</option>)}
+      </select>
+    </label>
   )
 }
 
