@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
-import { savingsOpportunities, SAVINGS_LIFECYCLE, savingsType, savingsUnderManagement } from '../lib/procurement.js'
-import { pipelineBoard, windowSummary, savingsWindow, opportunityYearValue, pipelineYears, MEASUREMENT_MONTHS } from '../lib/procurement-window.js'
+import { savingsOpportunities, lifecycleMeta, savingsType, savingsUnderManagement } from '../lib/procurement.js'
+import { pipelineBoard, PIPELINE_PHASES, windowSummary, savingsWindow, opportunityYearValue, pipelineYears, MEASUREMENT_MONTHS } from '../lib/procurement-window.js'
 import { money, pct, num } from '../lib/format.js'
 import Term from '../components/Term.jsx'
 import ExportMenu from '../components/ExportMenu.jsx'
@@ -23,14 +23,15 @@ function WindowMeter({ w, compact = false }) {
   )
 }
 
-// Horizontal process funnel — the five phases taper left→right, opportunities
-// are bubbles (sized by annual run-rate, coloured by savings type) that thin out
-// as they progress. Click a bubble to open its workspace.
-const FUNNEL_TAPER = [96, 78, 60, 44, 30] // band height % per phase (the taper)
+// Horizontal process funnel — five solid, colour-per-phase segments that taper
+// left→right into one continuous funnel (clip-path trapezoids share boundary
+// heights, so the neck flows). Opportunities are bubbles sitting INSIDE each
+// segment, sized by annual run-rate and coloured by savings type. Click to open.
+const FUNNEL_H = [100, 82, 64, 48, 36, 28] // 6 boundary heights %, tapering neck
 function FunnelView({ board, match, navigate, valueOf, valueLabel = '/yr' }) {
   const cols = board.map((c) => ({ ...c, cards: c.cards.filter((o) => match(o) && valueOf(o) > 0) }))
   const maxV = Math.max(1, ...cols.flatMap((c) => c.cards.map((o) => valueOf(o))))
-  const dot = (v) => Math.round(11 + 30 * Math.sqrt(Math.min(v, maxV) / maxV)) // px
+  const dot = (v) => Math.round(11 + 28 * Math.sqrt(Math.min(v, maxV) / maxV)) // px
   const [hover, setHover] = useState(null) // { o, x, y }
   const show = (o) => (e) => {
     const r = e.currentTarget.getBoundingClientRect()
@@ -38,46 +39,44 @@ function FunnelView({ board, match, navigate, valueOf, valueLabel = '/yr' }) {
     setHover({ o, x: r.left - p.left + r.width / 2, y: r.top - p.top })
   }
   return (
-    <div className="pfun" onMouseLeave={() => setHover(null)}>
-      <svg className="pfun-bg" viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="pfunG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="var(--brand-value)" stopOpacity="0.16" />
-            <stop offset="1" stopColor="var(--green)" stopOpacity="0.10" />
-          </linearGradient>
-        </defs>
-        <polygon points="0,8 1000,140 1000,260 0,392" fill="url(#pfunG)" />
-        {[200, 400, 600, 800].map((x) => <line key={x} x1={x} y1="0" x2={x} y2="400" stroke="var(--line)" strokeDasharray="4 6" />)}
-      </svg>
-      <div className="pfun-cols">
-        {cols.map((col) => (
-          <div key={col.key} className="pfun-col">
-            <div className="pfun-head">
-              <span className="pfun-tick" style={{ background: col.tone }} />
-              <b>{col.label}</b>
-              <span className="pfun-count" style={{ color: col.tone }}>{col.cards.length}</span>
-            </div>
-            <div className="pfun-mid">
-              <div className="pfun-band" style={{ height: `${FUNNEL_TAPER[cols.indexOf(col)] || 30}%` }}>
-                {col.cards.map((o) => {
-                  const st = savingsType(o.savingsType)
-                  const d = dot(valueOf(o))
-                  const active = hover && hover.o.id === o.id
-                  return (
-                    <button key={o.id} className={`pfun-dot ${active ? 'active' : ''} ${hover && !active ? 'dim' : ''}`} onClick={() => navigate('opportunity', { id: o.id })}
-                      onMouseEnter={show(o)} onFocus={show(o)} onMouseLeave={() => setHover(null)} onBlur={() => setHover(null)}
-                      style={{ width: d, height: d, background: st.accent, borderColor: o.ragStatus === 'red' ? 'var(--red)' : 'transparent' }}
-                      aria-label={`${o.name}, ${money(o.value.headline)} per year`} />
-                  )
-                })}
+    <div className="pfun pfun2" onMouseLeave={() => setHover(null)}>
+      <div className="pfun2-cols">
+        {cols.map((col, i) => {
+          const hL = FUNNEL_H[i], hR = FUNNEL_H[i + 1]
+          const clip = `polygon(0 ${(100 - hL) / 2}%, 100% ${(100 - hR) / 2}%, 100% ${(100 + hR) / 2}%, 0 ${(100 + hL) / 2}%)`
+          const total = col.cards.reduce((s, o) => s + valueOf(o), 0)
+          return (
+            <div key={col.key} className="pfun2-col">
+              <div className="pfun2-head">
+                <span className="pfun2-tick" style={{ background: col.tone }} />
+                <b>{col.label}</b>
+                <span className="pfun2-count" style={{ color: col.tone }}>{col.cards.length}</span>
+              </div>
+              <div className="pfun2-seg-wrap">
+                <div className="pfun2-seg" style={{ clipPath: clip, background: `linear-gradient(180deg, color-mix(in srgb, ${col.tone} 34%, transparent), color-mix(in srgb, ${col.tone} 14%, transparent))` }} />
+                <div className="pfun2-seg-edge" style={{ clipPath: clip, boxShadow: `inset 0 0 0 1.5px color-mix(in srgb, ${col.tone} 55%, transparent)` }} />
+                <div className="pfun2-dots">
+                  {col.cards.map((o) => {
+                    const st = savingsType(o.savingsType)
+                    const d = dot(valueOf(o))
+                    const active = hover && hover.o.id === o.id
+                    return (
+                      <button key={o.id} className={`pfun-dot ${active ? 'active' : ''} ${hover && !active ? 'dim' : ''}`} onClick={() => navigate('opportunity', { id: o.id })}
+                        onMouseEnter={show(o)} onFocus={show(o)} onMouseLeave={() => setHover(null)} onBlur={() => setHover(null)}
+                        style={{ width: d, height: d, background: st.accent, borderColor: o.ragStatus === 'red' ? 'var(--red)' : 'transparent' }}
+                        aria-label={`${o.name}, ${money(o.value.headline)} per year`} />
+                    )
+                  })}
+                  {col.cards.length === 0 && <span className="pfun2-empty">—</span>}
+                </div>
+              </div>
+              <div className="pfun2-foot">
+                <div className="mono pfun2-foot-v" style={{ color: col.tone }}>{money(total)}<span className="pboard-yr">{valueLabel}</span></div>
+                <div className="tiny muted">{col.gloss}</div>
               </div>
             </div>
-            <div className="pfun-foot">
-              <div className="mono pfun-foot-v" style={{ color: col.tone }}>{money(col.cards.reduce((s, o) => s + valueOf(o), 0))}<span className="pboard-yr">{valueLabel}</span></div>
-              <div className="tiny muted">{col.gloss}</div>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
       {hover && (() => {
         const o = hover.o; const st = savingsType(o.savingsType)
@@ -117,7 +116,8 @@ export default function SavingsPipeline({ db, navigate, flash }) {
   const match = (o) => (type === 'all' || o.savingsType === type)
   const inScope = (o) => match(o) && valueOf(o) > 0
   const shown = opps.filter(inScope)
-  const byStage = SAVINGS_LIFECYCLE.map((s) => ({ stage: s, rows: shown.filter((o) => o.stage === s.key) })).filter((g) => g.rows.length)
+  // List groups by the four project phases (not the 11 fine-grained stages).
+  const byPhase = PIPELINE_PHASES.map((ph) => ({ phase: ph, rows: shown.filter((o) => lifecycleMeta(o.stage).phase === ph.key) })).filter((g) => g.rows.length)
   const types = [{ key: 'all', label: 'All types' }, ...[...new Set(opps.map((o) => o.savingsType))].map((k) => ({ key: k, label: savingsType(k).label }))]
 
   return (
@@ -218,11 +218,11 @@ export default function SavingsPipeline({ db, navigate, flash }) {
           })}
         </div>
       ) : (
-        byStage.map(({ stage, rows }) => (
-          <div key={stage.key} className="card pad section-gap svp-stage">
+        byPhase.map(({ phase, rows }) => (
+          <div key={phase.key} className="card pad section-gap svp-stage">
             <div className="card-h">
-              <h3>{stage.label}</h3>
-              <span className="tiny muted" style={{ marginLeft: 8 }}>{stage.gloss}</span>
+              <h3><span className="svp-phdot" style={{ background: phase.tone }} />{phase.label}</h3>
+              <span className="tiny muted" style={{ marginLeft: 8 }}>{phase.gloss}</span>
               <span className="spacer" />
               <span className="badge b-grey">{rows.length} · {money(rows.reduce((s, o) => s + valueOf(o), 0))}{year !== 'all' ? ` (${year})` : ''}</span>
             </div>

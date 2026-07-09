@@ -1,13 +1,10 @@
 import { useMemo, useState } from 'react'
-import { procurementModel, lifecycleMeta, spendCoverage } from '../lib/procurement.js'
-import { impactByYear } from '../lib/procurement-window.js'
-import { forecastCurve } from '../lib/engine.js'
-import { money, pct, num, monthLabel, dateLabel } from '../lib/format.js'
+import { procurementModel, spendCoverage } from '../lib/procurement.js'
+import { impactByYear, pipelineBoard } from '../lib/procurement-window.js'
+import { money, pct, num } from '../lib/format.js'
 import { Tile } from '../components/ui.jsx'
-import { LineChart } from '../components/Charts.jsx'
 import Term from '../components/Term.jsx'
 import ExportMenu from '../components/ExportMenu.jsx'
-import AgentActions from '../components/AgentActions.jsx'
 
 // Procurement Executive Dashboard (Phase One W3) — the five-second read: how
 // much value is under management, where it is in the lifecycle, how confident
@@ -130,16 +127,17 @@ function ImpactByYear({ db, focusYear }) {
   )
 }
 
-function PipelineFunnel({ pipeline, navigate }) {
-  const max = Math.max(1, ...pipeline.map((s) => s.value))
-  const phaseTone = { pipeline: 'var(--opp)', commit: 'var(--amber)', execute: 'var(--brand-value)', realized: 'var(--green)', closed: 'var(--grey)' }
+// The pipeline as the FOUR project phases (not the 11 fine-grained stages):
+// pipeline → commit → execute → realize, plus banked. One click opens the board.
+function PipelineFunnel({ phases, navigate }) {
+  const max = Math.max(1, ...phases.map((s) => s.value))
   return (
     <div className="pdash-funnel">
-      {pipeline.map((s) => (
+      {phases.map((s) => (
         <button key={s.key} className="pdash-stage" onClick={() => navigate('savingspipeline')} title={s.gloss}>
           <span className="pdash-stage-l">{s.label}</span>
           <span className="pdash-stage-bar">
-            <span className="pdash-stage-fill" style={{ width: `${Math.max(s.value ? 3 : 0, (s.value / max) * 100)}%`, background: phaseTone[s.phase] || 'var(--navy)' }} />
+            <span className="pdash-stage-fill" style={{ width: `${Math.max(s.value ? 3 : 0, (s.value / max) * 100)}%`, background: s.tone || 'var(--navy)' }} />
           </span>
           <span className="pdash-stage-n mono">{s.count}</span>
           <span className="pdash-stage-v mono">{s.value ? money(s.value) : '—'}</span>
@@ -167,53 +165,23 @@ function TypeBars({ byType }) {
 
 export default function ProcurementDashboard({ db, navigate, flash }) {
   const m = useMemo(() => procurementModel(db), [db])
-  const { sum, pipeline, byType, velocity, blockers, opportunities } = m
+  const { sum, byType, velocity, opportunities } = m
   const fy = db.meta.fiscalYear
-  // The home page focuses on the current year's risk-adjusted impact.
   const focusYear = Number(String(db.meta.now).slice(0, 4))
   const yearImpact = useMemo(() => impactByYear(db, 'rav'), [db])
   const impactFocus = yearImpact.find((y) => y.year === focusYear)?.value || 0
-
-  // Decision queue — opportunities whose next move needs a human decision
-  // (pending sign-off or missing gate evidence), ranked by expected value.
-  const decisionQueue = useMemo(() => opportunities
-    .filter((o) => o.nextDecision && (o._raw.request || o.nextDecision.missing.length > 0))
-    .sort((a, b) => b.nextDecision.expectedValue - a.nextDecision.expectedValue)
-    .slice(0, 6), [opportunities])
-
-  const atRisk = useMemo(() => opportunities
-    .filter((o) => o.ragStatus === 'red')
-    .sort((a, b) => b.value.headline - a.value.headline)
-    .slice(0, 6), [opportunities])
-
-  // Forecast impact by period — realized run-rate to date, then risk-adjusted
-  // projection for the remaining fiscal months (engine forecastCurve).
-  const curve = useMemo(() => forecastCurve(db), [db])
-  const xLabels = curve.map((c) => monthLabel(c.month))
-  const elapsedIdx = curve.findIndex((c) => !c.past)
-  const anchor = elapsedIdx > 0 ? curve[elapsedIdx - 1].actual : null
-  const fut = (sel) => curve.map((c, idx) => (idx === elapsedIdx - 1 ? anchor : c.past ? null : sel(c)))
-  const series = [
-    { key: 'actual', label: 'Realized (validated)', color: 'var(--green)', points: curve.map((c) => (c.past ? c.actual : null)) },
-    { key: 'expected', label: 'Risk-adjusted forecast', color: 'var(--navy)', dashed: true, points: fut((c) => c.expected) },
-    { key: 'committed', label: 'Committed', color: 'var(--amber)', dashed: true, points: fut((c) => c.committed) },
-  ]
-
-  const top = decisionQueue[0]
+  // The pipeline as the four project phases (not 11 stages).
+  const phases = useMemo(() => pipelineBoard(db), [db])
   const redCount = opportunities.filter((o) => o.ragStatus === 'red').length
-  // keyboard-operable table rows (WCAG 2.1.1) — Enter/Space open the workspace
-  const rowNav = (id) => ({
-    className: 'clickable', role: 'button', tabIndex: 0,
-    onClick: () => navigate('opportunity', { id }),
-    onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate('opportunity', { id }) } },
-  })
 
+  // This screen is the NUMBERS — the value story. The action lists (decisions
+  // waiting, at-risk, next best) live on Home so the two never overlap.
   return (
     <>
       <div className="pdash-toolbar">
         <p className="page-intro" style={{ margin: 0 }}>
-          <b>Athens savings, in one place.</b> What we’re on track to save this year, what’s already confirmed, and what needs a
-          decision — across {num(sum.count)} live deals. Every number opens to the real deal behind it.
+          <b>The value story.</b> What we’re on track to save this year, how it splits, and where it lands.
+          Head to <button className="linkbtn" onClick={() => navigate('mission')}>Home</button> for what needs a decision today.
         </p>
         <ExportMenu db={db} flash={flash} label="Export board pack" />
       </div>
@@ -256,108 +224,20 @@ export default function ProcurementDashboard({ db, navigate, flash }) {
       <div className="tiles">
         <Tile tone="green" label={`Confirmed & banked (FY${fy})`} value={money(sum.lenses.realized)} sub={`checked by Finance · ${velocity.elapsedMonths} months in`} />
         <Tile tone="amber" label="Committed, not yet all delivered" value={money(sum.lenses.committed)} sub="deals we’ve approved and are working" />
-        <Tile tone="red" label="At risk" value={money(sum.atRisk)} sub={`${num(redCount)} deal${redCount === 1 ? '' : 's'} flagged red — need attention`} />
+        <Tile tone="red" label="At risk" value={money(sum.atRisk)} sub={`${num(redCount)} deal${redCount === 1 ? '' : 's'} flagged red`} />
         <Tile tone="navy" label="How likely the plan is to land" value={pct(sum.confidence)} sub="higher = more of it is nearly done" />
       </div>
 
-      {/* Proactive agents — always-on next best actions */}
-      <AgentActions db={db} navigate={navigate} />
-
-      {/* Executive narrative — what happened, why it matters, what next */}
-      <div className="pdash-narr card pad section-gap">
-        <div className="pdash-narr-tag">Executive narrative · deterministic</div>
-        <div className="pdash-narr-row"><b>What happened.</b> {money(sum.lenses.realized)} of validated savings landed year-to-date at {money(velocity.perMonth)}/month, with {money(sum.total)} now under active management across {num(sum.count)} opportunities.</div>
-        <div className="pdash-narr-row"><b>Why it matters.</b> {money(sum.lenses.committed)} is committed to the plan and {money(sum.atRisk)} sits at risk across {num(redCount)} red opportunit{redCount === 1 ? 'y' : 'ies'}; the book is running at {pct(sum.confidence)} value-weighted confidence.</div>
-        <div className="pdash-narr-row"><b>What next.</b> {top
-          ? <>The highest-value decision waiting is <button className="linkbtn" onClick={() => navigate('opportunity', { id: top.id })}>{top.name}</button> — {top.nextDecision.label.toLowerCase()} ({money(top.nextDecision.expectedValue)} expected value{top.nextDecision.dueBy ? `, due ${dateLabel(top.nextDecision.dueBy)}` : ''}).</>
-          : 'No decisions are blocked — every opportunity has what it needs to advance.'}</div>
-      </div>
-
       <div className="grid cols-2 section-gap">
         <div className="card pad">
-          <div className="card-h"><h3>Savings pipeline by stage</h3><span className="spacer" /><button className="btn sm" onClick={() => navigate('savingspipeline')}>Opportunities →</button></div>
-          <PipelineFunnel pipeline={pipeline} navigate={navigate} />
-          <p className="tiny muted" style={{ marginTop: 6 }}>Each opportunity counted once at its lifecycle stage; the eleven stages sum to {money(sum.total)} under management.</p>
+          <div className="card-h"><h3>Pipeline by phase</h3><span className="spacer" /><button className="btn sm" onClick={() => navigate('savingspipeline')}>Open pipeline →</button></div>
+          <PipelineFunnel phases={phases} navigate={navigate} />
+          <p className="tiny muted" style={{ marginTop: 6 }}>Each deal counted once at its phase; the phases sum to {money(sum.total)} under management.</p>
         </div>
-        <div className="card pad pdash-forecast">
-          <div className="card-h"><h3>Forecast impact by period</h3></div>
-          <LineChart xLabels={xLabels} series={series} />
-          <p className="tiny muted">Realized run-rate to date, then risk-adjusted / committed projection for the remainder of FY{fy}.</p>
-        </div>
-      </div>
-
-      <div className="grid cols-2 section-gap">
-        <div className="card pad">
-          <div className="card-h"><h3>Decision queue</h3><span className="spacer" /><button className="btn sm" onClick={() => navigate('decisioncenter')}>Decision Center →</button></div>
-          {decisionQueue.length === 0 ? (
-            <p className="muted" style={{ padding: '10px 2px' }}>Clear — no opportunity is waiting on a decision.</p>
-          ) : (
-            <div className="table-wrap">
-              <table className="tbl">
-                <thead><tr><th>Opportunity</th><th>Next decision</th><th className="num">Expected</th></tr></thead>
-                <tbody>
-                  {decisionQueue.map((o) => (
-                    <tr key={o.id} {...rowNav(o.id)}>
-                      <td><b>{o.name}</b><div className="tiny muted">{o.owner} · {o.stageLabel}</div></td>
-                      <td>{o.nextDecision.label}{o.nextDecision.missing.length > 0 && <div className="tiny" style={{ color: 'var(--brand-energy)' }}>{o.nextDecision.missing.length} thing{o.nextDecision.missing.length === 1 ? '' : 's'} missing to approve</div>}</td>
-                      <td className="num mono">{money(o.nextDecision.expectedValue)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-        <div className="card pad pdash-atrisk">
-          <div className="card-h"><h3>Opportunities at risk</h3><span className="badge b-red">{num(redCount)}</span></div>
-          {atRisk.length === 0 ? (
-            <p className="muted" style={{ padding: '10px 2px' }}>No red opportunities — the book is on track.</p>
-          ) : (
-            <div className="table-wrap">
-              <table className="tbl">
-                <thead><tr><th>Opportunity</th><th>Stage</th><th className="num">Value</th></tr></thead>
-                <tbody>
-                  {atRisk.map((o) => (
-                    <tr key={o.id} {...rowNav(o.id)}>
-                      <td><b>{o.name}</b><div className="tiny muted">{o.owner} · worst risk {o.worstRisk}</div></td>
-                      <td>{o.stageLabel}</td>
-                      <td className="num mono">{money(o.value.headline)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="grid cols-2 section-gap">
         <div className="card pad">
           <div className="card-h"><h3>Savings by type</h3><span className="spacer" /><span className="badge b-grey">shared definitions</span></div>
           <TypeBars byType={byType} />
           <p className="tiny muted" style={{ marginTop: 6 }}>One standardized language — hover a type for its governance definition.</p>
-        </div>
-        <div className="card pad">
-          <div className="card-h"><h3>Top blockers &amp; dependencies</h3></div>
-          {blockers.length === 0 ? (
-            <p className="muted" style={{ padding: '10px 2px' }}>No cross-opportunity blockers on the critical path.</p>
-          ) : (
-            <div className="table-wrap">
-              <table className="tbl">
-                <thead><tr><th>Opportunity</th><th className="num">Blocks</th><th className="num">Value</th></tr></thead>
-                <tbody>
-                  {blockers.map((b) => (
-                    <tr key={b.id} {...rowNav(b.id)}>
-                      <td><b>{b.name}</b></td>
-                      <td className="num"><span className="badge b-amber">{b.blocks}</span></td>
-                      <td className="num mono">{money(b.value)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          <p className="tiny muted" style={{ marginTop: 6 }}>Opportunities that gate the most downstream value — clear these first.</p>
         </div>
       </div>
     </>

@@ -101,33 +101,23 @@ const ENTL = ['exec', 'admin', 'fpna', 'leader']
 // screens. Later Procurement waves repoint labels at dedicated procurement
 // surfaces as they are built; the structure stays the same.
 // [key, label, Icon, roles]
+// Minimal, phase-shaped rail (per exec feedback — Juan/Cesar): two places to
+// look (Home = what needs you, Executive = the numbers), the four project
+// phases as the workflow, one AI door. Everything else stays reachable through
+// ⌘K / Ask EVRO — the sidebar just doesn't lead with it.
 export const PROCUREMENT_NAV = [
   { group: 'Command', items: [
     ['mission', 'Home', IconCockpit, ALL],
     ['procurement', 'Executive Dashboard', IconExec, ENTL],
   ] },
-  { group: 'Procurement', items: [
-    ['savingspipeline', 'Savings Pipeline', IconPortfolio, ENTL],
-    ['opportunities', 'Opportunities', IconOpportunity, ENT],
-    ['decisioncenter', 'Decision Center', IconCockpit, ENTL],
-    ['governance', 'Business Cases', IconReport, ENTL],
-    ['sustainment', 'Implementation', IconForecast, ENTL],
-    ['realization', 'Value Realization', IconReport, ENTL],
-    ['missions', 'Mission Rooms', IconBolt, ENTL],
+  { group: 'The four phases', items: [
+    ['savingspipeline', 'Pipeline', IconPortfolio, ENTL],
+    ['decisioncenter', 'Commit', IconCockpit, ENTL],
+    ['sustainment', 'Execute', IconForecast, ENTL],
+    ['realization', 'Realize', IconReport, ENTL],
   ] },
   { group: 'Intelligence', items: [
-    ['procai', 'Enterprise AI', IconAI, ALL],
-    ['whatif', 'What-If Simulation', IconScenarios, ENTL],
-    ['brief', 'Auto-Drafted Briefs', IconReport, ALL],
-    ['aitrust', 'Enterprise Memory', IconReport, ALL],
-    ['reporting', 'Analytics', IconGraph, ENT],
-  ] },
-  { group: 'Control', items: [
-    ['glossary', 'Definitions & Phases', IconBook, ALL],
-    ['studio', 'EVRO Studio', IconBolt, ENT],
-    ['knowledge', 'Knowledge Layer', IconBook, ALL],
-    ['sustainability', 'Sustainability', IconLeaf, ALL],
-    ['movement', 'Value Movement', IconTeam, ALL],
+    ['procai', 'Ask EVRO', IconAI, ALL],
     ['settings', 'Settings', IconCockpit, ENT],
   ] },
 ]

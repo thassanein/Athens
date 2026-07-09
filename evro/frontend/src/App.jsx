@@ -67,6 +67,7 @@ import Narrative from './pages/Narrative.jsx'
 import AITrust from './pages/AITrust.jsx'
 import Settings from './pages/Settings.jsx'
 import ProcurementDashboard from './pages/ProcurementDashboard.jsx'
+import ProcurementHome from './pages/ProcurementHome.jsx'
 import OpportunityWorkspace from './pages/OpportunityWorkspace.jsx'
 import SavingsPipeline from './pages/SavingsPipeline.jsx'
 import DecisionCenter from './pages/DecisionCenter.jsx'
@@ -276,7 +277,10 @@ export default function App() {
   if (!moduleKey) return <ModuleChooser onPick={pickModule} />
   if (!entered) return <Landing db={db} user={user} onEnter={enter} onBack={changeModule} onTour={() => { enter(); setWelcome(false); setTour(true) }} />
 
-  const Page = PAGES[page] || Cockpit
+  // In procurement-first mode, "Home" (the mission key) is the minimal daily
+  // action screen, not the heavy enterprise Mission Control.
+  const procHome = procurementFirst() && page === 'mission'
+  const Page = procHome ? ProcurementHome : (PAGES[page] || Cockpit)
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
   const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, onCompanion: () => setCopilot(true), home: HOME[user.role] || 'morning', refreshShell }
   void shellRev // referenced so a capability toggle re-renders the shell/NavBar
@@ -304,7 +308,7 @@ export default function App() {
       <div className="main">
         <header className="topbar">
           <button className="hamburger" onClick={() => setDrawer((d) => !d)} aria-label="Menu"><IconMenu /></button>
-          <div className="page-title">{TITLES[page]}</div>
+          <div className="page-title">{procHome ? 'Home' : TITLES[page]}</div>
           <div className="spacer" />
           <button className="copilot-btn why-btn" onClick={() => setWhy(true)} title="Why EVRO? — the plain-English overview">Why EVRO?</button>
           <button className="copilot-btn hide-sm" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
@@ -322,7 +326,7 @@ export default function App() {
             <Page key={`${page}:${selId || ''}`} {...ctx} db={pageDb} id={selId} />
           </ErrorBoundary>
         </main>
-        {RAIL_PAGES.has(page) && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
+        {RAIL_PAGES.has(page) && !procHome && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
         <AIPresence db={db} user={user} page={page} navigate={navigate} />
         <AskEvro onClick={() => setCopilot(true)} railPage={RAIL_PAGES.has(page)}
           hidden={copilot || briefing || palette || welcome || tour || drawer || !!drawerId || celebrations.length > 0} />
