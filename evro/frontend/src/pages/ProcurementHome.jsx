@@ -86,7 +86,7 @@ export default function ProcurementHome({ db, navigate, user }) {
       {/* The one list: what needs you, in plain language */}
       <div className="card pad section-gap">
         <div className="card-h">
-          <h3>What needs you</h3>
+          <h3>What to do next</h3>
           <span className="tiny muted" style={{ marginLeft: 8 }}>{scope === 'book' ? 'across the book' : 'on the deals you own'} · most important first</span>
         </div>
         {todo.length === 0 ? (
