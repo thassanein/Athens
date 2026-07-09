@@ -118,6 +118,7 @@ export const PROCUREMENT_NAV = [
   ] },
   { group: 'Intelligence', items: [
     ['procai', 'Ask EVRO', IconAI, ALL],
+    ['studio', 'EVRO Studio', IconBolt, ENT],
     ['settings', 'Settings', IconCockpit, ENT],
   ] },
 ]
