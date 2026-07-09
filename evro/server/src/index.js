@@ -9,7 +9,7 @@ import { loadDb, persistMutable } from './store.js'
 import { MUTATIONS } from './mutations.js'
 import { enterpriseRollup } from './engine.js'
 import { portfolioDiagnostics, renderLlmsTxt, renderOverviewHTML } from './diagnostics.js'
-import { aiStatus, aiAsk } from './ai.js'
+import { aiStatus, aiAsk, aiSelftest } from './ai.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -93,6 +93,7 @@ app.post('/api/action', async (req, res, next) => {
 
 // ---- EVRO AI (optional real-LLM copilot; off unless ANTHROPIC_API_KEY is set) ---
 app.get('/api/ai/status', aiStatus)
+app.get('/api/ai/selftest', aiSelftest)
 app.post('/api/ai/ask', aiAsk)
 
 // ---- API discovery index ---------------------------------------------------

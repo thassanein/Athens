@@ -101,6 +101,28 @@ export async function aiStatus(_req, res) {
   res.json({ enabled: ready, model: ready ? MODEL() : null, ...meter() })
 }
 
+// GET /api/ai/selftest — one-click browser diagnostic. Walks the exact path an
+// answer takes and reports which stage fails, so a non-technical user can just
+// open the URL and share the JSON. Rate-limited; makes one tiny (~10-token) call.
+export async function aiSelftest(req, res) {
+  const out = { keyPresent: aiEnabled(), model: MODEL() }
+  if (!aiEnabled()) return res.json({ ...out, ok: false, stage: 'key', hint: 'ANTHROPIC_API_KEY is not set on the server.' })
+  if (!rateOK(req)) return res.status(429).json({ ...out, ok: false, stage: 'rate', hint: 'Too many tests from this IP; wait an hour.' })
+  let Anthropic
+  try { ({ default: Anthropic } = await import('@anthropic-ai/sdk')) }
+  catch (err) { return res.json({ ...out, ok: false, stage: 'sdk', error: String(err?.message || err), hint: 'The @anthropic-ai/sdk package is not installed on the server.' }) }
+  try {
+    const client = new Anthropic()
+    const resp = await client.messages.create({ model: MODEL(), max_tokens: 16, messages: [{ role: 'user', content: 'Reply with exactly: ok' }] })
+    const reply = (resp.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('').trim()
+    res.json({ ...out, ok: true, stage: 'done', reply, usage: { input: resp.usage?.input_tokens ?? null, output: resp.usage?.output_tokens ?? null } })
+  } catch (err) {
+    const status = err?.status || err?.statusCode
+    res.json({ ...out, ok: false, stage: 'api', status: status ?? null, error: String(err?.message || err),
+      hint: status === 401 ? 'The API key is invalid.' : status === 400 ? 'Bad request (likely a wrong model name).' : status === 429 ? 'Anthropic rate/credit limit — check billing/credits.' : 'The call to Anthropic failed.' })
+  }
+}
+
 // POST /api/ai/ask  { question, context }  →  { enabled, answer, model, usage }
 export async function aiAsk(req, res) {
   if (!aiEnabled()) return res.json({ enabled: false })
