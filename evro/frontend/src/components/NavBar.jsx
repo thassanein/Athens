@@ -107,11 +107,15 @@ export default function NavBar({ page, navigate, onNew, showNew, role, roleLabel
           return (
             <div key={sec.group}>
               <div className="group-label">{sec.group}</div>
-              {items.map(([key, label, Icon]) => (
-                <button key={key} className={`navitem ${page === key ? 'active' : ''}`} onClick={() => navigate(key)}>
-                  <Icon /> {label}
-                </button>
-              ))}
+              {items.map(([key, label, Icon]) => {
+                // The single "Pipeline" entry stays lit across every phase sub-view.
+                const active = page === key || (key === 'phase_pipeline' && typeof page === 'string' && page.startsWith('phase_'))
+                return (
+                  <button key={key} className={`navitem ${active ? 'active' : ''}`} onClick={() => navigate(key)}>
+                    <Icon /> {label}
+                  </button>
+                )
+              })}
             </div>
           )
         })}

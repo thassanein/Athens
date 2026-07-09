@@ -2109,6 +2109,12 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
 .ows-step:first-child::before { display: none; }
 .ows-step-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--line); z-index: 1; border: 2px solid var(--bg, #0b0f17); }
 .ows-step-l { font-size: 9.5px; text-align: center; color: var(--grey); line-height: 1.2; }
+/* Four-phase track — fewer, bigger steps than the old 11-stage strip */
+.ows-track-4 { padding: 16px 4px 6px; }
+.ows-track-4 .ows-step-l { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.ows-track-4 .ows-step.todo .ows-step-l { color: var(--grey); font-weight: 600; }
+.ows-track-4 .ows-step-dot { width: 14px; height: 14px; }
+.ows-step-sub { font-size: 10.5px; font-weight: 700; color: var(--brand-value); background: color-mix(in srgb, var(--brand-value) 12%, transparent); padding: 1px 7px; border-radius: 999px; margin-top: 1px; }
 .ows-step.done .ows-step-dot { background: var(--green); }
 .ows-step.done::before { background: var(--green); }
 .ows-step.current .ows-step-dot { background: var(--brand-value); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-value) 25%, transparent); }

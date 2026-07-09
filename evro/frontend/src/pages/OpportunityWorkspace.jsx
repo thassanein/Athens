@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import {
-  savingsOpportunity, savingsOpportunities, savingsType, SAVINGS_LIFECYCLE, lifecycleIndex,
-  lifecycleMeta, VALUE_CHAIN, decisionHistory, opportunityInsight,
+  savingsOpportunity, savingsOpportunities, savingsType,
+  lifecycleMeta, decisionHistory, opportunityInsight,
 } from '../lib/procurement.js'
 import { categoryName, groupName, index } from '../lib/engine.js'
 import { savingsWindow, MEASUREMENT_MONTHS } from '../lib/procurement-window.js'
@@ -18,28 +18,30 @@ import EvidenceDrawer from '../components/EvidenceDrawer.jsx'
 // object the dashboard rolls up (savingsOpportunity), so nothing here disagrees
 // with the headline. Reuses the shared EvidenceDrawer for source drill-through.
 
+// The four project phases — the same Pipeline → Commit → Execute → Realize model
+// used everywhere else. The exact lifecycle stage rides under the current phase
+// as a caption, so the track is simple but the detail isn't lost.
+const PHASE_STEPS = [
+  { key: 'pipeline', label: 'Pipeline', phases: ['pipeline'] },
+  { key: 'commit', label: 'Commit', phases: ['commit'] },
+  { key: 'execute', label: 'Execute', phases: ['execute'] },
+  { key: 'realize', label: 'Realize', phases: ['realized', 'closed'] },
+]
 function LifecycleTrack({ stage }) {
-  const cur = lifecycleIndex(stage)
-  const curChain = lifecycleMeta(stage).chain
+  const meta = lifecycleMeta(stage)
+  const cur = PHASE_STEPS.findIndex((p) => p.phases.includes(meta.phase))
   return (
-    <div>
-      {/* procurement value chain — the three phases the eleven stages roll into */}
-      <div className="ows-chain" role="list" aria-label="Procurement value chain">
-        {VALUE_CHAIN.map((c) => (
-          <div key={c.key} className={`ows-chain-ph ${c.key === curChain ? 'active' : ''}`} role="listitem" title={c.gloss}>{c.label}</div>
-        ))}
-      </div>
-      <div className="ows-track" role="list" aria-label="Savings lifecycle">
-        {SAVINGS_LIFECYCLE.map((s, i) => {
-          const state = i < cur ? 'done' : i === cur ? 'current' : 'todo'
-          return (
-            <div key={s.key} className={`ows-step ${state}`} role="listitem" title={s.gloss}>
-              <span className="ows-step-dot" />
-              <span className="ows-step-l">{s.label}</span>
-            </div>
-          )
-        })}
-      </div>
+    <div className="ows-track ows-track-4" role="list" aria-label="Project phase">
+      {PHASE_STEPS.map((p, i) => {
+        const state = i < cur ? 'done' : i === cur ? 'current' : 'todo'
+        return (
+          <div key={p.key} className={`ows-step ${state}`} role="listitem">
+            <span className="ows-step-dot" />
+            <span className="ows-step-l">{p.label}</span>
+            {state === 'current' && <span className="ows-step-sub">{meta.label}</span>}
+          </div>
+        )
+      })}
     </div>
   )
 }

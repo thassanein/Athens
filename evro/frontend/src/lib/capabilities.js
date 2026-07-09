@@ -109,12 +109,7 @@ export const PROCUREMENT_NAV = [
   { group: 'Command', items: [
     ['mission', 'Home', IconCockpit, ALL],
     ['procurement', 'Executive Dashboard', IconExec, ENTL],
-  ] },
-  { group: 'The four phases', items: [
     ['phase_pipeline', 'Pipeline', IconPortfolio, ENTL],
-    ['phase_commit', 'Commit', IconCockpit, ENTL],
-    ['phase_execute', 'Execute', IconForecast, ENTL],
-    ['phase_realize', 'Realize', IconReport, ENTL],
   ] },
   { group: 'Intelligence', items: [
     ['procai', 'Ask EVRO', IconAI, ALL],
