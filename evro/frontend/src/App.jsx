@@ -14,7 +14,7 @@ import ModuleChooser from './components/ModuleChooser.jsx'
 import Onboarding from './components/Onboarding.jsx'
 import MobileCommandBar from './components/MobileCommandBar.jsx'
 import { BrandMark } from './components/Brand.jsx'
-import { IconMenu, IconSearch, IconAI } from './components/Icons.jsx'
+import { IconMenu, IconSearch } from './components/Icons.jsx'
 import { missionQueue } from './lib/mission.js'
 import { recordView } from './lib/memory.js'
 import { procurementFirst, selectModule } from './lib/capabilities.js'
@@ -78,7 +78,6 @@ import ProcurementScenario from './pages/ProcurementScenario.jsx'
 import ProcurementBrief from './pages/ProcurementBrief.jsx'
 import ProcurementStudio from './pages/ProcurementStudio.jsx'
 import NextBestRail from './components/NextBestRail.jsx'
-import AIPresence from './components/AIPresence.jsx'
 import AskEvro from './components/AskEvro.jsx'
 import WhyEvro from './components/WhyEvro.jsx'
 import Celebration from './components/Celebration.jsx'
@@ -87,7 +86,7 @@ import { SignatureWelcome } from './components/Signature.jsx'
 import { signatureSeen } from './lib/signature.js'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 import { track } from './lib/telemetry.js'
-import { KnowledgeProvider, defaultLevelFor, LevelToggle } from './components/Explain.jsx'
+import { KnowledgeProvider, defaultLevelFor } from './components/Explain.jsx'
 import { disabledNavKeys } from './lib/model.js'
 
 const PAGES = { morning: Morning, mission: MissionControl, missions: MissionQueue, wall: Wall, accountability: Accountability, intelligence: Intelligence, decisions: Decisions, narrative: Narrative, aitrust: AITrust, brand: BrandPage, identity: IdentityPage, identitylab: IdentityLab, valueoffice: ValueOffice, pulse: Pulse, chief: ChiefOfStaff, cockpit: Cockpit, exec: Exec, mywork: MyWork, department: Department, hierarchy: Hierarchy, portfolio: Portfolio, forecast: Forecast, timeline: Timeline, scenarios: Scenarios, optimize: Optimize, realization: Realization, sustainment: Sustainment, dependencies: Dependencies, valuemap: ValueMap, valuegraph: ValueGraph, mining: Mining, opportunities: Opportunities, spend: Spend, leaderboard: Leaderboard, movement: Movement, summit: Summit, recognition: Recognition, reporting: Reporting, sustainability: Sustainability, methodology: Methodology, knowledge: Knowledge, governance: Governance, integrations: Integrations, intake: Intake, initiative: Initiative, settings: Settings, procurement: ProcurementDashboard, opportunity: OpportunityWorkspace, savingspipeline: SavingsPipeline, decisioncenter: DecisionCenter, procai: ProcurementAI, glossary: ProcurementGlossary, whatif: ProcurementScenario, brief: ProcurementBrief, studio: ProcurementStudio }
@@ -317,9 +316,7 @@ export default function App() {
           <div className="spacer" />
           <button className="copilot-btn why-btn" onClick={() => setWhy(true)} title="Why EVRO? — the plain-English overview">Why EVRO?</button>
           <button className="copilot-btn hide-sm" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
-          <button className="copilot-btn hide-md" onClick={() => setCopilot(true)} title="EVRO Companion (executive intelligence)"><IconAI /> Companion</button>
-          <button className="cmdk" onClick={() => setPalette(true)} title="Command palette (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
-          <span className="hide-md" title="Explanation depth (Knowledge Layer)"><LevelToggle compact /></span>
+          <button className="cmdk" onClick={() => setPalette(true)} title="Search &amp; commands (⌘K)"><IconSearch /> <span className="kbd">⌘K</span></button>
           <button className="theme-btn" onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} aria-label="Toggle theme">{theme === 'dark' ? '☀' : '☾'}</button>
           <PersonaSwitch db={db} userId={userId} setUserId={setUserId} />
           <DataBadge source={source} />
@@ -334,7 +331,6 @@ export default function App() {
           </ErrorBoundary>
         </main>
         {RAIL_PAGES.has(page) && !procHome && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
-        <AIPresence db={db} user={user} page={page} navigate={navigate} />
         <AskEvro onClick={() => setCopilot(true)} railPage={RAIL_PAGES.has(page)}
           hidden={copilot || briefing || palette || welcome || tour || drawer || !!drawerId || celebrations.length > 0} />
         <Celebration queue={celebrations} onDismiss={() => setCelebrations((q) => q.slice(1))} />
