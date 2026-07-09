@@ -118,8 +118,14 @@ export async function aiSelftest(req, res) {
     res.json({ ...out, ok: true, stage: 'done', reply, usage: { input: resp.usage?.input_tokens ?? null, output: resp.usage?.output_tokens ?? null } })
   } catch (err) {
     const status = err?.status || err?.statusCode
-    res.json({ ...out, ok: false, stage: 'api', status: status ?? null, error: String(err?.message || err),
-      hint: status === 401 ? 'The API key is invalid.' : status === 400 ? 'Bad request (likely a wrong model name).' : status === 429 ? 'Anthropic rate/credit limit — check billing/credits.' : 'The call to Anthropic failed.' })
+    const msg = String(err?.message || err)
+    const lowCredit = /credit balance is too low|purchase credits|plans & billing/i.test(msg)
+    res.json({ ...out, ok: false, stage: 'api', status: status ?? null, error: msg,
+      hint: lowCredit ? 'The Anthropic account is out of credit — add credit under Plans & Billing at console.anthropic.com.'
+        : status === 401 ? 'The API key is invalid.'
+        : status === 400 ? 'Bad request (likely a wrong model name).'
+        : status === 429 ? 'Anthropic rate limit — slow down or check limits.'
+        : 'The call to Anthropic failed.' })
   }
 }
 
