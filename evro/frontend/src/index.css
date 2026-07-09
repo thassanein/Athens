@@ -2215,6 +2215,41 @@ html[data-theme='light'] .pv-win td:first-child { color: #8a5f08; }
   .svp-cards { display: block; }
 }
 
+/* ── Standardized Phase view (Pipeline / Commit / Execute / Realize) */
+.pv-stepper { display: flex; align-items: stretch; gap: 0; padding: 6px; margin-bottom: 14px; }
+.pv-step { flex: 1; display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer;
+  padding: 10px 12px; border-radius: 10px; color: var(--ink); position: relative; transition: background .16s ease; text-align: left; }
+.pv-step:hover { background: var(--hover, rgba(127,127,127,0.08)); }
+.pv-step.on { background: color-mix(in srgb, var(--brand-value) 14%, transparent); }
+.pv-step-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.pv-step.on .pv-step-dot { box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-value) 22%, transparent); }
+.pv-step-l { font-size: 13px; font-weight: 700; }
+.pv-step.on .pv-step-l { color: var(--brand-value); }
+.pv-step-n { margin-left: auto; font-size: 13px; font-weight: 800; color: var(--grey); }
+.pv-step.on .pv-step-n { color: var(--brand-value); }
+.pv-step-arrow { position: absolute; right: -7px; color: var(--grey); font-size: 13px; z-index: 1; }
+.pv-win { display: flex; align-items: center; gap: 6px; }
+.pv-win-track { flex: 1; min-width: 46px; height: 6px; border-radius: 4px; background: var(--panel-2); overflow: hidden; }
+.pv-win-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green), var(--brand-value)); }
+.pv-badge.banked { font-size: 10.5px; font-weight: 800; color: var(--grey); background: var(--panel-2); border-radius: 6px; padding: 2px 7px; }
+.pv-cards { display: none; }
+.pv-card { display: block; width: 100%; text-align: left; background: var(--panel-2, transparent); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; margin-bottom: 8px; cursor: pointer; }
+.pv-card:active { background: var(--hover, rgba(127,127,127,0.08)); }
+.pv-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+.pv-card-top b { font-size: 13.5px; line-height: 1.3; }
+.pv-card-meta { display: flex; align-items: center; gap: 8px; }
+.pv-card-v { color: var(--green); font-size: 14px; }
+.pv-card-next { margin-top: 6px; }
+@media (max-width: 720px) {
+  .pv-stepper { flex-wrap: wrap; gap: 4px; }
+  .pv-step { flex: 1 1 44%; }
+  .pv-step-arrow { display: none; }
+}
+@media (max-width: 640px) {
+  .pv-tablewrap { display: none; }
+  .pv-cards { display: block; }
+}
+
 /* Module chooser — the front door (capability selection before the landing) */
 .modchooser { min-height: 100vh; min-height: 100dvh; background: var(--bg); color: var(--ink); overflow-y: auto; }
 .modchooser-inner { max-width: 1040px; margin: 0 auto; padding: 32px 24px 48px; }

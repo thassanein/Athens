@@ -68,6 +68,7 @@ import AITrust from './pages/AITrust.jsx'
 import Settings from './pages/Settings.jsx'
 import ProcurementDashboard from './pages/ProcurementDashboard.jsx'
 import ProcurementHome from './pages/ProcurementHome.jsx'
+import PhaseView from './pages/PhaseView.jsx'
 import OpportunityWorkspace from './pages/OpportunityWorkspace.jsx'
 import SavingsPipeline from './pages/SavingsPipeline.jsx'
 import DecisionCenter from './pages/DecisionCenter.jsx'
@@ -95,7 +96,10 @@ const TITLES = { morning: 'Morning operating screen', mission: 'Enterprise Missi
 // Executives / leadership land on Enterprise Mission Control; operators
 // (owner / procurement) keep the Morning operating screen.
 const HOME = { exec: 'mission', admin: 'mission', fpna: 'mission', leader: 'mission', owner: 'morning', procurement: 'morning' }
-const ALWAYS_OK = ['initiative', 'intake', 'opportunity']
+const ALWAYS_OK = ['initiative', 'intake', 'opportunity', 'phase_pipeline', 'phase_commit', 'phase_execute', 'phase_realize']
+// The four standardized phase views — one component, one layout, per phase.
+const PHASE_ROUTES = { phase_pipeline: 'pipeline', phase_commit: 'commit', phase_execute: 'execute', phase_realize: 'realize' }
+const PHASE_TITLE = { phase_pipeline: 'Pipeline', phase_commit: 'Commit', phase_execute: 'Execute', phase_realize: 'Realize' }
 const SCOPED_PAGES = new Set(['portfolio', 'forecast', 'sustainability', 'sustainment', 'realization'])
 // Operating screens that carry the persistent "Do next" rail (5B.6 item 7).
 const RAIL_PAGES = new Set(['mission', 'intelligence', 'valueoffice', 'pulse', 'wall', 'chief', 'governance'])
@@ -280,6 +284,7 @@ export default function App() {
   // In procurement-first mode, "Home" (the mission key) is the minimal daily
   // action screen, not the heavy enterprise Mission Control.
   const procHome = procurementFirst() && page === 'mission'
+  const phaseKey = PHASE_ROUTES[page]
   const Page = procHome ? ProcurementHome : (PAGES[page] || Cockpit)
   const pageDb = SCOPED_PAGES.has(page) ? scopedView(db, user) : db
   const ctx = { db, source, user, caps, dispatch, navigate, flash, openDrawer, onCompanion: () => setCopilot(true), home: HOME[user.role] || 'morning', refreshShell }
@@ -308,7 +313,7 @@ export default function App() {
       <div className="main">
         <header className="topbar">
           <button className="hamburger" onClick={() => setDrawer((d) => !d)} aria-label="Menu"><IconMenu /></button>
-          <div className="page-title">{procHome ? 'Home' : TITLES[page]}</div>
+          <div className="page-title">{procHome ? 'Home' : (PHASE_TITLE[page] || TITLES[page])}</div>
           <div className="spacer" />
           <button className="copilot-btn why-btn" onClick={() => setWhy(true)} title="Why EVRO? — the plain-English overview">Why EVRO?</button>
           <button className="copilot-btn hide-sm" onClick={() => setTour(true)} title="EVRO Procurement — 5-minute guided walkthrough">▶ Tour</button>
@@ -323,7 +328,9 @@ export default function App() {
           onBriefing={() => setBriefing(true)} onCopilot={() => setCopilot(true)} openDrawer={openDrawer} />
         <main className="content">
           <ErrorBoundary page={page} resetKey={page} onHome={() => navigate(HOME[user.role] || 'morning')}>
-            <Page key={`${page}:${selId || ''}`} {...ctx} db={pageDb} id={selId} />
+            {phaseKey
+              ? <PhaseView key={page} {...ctx} db={pageDb} phase={phaseKey} />
+              : <Page key={`${page}:${selId || ''}`} {...ctx} db={pageDb} id={selId} />}
           </ErrorBoundary>
         </main>
         {RAIL_PAGES.has(page) && !procHome && <NextBestRail db={db} user={user} dispatch={dispatch} navigate={navigate} flash={flash} />}
