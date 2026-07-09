@@ -23,25 +23,47 @@ const BUCKET_TONE = { potential: 'var(--opp)', committed: 'var(--amber)', realiz
 function SpendCoverage({ db }) {
   const c = useMemo(() => spendCoverage(db), [db])
   if (!c.totalSpend) return null
-  const bn = (n) => `$${(n / 1e6).toFixed(0)}M`
+  const bn = (n) => `$${(n / 1e6).toFixed(1)}M`
+  const passthrough = c.totalSpend - c.addressable
+  const notWorked = c.addressable - c.addressed
+  const w = (n) => `${(n / c.totalSpend) * 100}%`   // one 0→total scale for every bar & step
   return (
     <div className="spc card pad section-gap">
       <div className="card-h">
-        <h3>How much of Athens’ spend we’re working</h3>
-        <span className="tiny muted" style={{ marginLeft: 8 }}>total buy → what we can influence → what we’re on</span>
+        <h3>From everything we buy to what we’re working</h3>
+        <span className="tiny muted" style={{ marginLeft: 8 }}>third-party spend → addressable → actively addressed</span>
       </div>
-      <div className="spc-grid">
-        <div className="spc-stat"><div className="spc-v mono">{bn(c.totalSpend)}</div><div className="spc-l">Total we buy outside</div><div className="tiny muted">all third-party spend</div></div>
-        <div className="spc-stat"><div className="spc-v mono" style={{ color: 'var(--brand-value)' }}>{bn(c.addressable)}</div><div className="spc-l">Addressable</div><div className="tiny muted">{pct(c.addressablePct)} of spend we can influence</div></div>
-        <div className="spc-stat"><div className="spc-v mono" style={{ color: 'var(--green)' }}>{bn(c.addressed)}</div><div className="spc-l">Actively addressed</div><div className="tiny muted">{pct(c.addressedPct)} of addressable · {c.categoriesWorked} of {c.categoriesTotal} categories</div></div>
-      </div>
-      {/* coverage bar: addressed within addressable within total */}
-      <div className="spc-bar" title={`${bn(c.addressed)} addressed of ${bn(c.addressable)} addressable of ${bn(c.totalSpend)} total`}>
-        <div className="spc-bar-addr" style={{ width: `${c.addressablePct * 100}%` }}>
-          <div className="spc-bar-done" style={{ width: `${c.addressedPct * 100}%` }} />
+
+      {/* Bridge: each anchor is a bar on the same scale; each step shows the chunk that falls away and why */}
+      <div className="spc-bridge">
+        <div className="spc-br-row">
+          <div className="spc-br-head"><b>Third-party spend</b><span className="spc-br-num mono">{bn(c.totalSpend)}</span></div>
+          <div className="spc-br-note">everything Athens buys outside</div>
+          <div className="spc-br-track"><div className="spc-br-fill total" style={{ width: w(c.totalSpend) }} /></div>
+        </div>
+
+        <div className="spc-br-step">
+          <div className="spc-br-steptrack"><div className="spc-br-drop" style={{ left: w(c.addressable), width: w(passthrough) }} /></div>
+          <div className="spc-br-steptag">− <b className="mono">{bn(passthrough)}</b> pass-throughs we can’t influence <span className="tiny muted">taxes · disposal · franchise fees · pension</span></div>
+        </div>
+
+        <div className="spc-br-row">
+          <div className="spc-br-head"><b style={{ color: 'var(--brand-value)' }}>Addressable spend</b><span className="spc-br-num mono">{bn(c.addressable)}</span></div>
+          <div className="spc-br-note">{pct(c.addressablePct)} of what we buy — spend Procurement can actually move</div>
+          <div className="spc-br-track"><div className="spc-br-fill addr" style={{ width: w(c.addressable) }} /></div>
+        </div>
+
+        <div className="spc-br-step">
+          <div className="spc-br-steptrack"><div className="spc-br-drop" style={{ left: w(c.addressed), width: w(notWorked) }} /></div>
+          <div className="spc-br-steptag">− <b className="mono">{bn(notWorked)}</b> addressable but not on it yet <span className="tiny muted">{c.categoriesTotal - c.categoriesWorked} of {c.categoriesTotal} categories still on the shelf</span></div>
+        </div>
+
+        <div className="spc-br-row">
+          <div className="spc-br-head"><b style={{ color: 'var(--green)' }}>Actively addressed</b><span className="spc-br-num mono">{bn(c.addressed)}</span></div>
+          <div className="spc-br-note">{pct(c.addressed / c.totalSpend)} of what we buy · {pct(c.addressedPct)} of addressable · {c.categoriesWorked} of {c.categoriesTotal} categories under way</div>
+          <div className="spc-br-track"><div className="spc-br-fill done" style={{ width: w(c.addressed) }} /></div>
         </div>
       </div>
-      <div className="spc-barkey tiny muted"><span><i className="spc-sw total" /> total buy</span><span><i className="spc-sw addr" /> addressable ({pct(c.addressablePct)})</span><span><i className="spc-sw done" /> addressed ({pct(c.addressedPct)} of addressable)</span></div>
       {/* savings split + savings rate */}
       <div className="spc-split">
         <div className="spc-split-h">

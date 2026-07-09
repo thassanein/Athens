@@ -2744,19 +2744,29 @@ html.evro-tour .content { padding-bottom: 72vh; }
 }
 
 /* Spend coverage — addressable vs addressed + savings split */
-.spc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 6px 0 14px; }
-.spc-stat { display: flex; flex-direction: column; gap: 2px; }
-.spc-v { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
-.spc-l { font-size: 13px; font-weight: 700; }
-.spc-bar { height: 26px; border-radius: 8px; background: var(--panel-2); overflow: hidden; position: relative; }
-.spc-bar-addr { height: 100%; background: color-mix(in srgb, var(--brand-value) 30%, transparent); position: relative; }
-.spc-bar-done { height: 100%; background: linear-gradient(90deg, var(--green), color-mix(in srgb, var(--green) 70%, transparent)); }
-.spc-barkey { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 7px; }
+/* Spend bridge — a waterfall from total buy → addressable → addressed, every bar
+   and step drawn on one 0→total scale so the staircase lines up. */
+.spc-bridge { margin: 10px 0 4px; }
+.spc-br-row { margin-bottom: 2px; }
+.spc-br-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.spc-br-head b { font-size: 14px; letter-spacing: -0.2px; }
+.spc-br-num { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; }
+.spc-br-note { font-size: 11px; color: var(--grey); margin: 1px 0 4px; }
+.spc-br-track { height: 16px; border-radius: 5px; background: var(--panel-2); overflow: hidden; }
+.spc-br-fill { height: 100%; border-radius: 5px; transition: width .5s cubic-bezier(.2,.7,.2,1); }
+.spc-br-fill.total { background: color-mix(in srgb, var(--grey) 34%, transparent); }
+.spc-br-fill.addr { background: color-mix(in srgb, var(--brand-value) 55%, transparent); }
+.spc-br-fill.done { background: linear-gradient(90deg, var(--green), color-mix(in srgb, var(--green) 72%, transparent)); }
+.spc-br-step { margin: 3px 0 5px; }
+.spc-br-steptrack { position: relative; height: 9px; }
+.spc-br-drop { position: absolute; top: 0; height: 100%; border-radius: 3px;
+  background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--grey) 26%, transparent) 0 5px, transparent 5px 10px);
+  border-right: 2px solid color-mix(in srgb, var(--grey) 40%, transparent); }
+.spc-br-steptag { font-size: 11px; color: var(--grey); margin-top: 3px; }
+.spc-br-steptag b { color: var(--ink); }
 .spc-barkey span, .spc-split-key span { display: inline-flex; align-items: center; gap: 6px; }
 .spc-sw { width: 11px; height: 11px; border-radius: 3px; display: inline-block; flex: none; }
-.spc-sw.total { background: var(--panel-2); border: 1px solid var(--line); }
-.spc-sw.addr { background: color-mix(in srgb, var(--brand-value) 40%, transparent); }
-.spc-sw.done, .spc-sw.hard { background: var(--green); }
+.spc-sw.hard { background: var(--green); }
 .spc-sw.soft { background: var(--navy); }
 .spc-split { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
 .spc-split-h { font-size: 13px; margin-bottom: 8px; }
@@ -2765,4 +2775,4 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .spc-seg.hard { background: var(--green); }
 .spc-seg.soft { background: var(--navy); }
 .spc-split-key { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 7px; color: var(--grey); }
-@media (max-width: 640px) { .spc-grid { grid-template-columns: 1fr; gap: 10px; } .spc-v { font-size: 22px; } }
+@media (max-width: 640px) { .spc-br-num { font-size: 15px; } .spc-br-head b { font-size: 13px; } }
