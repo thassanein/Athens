@@ -2458,8 +2458,16 @@ html.evro-tour .content { padding-bottom: 72vh; }
 .pcp-turn { display: flex; flex-direction: column; gap: 8px; }
 .pcp-q { align-self: flex-end; max-width: 88%; background: var(--brand-value); color: #fff; font-size: 13px; font-weight: 600; padding: 8px 12px; border-radius: 12px 12px 3px 12px; }
 .pcp-a { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px 12px 12px 3px; padding: 11px 13px; display: flex; flex-direction: column; gap: 7px; }
-.pcp-a-t { font-size: 10px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--brand-ai-ink); }
+.pcp-a-t { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--brand-ai-ink); }
+.pcp-badge { margin-left: auto; font-size: 9px; font-weight: 800; letter-spacing: 0.4px; padding: 2px 7px; border-radius: 999px; background: var(--line); color: var(--grey); }
+.pcp-badge.is-ai { background: color-mix(in srgb, var(--brand-ai-ink) 16%, transparent); color: var(--brand-ai-ink); }
 .pcp-a-body { font-size: 13px; line-height: 1.55; color: var(--ink); }
+.pcp-pending { flex-direction: row; align-items: center; gap: 8px; font-size: 12px; color: var(--grey); }
+.pcp-dots { display: inline-flex; gap: 3px; }
+.pcp-dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--brand-ai-ink); opacity: 0.35; animation: pcpDot 1s infinite ease-in-out; }
+.pcp-dots i:nth-child(2) { animation-delay: 0.15s; }
+.pcp-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pcpDot { 0%, 80%, 100% { opacity: 0.25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
 .pcp-metrics { display: flex; gap: 16px; flex-wrap: wrap; }
 .pcp-metric b { display: block; font-size: 15px; color: var(--brand-value); }
 .pcp-metric span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; color: var(--grey); }

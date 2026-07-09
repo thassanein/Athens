@@ -9,6 +9,7 @@ import { loadDb, persistMutable } from './store.js'
 import { MUTATIONS } from './mutations.js'
 import { enterpriseRollup } from './engine.js'
 import { portfolioDiagnostics, renderLlmsTxt, renderOverviewHTML } from './diagnostics.js'
+import { aiStatus, aiAsk } from './ai.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -90,12 +91,16 @@ app.post('/api/action', async (req, res, next) => {
   }
 })
 
+// ---- EVRO AI (optional real-LLM copilot; off unless ANTHROPIC_API_KEY is set) ---
+app.get('/api/ai/status', aiStatus)
+app.post('/api/ai/ask', aiAsk)
+
 // ---- API discovery index ---------------------------------------------------
 app.get('/api', (_req, res) => {
   res.json({
     app: 'Athens EVRO',
     description: 'Enterprise Value Realization Office — cost-management PoC. Return-maximization model (no target).',
-    endpoints: { health: '/api/health', db: '/api/db', exec: '/api/exec', portfolio: '/api/portfolio', integration: '/api/integration', action: 'POST /api/action', overview: '/overview', llms: '/llms.txt' },
+    endpoints: { health: '/api/health', db: '/api/db', exec: '/api/exec', portfolio: '/api/portfolio', integration: '/api/integration', action: 'POST /api/action', ai: 'GET /api/ai/status · POST /api/ai/ask', overview: '/overview', llms: '/llms.txt' },
   })
 })
 
