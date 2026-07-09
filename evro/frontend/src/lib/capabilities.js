@@ -107,9 +107,11 @@ const ENTL = ['exec', 'admin', 'fpna', 'leader']
 // ⌘K / Ask EVRO — the sidebar just doesn't lead with it.
 export const PROCUREMENT_NAV = [
   { group: 'Command', items: [
+    // The four core screens are visible to every role — the login lands each
+    // role on the right one; capabilities (edit / validate / steer) still differ.
     ['mission', 'Home', IconCockpit, ALL],
-    ['procurement', 'Executive Dashboard', IconExec, ENTL],
-    ['phase_pipeline', 'Pipeline', IconPortfolio, ENTL],
+    ['procurement', 'Executive Dashboard', IconExec, ALL],
+    ['phase_pipeline', 'Pipeline', IconPortfolio, ALL],
   ] },
   { group: 'Intelligence', items: [
     ['procai', 'Ask EVRO', IconAI, ALL],

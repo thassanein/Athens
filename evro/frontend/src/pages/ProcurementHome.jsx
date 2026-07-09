@@ -1,13 +1,26 @@
 import { useMemo } from 'react'
-import { procurementModel, decisionQueue } from '../lib/procurement.js'
+import { procurementModel, decisionQueue, PROCUREMENT_ROLE_LABEL } from '../lib/procurement.js'
 import { money, num } from '../lib/format.js'
 import AgentActions from '../components/AgentActions.jsx'
+
+// What each role should focus on when they land on Home.
+const ROLE_FOCUS = {
+  exec: 'the whole book and what needs a decision',
+  admin: 'the whole book and what needs a decision',
+  fpna: 'validating delivered value and the forecast',
+  leader: 'your categories and moving deals forward',
+  owner: 'the deals you own and your next actions',
+  procurement: 'the deals you own and your next actions',
+}
 
 // Home — the daily driver. Deliberately NOT the dashboard: this screen answers
 // one question, "what needs me today?", with a short, ranked action list. The
 // numbers/value story lives on the Executive Dashboard, so the two never overlap
 // (per exec feedback — one place for actions, one for the story).
-export default function ProcurementHome({ db, navigate }) {
+export default function ProcurementHome({ db, navigate, user }) {
+  const firstName = (user?.name || '').split(' ')[0]
+  const roleLabel = PROCUREMENT_ROLE_LABEL[user?.role] || 'EVRO'
+  const focus = ROLE_FOCUS[user?.role] || 'what needs you today'
   const m = useMemo(() => procurementModel(db), [db])
   const { sum, opportunities } = m
   const decisions = useMemo(() => decisionQueue(db).slice(0, 5), [db])
@@ -27,7 +40,8 @@ export default function ProcurementHome({ db, navigate }) {
     <>
       {/* One-line pulse — the whole book in a sentence, then straight to the work. */}
       <div className="phome-hero card pad">
-        <div className="phome-hero-t">What needs you today</div>
+        <div className="phome-hero-t">{firstName ? `Welcome, ${firstName}` : 'What needs you today'}</div>
+        <div className="tiny muted" style={{ marginTop: -2, marginBottom: 4 }}>Signed in as <b>{roleLabel}</b> · focus on {focus}.</div>
         <div className="phome-pulse">
           <span><b className="mono" style={{ color: 'var(--green)' }}>{money(sum.lenses.realized)}</b> confirmed this year</span>
           <span className="phome-dot" />

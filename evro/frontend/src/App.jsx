@@ -69,6 +69,7 @@ import Settings from './pages/Settings.jsx'
 import ProcurementDashboard from './pages/ProcurementDashboard.jsx'
 import ProcurementHome from './pages/ProcurementHome.jsx'
 import PhaseView from './pages/PhaseView.jsx'
+import ProcurementLogin, { rolePath } from './pages/ProcurementLogin.jsx'
 import OpportunityWorkspace from './pages/OpportunityWorkspace.jsx'
 import SavingsPipeline from './pages/SavingsPipeline.jsx'
 import DecisionCenter from './pages/DecisionCenter.jsx'
@@ -95,7 +96,7 @@ const TITLES = { morning: 'Morning operating screen', mission: 'Enterprise Missi
 // Executives / leadership land on Enterprise Mission Control; operators
 // (owner / procurement) keep the Morning operating screen.
 const HOME = { exec: 'mission', admin: 'mission', fpna: 'mission', leader: 'mission', owner: 'morning', procurement: 'morning' }
-const ALWAYS_OK = ['initiative', 'intake', 'opportunity', 'phase_pipeline', 'phase_commit', 'phase_execute', 'phase_realize']
+const ALWAYS_OK = ['initiative', 'intake', 'opportunity', 'mission', 'procurement', 'procai', 'phase_pipeline', 'phase_commit', 'phase_execute', 'phase_realize']
 // The four standardized phase views — one component, one layout, per phase.
 const PHASE_ROUTES = { phase_pipeline: 'pipeline', phase_commit: 'commit', phase_execute: 'execute', phase_realize: 'realize' }
 const PHASE_TITLE = { phase_pipeline: 'Pipeline', phase_commit: 'Commit', phase_execute: 'Execute', phase_realize: 'Realize' }
@@ -154,13 +155,30 @@ export default function App() {
     if (key === 'procurement') {
       setWelcome(false)
       setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ }
-      // First time in, show the plain-English "Why EVRO" once (not the tour).
-      try { if (!localStorage.getItem('evro.why.seen')) setWhy(true) } catch { setWhy(true) }
+      // Next the operator picks a role (ProcurementLogin); "Why EVRO" shows once
+      // after that, so the pitch lands on the app, not the login.
     }
   }, [])
+  // Role login — the operator signs in as a role after choosing Procurement. Sets
+  // the acting person, lands on the view built for that role, persists for the
+  // session. Different login paths → different starting views + capabilities.
+  const [roleChosen, setRoleChosen] = useState(() => { try { return sessionStorage.getItem('evro.role') || null } catch { return null } })
+  const pickRole = useCallback((roleKey) => {
+    const path = rolePath(roleKey)
+    const person = (db?.people || []).find((p) => p.role === path.role) || (db?.people || []).find((p) => p.role === 'admin') || db?.people?.[0]
+    if (person) setUserId(person.id)
+    setPage(path.land); setSelId(null)
+    setRoleChosen(roleKey); try { sessionStorage.setItem('evro.role', roleKey) } catch { /* ignore */ }
+    try { if (!localStorage.getItem('evro.why.seen')) setWhy(true) } catch { setWhy(true) }
+    track('role', roleKey)
+  }, [db])
   const changeModule = useCallback(() => {
-    try { sessionStorage.removeItem('evro.module'); sessionStorage.removeItem('evro.entered') } catch { /* ignore */ }
-    setModuleKey(null); setEntered(false)
+    try { sessionStorage.removeItem('evro.module'); sessionStorage.removeItem('evro.entered'); sessionStorage.removeItem('evro.role') } catch { /* ignore */ }
+    setModuleKey(null); setEntered(false); setRoleChosen(null)
+  }, [])
+  const changeRole = useCallback(() => {
+    try { sessionStorage.removeItem('evro.role') } catch { /* ignore */ }
+    setRoleChosen(null)
   }, [])
   const enter = useCallback(() => { setEntered(true); try { sessionStorage.setItem('evro.entered', '1') } catch { /* ignore */ } }, [])
 
@@ -279,6 +297,8 @@ export default function App() {
   )
   if (!moduleKey) return <ModuleChooser onPick={pickModule} />
   if (!entered) return <Landing db={db} user={user} onEnter={enter} onBack={changeModule} onTour={() => { enter(); setWelcome(false); setTour(true) }} />
+  // After choosing Procurement, sign in as a role — different paths, different views.
+  if (procurementFirst() && !roleChosen) return <ProcurementLogin onPick={pickRole} onBack={changeModule} />
 
   // In procurement-first mode, "Home" (the mission key) is the minimal daily
   // action screen, not the heavy enterprise Mission Control.
@@ -305,7 +325,7 @@ export default function App() {
    <KnowledgeProvider value={{ db, level: effLevel, setLevel }}>
     <div className="layout">
       <aside className={`sidebar ${drawer ? 'open' : ''}`}>
-        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={roleLabelOf(user.role)} onBrand={() => setEntered(false)} disabled={disabledNavKeys(db)} />
+        <NavBar page={page} navigate={navigate} onNew={() => navigate('intake')} showNew={caps.edit} role={user.role} roleLabel={roleLabelOf(user.role)} onBrand={() => setEntered(false)} disabled={disabledNavKeys(db)} onSwitchRole={changeRole} />
       </aside>
       <div className={`scrim ${drawer ? 'show' : ''}`} onClick={() => setDrawer(false)} />
 
